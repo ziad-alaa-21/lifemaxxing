@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-fixed": "#a2eeff", "secondary-fixed-dim": "#2fd9f4", "on-tertiary-container": "#6d51bc", "on-secondary": "#00363e", "on-tertiary-fixed": "#21005e", "on-primary-fixed": "#141f00", "on-primary-fixed-variant": "#384e00", "on-background": "#dee3e9", "background": "#0f1419", "on-error-container": "#ffdad6", "outline-variant": "#434934", "primary-container": "#bdf532", "surface-container-highest": "#30353a", "surface-container": "#1b2025", "inverse-on-surface": "#2c3136", "on-secondary-fixed": "#001f25", "surface-bright": "#353a3f", "secondary": "#5de6ff", "secondary-container": "#00cbe6", "inverse-primary": "#4c6700", "tertiary-fixed": "#e8ddff", "tertiary": "#ffffff", "surface-dim": "#0f1419", "on-primary": "#263500", "surface-container-lowest": "#0a0f13", "on-primary-container": "#516e00", "on-secondary-container": "#00515d", "surface-container-low": "#171c21", "inverse-surface": "#dee3e9", "primary-fixed-dim": "#a2d801", "surface-tint": "#a2d801", "surface-container-high": "#252a30", "on-surface": "#dee3e9", "error": "#ffb4ab", "on-secondary-fixed-variant": "#004e5a", "on-tertiary": "#381385", "on-surface-variant": "#c3c9ae", "on-error": "#690005", "surface-variant": "#30353a", "primary-fixed": "#bdf532", "outline": "#8d937b", "error-container": "#93000a", "surface": "#0f1419", "primary": "#ffffff", "tertiary-container": "#e8ddff", "on-tertiary-fixed-variant": "#4f319c", "tertiary-fixed-dim": "#cebdff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "0.75rem", "space-md": "1rem", "margin": "1rem", "space-xs": "0.25rem", "space-xl": "1.5rem" }, fontFamily: { "headline-sm": ["Inter"], "stat-mono-md": ["JetBrains Mono"], "body-sm": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Inter"], "body-md": ["Inter"], "stat-mono-sm": ["JetBrains Mono"], "display-hero-mobile": ["JetBrains Mono"], "headline-lg": ["JetBrains Mono"], "label-sm": ["Inter"], "display-hero": ["JetBrains Mono"], "label-uppercase": ["Inter"] }, fontSize: { "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }], "stat-mono-md": ["18px", { "lineHeight": "22px", "letterSpacing": "-0.02em", "fontWeight": "500" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }], "stat-mono-sm": ["14px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "500" }], "display-hero-mobile": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "display-hero": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }] } } } }</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;background-color:#0f1419;color:#dee3e9;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.25)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Navigate Back" class="w-11 h-11 -ml-2 rounded-xl flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><div class="flex flex-col ml-1"><div class="flex items-center gap-1.5 font-label-uppercase text-label-uppercase text-outline tracking-wider"><span class="text-secondary">ACADEMICS</span><span>/</span><span class="text-outline-variant">CORE</span></div><h1 class="font-headline-sm text-headline-sm text-on-surface truncate max-w-[200px]">Course Detail</h1></div></div><div class="flex items-center gap-space-xs"><button aria-label="Context Actions" class="w-11 h-11 rounded-xl flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[22px]">tune</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface px-margin"><div class="flex flex-col w-full relative">
+<!-- Backdrop Simulated Academic Layer -->
+<div aria-hidden="true" class="flex flex-col w-full opacity-40 blur-[3px] select-none pointer-events-none pb-12">
+<div class="flex items-center justify-between mb-4">
+<div>
+<div class="font-label-uppercase text-label-uppercase text-outline tracking-wider">SEMESTER II • 2025</div>
+<div class="font-headline-md text-headline-md text-on-surface">Academic Load</div>
+</div>
+<div class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-stat-mono-sm text-stat-mono-sm">
+        16.0 Credits
+      </div>
+</div>
+<!-- Background Mock Subject Cards -->
+<div class="space-y-3 mb-6">
+<div class="bg-surface-container-low p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-[#38BDF8]"></div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">EECS 370: Arch</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Core Engine • 4.0 Cr</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-stat-mono-md text-stat-mono-md text-secondary">93.4%</div>
+<div class="font-label-uppercase text-label-uppercase text-outline">Standing: A</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-[#A78BFA]"></div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">STATS 425: Prob</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Stochastic Theory • 3.0 Cr</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-stat-mono-md text-stat-mono-md text-on-surface">88.9%</div>
+<div class="font-label-uppercase text-label-uppercase text-outline">Standing: B+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-primary-fixed"></div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">ROB 501: Math</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Autonomous • 4.0 Cr</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-stat-mono-md text-stat-mono-md text-primary-fixed">96.8%</div>
+<div class="font-label-uppercase text-label-uppercase text-outline">Standing: A+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Sheet Overlay Container -->
+<div class="fixed inset-0 z-50 flex flex-col justify-end bg-[#0a0f13]/80 backdrop-blur-md">
+<!-- Modal Sheet -->
+<div class="w-full bg-surface-container-low rounded-t-[28px] shadow-[0_-8px_32px_rgba(0,0,0,0.65)] flex flex-col max-h-[777px] overflow-y-auto">
+<!-- Drag Handle Affordance -->
+<div class="w-full flex items-center justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
+<div class="w-10 h-1.5 rounded-full bg-surface-container-highest"></div>
+</div>
+<!-- Header Section -->
+<div class="px-space-xl pt-1 pb-4 flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">Add New Subject</h2>
+</div>
+<p class="font-body-sm text-body-sm text-outline mt-0.5 leading-snug">
+            Configure syllabus parameters, credit load, and target performance standing.
+          </p>
+</div>
+<button aria-label="Close modal" class="w-9 h-9 -mr-1.5 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" onclick="history.back()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Sheet Form Content -->
+<div class="px-space-xl space-y-5 pb-6">
+<!-- Field 1: Subject Name -->
+<div class="flex flex-col space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-uppercase text-label-uppercase text-outline tracking-wider" for="subject-title">
+              Subject Name &amp; Code
+            </label>
+<span class="font-stat-mono-sm text-[11px] text-secondary">ACTIVE PROTOCOL</span>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px] pointer-events-none">menu_book</span>
+<input class="w-full h-12 pl-11 pr-4 bg-surface-container text-on-surface font-body-md text-body-md rounded-xl outline-none shadow-[inset_0_1px_3px_rgba(0,0,0,0.4)] focus:bg-surface-container-high transition-colors" id="subject-title" oninput="updateLivePreview()" placeholder="e.g. EECS 482: Operating Systems" type="text" value="EECS 482: Operating Systems"/>
+</div>
+</div>
+<!-- Field 2: Short Code & Credit Stepper Grid -->
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Short Code -->
+<div class="flex flex-col space-y-1.5">
+<label class="font-label-uppercase text-label-uppercase text-outline tracking-wider" for="short-code">
+              Short Code
+            </label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[18px] pointer-events-none">tag</span>
+<input class="w-full h-12 pl-10 pr-3 bg-surface-container text-on-surface font-stat-mono-md text-stat-mono-md rounded-xl uppercase outline-none focus:bg-surface-container-high transition-colors" id="short-code" maxlength="8" oninput="updateLivePreview()" placeholder="CS 482" type="text" value="CS 482"/>
+</div>
+</div>
+<!-- Credit Hours Stepper -->
+<div class="flex flex-col space-y-1.5">
+<label class="font-label-uppercase text-label-uppercase text-outline tracking-wider">
+              Credit Hours
+            </label>
+<div class="h-12 bg-surface-container rounded-xl flex items-center justify-between px-2">
+<button aria-label="Decrease credits" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-transform" onclick="decrementCredits()" type="button">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface" id="credit-display">4.0 Cr</span>
+<button aria-label="Increase credits" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-transform" onclick="incrementCredits()" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Field 3: Color Accent Picker -->
+<div class="flex flex-col space-y-2.5">
+<div class="flex items-center justify-between">
+<label class="font-label-uppercase text-label-uppercase text-outline tracking-wider">
+              Subject Accent Color
+            </label>
+<span class="font-stat-mono-sm text-[12px] text-secondary" id="palette-label">Electric Cyan</span>
+</div>
+<p class="font-body-sm text-[12px] text-outline leading-tight">
+            Used for trajectory charts, calendar sprints, and badge telemetry.
+          </p>
+<!-- Vibrant Palette Matrix -->
+<div class="grid grid-cols-4 gap-2 pt-1" id="swatch-group">
+<!-- Swatch 1: Electric Cyan (Default Selected) -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#38BDF8" onclick="selectColor('#38BDF8', 'Electric Cyan', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#38BDF8] flex items-center justify-center shadow-[0_0_12px_rgba(56,189,248,0.4)]">
+<span class="material-symbols-outlined text-[16px] text-[#0f1419] font-bold">check</span>
+</span>
+</button>
+<!-- Swatch 2: Cognitive Violet -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#A78BFA" onclick="selectColor('#A78BFA', 'Cognitive Violet', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#A78BFA] flex items-center justify-center"></span>
+</button>
+<!-- Swatch 3: Volt Lime -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#C6FF3D" onclick="selectColor('#C6FF3D', 'Volt Lime', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#C6FF3D] flex items-center justify-center"></span>
+</button>
+<!-- Swatch 4: Coral Crimson -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#F43F5E" onclick="selectColor('#F43F5E', 'Coral Crimson', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#F43F5E] flex items-center justify-center"></span>
+</button>
+<!-- Swatch 5: Amber Gold -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#F59E0B" onclick="selectColor('#F59E0B', 'Amber Gold', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#F59E0B] flex items-center justify-center"></span>
+</button>
+<!-- Swatch 6: Emerald Mint -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#10B981" onclick="selectColor('#10B981', 'Emerald Mint', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#10B981] flex items-center justify-center"></span>
+</button>
+<!-- Swatch 7: Neon Magenta -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#EC4899" onclick="selectColor('#EC4899', 'Neon Magenta', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#EC4899] flex items-center justify-center"></span>
+</button>
+<!-- Swatch 8: Indigo Blue -->
+<button class="color-swatch group h-11 rounded-xl bg-surface-container flex items-center justify-center relative transition-transform active:scale-95" data-color="#6366F1" onclick="selectColor('#6366F1', 'Indigo Blue', this)" type="button">
+<span class="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center"></span>
+</button>
+</div>
+<!-- Live Visual Pill Preview -->
+<div class="mt-2 bg-surface-container p-3 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0 pr-2">
+<div class="w-2.5 h-2.5 rounded-full bg-[#38BDF8] shrink-0 shadow-[0_0_8px_#38BDF8]" id="preview-indicator"></div>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface truncate" id="preview-text">
+                EECS 482: Operating Systems • 4.0 Cr
+              </span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-outline font-label-uppercase text-[10px] uppercase shrink-0">
+              PREVIEW
+            </span>
+</div>
+</div>
+<!-- Field 4: Target Performance Standing -->
+<div class="flex flex-col space-y-2">
+<div class="flex items-center justify-between">
+<label class="font-label-uppercase text-label-uppercase text-outline tracking-wider">
+              Target Standing &amp; Benchmark
+            </label>
+<span class="font-stat-mono-sm text-stat-mono-sm text-secondary" id="target-summary">
+              90.0% (A-)
+            </span>
+</div>
+<!-- Grade Level Selector Pills -->
+<div class="grid grid-cols-4 gap-2">
+<button class="grade-pill py-2 rounded-xl bg-surface-container text-on-surface-variant font-stat-mono-sm text-stat-mono-sm text-center transition-all hover:text-on-surface" onclick="setTargetGrade('95.0%', 'A', this)" type="button">
+              A (95%)
+            </button>
+<button class="grade-pill py-2 rounded-xl bg-surface-container-highest text-secondary font-stat-mono-sm text-stat-mono-sm text-center transition-all font-semibold shadow-sm" onclick="setTargetGrade('90.0%', 'A-', this)" type="button">
+              A- (90%)
+            </button>
+<button class="grade-pill py-2 rounded-xl bg-surface-container text-on-surface-variant font-stat-mono-sm text-stat-mono-sm text-center transition-all hover:text-on-surface" onclick="setTargetGrade('85.0%', 'B+', this)" type="button">
+              B+ (85%)
+            </button>
+<button class="grade-pill py-2 rounded-xl bg-surface-container text-on-surface-variant font-stat-mono-sm text-stat-mono-sm text-center transition-all hover:text-on-surface" onclick="setTargetGrade('80.0%', 'B', this)" type="button">
+              B (80%)
+            </button>
+</div>
+</div>
+<!-- Form Actions -->
+<div class="pt-2 space-y-2">
+<!-- Primary Volt Lime Action CTA -->
+<button class="w-full h-13 py-3.5 rounded-full bg-primary-fixed text-on-primary-fixed font-headline-sm text-headline-sm font-semibold tracking-wide flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(189,245,50,0.22)] active:scale-[0.98] transition-transform" onclick="submitSubjectForm()" type="button">
+<span>CREATE SUBJECT</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<!-- Ghost Cancel Button -->
+<button class="w-full h-11 rounded-xl text-outline hover:text-on-surface font-body-md text-body-md transition-colors flex items-center justify-center" onclick="history.back()" type="button">
+            Cancel
+          </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  let currentCreditHours = 4.0;
+  let activeColor = '#38BDF8';
+  let activeColorName = 'Electric Cyan';
+
+  function incrementCredits() {
+    if (currentCreditHours < 12.0) {
+      currentCreditHours += 0.5;
+      updateCreditDisplay();
+    }
+  }
+
+  function decrementCredits() {
+    if (currentCreditHours > 0.5) {
+      currentCreditHours -= 0.5;
+      updateCreditDisplay();
+    }
+  }
+
+  function updateCreditDisplay() {
+    const formatted = currentCreditHours.toFixed(1);
+    document.getElementById('credit-display').innerText = formatted + ' Cr';
+    updateLivePreview();
+  }
+
+  function selectColor(hex, label, el) {
+    activeColor = hex;
+    activeColorName = label;
+    document.getElementById('palette-label').innerText = label;
+    document.getElementById('palette-label').style.color = hex;
+
+    // Reset swatch elements
+    const swatches = document.querySelectorAll('.color-swatch');
+    swatches.forEach(btn => {
+      const circle = btn.querySelector('span');
+      circle.innerHTML = '';
+      circle.style.boxShadow = 'none';
+      btn.classList.remove('bg-surface-container-high');
+    });
+
+    // Mark current
+    el.classList.add('bg-surface-container-high');
+    const activeCircle = el.querySelector('span');
+    activeCircle.style.boxShadow = `0 0 12px ${hex}80`;
+    activeCircle.innerHTML = '<span class="material-symbols-outlined text-[16px] text-[#0f1419] font-bold">check</span>';
+
+    // Update Preview Dot
+    const previewDot = document.getElementById('preview-indicator');
+    previewDot.style.backgroundColor = hex;
+    previewDot.style.boxShadow = `0 0 8px ${hex}`;
+  }
+
+  function setTargetGrade(pct, letter, btn) {
+    document.getElementById('target-summary').innerText = `${pct} (${letter})`;
+    
+    // Toggle active pill classes
+    const pills = document.querySelectorAll('.grade-pill');
+    pills.forEach(p => {
+      p.classList.remove('bg-surface-container-highest', 'text-secondary', 'font-semibold');
+      p.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+
+    btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    btn.classList.add('bg-surface-container-highest', 'text-secondary', 'font-semibold');
+  }
+
+  function updateLivePreview() {
+    const nameInput = document.getElementById('subject-title').value.trim();
+    const fallback = nameInput.length > 0 ? nameInput : 'EECS 482: Operating Systems';
+    const creditText = currentCreditHours.toFixed(1) + ' Cr';
+    document.getElementById('preview-text').innerText = `${fallback} • ${creditText}`;
+  }
+
+  function submitSubjectForm() {
+    const title = document.getElementById('subject-title').value.trim();
+    const code = document.getElementById('short-code').value.trim();
+    
+    // Tactile confirmation feedback
+    const btn = event.currentTarget;
+    const initialText = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">sync</span> SUBJECT INITIALIZED';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      history.back();
+    }, 600);
+  }
+</script></main></body></html>

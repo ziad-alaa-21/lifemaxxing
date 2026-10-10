@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0f1419;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed-variant": "#4f319c", "outline": "#8d937b", "on-secondary-container": "#00515d", "on-secondary": "#00363e", "surface-variant": "#30353a", "inverse-primary": "#4c6700", "on-primary-container": "#516e00", "surface-container-high": "#252a30", "on-primary": "#263500", "on-secondary-fixed": "#001f25", "on-error": "#690005", "on-secondary-fixed-variant": "#004e5a", "surface-container-highest": "#30353a", "tertiary-fixed-dim": "#cebdff", "on-surface": "#dee3e9", "on-background": "#dee3e9", "surface-container": "#1b2025", "error-container": "#93000a", "tertiary-container": "#e8ddff", "secondary-container": "#00cbe6", "secondary-fixed": "#a2eeff", "on-surface-variant": "#c3c9ae", "primary-fixed-dim": "#a2d801", "on-tertiary-container": "#6d51bc", "on-tertiary": "#381385", "surface-dim": "#0f1419", "tertiary-fixed": "#e8ddff", "error": "#ffb4ab", "on-error-container": "#ffdad6", "outline-variant": "#434934", "primary-fixed": "#bdf532", "on-primary-fixed": "#141f00", "surface-container-lowest": "#0a0f13", "tertiary": "#ffffff", "inverse-surface": "#dee3e9", "inverse-on-surface": "#2c3136", "surface-bright": "#353a3f", "on-primary-fixed-variant": "#384e00", "primary": "#ffffff", "secondary-fixed-dim": "#2fd9f4", "secondary": "#5de6ff", "primary-container": "#bdf532", "on-tertiary-fixed": "#21005e", "background": "#0f1419", "surface": "#0f1419", "surface-tint": "#a2d801", "surface-container-low": "#171c21" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter": "0.75rem", "space-lg": "1.25rem", "space-xs": "0.25rem", "space-xl": "1.5rem", "space-sm": "0.5rem", "space-md": "1rem", "margin": "1rem" }, "fontFamily": { "headline-md": ["Inter"], "body-md": ["Inter"], "stat-mono-md": ["JetBrains Mono"], "headline-lg": ["JetBrains Mono"], "stat-mono-sm": ["JetBrains Mono"], "headline-sm": ["Inter"], "display-hero-mobile": ["JetBrains Mono"], "body-lg": ["Inter"], "label-uppercase": ["Inter"], "display-hero": ["JetBrains Mono"], "label-sm": ["Inter"], "body-sm": ["Inter"] }, "fontSize": { "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }], "stat-mono-md": ["18px", { "lineHeight": "22px", "letterSpacing": "-0.02em", "fontWeight": "500" }], "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "stat-mono-sm": ["14px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "500" }], "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }], "display-hero-mobile": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }], "display-hero": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }] } } } };</script><style>body { min-height: max(884px, 100dvh); }</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface-container-low/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.35)] pt-safe"><div class="h-28 px-margin flex flex-col justify-between py-2"><div class="flex items-center justify-between h-12"><div class="flex items-center gap-space-sm"><img alt="Life Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XwwugNt0W_X2s2cA3FlL7rz6ljFok8MWklofXphLMZbrlLUdXPls3dYd_RQdZtLKdNbGsJIv3ZV11lyb9vJZOg9VXT-uSUywP_Dn-5VKN32XRSNPUw4e5hZuYT736y74eOoX0y9cNna8VLxIToWdXyRTidxKblyKdcvBdPYqprKw_R9Km2Kd-e8ac2VUJlWpmNJjBlyx_ds24maJJZ9En4WgH19SUMH063iy5QenR3cbKZQf0DI6pwLipg"/><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-lg text-body-md text-on-surface tracking-widest">LIFE</span><span class="text-on-surface-variant text-label-uppercase font-label-uppercase opacity-40">/</span><span class="font-label-uppercase text-label-uppercase text-secondary tracking-wider uppercase">BODY</span></div><span class="font-stat-mono-sm text-label-sm text-on-surface-variant opacity-75">THU, OCT 24</span></div></div><div class="flex items-center gap-space-sm"><button aria-label="User Profile" class="w-11 h-11 rounded-full flex items-center justify-center transition-opacity hover:opacity-80 active:scale-95"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXJJ_vkSdSscnKbo_k97s-9ewcUuUe_VqE1Pi2RmVtJ4btpDfmOpWHCqxGQ33JKpScAkAgaNsvnxpc72kZx2RnQNMrytj2f71-1MvQWQvJ7FNgJd4HGoA7Bq3NhCUb6UXNyUltZMX2xMRvc_QX_Oc7AQUEusqHCN3y-VxMt7bMMC1KDq7uK0nK9bIC2IW90lQ3QLwX64UZ8a7X-GJY39vk5mnW7zHpGFAZrvlirbSVWe_j3pmOqB-0aw"/></button></div></div><nav aria-label="Body Categories" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1" data-active-classes="bg-surface-variant text-secondary shadow-[0_0_12px_rgba(93,230,255,0.22)] border border-secondary/40 font-semibold"><a class="px-3 py-1.5 rounded-full text-label-sm font-label-sm whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all shrink-0" data-path="body-workouts" href="#">Workouts</a><a class="px-3 py-1.5 rounded-full text-label-sm font-label-sm whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all shrink-0" data-path="body-nutrition" href="#">Nutrition</a><a class="px-3 py-1.5 rounded-full text-label-sm font-label-sm whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all shrink-0" data-path="body-weight" href="#">Weight</a><a class="px-3 py-1.5 rounded-full text-label-sm font-label-sm whitespace-nowrap bg-surface-variant text-secondary shadow-[0_0_12px_rgba(93,230,255,0.22)] border border-secondary/40 font-semibold shrink-0" data-path="body-sleep" href="#">Sleep</a></nav></div></header><main class="flex-1 flex flex-col relative w-full max-w-[390px] mx-auto px-margin pt-28 pb-28 bg-surface"><div class="flex flex-col w-full space-y-space-md">
+<!-- HERO TELEMETRY: SLEEP SCORE & RECOVERY VITAL -->
+<section class="bg-surface-container rounded-xl p-space-lg relative overflow-hidden shadow-md">
+<!-- Ambient Luminous Glow (Ice Blue domain accent) -->
+<div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-secondary/10 blur-3xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(93,230,255,0.8)]"></span>
+<span class="font-label-uppercase text-label-uppercase tracking-wider text-secondary uppercase">OVERNIGHT TELEMETRY</span>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">sync</span> 06:58 AM SYNCED
+      </span>
+</div>
+<div class="flex flex-col items-center justify-center my-space-xs relative">
+<!-- Radial Gauge Ring -->
+<div class="relative w-44 h-44 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 120 120">
+<!-- Background Track -->
+<circle class="text-surface-variant" cx="60" cy="60" fill="none" r="50" stroke="currentColor" stroke-width="7"></circle>
+<!-- Active Gauge Arc (88% fill) -->
+<circle class="text-secondary transition-all duration-1000 ease-out" cx="60" cy="60" fill="none" r="50" stroke="currentColor" stroke-dasharray="314.159" stroke-dashoffset="37.7" stroke-linecap="round" stroke-width="7" style="filter: drop-shadow(0 0 8px rgba(93, 230, 255, 0.45));"></circle>
+</svg>
+<!-- Center Score Metrics -->
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-label-uppercase text-label-uppercase tracking-widest text-on-surface-variant mb-0.5">SLEEP SCORE</span>
+<span class="font-display-hero-mobile text-display-hero-mobile text-on-surface leading-none tracking-tight">88</span>
+<div class="mt-1.5 px-2.5 py-0.5 rounded-full bg-surface-variant text-secondary text-label-sm font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-secondary">verified</span>
+<span>RESTFUL</span>
+</div>
+</div>
+</div>
+<!-- Duration & Deficit Mini-Readout -->
+<div class="flex items-center justify-center gap-6 mt-space-sm">
+<div class="flex flex-col items-center">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">TOTAL SLEPT</span>
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface">7h 42m</span>
+</div>
+<div class="w-px h-7 bg-surface-variant"></div>
+<div class="flex flex-col items-center">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">TARGET</span>
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface-variant">8h 00m</span>
+</div>
+<div class="w-px h-7 bg-surface-variant"></div>
+<div class="flex flex-col items-center">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">EFFICIENCY</span>
+<span class="font-stat-mono-md text-stat-mono-md text-secondary">91%</span>
+</div>
+</div>
+</div>
+<!-- Component Breakdown Grid -->
+<div class="grid grid-cols-2 gap-gutter mt-space-lg pt-space-md bg-surface-container-low rounded-lg p-space-sm">
+<!-- Duration -->
+<div class="flex flex-col p-2 rounded bg-surface-container-high/60">
+<div class="flex items-center justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface-variant">Duration</span>
+<span class="font-stat-mono-sm text-on-surface">86/100</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-variant overflow-hidden">
+<div class="h-full rounded-full bg-secondary" style="width: 86%;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-1.5">7h 42m • -18m target</span>
+</div>
+<!-- Consistency -->
+<div class="flex flex-col p-2 rounded bg-surface-container-high/60">
+<div class="flex items-center justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface-variant">Consistency</span>
+<span class="font-stat-mono-sm text-secondary">94/100</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-variant overflow-hidden">
+<div class="h-full rounded-full bg-secondary shadow-[0_0_6px_rgba(93,230,255,0.6)]" style="width: 94%;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-1.5">Circadian ±18m shift</span>
+</div>
+<!-- Quality Architecture -->
+<div class="flex flex-col p-2 rounded bg-surface-container-high/60 col-span-2">
+<div class="flex items-center justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface-variant">Sleep Architecture Quality</span>
+<span class="font-stat-mono-sm text-on-surface">84/100</span>
+</div>
+<!-- Multi-segment Stage Bar -->
+<div class="w-full h-2 rounded-full overflow-hidden flex gap-0.5 bg-surface-variant mt-0.5">
+<div class="h-full bg-secondary" style="width: 22%;" title="Deep 22%"></div>
+<div class="h-full bg-secondary/60" style="width: 25%;" title="REM 25%"></div>
+<div class="h-full bg-surface-variant" style="width: 48%;" title="Light 48%"></div>
+<div class="h-full bg-error" style="width: 5%;" title="Restless 5%"></div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-stat-mono-sm text-on-surface-variant mt-2 pt-0.5">
+<span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Deep 1h 38m</span>
+<span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary/60"></span>REM 1h 54m</span>
+<span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>Awake 22m</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 7-NIGHT FLOATING SCHEDULE BAR CHART -->
+<section class="bg-surface-container rounded-xl p-space-lg shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Circadian Rhythm</span>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant">Weekly Midpoint Stability</span>
+</div>
+<div class="text-right">
+<span class="font-stat-mono-md text-stat-mono-md text-secondary">7h 34m</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant block">WEEK AVG</span>
+</div>
+</div>
+<!-- Timeline Chart Container -->
+<div class="relative bg-surface-container-low rounded-lg p-space-md pt-6 pb-4 mt-space-sm">
+<!-- Y-Axis Time Labels -->
+<div class="absolute left-3 top-5 bottom-8 flex flex-col justify-between text-label-sm font-stat-mono-sm text-on-surface-variant/60 pointer-events-none select-none">
+<span>22:00</span>
+<span>01:00</span>
+<span>04:00</span>
+<span>07:00</span>
+</div>
+<!-- Guide Lines -->
+<div class="absolute left-14 right-4 top-6 border-b border-surface-variant/40 pointer-events-none"></div>
+<div class="absolute left-14 right-4 top-16 border-b border-surface-variant/40 pointer-events-none"></div>
+<div class="absolute left-14 right-4 top-28 border-b border-surface-variant/40 pointer-events-none"></div>
+<div class="absolute left-14 right-4 top-40 border-b border-surface-variant/40 pointer-events-none"></div>
+<!-- Circadian Midpoint Horizon Indicator -->
+<div class="absolute left-12 right-2 top-[76px] h-0.5 bg-secondary/25 border-t border-dashed border-secondary/50 pointer-events-none"></div>
+<!-- 7 Floating Bars -->
+<div class="grid grid-cols-7 gap-2 pl-12 h-44 items-start relative z-10">
+<!-- Fri -->
+<div class="flex flex-col items-center h-full justify-end">
+<div class="w-full flex flex-col items-center h-full justify-start pt-3">
+<div class="w-3 rounded-full bg-surface-variant hover:bg-secondary/40 transition-colors" style="height: 72%; margin-top: 10px;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-2">F</span>
+</div>
+<!-- Sat -->
+<div class="flex flex-col items-center h-full justify-end">
+<div class="w-full flex flex-col items-center h-full justify-start pt-3">
+<div class="w-3 rounded-full bg-surface-variant hover:bg-secondary/40 transition-colors" style="height: 80%; margin-top: 18px;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-2">S</span>
+</div>
+<!-- Sun -->
+<div class="flex flex-col items-center h-full justify-end">
+<div class="w-full flex flex-col items-center h-full justify-start pt-3">
+<div class="w-3 rounded-full bg-surface-variant hover:bg-secondary/40 transition-colors" style="height: 76%; margin-top: 14px;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-2">S</span>
+</div>
+<!-- Mon -->
+<div class="flex flex-col items-center h-full justify-end">
+<div class="w-full flex flex-col items-center h-full justify-start pt-3">
+<div class="w-3 rounded-full bg-surface-variant hover:bg-secondary/40 transition-colors" style="height: 74%; margin-top: 8px;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-2">M</span>
+</div>
+<!-- Tue -->
+<div class="flex flex-col items-center h-full justify-end">
+<div class="w-full flex flex-col items-center h-full justify-start pt-3">
+<div class="w-3 rounded-full bg-surface-variant hover:bg-secondary/40 transition-colors" style="height: 68%; margin-top: 16px;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-2">T</span>
+</div>
+<!-- Wed -->
+<div class="flex flex-col items-center h-full justify-end">
+<div class="w-full flex flex-col items-center h-full justify-start pt-3">
+<div class="w-3 rounded-full bg-surface-variant hover:bg-secondary/40 transition-colors" style="height: 75%; margin-top: 10px;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant mt-2">W</span>
+</div>
+<!-- Thu (TODAY / HIGHLIGHTED) -->
+<div class="flex flex-col items-center h-full justify-end relative">
+<!-- Ambient Column Halo -->
+<div class="absolute inset-0 bg-secondary/10 rounded-lg -mx-1 -my-1 pointer-events-none"></div>
+<div class="w-full flex flex-col items-center h-full justify-start pt-3 relative z-10">
+<div class="w-3.5 rounded-full bg-secondary shadow-[0_0_12px_rgba(93,230,255,0.7)] transition-all" style="height: 78%; margin-top: 11px;"></div>
+</div>
+<span class="font-stat-mono-sm text-label-sm font-semibold text-secondary mt-2 relative z-10">T</span>
+</div>
+</div>
+</div>
+<!-- Active Day Schedule Spec -->
+<div class="flex items-center justify-between px-3 py-2.5 mt-space-sm rounded-lg bg-surface-container-high/70">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">bedtime</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Last Night:</span>
+<span class="font-stat-mono-sm text-label-sm text-on-surface">23:14 – 06:56</span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-variant px-2 py-0.5 rounded-full">Midpoint 03:05</span>
+</div>
+</section>
+<!-- SLEEP BANK BALANCE & RECOVERY BUFFER -->
+<section class="bg-surface-container rounded-xl p-space-lg shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">CHRONIC BUFFER</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Sleep Bank Balance</span>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-variant text-secondary text-label-sm font-stat-mono-sm flex items-center gap-1.5 shadow-[0_0_10px_rgba(93,230,255,0.18)]">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+1h 18m SURPLUS</span>
+</div>
+</div>
+<!-- Meter Architecture: 14-day Rolling Buffer -->
+<div class="mt-space-md">
+<div class="flex items-center justify-between text-label-sm font-label-sm mb-1.5 text-on-surface-variant">
+<span>-2h Debt</span>
+<span class="font-stat-mono-sm text-on-surface">Baseline (8.0h)</span>
+<span>+3h Surplus</span>
+</div>
+<!-- Visual Split Range Bar -->
+<div class="relative w-full h-3 bg-surface-variant rounded-full overflow-hidden flex">
+<!-- Negative Zone -->
+<div class="w-2/5 h-full bg-surface-container-high"></div>
+<!-- Center Tick -->
+<div class="w-0.5 h-full bg-surface-dim z-20"></div>
+<!-- Positive Zone with Current Value Active Fill -->
+<div class="w-3/5 h-full bg-surface-container-high relative">
+<!-- Active Surplus Bar from zero line -->
+<div class="absolute left-0 top-0 bottom-0 bg-secondary rounded-r-full shadow-[0_0_8px_rgba(93,230,255,0.6)]" style="width: 43%;"></div>
+</div>
+</div>
+</div>
+<div class="mt-space-md p-space-sm rounded-lg bg-surface-container-low flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">bolt</span>
+<p class="font-body-sm text-body-sm text-on-surface leading-snug">
+        Your 3-day rhythm alignment restored your sleep buffer. Physiological readiness is primed for high-strain training today.
+      </p>
+</div>
+</section>
+<!-- BEHAVIORAL FACTORS: WHAT AFFECTED LAST NIGHT -->
+<section class="bg-surface-container rounded-xl p-space-lg shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Sleep Drivers</span>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant">Behavioral Biomarkers</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">tune</span>
+</div>
+<div class="space-y-space-xs mt-space-sm">
+<!-- Factor 1: Caffeine Cutoff -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[18px]">coffee</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium">Caffeine Cutoff</span>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant">11h 44m before bed</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-stat-mono-md text-stat-mono-md text-primary-fixed-dim">11:30 AM</span>
+<span class="text-label-sm font-label-sm text-primary-fixed-dim block font-medium">Optimal Window</span>
+</div>
+</div>
+<!-- Factor 2: Last Meal Window -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">restaurant</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium">Last Meal Dinner</span>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant">3h 44m pre-sleep digestion</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface">07:30 PM</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant block">Low Glycemic</span>
+</div>
+</div>
+<!-- Factor 3: Pre-Bed Screen Time -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[18px]">smartphone</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium">Pre-Bed Display</span>
+<span class="font-stat-mono-sm text-label-sm text-error/90">Late blue-light load</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-stat-mono-md text-stat-mono-md text-error">38 min</span>
+<span class="text-label-sm font-label-sm text-error block">Delayed Deep -12m</span>
+</div>
+</div>
+</div>
+<!-- Machine Learning Correlate Note -->
+<div class="mt-space-sm px-3 py-2 rounded bg-surface-container-high/50 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">insights</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Earlier caffeine cutoff improved deep sleep ratio by <span class="text-secondary font-medium">+14%</span> vs Tuesday.
+      </p>
+</div>
+</section>
+<!-- SUBJECTIVE MORNING ENERGY CHECK-IN -->
+<section class="bg-surface-container rounded-xl p-space-lg shadow-md" id="energy-checkin">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Subjective Readiness</span>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant">Morning Wakefulness Vibe</span>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-secondary font-medium">LEVEL 4/5</span>
+</div>
+<!-- 5-Level Rating Interactive Tiles -->
+<div class="grid grid-cols-5 gap-1.5 mt-space-md">
+<!-- 1 -->
+<button class="energy-btn flex flex-col items-center justify-center py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-variant transition-all active:scale-95" data-level="1" type="button">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface-variant">1</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant/70 text-[10px] mt-0.5">Heavy</span>
+</button>
+<!-- 2 -->
+<button class="energy-btn flex flex-col items-center justify-center py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-variant transition-all active:scale-95" data-level="2" type="button">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface-variant">2</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant/70 text-[10px] mt-0.5">Sluggish</span>
+</button>
+<!-- 3 -->
+<button class="energy-btn flex flex-col items-center justify-center py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-variant transition-all active:scale-95" data-level="3" type="button">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface-variant">3</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant/70 text-[10px] mt-0.5">Moderate</span>
+</button>
+<!-- 4: Active State -->
+<button class="energy-btn flex flex-col items-center justify-center py-2.5 rounded-lg bg-surface-variant text-secondary shadow-[0_0_12px_rgba(93,230,255,0.25)] transition-all active:scale-95" data-level="4" type="button">
+<span class="font-stat-mono-md text-stat-mono-md font-bold text-secondary">4</span>
+<span class="font-label-uppercase text-label-uppercase text-secondary font-semibold text-[10px] mt-0.5">Energized</span>
+</button>
+<!-- 5 -->
+<button class="energy-btn flex flex-col items-center justify-center py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-variant transition-all active:scale-95" data-level="5" type="button">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface-variant">5</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant/70 text-[10px] mt-0.5">Peak</span>
+</button>
+</div>
+<!-- Subjective Reflection Note Card -->
+<div class="mt-space-md p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">format_quote</span>
+<span class="font-body-sm text-body-sm text-on-surface italic">"Felt alert upon waking, no brain fog."</span>
+</div>
+<button aria-label="Edit journal note" class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</section>
+<!-- DATA INTEGRATION & MANUAL LOG ACTIONS -->
+<section class="flex flex-col space-y-space-sm pt-space-xs pb-4">
+<button class="w-full h-13 py-3.5 px-space-md rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface flex items-center justify-center gap-2 shadow-sm transition-all active:scale-98">
+<span class="material-symbols-outlined text-secondary text-[20px]">watch</span>
+<span class="font-headline-sm text-label-sm font-semibold tracking-wide uppercase">SYNC OURA / WHOOP BIOMETRICS</span>
+</button>
+<div class="flex items-center justify-center gap-2 text-label-sm font-stat-mono-sm text-on-surface-variant/60 py-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Connected: WHOOP 4.0 • Auto-Track Active</span>
+</div>
+</section>
+</div>
+<script>
+  // Micro-interaction for subjective morning energy rating selection
+  document.querySelectorAll('#energy-checkin .energy-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('#energy-checkin .energy-btn').forEach(btn => {
+        btn.classList.remove('bg-surface-variant', 'text-secondary', 'shadow-[0_0_12px_rgba(93,230,255,0.25)]');
+        btn.classList.add('bg-surface-container-low');
+        const num = btn.querySelector('span:first-child');
+        const label = btn.querySelector('span:last-child');
+        num.classList.remove('font-bold', 'text-secondary');
+        num.classList.add('text-on-surface-variant');
+        label.classList.remove('text-secondary', 'font-semibold');
+        label.classList.add('text-on-surface-variant/70');
+      });
+
+      button.classList.remove('bg-surface-container-low');
+      button.classList.add('bg-surface-variant', 'text-secondary', 'shadow-[0_0_12px_rgba(93,230,255,0.25)]');
+      const num = button.querySelector('span:first-child');
+      const label = button.querySelector('span:last-child');
+      num.classList.remove('text-on-surface-variant');
+      num.classList.add('font-bold', 'text-secondary');
+      label.classList.remove('text-on-surface-variant/70');
+      label.classList.add('text-secondary', 'font-semibold');
+    });
+  });
+</script></main><div class="fixed bottom-24 right-margin z-50 pointer-events-auto"><button aria-label="Quick Log Action" class="w-14 h-14 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center shadow-[0_4px_20px_rgba(189,245,50,0.28)] hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined text-[28px] leading-none select-none font-semibold">add</span></button></div><nav class="fixed bottom-0 inset-x-0 z-40 pb-safe bg-surface-container-low/90 backdrop-blur-xl shadow-[0_-1px_12px_rgba(0,0,0,0.4)]" data-active-classes="text-on-surface [&amp;_.tab-indicator]:bg-primary-container [&amp;_.tab-indicator]:opacity-100 [&amp;_.tab-icon]:text-on-surface"><div class="max-w-[390px] mx-auto grid grid-cols-5 h-16 items-stretch"><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="today" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">calendar_today</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">Today</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface transition-colors" data-path="body" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-primary-container opacity-100 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] text-on-surface transition-colors">vital_signs</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">Body</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="mind" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">psychology</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">Mind</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="school" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">school</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">School</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="more" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">tune</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">More</span></a></div></nav></body></html>

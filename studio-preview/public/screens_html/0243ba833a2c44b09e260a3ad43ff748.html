@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0f1419;color:#dee3e9;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-container": "#516e00", "on-primary-fixed-variant": "#384e00", "inverse-surface": "#dee3e9", "outline": "#8d937b", "secondary-container": "#00cbe6", "on-error": "#690005", "on-surface-variant": "#c3c9ae", "on-tertiary": "#381385", "surface-tint": "#a2d801", "background": "#0f1419", "surface": "#0f1419", "inverse-on-surface": "#2c3136", "secondary": "#5de6ff", "primary-container": "#bdf532", "inverse-primary": "#4c6700", "primary-fixed": "#bdf532", "secondary-fixed": "#a2eeff", "on-tertiary-fixed-variant": "#4f319c", "on-tertiary-container": "#6d51bc", "on-secondary-container": "#00515d", "on-secondary-fixed": "#001f25", "surface-container": "#1b2025", "surface-bright": "#353a3f", "primary": "#ffffff", "tertiary-fixed": "#e8ddff", "surface-variant": "#30353a", "surface-container-lowest": "#0a0f13", "tertiary-container": "#e8ddff", "on-error-container": "#ffdad6", "on-primary": "#263500", "secondary-fixed-dim": "#2fd9f4", "on-secondary-fixed-variant": "#004e5a", "surface-dim": "#0f1419", "primary-fixed-dim": "#a2d801", "tertiary": "#ffffff", "tertiary-fixed-dim": "#cebdff", "on-secondary": "#00363e", "on-primary-fixed": "#141f00", "on-surface": "#dee3e9", "on-tertiary-fixed": "#21005e", "surface-container-highest": "#30353a", "error": "#ffb4ab", "error-container": "#93000a", "on-background": "#dee3e9", "surface-container-high": "#252a30", "surface-container-low": "#171c21", "outline-variant": "#434934" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "1.5rem", "space-xs": "0.25rem", "gutter": "0.75rem", "space-lg": "1.25rem", "space-md": "1rem", "margin": "1rem", "space-sm": "0.5rem" }, "fontFamily": { "body-lg": ["Inter"], "body-md": ["Inter"], "headline-sm": ["Inter"], "headline-md": ["Inter"], "display-hero-mobile": ["JetBrains Mono"], "label-uppercase": ["Inter"], "display-hero": ["JetBrains Mono"], "stat-mono-sm": ["JetBrains Mono"], "label-sm": ["Inter"], "stat-mono-md": ["JetBrains Mono"], "headline-lg": ["JetBrains Mono"], "body-sm": ["Inter"] }, "fontSize": { "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }], "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-hero-mobile": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }], "display-hero": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "stat-mono-sm": ["14px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "500" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "stat-mono-md": ["18px", { "lineHeight": "22px", "letterSpacing": "-0.02em", "fontWeight": "500" }], "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex flex-col justify-center"><div class="flex items-center gap-space-xs"><span class="font-label-uppercase text-label-uppercase tracking-widest text-on-surface-variant">LIFE</span><span class="font-label-uppercase text-label-uppercase text-outline-variant">/</span><span class="font-headline-sm text-headline-sm text-primary font-semibold tracking-tight">School</span></div><span class="font-stat-mono-sm text-label-sm text-secondary-fixed-dim tracking-wider uppercase">THU, OCT 24</span></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-[96px] bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive Feedback Pill / Mini Toast (Hidden by default) -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-surface-container-high px-space-md py-space-sm rounded-full shadow-xl flex items-center gap-space-xs transition-all duration-300 opacity-0 pointer-events-none scale-95" id="toast-notify">
+<span class="material-symbols-outlined text-[18px] text-primary-fixed" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-sm text-label-sm text-primary" id="toast-text">Card updated</span>
+</div>
+<!-- Section 1: Navigation Pill Tabs & Context Filter Matrix -->
+<div class="px-margin pt-space-md pb-space-sm flex flex-col gap-space-md">
+<!-- View Switcher -->
+<div class="flex items-center gap-space-xs bg-surface-container-lowest p-1 rounded-full w-full">
+<button class="flex-1 py-space-xs px-space-sm rounded-full bg-surface-container-high text-primary flex items-center justify-center gap-1 shadow-md transition-all duration-200" id="tab-mistakes" onclick="switchMainView('mistakes')">
+<span class="font-headline-sm text-body-sm font-semibold">Mistakes</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-container text-on-primary-fixed font-stat-mono-sm text-label-uppercase">14</span>
+</button>
+<button class="flex-1 py-space-xs px-space-sm rounded-full text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-1 transition-all duration-200" id="tab-topics" onclick="switchMainView('topics')">
+<span class="font-headline-sm text-body-sm font-medium">Topic Mastery</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim"></span>
+</button>
+<button class="flex-1 py-space-xs px-space-sm rounded-full text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-1 transition-all duration-200" id="tab-archive" onclick="switchMainView('archive')">
+<span class="font-headline-sm text-body-sm font-medium">Archive</span>
+</button>
+</div>
+<!-- Quick Course Filter Scrollable Ribbon -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar -mx-margin px-margin py-0.5">
+<button class="course-pill shrink-0 px-space-md py-1.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm" onclick="filterCourse(this, 'ALL')">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span>All Courses</span>
+</button>
+<button class="course-pill shrink-0 px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface-variant hover:text-primary font-label-sm text-label-sm flex items-center gap-1.5 transition-colors" onclick="filterCourse(this, 'CS 280')">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>CS 280</span>
+<span class="font-stat-mono-sm text-label-uppercase text-secondary">8</span>
+</button>
+<button class="course-pill shrink-0 px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface-variant hover:text-primary font-label-sm text-label-sm flex items-center gap-1.5 transition-colors" onclick="filterCourse(this, 'MATH 215')">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+<span>MATH 215</span>
+<span class="font-stat-mono-sm text-label-uppercase text-tertiary-fixed-dim">4</span>
+</button>
+<button class="course-pill shrink-0 px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface-variant hover:text-primary font-label-sm text-label-sm flex items-center gap-1.5 transition-colors" onclick="filterCourse(this, 'PHYS 240')">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+<span>PHYS 240</span>
+<span class="font-stat-mono-sm text-label-uppercase text-on-surface-variant">2</span>
+</button>
+</div>
+</div>
+<!-- Content Container: View 1 (Mistake Log & Attribution) -->
+<div class="flex flex-col gap-space-lg w-full px-margin pb-space-xl" id="view-mistakes-content">
+<!-- Section 2: Mistake Analytics & Cause Breakdown Telemetry Card -->
+<div class="bg-surface-container rounded-xl p-space-lg shadow-xl relative overflow-hidden">
+<!-- Glow ambient backdrop -->
+<div class="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-primary-container/5 blur-3xl pointer-events-none"></div>
+<!-- Header of Card -->
+<div class="flex items-start justify-between relative z-10">
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[18px]">query_stats</span>
+<span class="font-label-uppercase text-label-uppercase text-primary tracking-wider uppercase font-semibold">Attribution Breakdown</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Last 30 days • <span class="font-stat-mono-sm text-primary">38</span> logged incidents</p>
+</div>
+<div class="px-2 py-1 rounded bg-surface-container-highest flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[14px]">trending_up</span>
+<span class="font-stat-mono-sm text-label-uppercase text-secondary font-semibold">Q4 RUN</span>
+</div>
+</div>
+<!-- Multi-segment Proportional Meter (Obsidian Precision Bar) -->
+<div class="mt-space-md relative z-10">
+<div class="w-full h-3 rounded-full bg-surface-container-lowest overflow-hidden flex p-0.5 gap-0.5">
+<!-- Concept: 42% Violet -->
+<div class="h-full bg-tertiary-fixed-dim rounded-l-full shadow-[0_0_8px_rgba(206,189,255,0.35)]" style="width: 42%;"></div>
+<!-- Careless: 26% Amber/Orange -->
+<div class="h-full bg-primary-fixed shadow-[0_0_8px_rgba(189,245,50,0.35)]" style="width: 26%;"></div>
+<!-- Time: 21% Coral -->
+<div class="h-full bg-error shadow-[0_0_8px_rgba(255,180,171,0.35)]" style="width: 21%;"></div>
+<!-- Memory: 11% Cyan -->
+<div class="h-full bg-secondary-fixed-dim rounded-r-full shadow-[0_0_8px_rgba(47,217,244,0.35)]" style="width: 11%;"></div>
+</div>
+</div>
+<!-- 4-Quadrant Legend Grid -->
+<div class="grid grid-cols-2 gap-space-sm mt-space-md relative z-10">
+<!-- Cause 1 -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim shrink-0"></span>
+<div>
+<p class="font-label-sm text-label-sm text-primary font-medium">Concept</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant">16 errs</p>
+</div>
+</div>
+<span class="font-stat-mono-md text-stat-mono-sm text-tertiary-fixed-dim">42%</span>
+</div>
+<!-- Cause 2 -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-fixed shrink-0"></span>
+<div>
+<p class="font-label-sm text-label-sm text-primary font-medium">Careless</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant">10 errs</p>
+</div>
+</div>
+<span class="font-stat-mono-md text-stat-mono-sm text-primary-fixed">26%</span>
+</div>
+<!-- Cause 3 -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error shrink-0"></span>
+<div>
+<p class="font-label-sm text-label-sm text-primary font-medium">Time Press.</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant">8 errs</p>
+</div>
+</div>
+<span class="font-stat-mono-md text-stat-mono-sm text-error">21%</span>
+</div>
+<!-- Cause 4 -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim shrink-0"></span>
+<div>
+<p class="font-label-sm text-label-sm text-primary font-medium">Memory / Rec.</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant">4 errs</p>
+</div>
+</div>
+<span class="font-stat-mono-md text-stat-mono-sm text-secondary-fixed-dim">11%</span>
+</div>
+</div>
+<!-- Actionable Biometric / Pedagogical Note -->
+<div class="mt-space-md p-space-sm bg-surface-container-highest/60 rounded-lg flex items-start gap-space-sm relative z-10">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[20px] shrink-0 mt-0.5">tips_and_updates</span>
+<p class="font-body-sm text-body-sm text-on-surface leading-snug">
+<span class="font-semibold text-primary">Concept alert:</span> Errors in <span class="text-secondary font-medium">CS 280</span> cluster on <span class="text-primary font-medium">Graph Theory DP proofs</span>. Recommended: Drill recursive memoization trees before Quiz 5.
+        </p>
+</div>
+</div>
+<!-- Section 3: "Redo Today" Queue Section (Priority Error Deck) -->
+<div class="flex flex-col gap-space-md">
+<!-- Section Header with Quick Sprint Trigger -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Redo Today</h2>
+<span class="w-5 h-5 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center font-stat-mono-sm text-label-uppercase font-bold" id="redo-counter">4</span>
+</div>
+<button class="px-space-md py-1.5 rounded-full bg-primary-container text-on-primary-fixed font-headline-sm text-label-sm font-semibold flex items-center gap-1 shadow-md hover:scale-102 active:scale-98 transition-transform" onclick="startRedoSprint()">
+<span>Sprint (15m)</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Card A: CS 280 Algorithms (Concept) -->
+<div class="mistake-item bg-surface-container rounded-xl p-space-lg flex flex-col gap-space-sm shadow-md transition-all" data-course="CS 280" id="mistake-card-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<span class="font-label-uppercase text-label-uppercase tracking-wider text-secondary font-semibold">CS 280: ALGORITHMS</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed/20 text-tertiary-fixed-dim font-stat-mono-sm text-label-uppercase">CONCEPT</span>
+</div>
+<div>
+<p class="font-headline-sm text-body-lg text-primary font-medium">Why does Dijkstra's algorithm fail on negative edge weights even with no negative cycles?</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 bg-surface-container-low p-2 rounded-md">
+<span class="text-error font-medium">My Error:</span> Missed relaxation order invariant; assumed greedy local minimum was globally persistent.
+          </p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-stat-mono-sm text-label-uppercase">
+<span>Oct 21</span>
+<span>•</span>
+<span class="text-primary-fixed">Redo #2</span>
+<span>•</span>
+<span class="text-error">Due Today</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface flex items-center justify-center transition-colors" onclick="markResolved('mistake-card-1', 'Dijkstra Proof')" title="Mark Done">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-highest text-primary font-headline-sm text-label-sm font-semibold flex items-center gap-1 hover:bg-surface-bright transition-colors" onclick="solveAgain('Dijkstra negative weights')">
+<span>Solve Again</span>
+<span class="material-symbols-outlined text-[14px]">replay</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card B: MATH 215 Linear Alg (Careless) -->
+<div class="mistake-item bg-surface-container rounded-xl p-space-lg flex flex-col gap-space-sm shadow-md transition-all" data-course="MATH 215" id="mistake-card-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim shrink-0"></span>
+<span class="font-label-uppercase text-label-uppercase tracking-wider text-tertiary-fixed-dim font-semibold">MATH 215: LINEAR ALG</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed font-stat-mono-sm text-label-uppercase">CARELESS</span>
+</div>
+<div>
+<p class="font-headline-sm text-body-lg text-primary font-medium">Find det(A - λI) for 3x3 block triangular matrix with λ=4 multiplicity 2</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 bg-surface-container-low p-2 rounded-md">
+<span class="text-error font-medium">My Error:</span> Sign error on cofactor expansion row 2 (-1)^(i+j). Ignored diagonal block shortcut.
+          </p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-stat-mono-sm text-label-uppercase">
+<span>Oct 23</span>
+<span>•</span>
+<span class="text-primary-fixed">Redo #1</span>
+<span>•</span>
+<span class="text-error">Due Today</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface flex items-center justify-center transition-colors" onclick="markResolved('mistake-card-2', 'Eigenvalues Determinant')">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-highest text-primary font-headline-sm text-label-sm font-semibold flex items-center gap-1 hover:bg-surface-bright transition-colors" onclick="solveAgain('Matrix determinant block')">
+<span>Solve Again</span>
+<span class="material-symbols-outlined text-[14px]">replay</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card C: PHYS 240 Physics (Time Pressure) -->
+<div class="mistake-item bg-surface-container rounded-xl p-space-lg flex flex-col gap-space-sm shadow-md transition-all" data-course="PHYS 240" id="mistake-card-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container shrink-0"></span>
+<span class="font-label-uppercase text-label-uppercase tracking-wider text-on-surface-variant font-semibold">PHYS 240: GENERAL PHYSICS</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error/20 text-error font-stat-mono-sm text-label-uppercase">TIME PRESS.</span>
+</div>
+<div>
+<p class="font-headline-sm text-body-lg text-primary font-medium">Calculate magnetic flux through rotating loop at t=0.04s under 0.8T field</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 bg-surface-container-low p-2 rounded-md">
+<span class="text-error font-medium">My Error:</span> Ran out of time during Quiz 4; skipped cosine angular velocity derivative and unit conversion.
+          </p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-stat-mono-sm text-label-uppercase">
+<span>Oct 22</span>
+<span>•</span>
+<span class="text-primary-fixed">Redo #1</span>
+<span>•</span>
+<span class="text-error">Due Today</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface flex items-center justify-center transition-colors" onclick="markResolved('mistake-card-3', 'Magnetic Flux Rotation')">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-highest text-primary font-headline-sm text-label-sm font-semibold flex items-center gap-1 hover:bg-surface-bright transition-colors" onclick="solveAgain('Loop magnetic flux calculation')">
+<span>Solve Again</span>
+<span class="material-symbols-outlined text-[14px]">replay</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card D: CS 280 Algorithms (Memory / Recall) -->
+<div class="mistake-item bg-surface-container rounded-xl p-space-lg flex flex-col gap-space-sm shadow-md transition-all" data-course="CS 280" id="mistake-card-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<span class="font-label-uppercase text-label-uppercase tracking-wider text-secondary font-semibold">CS 280: ALGORITHMS</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed-dim/20 text-secondary-fixed-dim font-stat-mono-sm text-label-uppercase">MEMORY</span>
+</div>
+<div>
+<p class="font-headline-sm text-body-lg text-primary font-medium">Time complexity of Bellman-Ford using adjacency matrix vs list</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 bg-surface-container-low p-2 rounded-md">
+<span class="text-error font-medium">My Error:</span> Wrote O(V·E) as O(V²·E); forgot edge list density bound and degree iteration step.
+          </p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-stat-mono-sm text-label-uppercase">
+<span>Oct 19</span>
+<span>•</span>
+<span class="text-secondary-fixed-dim">Redo #3</span>
+<span>•</span>
+<span class="text-error">Due Today</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface flex items-center justify-center transition-colors" onclick="markResolved('mistake-card-4', 'Bellman-Ford Complexity')">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-highest text-primary font-headline-sm text-label-sm font-semibold flex items-center gap-1 hover:bg-surface-bright transition-colors" onclick="solveAgain('Bellman-Ford matrix complexity')">
+<span>Solve Again</span>
+<span class="material-symbols-outlined text-[14px]">replay</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Container: View 2 (Chapter & Topic Confidence Mastery) -->
+<div class="flex flex-col gap-space-lg w-full px-margin pb-space-xl" id="view-topics-content">
+<!-- Mastery Header & Quick Review Recommendation Banner -->
+<div class="bg-surface-container-high rounded-xl p-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[24px]">school</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-semibold">Active Curriculum</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Review Queue: <span class="text-primary-fixed font-semibold">3 Chapters flagged</span></p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-primary-fixed font-stat-mono-sm text-label-uppercase">87% SYLLABUS</span>
+</div>
+<!-- Course Block 1: CS 280 -->
+<div class="bg-surface-container rounded-xl p-space-lg flex flex-col gap-space-md shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-semibold">CS 280: Algorithms &amp; Graphs</h3>
+</div>
+<span class="font-stat-mono-sm text-label-uppercase text-secondary">3 MODULES</span>
+</div>
+<!-- Topics in CS 280 -->
+<div class="flex flex-col gap-space-sm">
+<!-- Topic 1 -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-headline-sm text-body-md text-primary font-medium">Ch 4: Dynamic Programming &amp; Bellman-Ford</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant mt-0.5">Next review: <span class="text-error font-medium">Today</span> • 6 mistakes logged</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-error/20 text-error font-stat-mono-sm text-label-uppercase font-semibold">NEEDS DRILL</span>
+</div>
+<!-- Interactive Dot Rating (2/5) -->
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-uppercase text-on-surface-variant">Confidence Level</span>
+<div class="flex items-center gap-1.5" data-rating="2" onclick="adjustConfidence(event, this)">
+<button class="w-3.5 h-3.5 rounded-full bg-error cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-error cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+</div>
+</div>
+</div>
+<!-- Topic 2 -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-headline-sm text-body-md text-primary font-medium">Ch 3: Shortest Paths &amp; Dijkstra</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant mt-0.5">Next review: <span class="text-on-surface font-medium">In 4 days</span> • 2 mistakes logged</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-fixed font-stat-mono-sm text-label-uppercase font-semibold">SOLID</span>
+</div>
+<!-- Interactive Dot Rating (4/5) -->
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-uppercase text-on-surface-variant">Confidence Level</span>
+<div class="flex items-center gap-1.5" data-rating="4" onclick="adjustConfidence(event, this)">
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+</div>
+</div>
+</div>
+<!-- Topic 3 -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-headline-sm text-body-md text-primary font-medium">Ch 5: Max Flow &amp; Ford-Fulkerson</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant mt-0.5">Next review: <span class="text-error font-medium">Today</span> • 8 mistakes logged</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-error/30 text-error font-stat-mono-sm text-label-uppercase font-semibold">CRITICAL GAP</span>
+</div>
+<!-- Interactive Dot Rating (1/5) -->
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-uppercase text-on-surface-variant">Confidence Level</span>
+<div class="flex items-center gap-1.5" data-rating="1" onclick="adjustConfidence(event, this)">
+<button class="w-3.5 h-3.5 rounded-full bg-error cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Course Block 2: MATH 215 -->
+<div class="bg-surface-container rounded-xl p-space-lg flex flex-col gap-space-md shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim"></span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-semibold">MATH 215: Linear Algebra</h3>
+</div>
+<span class="font-stat-mono-sm text-label-uppercase text-tertiary-fixed-dim">2 MODULES</span>
+</div>
+<!-- Topics in MATH 215 -->
+<div class="flex flex-col gap-space-sm">
+<!-- Topic 1 -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-headline-sm text-body-md text-primary font-medium">Ch 6: Eigenvalues, Diagonalization &amp; SVD</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant mt-0.5">Next review: <span class="text-primary-fixed font-medium">Tomorrow</span> • 3 mistakes logged</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary font-stat-mono-sm text-label-uppercase font-semibold">MODERATE</span>
+</div>
+<!-- Interactive Dot Rating (3/5) -->
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-uppercase text-on-surface-variant">Confidence Level</span>
+<div class="flex items-center gap-1.5" data-rating="3" onclick="adjustConfidence(event, this)">
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer"></button>
+</div>
+</div>
+</div>
+<!-- Topic 2 -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-xs">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-headline-sm text-body-md text-primary font-medium">Ch 5: Orthogonality &amp; Gram-Schmidt</p>
+<p class="font-body-sm text-label-uppercase text-on-surface-variant mt-0.5">Next review: <span class="text-on-surface font-medium">In 12 days</span> • 0 mistakes</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-fixed font-stat-mono-sm text-label-uppercase font-bold">MASTERED</span>
+</div>
+<!-- Interactive Dot Rating (5/5) -->
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-uppercase text-on-surface-variant">Confidence Level</span>
+<div class="flex items-center gap-1.5" data-rating="5" onclick="adjustConfidence(event, this)">
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+<button class="w-3.5 h-3.5 rounded-full bg-primary-fixed cursor-pointer shadow-sm"></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Container: View 3 (Archive State) -->
+<div class="hidden flex-col gap-space-lg w-full px-margin pb-space-xl" id="view-archive-content">
+<div class="bg-surface-container rounded-xl p-space-xl flex flex-col items-center justify-center text-center gap-space-sm">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[32px]">inventory_2</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary font-semibold">24 Resolved Mistakes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[280px]">
+        Mistakes successfully re-solved across 3 consecutive cycles are archived here for final exam retention checks.
+      </p>
+<button class="mt-space-sm px-space-lg py-2.5 rounded-full bg-surface-container-high hover:bg-surface-bright text-primary font-headline-sm text-label-sm font-semibold transition-colors" onclick="showToast('Loading full semester archive...')">
+        Export Knowledge Base (CSV)
+      </button>
+</div>
+</div>
+<!-- Quick Floating Log Action Button Pill -->
+<div class="px-margin pt-space-xs pb-space-lg flex justify-center">
+<button class="w-full py-3.5 rounded-full bg-surface-container-high hover:bg-surface-bright text-primary font-headline-sm text-body-md font-semibold flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-98" onclick="openLogModal()">
+<span class="material-symbols-outlined text-[20px] text-primary-fixed">add_circle</span>
+<span>Log New Academic Mistake</span>
+<span class="font-stat-mono-sm text-label-uppercase text-on-surface-variant">⌘N</span>
+</button>
+</div>
+<!-- Interactive Quick Log Modal Overlay -->
+<div class="fixed inset-0 z-50 bg-background/80 backdrop-blur-md hidden items-center justify-center p-margin" id="quick-log-modal">
+<div class="bg-surface-container rounded-xl p-space-lg w-full max-w-sm flex flex-col gap-space-md shadow-2xl">
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-sm text-primary font-bold">Quick Mistake Entry</h4>
+<button class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center" onclick="closeLogModal()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-uppercase text-label-uppercase text-on-surface-variant">Course Tag</label>
+<select class="h-10 rounded-lg bg-surface-container-lowest px-space-sm text-primary font-body-sm text-body-sm" id="modal-course-select">
+<option>CS 280: Algorithms</option>
+<option>MATH 215: Linear Algebra</option>
+<option>PHYS 240: General Physics</option>
+</select>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-uppercase text-label-uppercase text-on-surface-variant">Cause Category</label>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="py-1.5 px-2 rounded bg-tertiary-fixed/20 text-tertiary-fixed-dim font-stat-mono-sm text-label-sm font-semibold active:ring-2 active:ring-tertiary-fixed" type="button">Concept</button>
+<button class="py-1.5 px-2 rounded bg-primary-fixed/20 text-primary-fixed font-stat-mono-sm text-label-sm font-semibold active:ring-2 active:ring-primary-fixed" type="button">Careless</button>
+<button class="py-1.5 px-2 rounded bg-error/20 text-error font-stat-mono-sm text-label-sm font-semibold active:ring-2 active:ring-error" type="button">Time Pressure</button>
+<button class="py-1.5 px-2 rounded bg-secondary-fixed-dim/20 text-secondary-fixed-dim font-stat-mono-sm text-label-sm font-semibold active:ring-2 active:ring-secondary-fixed-dim" type="button">Memory</button>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-uppercase text-label-uppercase text-on-surface-variant">What tripped you up?</label>
+<input class="h-11 rounded-lg bg-surface-container-lowest px-space-sm text-primary font-body-sm text-body-sm placeholder:text-on-surface-variant" placeholder="e.g., Forgot determinant sign rule..." type="text"/>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 py-2.5 rounded-lg bg-surface-container-high text-on-surface font-headline-sm text-label-sm" onclick="closeLogModal()">Cancel</button>
+<button class="flex-1 py-2.5 rounded-lg bg-primary-container text-on-primary-fixed font-headline-sm text-label-sm font-semibold" onclick="submitNewMistake()">Save to Deck</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Dynamic Tab Switching
+  function switchMainView(target) {
+    const mistakesView = document.getElementById('view-mistakes-content');
+    const topicsView = document.getElementById('view-topics-content');
+    const archiveView = document.getElementById('view-archive-content');
+
+    const tabMistakes = document.getElementById('tab-mistakes');
+    const tabTopics = document.getElementById('tab-topics');
+    const tabArchive = document.getElementById('tab-archive');
+
+    // Default classes
+    const activeClasses = 'bg-surface-container-high text-primary shadow-md font-semibold';
+    const inactiveClasses = 'text-on-surface-variant hover:text-on-surface font-medium';
+
+    // Reset tabs
+    [tabMistakes, tabTopics, tabArchive].forEach(t => {
+      t.className = 'flex-1 py-space-xs px-space-sm rounded-full flex items-center justify-center gap-1 transition-all duration-200 ' + inactiveClasses;
+    });
+
+    if (target === 'mistakes') {
+      mistakesView.classList.remove('hidden');
+      topicsView.classList.remove('hidden');
+      archiveView.classList.add('hidden');
+      tabMistakes.className = 'flex-1 py-space-xs px-space-sm rounded-full flex items-center justify-center gap-1 shadow-md transition-all duration-200 ' + activeClasses;
+      topicsView.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    } else if (target === 'topics') {
+      mistakesView.classList.add('hidden');
+      topicsView.classList.remove('hidden');
+      archiveView.classList.add('hidden');
+      tabTopics.className = 'flex-1 py-space-xs px-space-sm rounded-full flex items-center justify-center gap-1 shadow-md transition-all duration-200 ' + activeClasses;
+    } else if (target === 'archive') {
+      mistakesView.classList.add('hidden');
+      topicsView.classList.add('hidden');
+      archiveView.classList.remove('hidden');
+      archiveView.classList.add('flex');
+      tabArchive.className = 'flex-1 py-space-xs px-space-sm rounded-full flex items-center justify-center gap-1 shadow-md transition-all duration-200 ' + activeClasses;
+    }
+  }
+
+  // Course Filter Ribbon Logic
+  function filterCourse(btn, courseName) {
+    document.querySelectorAll('.course-pill').forEach(p => {
+      p.className = 'course-pill shrink-0 px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface-variant hover:text-primary font-label-sm text-label-sm flex items-center gap-1.5 transition-colors';
+    });
+    btn.className = 'course-pill shrink-0 px-space-md py-1.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm';
+
+    const cards = document.querySelectorAll('.mistake-item');
+    cards.forEach(card => {
+      if (courseName === 'ALL' || card.getAttribute('data-course') === courseName) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    showToast(courseName === 'ALL' ? 'Showing all subjects' : `Filtered to ${courseName}`);
+  }
+
+  // Card Resolution Action
+  function markResolved(cardId, topicName) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+
+    card.style.transition = 'all 0.3s ease-out';
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(20px)';
+    
+    setTimeout(() => {
+      card.remove();
+      const counter = document.getElementById('redo-counter');
+      if (counter) {
+        let count = parseInt(counter.innerText, 10);
+        if (count > 0) counter.innerText = (count - 1).toString();
+      }
+      showToast(`Resolved: ${topicName}`);
+    }, 300);
+  }
+
+  // Solve Again Prompt
+  function solveAgain(concept) {
+    showToast(`Loading retry module for: ${concept}`);
+  }
+
+  // Sprint Trigger
+  function startRedoSprint() {
+    showToast('Starting 15-minute Redo Sprint timer...');
+  }
+
+  // Interactive Dot Confidence Adjuster
+  function adjustConfidence(e, container) {
+    const dots = container.querySelectorAll('button');
+    const clickedIndex = Array.from(dots).indexOf(e.target);
+    if (clickedIndex === -1) return;
+
+    const newRating = clickedIndex + 1;
+    container.setAttribute('data-rating', newRating.toString());
+
+    dots.forEach((dot, idx) => {
+      if (idx < newRating) {
+        dot.className = 'w-3.5 h-3.5 rounded-full cursor-pointer shadow-sm ' + 
+          (newRating <= 2 ? 'bg-error' : (newRating === 3 ? 'bg-primary-fixed' : 'bg-primary-fixed'));
+      } else {
+        dot.className = 'w-3.5 h-3.5 rounded-full bg-surface-container-highest cursor-pointer';
+      }
+    });
+
+    showToast(`Mastery set to ${newRating}/5`);
+  }
+
+  // Toast Notification Micro-interaction
+  function showToast(msg) {
+    const toast = document.getElementById('toast-notify');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+
+    toastText.innerText = msg;
+    toast.classList.remove('opacity-0', 'scale-95');
+    toast.classList.add('opacity-100', 'scale-100');
+
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'scale-95');
+      toast.classList.remove('opacity-100', 'scale-100');
+    }, 2200);
+  }
+
+  // Modal Handlers
+  function openLogModal() {
+    const modal = document.getElementById('quick-log-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  function closeLogModal() {
+    const modal = document.getElementById('quick-log-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  }
+
+  function submitNewMistake() {
+    closeLogModal();
+    showToast('Logged new mistake into Redo Deck!');
+    const counter = document.getElementById('redo-counter');
+    if (counter) {
+      let count = parseInt(counter.innerText, 10);
+      counter.innerText = (count + 1).toString();
+    }
+  }
+</script></main><div class="fixed bottom-20 right-margin z-50"><button aria-label="Quick Add" class="w-14 h-14 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center shadow-[0_4px_20px_rgba(198,255,61,0.28)] hover:scale-105 active:scale-95 transition-transform duration-150"><span class="material-symbols-outlined text-[28px] font-bold">add</span></button></div><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-low/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.2)]" data-active-classes="text-primary [&amp;&gt;div.active-indicator]:opacity-100"><div class="flex justify-between items-center h-16 px-space-sm"><a class="relative flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors" data-path="today" href="#"><div class="active-indicator absolute top-0 w-4 h-[2px] bg-primary-container rounded-full opacity-0 transition-opacity"></div><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-label-sm text-label-sm mt-space-xs">Today</span></a><a class="relative flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors" data-path="body" href="#"><div class="active-indicator absolute top-0 w-4 h-[2px] bg-primary-container rounded-full opacity-0 transition-opacity"></div><span class="material-symbols-outlined text-[22px]">monitor_heart</span><span class="font-label-sm text-label-sm mt-space-xs">Body</span></a><a class="relative flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors" data-path="mind" href="#"><div class="active-indicator absolute top-0 w-4 h-[2px] bg-primary-container rounded-full opacity-0 transition-opacity"></div><span class="material-symbols-outlined text-[22px]">psychology</span><span class="font-label-sm text-label-sm mt-space-xs">Mind</span></a><a aria-current="page" class="relative flex flex-col items-center justify-center flex-1 h-full transition-colors text-primary [&amp;&gt;div.active-indicator]:opacity-100" data-path="school" href="#"><div class="active-indicator absolute top-0 w-4 h-[2px] bg-primary-container rounded-full opacity-0 transition-opacity"></div><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-sm text-label-sm mt-space-xs">School</span></a><a class="relative flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors" data-path="more" href="#"><div class="active-indicator absolute top-0 w-4 h-[2px] bg-primary-container rounded-full opacity-0 transition-opacity"></div><span class="material-symbols-outlined text-[22px]">more_horiz</span><span class="font-label-sm text-label-sm mt-space-xs">More</span></a></div></nav></body></html>

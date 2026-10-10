@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_blank" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#001f26", "inverse-on-surface": "#303034", "error-container": "#93000a", "on-primary": "#472a00", "surface-variant": "#353439", "on-primary-container": "#613b00", "on-secondary-container": "#00424e", "on-background": "#e4e1e7", "secondary-fixed-dim": "#4cd7f6", "on-error-container": "#ffdad6", "error": "#ffb4ab", "on-secondary": "#003640", "tertiary": "#d5c3ff", "surface-bright": "#39393d", "tertiary-fixed": "#e9ddff", "on-primary-fixed": "#2a1700", "on-surface": "#e4e1e7", "primary-fixed-dim": "#ffb95f", "secondary-container": "#03b5d3", "on-primary-fixed-variant": "#653e00", "surface-container-low": "#1b1b1f", "on-tertiary-fixed-variant": "#5516be", "surface-container-high": "#2a292e", "inverse-surface": "#e4e1e7", "tertiary-fixed-dim": "#d0bcff", "surface-container": "#1f1f23", "tertiary-container": "#bda2ff", "outline-variant": "#534434", "primary": "#ffc174", "secondary": "#4cd7f6", "primary-container": "#f59e0b", "inverse-primary": "#855300", "surface-dim": "#131317", "on-surface-variant": "#d8c3ad", "outline": "#a08e7a", "surface-container-lowest": "#0e0e12", "surface": "#131317", "surface-tint": "#ffb95f", "primary-fixed": "#ffddb8", "secondary-fixed": "#acedff", "on-tertiary-fixed": "#23005c", "background": "#131317", "surface-container-highest": "#353439", "on-error": "#690005", "on-tertiary-container": "#520fbb", "on-tertiary": "#3c0091", "on-secondary-fixed-variant": "#004e5c" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "1.25rem", "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "gutter": "1rem", "gutter-mobile": "0.75rem", "space-xs": "0.25rem", "margin-mobile": "1rem", "space-sm": "0.5rem" }, "fontFamily": { "headline-md": ["Inter"], "label-caps": ["JetBrains Mono"], "telemetry-md": ["JetBrains Mono"], "headline-lg": ["Inter"], "telemetry-lg": ["JetBrains Mono"], "headline-sm": ["Inter"], "label-micro": ["JetBrains Mono"], "body-md": ["Inter"], "display-hero-mobile": ["JetBrains Mono"], "display-hero": ["JetBrains Mono"], "body-sm": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "label-caps": ["11px", {"lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600"}], "telemetry-md": ["16px", {"lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "500"}], "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "telemetry-lg": ["24px", {"lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600"}], "label-micro": ["9px", {"lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400"}], "display-hero-mobile": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700"}], "display-hero": ["48px", {"lineHeight": "52px", "letterSpacing": "-0.04em", "fontWeight": "700"}], "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400"}] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface-container-lowest text-on-surface min-h-screen relative overflow-x-hidden flex flex-col justify-end"><div aria-hidden="true" class="fixed inset-0 z-10 bg-black/75 backdrop-blur-md pointer-events-none"></div><div class="relative z-20 w-full flex flex-col bg-surface-container rounded-t-xl max-h-[813px] shadow-[0_-8px_32px_rgba(0,0,0,0.8)]"><div class="w-full flex items-center justify-center pt-space-sm pb-space-xs"><div class="w-10 h-1 rounded-full bg-outline-variant/60"></div></div><div class="px-margin-mobile pt-space-xs pb-space-sm flex items-center justify-between"><div class="flex flex-col gap-space-xs"><span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">TELEMETRY SESSION</span><h2 class="font-headline-sm text-headline-sm text-on-surface">Modal Deep Work Calibration</h2></div><button aria-label="Close modal" class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-on-surface" onclick="history.back()"><span class="material-symbols-outlined text-[20px]">close</span></button></div><div class="px-margin-mobile pb-space-sm"><div class="w-full h-1 bg-surface-container-high rounded-full overflow-hidden flex gap-0.5"><div class="h-full flex-1 bg-primary-container rounded-full"></div><div class="h-full flex-1 bg-primary-container/40 rounded-full"></div><div class="h-full flex-1 bg-surface-variant rounded-full"></div></div></div><main class="flex flex-col relative w-full px-margin-mobile pb-safe overflow-y-auto bg-surface-container"><div class="flex flex-col w-full pb-6 text-on-surface select-none">
+<!-- Exercise Step Header Sub-nav -->
+<div class="flex items-center justify-between py-2 mb-3">
+<button aria-label="Go back" class="flex items-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors py-1 px-2 rounded-lg bg-surface-container-high" onclick="history.back()">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span class="font-body-sm text-body-sm">Back</span>
+</button>
+<div class="flex flex-col items-center">
+<div class="flex items-center gap-1.5">
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Barbell Bench Press</h3>
+<span class="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-micro text-label-micro">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+          RANKED
+        </span>
+</div>
+<span class="font-label-caps text-label-caps text-primary tracking-wider uppercase">Step 3 of 3 • Telemetry Input</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-micro text-label-micro text-on-surface-variant">REC</span>
+</div>
+</div>
+<!-- Historical Benchmark Reminder Banner -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-3 mb-4 shadow-sm">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-secondary/5 to-transparent pointer-events-none"></div>
+<div class="relative z-10 flex items-center justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">history_toggle_off</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-micro text-label-micro text-on-surface-variant uppercase tracking-widest">Baseline Benchmark</span>
+<div class="flex items-center gap-1.5 font-telemetry-md text-telemetry-md text-on-surface">
+<span class="text-primary font-semibold">107.5</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">kg</span>
+<span class="text-outline-variant font-label-caps">×</span>
+<span>5</span>
+<span class="text-secondary font-label-micro text-label-micro px-1 py-0.5 rounded bg-secondary/10">@ 8.5 RPE</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0 pl-2">
+<span class="font-label-micro text-label-micro text-on-surface-variant">EST. 1RM</span>
+<span class="font-telemetry-md text-telemetry-md text-secondary font-semibold">125.0 <span class="font-body-sm text-body-sm font-normal text-on-surface-variant">kg</span></span>
+</div>
+</div>
+</div>
+<!-- Set Progression Carousel -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 mb-4">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low opacity-60 shrink-0">
+<span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-caps text-label-caps text-on-surface">SET 1</span>
+<span class="font-telemetry-md text-telemetry-md text-on-surface-variant text-[11px]">105kg × 5</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low opacity-60 shrink-0">
+<span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-caps text-label-caps text-on-surface">SET 2</span>
+<span class="font-telemetry-md text-telemetry-md text-on-surface-variant text-[11px]">107.5kg × 5</span>
+</div>
+<div class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/20 text-primary shadow-[0_0_12px_rgba(245,158,11,0.25)] shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-caps text-label-caps font-bold">SET 3 (ACTIVE)</span>
+</div>
+<button aria-label="Add Set" class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors shrink-0">
+<span class="material-symbols-outlined text-[14px]">add</span>
+<span class="font-label-caps text-label-caps">SET</span>
+</button>
+</div>
+<!-- Interactive Dual Numeric Steppers -->
+<div class="grid grid-cols-1 gap-3 mb-4">
+<!-- Weight Stepper -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-3 shadow-md">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-primary">fitness_center</span>
+          TARGET LOAD
+        </span>
+<span class="font-label-micro text-label-micro text-primary bg-primary/10 px-2 py-0.5 rounded-full">+2.5 KG DELTA</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1 bg-surface-container-lowest rounded-lg mb-2.5">
+<button aria-label="Decrease weight" class="w-12 h-12 rounded-full bg-surface-container-high hover:bg-surface-variant active:scale-95 transition flex items-center justify-center text-on-surface" id="btn-wt-minus">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight" id="display-weight">110.0</span>
+<span class="font-telemetry-md text-telemetry-md text-on-surface-variant font-medium">kg</span>
+</div>
+<button aria-label="Increase weight" class="w-12 h-12 rounded-full bg-surface-container-high hover:bg-surface-variant active:scale-95 transition flex items-center justify-center text-on-surface" id="btn-wt-plus">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+<!-- Weight Delta Buttons -->
+<div class="grid grid-cols-4 gap-1.5">
+<button class="py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="adjustWeight(-5.0)">-5</button>
+<button class="py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="adjustWeight(-2.5)">-2.5</button>
+<button class="py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-primary font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="adjustWeight(2.5)">+2.5</button>
+<button class="py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-primary font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="adjustWeight(5.0)">+5</button>
+</div>
+</div>
+<!-- Repetitions Stepper -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-3 shadow-md">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-secondary">repeat</span>
+          REPETITIONS
+        </span>
+<span class="font-label-micro text-label-micro text-secondary bg-secondary/10 px-2 py-0.5 rounded-full">HYPERTROPHY FOCUS</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1 bg-surface-container-lowest rounded-lg mb-2.5">
+<button aria-label="Decrease reps" class="w-12 h-12 rounded-full bg-surface-container-high hover:bg-surface-variant active:scale-95 transition flex items-center justify-center text-on-surface" id="btn-rep-minus">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight" id="display-reps">5</span>
+<span class="font-telemetry-md text-telemetry-md text-on-surface-variant font-medium">reps</span>
+</div>
+<button aria-label="Increase reps" class="w-12 h-12 rounded-full bg-surface-container-high hover:bg-surface-variant active:scale-95 transition flex items-center justify-center text-on-surface" id="btn-rep-plus">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+<!-- Quick Rep Target Chips -->
+<div class="grid grid-cols-5 gap-1.5">
+<button class="rep-chip py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="setReps(3)">3</button>
+<button class="rep-chip py-1.5 rounded-lg bg-primary/20 text-primary font-telemetry-md text-telemetry-md text-[13px] transition text-center font-bold" onclick="setReps(5)">5</button>
+<button class="rep-chip py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="setReps(8)">8</button>
+<button class="rep-chip py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="setReps(10)">10</button>
+<button class="rep-chip py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] transition text-center" onclick="setReps(12)">12</button>
+</div>
+</div>
+</div>
+<!-- RPE (Rate of Perceived Exertion) Dial Selector -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-3 shadow-md mb-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">RPE (EFFORT INTENSITY)</span>
+<span class="material-symbols-outlined text-[13px] text-outline cursor-pointer" title="Rating of Perceived Exertion">info</span>
+</div>
+<span class="font-label-micro text-label-micro text-primary px-2 py-0.5 rounded-full bg-primary/10" id="rpe-desc">RPE 9.0 = 1 REP IN RESERVE</span>
+</div>
+<!-- Segmented horizontal pill slider -->
+<div class="flex items-center justify-between gap-1 overflow-x-auto py-1">
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition" onclick="selectRPE(6.5, '3-4 RIR')">
+<span>6.5</span>
+</button>
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition" onclick="selectRPE(7.0, '3 RIR')">
+<span>7.0</span>
+</button>
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition" onclick="selectRPE(7.5, '2-3 RIR')">
+<span>7.5</span>
+</button>
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition" onclick="selectRPE(8.0, '2 RIR')">
+<span>8.0</span>
+</button>
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition" onclick="selectRPE(8.5, '1-2 RIR')">
+<span>8.5</span>
+</button>
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-primary text-on-primary font-telemetry-md text-telemetry-md text-[13px] font-bold flex flex-col items-center gap-0.5 shadow-[0_0_16px_rgba(245,158,11,0.4)] transition" onclick="selectRPE(9.0, '1 RIR')">
+<span>9.0</span>
+<span class="font-label-micro text-[8px] uppercase tracking-tighter">1 RIR</span>
+</button>
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition" onclick="selectRPE(9.5, '0-1 RIR')">
+<span>9.5</span>
+</button>
+<button class="rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-error font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition" onclick="selectRPE(10.0, '0 RIR')">
+<span>10</span>
+</button>
+</div>
+</div>
+<!-- Real-Time Telemetry Projection Preview -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high mb-4 shadow-sm">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-secondary/15 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-micro text-label-micro text-on-surface-variant uppercase">PROJECTED e1RM</span>
+<div class="flex items-baseline gap-1 font-telemetry-md text-telemetry-md text-on-surface">
+<span class="font-bold text-on-surface" id="projected-e1rm">128.3</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">kg</span>
+<span class="font-label-micro text-label-micro text-secondary font-semibold pl-1">(+3.3 kg)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+<span class="font-label-caps text-label-caps text-primary uppercase font-bold">GOLD III REACHED</span>
+</div>
+</div>
+<!-- Sticky Confirm CTA -->
+<div class="pt-1">
+<button class="w-full py-4 px-4 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(245,158,11,0.35)] active:scale-[0.99] transition" id="cta-log-set" onclick="logTelemetrySet()">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span>Log Set &amp; Update Telemetry</span>
+</button>
+</div>
+</div>
+<script>
+  let currentWeight = 110.0;
+  let currentReps = 5;
+  let currentRpe = 9.0;
+
+  function updateTelemetryProjection() {
+    const rpeRIR = 10 - currentRpe;
+    const estimatedMaxReps = currentReps + rpeRIR;
+    const e1rm = currentWeight * (1 + (estimatedMaxReps / 30));
+    const formattedE1rm = e1rm.toFixed(1);
+    const diff = (e1rm - 125.0).toFixed(1);
+    
+    const projElem = document.getElementById('projected-e1rm');
+    if (projElem) {
+      projElem.textContent = formattedE1rm;
+    }
+  }
+
+  function adjustWeight(delta) {
+    currentWeight = Math.max(20, Math.round((currentWeight + delta) * 10) / 10);
+    document.getElementById('display-weight').textContent = currentWeight.toFixed(1);
+    updateTelemetryProjection();
+  }
+
+  function setReps(count) {
+    currentReps = count;
+    document.getElementById('display-reps').textContent = currentReps;
+    document.querySelectorAll('.rep-chip').forEach(btn => {
+      btn.className = 'rep-chip py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] transition text-center';
+      if (parseInt(btn.textContent) === count) {
+        btn.className = 'rep-chip py-1.5 rounded-lg bg-primary/20 text-primary font-telemetry-md text-telemetry-md text-[13px] transition text-center font-bold';
+      }
+    });
+    updateTelemetryProjection();
+  }
+
+  function selectRPE(val, rir) {
+    currentRpe = val;
+    const descElem = document.getElementById('rpe-desc');
+    if (descElem) {
+      descElem.textContent = `RPE ${val.toFixed(1)} = ${rir.toUpperCase()}`;
+    }
+    
+    document.querySelectorAll('.rpe-pill').forEach(btn => {
+      btn.className = 'rpe-pill flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-telemetry-md text-telemetry-md text-[13px] flex flex-col items-center gap-0.5 transition';
+      const textVal = parseFloat(btn.querySelector('span').textContent);
+      if (textVal === val) {
+        btn.className = 'rpe-pill flex-1 py-2 rounded-lg bg-primary text-on-primary font-telemetry-md text-telemetry-md text-[13px] font-bold flex flex-col items-center gap-0.5 shadow-[0_0_16px_rgba(245,158,11,0.4)] transition';
+      }
+    });
+    updateTelemetryProjection();
+  }
+
+  document.getElementById('btn-wt-minus')?.addEventListener('click', () => adjustWeight(-1.0));
+  document.getElementById('btn-wt-plus')?.addEventListener('click', () => adjustWeight(1.0));
+
+  document.getElementById('btn-rep-minus')?.addEventListener('click', () => {
+    if (currentReps > 1) {
+      setReps(currentReps - 1);
+    }
+  });
+
+  document.getElementById('btn-rep-plus')?.addEventListener('click', () => {
+    setReps(currentReps + 1);
+  });
+
+  function logTelemetrySet() {
+    const cta = document.getElementById('cta-log-set');
+    if (!cta) return;
+    cta.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span><span>Synchronizing Telemetry...</span>';
+    setTimeout(() => {
+      cta.innerHTML = '<span class="material-symbols-outlined text-[20px]">check</span><span>Telemetry Synced!</span>';
+      cta.classList.remove('bg-primary-container', 'text-on-primary-container');
+      cta.classList.add('bg-secondary-container', 'text-on-secondary-container');
+      setTimeout(() => {
+        history.back();
+      }, 700);
+    }, 600);
+  }
+</script></main></div></body></html>

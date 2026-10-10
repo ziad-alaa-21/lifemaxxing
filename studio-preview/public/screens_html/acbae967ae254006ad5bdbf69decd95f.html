@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_blank" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "bg-gradient-top": "#1F262D",
+        "bg-gradient-bottom": "#171D23",
+        "card-bg": "#283038",
+        "raised-surface": "#313A43",
+        "raised-border": "#3B4650",
+        "primary-text": "#EEF3F7",
+        "secondary-text": "#98A6B3",
+        "muted-label": "#6B7885",
+        "ice-blue": "#38BDF8",
+        "near-black": "#0A0F14",
+        "accent-green": "#10B981",
+        "status-success": "#34D399",
+        "status-error": "#F87171"
+      },
+      borderRadius: {
+        "card": "22px",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      fontFamily: {
+        "inter": ["Inter", "sans-serif"],
+        "mono": ["JetBrains Mono", "monospace"]
+      }
+    }
+  }
+};</script><style>@layer base{html,body{width:100vw;min-height:100vh;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-gradient-to-b from-[#1F262D] to-[#171D23] text-[#EEF3F7] font-inter antialiased flex flex-col min-h-screen selection:bg-[#38BDF8] selection:text-[#0A0F14]"><main class="flex-1 flex flex-col relative w-full bg-transparent pt-safe pb-safe"><div class="flex flex-col w-full px-4 pb-8">
+<!-- Progress Header -->
+<div class="flex items-center justify-between py-4 mb-2">
+<button aria-label="Go Back" class="flex items-center justify-center w-10 h-10 rounded-full bg-[#283038] text-[#EEF3F7] hover:bg-[#313A43] active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<!-- 4 Progress Step Dots -->
+<div class="flex items-center space-x-2">
+<!-- Step 1: Completed -->
+<div class="flex items-center justify-center w-6 h-6 rounded-full bg-[#313A43] text-[#98A6B3]">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<!-- Step 2: Active Glow -->
+<div class="flex items-center justify-center w-6 h-6 rounded-full bg-[#38BDF8] text-[#0A0F14] font-mono font-bold text-[10px] shadow-[0_0_12px_rgba(56,189,248,0.45)]">
+<span>02</span>
+</div>
+<!-- Step 3: Inactive -->
+<div class="w-2 h-2 rounded-full bg-[#313A43]"></div>
+<!-- Step 4: Inactive -->
+<div class="w-2 h-2 rounded-full bg-[#313A43]"></div>
+</div>
+<!-- Step Label indicator -->
+<span class="font-mono text-[11px] font-semibold text-[#98A6B3] tracking-wider uppercase">STEP 2/4</span>
+</div>
+<!-- Hero Header -->
+<div class="flex flex-col space-y-1.5 mb-6">
+<h1 class="text-[28px] font-bold text-[#EEF3F7] tracking-tight leading-tight">Establish your physical baseline</h1>
+<p class="text-[14px] text-[#98A6B3] leading-relaxed">Precision input for body mass and velocity targets. Used to generate projected milestone trajectories.</p>
+</div>
+<div class="flex flex-col space-y-4">
+<!-- Card 1: Current Weight -->
+<div class="flex flex-col rounded-[22px] bg-[#283038] p-5 shadow-lg border-0">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-[#38BDF8]"></span>
+<span class="font-mono text-[11px] font-semibold tracking-wider text-[#98A6B3] uppercase">CURRENT SCALE WEIGHT</span>
+</div>
+<!-- Unit Toggle -->
+<div class="flex items-center rounded-lg bg-[#1F262D] p-0.5">
+<button class="px-2.5 py-1 rounded-md bg-[#313A43] border border-[#3B4650] text-[#38BDF8] font-mono text-[11px] font-semibold transition-all" id="unit-kg" type="button">KG</button>
+<button class="px-2.5 py-1 rounded-md text-[#98A6B3] font-mono text-[11px] font-medium hover:text-[#EEF3F7] transition-all border border-transparent" id="unit-lbs" type="button">LBS</button>
+</div>
+</div>
+<!-- Numeric Stepper -->
+<div class="flex items-center justify-between py-1 my-1">
+<button class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#313A43] border border-[#3B4650] text-[#EEF3F7] active:scale-95 hover:border-[#38BDF8]/40 transition-all" id="btn-curr-dec" type="button">
+<span class="material-symbols-outlined text-[22px]">remove</span>
+</button>
+<div class="flex items-baseline space-x-1.5">
+<span class="font-mono text-[42px] font-bold text-[#EEF3F7] tracking-tight" id="current-weight-val">78.4</span>
+<span class="font-mono text-base font-medium text-[#98A6B3]" id="current-unit-label">kg</span>
+</div>
+<button class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#313A43] border border-[#3B4650] text-[#EEF3F7] active:scale-95 hover:border-[#38BDF8]/40 transition-all" id="btn-curr-inc" type="button">
+<span class="material-symbols-outlined text-[22px]">add</span>
+</button>
+</div>
+<!-- Notes & Helper Wells -->
+<div class="flex flex-col space-y-2.5 mt-3 pt-1">
+<div class="flex items-center space-x-2 text-[#98A6B3]">
+<span class="material-symbols-outlined text-sm text-[#38BDF8]">schedule</span>
+<span class="text-xs text-[#98A6B3]">Standardized waking post-void baseline</span>
+</div>
+<div class="rounded-xl bg-[#1F262D] p-3 flex items-start space-x-2.5">
+<span class="material-symbols-outlined text-sm text-[#38BDF8] flex-shrink-0 mt-0.5">info</span>
+<p class="text-xs text-[#98A6B3] leading-relaxed">We calculate 7-day rolling moving averages to damp acute water retention fluctuations.</p>
+</div>
+</div>
+</div>
+<!-- Card 2: Target Weight Objective -->
+<div class="flex flex-col rounded-[22px] bg-[#283038] p-5 shadow-lg border-0">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+<span class="font-mono text-[11px] font-semibold tracking-wider text-[#98A6B3] uppercase">TARGET WEIGHT OBJECTIVE</span>
+</div>
+<!-- Total Delta Badge with Status Icon -->
+<span class="inline-flex items-center space-x-1 font-mono text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30" id="target-delta-badge">
+<span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+<span id="target-delta-text">-3.4 kg total delta</span>
+</span>
+</div>
+<!-- Numeric Stepper -->
+<div class="flex items-center justify-between py-1 my-1">
+<button class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#313A43] border border-[#3B4650] text-[#EEF3F7] active:scale-95 hover:border-[#38BDF8]/40 transition-all" id="btn-tgt-dec" type="button">
+<span class="material-symbols-outlined text-[22px]">remove</span>
+</button>
+<div class="flex items-baseline space-x-1.5">
+<span class="font-mono text-[42px] font-bold text-[#EEF3F7] tracking-tight" id="target-weight-val">75.0</span>
+<span class="font-mono text-base font-medium text-[#98A6B3]" id="target-unit-label">kg</span>
+</div>
+<button class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#313A43] border border-[#3B4650] text-[#EEF3F7] active:scale-95 hover:border-[#38BDF8]/40 transition-all" id="btn-tgt-inc" type="button">
+<span class="material-symbols-outlined text-[22px]">add</span>
+</button>
+</div>
+<!-- Velocity Selector -->
+<div class="mt-3 pt-1">
+<label class="block font-mono text-[11px] font-semibold text-[#98A6B3] uppercase tracking-wider mb-2.5">VELOCITY DEFICIT RATE</label>
+<div class="grid grid-cols-1 gap-2" id="pace-container">
+<!-- Conservative -->
+<button class="pace-btn flex items-center justify-between px-3.5 py-3 rounded-xl bg-[#1F262D] border border-transparent text-[#EEF3F7] hover:bg-[#313A43]/50 transition-all text-left" data-pace="conservative" type="button">
+<span class="text-sm text-[#EEF3F7] font-medium">Conservative</span>
+<span class="font-mono text-sm text-[#98A6B3]">-0.35 kg/wk</span>
+</button>
+<!-- Optimal (Default active) -->
+<button class="pace-btn flex items-center justify-between px-3.5 py-3 rounded-xl bg-[#313A43] border border-[#3B4650] text-[#EEF3F7] shadow-[0_0_12px_rgba(56,189,248,0.12)] transition-all text-left" data-pace="optimal" type="button">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-base text-[#34D399]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-sm font-semibold text-[#EEF3F7]">Optimal</span>
+</div>
+<span class="font-mono text-sm font-semibold text-[#38BDF8]">-0.50 kg/wk</span>
+</button>
+<!-- Aggressive -->
+<button class="pace-btn flex items-center justify-between px-3.5 py-3 rounded-xl bg-[#1F262D] border border-transparent text-[#EEF3F7] hover:bg-[#313A43]/50 transition-all text-left" data-pace="aggressive" type="button">
+<span class="text-sm text-[#EEF3F7] font-medium">Aggressive</span>
+<span class="font-mono text-sm text-[#98A6B3]">-0.75 kg/wk</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Dynamic Live Trajectory Preview Card -->
+<div class="flex flex-col rounded-[22px] bg-[#283038] p-5 shadow-lg border-0">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-[#38BDF8]"></span>
+<span class="font-mono text-[11px] font-semibold tracking-wider text-[#98A6B3] uppercase">PROJECTED HORIZON</span>
+</div>
+<span class="font-mono text-[11px] font-semibold text-[#38BDF8] uppercase tracking-wider">High Fidelity</span>
+</div>
+<div class="flex items-baseline justify-between mt-1 mb-3">
+<span class="text-[20px] font-semibold text-[#EEF3F7]" id="target-eta-date">Dec 14, 2024</span>
+<span class="font-mono text-sm text-[#98A6B3]" id="target-eta-duration">~7.5 weeks</span>
+</div>
+<!-- Sparkline Trajectory Visualizer -->
+<div class="relative w-full h-24 rounded-xl bg-[#1F262D] p-2.5 overflow-hidden flex flex-col justify-between">
+<!-- Grid horizontal lines -->
+<div class="absolute inset-x-0 top-3 h-px bg-[#313A43]/60"></div>
+<div class="absolute inset-x-0 top-1/2 h-px bg-[#313A43]/40"></div>
+<div class="absolute inset-x-0 bottom-3 h-px bg-[#313A43]/60"></div>
+<!-- Target Line Guide -->
+<div class="absolute right-2.5 bottom-3 flex items-center space-x-1.5 z-10">
+<span class="w-1.5 h-1.5 rounded-full bg-[#38BDF8]"></span>
+<span class="font-mono text-[11px] font-semibold text-[#38BDF8]" id="chart-target-label">TARGET 75.0</span>
+</div>
+<!-- SVG Curve -->
+<svg class="w-full h-full overflow-visible z-0" preserveaspectratio="none" viewbox="0 0 320 80">
+<defs>
+<lineargradient id="curveGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#38BDF8" stop-opacity="0.30"></stop>
+<stop offset="100%" stop-color="#38BDF8" stop-opacity="0.0"></stop>
+</lineargradient>
+<lineargradient id="strokeGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#38BDF8"></stop>
+<stop offset="100%" stop-color="#38BDF8"></stop>
+</lineargradient>
+</defs>
+<!-- Gradient Fill Area -->
+<path d="M 10 18 Q 120 40, 310 65 L 310 78 L 10 78 Z" fill="url(#curveGradient)" id="trajectory-fill"></path>
+<!-- Animated / Dynamic Trajectory Path (Ice Blue) -->
+<path d="M 10 18 Q 120 40, 310 65" fill="none" id="trajectory-line" stroke="#38BDF8" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Start Indicator -->
+<circle cx="10" cy="18" fill="#38BDF8" r="3.5"></circle>
+<!-- Target Point -->
+<circle class="animate-pulse" cx="310" cy="65" fill="#38BDF8" r="4.5"></circle>
+</svg>
+<div class="flex justify-between items-center z-10 px-1">
+<span class="font-mono text-[11px] font-medium text-[#98A6B3]">Today</span>
+<span class="font-mono text-[11px] font-medium text-[#38BDF8]" id="svg-milestone-marker">Milestone Reach</span>
+</div>
+</div>
+<!-- Telemetry Bottom Details -->
+<div class="flex items-center justify-between rounded-xl bg-[#313A43] border border-[#3B4650] px-3.5 py-2.5 mt-3">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm text-[#38BDF8]">local_fire_department</span>
+<span class="font-mono text-xs text-[#EEF3F7]"><span id="meta-deficit">-420</span> kcal/day</span>
+</div>
+<div class="w-1 h-3 rounded bg-[#3B4650]"></div>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm text-[#34D399]">fitness_center</span>
+<span class="font-mono text-xs text-[#EEF3F7]"><span id="meta-protein">165</span>g protein/day</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Controls & CTA -->
+<div class="mt-6 flex flex-col items-center space-y-3">
+<button class="w-full py-4 rounded-xl bg-[#38BDF8] text-[#0A0F14] font-semibold text-base tracking-normal flex items-center justify-center space-x-2 shadow-[0_0_24px_rgba(56,189,248,0.35)] active:scale-[0.98] transition-all hover:brightness-105" type="button">
+<span>Lock Stats &amp; Set Schedule</span>
+<span class="material-symbols-outlined text-lg leading-none font-bold">arrow_forward</span>
+</button>
+<div class="flex items-center space-x-1.5 text-[#98A6B3]">
+<span class="material-symbols-outlined text-xs">sync</span>
+<span class="text-[11px] leading-tight text-[#98A6B3]">Withings, Apple Health &amp; Oura integration available next.</span>
+</div>
+</div>
+</div>
+<script>
+(() => {
+  let isKg = true;
+  let currKg = 78.4;
+  let tgtKg = 75.0;
+  let selectedPace = 'optimal';
+
+  const paceMap = {
+    conservative: { rateKg: 0.35, deficit: 300, proteinFactor: 2.1 },
+    optimal: { rateKg: 0.50, deficit: 420, proteinFactor: 2.15 },
+    aggressive: { rateKg: 0.75, deficit: 650, proteinFactor: 2.25 }
+  };
+
+  const currWeightEl = document.getElementById('current-weight-val');
+  const tgtWeightEl = document.getElementById('target-weight-val');
+  const currUnitEl = document.getElementById('current-unit-label');
+  const tgtUnitEl = document.getElementById('target-unit-label');
+  const deltaBadgeEl = document.getElementById('target-delta-badge');
+  const deltaTextEl = document.getElementById('target-delta-text');
+  const unitKgBtn = document.getElementById('unit-kg');
+  const unitLbsBtn = document.getElementById('unit-lbs');
+  const etaDateEl = document.getElementById('target-eta-date');
+  const etaDurEl = document.getElementById('target-eta-duration');
+  const metaDeficitEl = document.getElementById('meta-deficit');
+  const metaProteinEl = document.getElementById('meta-protein');
+  const chartTargetLabel = document.getElementById('chart-target-label');
+
+  const updateDisplays = () => {
+    const factor = isKg ? 1 : 2.20462;
+    const unitText = isKg ? 'kg' : 'lbs';
+    
+    currUnitEl.textContent = unitText;
+    tgtUnitEl.textContent = unitText;
+
+    const displayCurr = (currKg * factor).toFixed(1);
+    const displayTgt = (tgtKg * factor).toFixed(1);
+    currWeightEl.textContent = displayCurr;
+    tgtWeightEl.textContent = displayTgt;
+    chartTargetLabel.textContent = `TARGET ${displayTgt}`;
+
+    const delta = (tgtKg - currKg);
+    const deltaDisplay = (delta * factor).toFixed(1);
+    
+    // Status visual cue with icon
+    const isLoss = delta <= 0;
+    const iconName = isLoss ? 'arrow_downward' : 'arrow_upward';
+    const statusBg = isLoss ? 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30' : 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30';
+    deltaBadgeEl.className = `inline-flex items-center space-x-1 font-mono text-[11px] font-medium px-2.5 py-1 rounded-full border ${statusBg}`;
+    deltaBadgeEl.innerHTML = `
+      <span class="material-symbols-outlined text-xs leading-none">${iconName}</span>
+      <span id="target-delta-text">${delta > 0 ? '+' : ''}${deltaDisplay} ${unitText} total delta</span>
+    `;
+
+    // Recalculate duration & horizon
+    const paceInfo = paceMap[selectedPace];
+    const absDelta = Math.abs(delta);
+    const weeksNeeded = Math.max(0.5, absDelta / paceInfo.rateKg);
+    etaDurEl.textContent = `~${weeksNeeded.toFixed(1)} weeks`;
+
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + Math.round(weeksNeeded * 7));
+    etaDateEl.textContent = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    metaDeficitEl.textContent = `-${paceInfo.deficit}`;
+    const proteinTarget = Math.round(currKg * paceInfo.proteinFactor);
+    metaProteinEl.textContent = proteinTarget;
+  };
+
+  // Unit Toggles
+  unitKgBtn.addEventListener('click', () => {
+    if (isKg) return;
+    isKg = true;
+    unitKgBtn.className = "px-2.5 py-1 rounded-md bg-[#313A43] border border-[#3B4650] text-[#38BDF8] font-mono text-[11px] font-semibold transition-all";
+    unitLbsBtn.className = "px-2.5 py-1 rounded-md text-[#98A6B3] font-mono text-[11px] font-medium hover:text-[#EEF3F7] transition-all border border-transparent";
+    updateDisplays();
+  });
+
+  unitLbsBtn.addEventListener('click', () => {
+    if (!isKg) return;
+    isKg = false;
+    unitLbsBtn.className = "px-2.5 py-1 rounded-md bg-[#313A43] border border-[#3B4650] text-[#38BDF8] font-mono text-[11px] font-semibold transition-all";
+    unitKgBtn.className = "px-2.5 py-1 rounded-md text-[#98A6B3] font-mono text-[11px] font-medium hover:text-[#EEF3F7] transition-all border border-transparent";
+    updateDisplays();
+  });
+
+  // Current Stepper
+  document.getElementById('btn-curr-dec').addEventListener('click', () => {
+    currKg = Math.max(30, parseFloat((currKg - 0.2).toFixed(1)));
+    updateDisplays();
+  });
+  document.getElementById('btn-curr-inc').addEventListener('click', () => {
+    currKg = Math.min(250, parseFloat((currKg + 0.2).toFixed(1)));
+    updateDisplays();
+  });
+
+  // Target Stepper
+  document.getElementById('btn-tgt-dec').addEventListener('click', () => {
+    tgtKg = Math.max(30, parseFloat((tgtKg - 0.2).toFixed(1)));
+    updateDisplays();
+  });
+  document.getElementById('btn-tgt-inc').addEventListener('click', () => {
+    tgtKg = Math.min(250, parseFloat((tgtKg + 0.2).toFixed(1)));
+    updateDisplays();
+  });
+
+  // Pace Selector
+  const paceButtons = document.querySelectorAll('.pace-btn');
+  paceButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedPace = btn.getAttribute('data-pace');
+      paceButtons.forEach(b => {
+        b.className = "pace-btn flex items-center justify-between px-3.5 py-3 rounded-xl bg-[#1F262D] border border-transparent text-[#EEF3F7] hover:bg-[#313A43]/50 transition-all text-left";
+        const innerDiv = b.querySelector('div');
+        if (innerDiv) {
+          const text = innerDiv.querySelector('span:last-child')?.textContent || 'Pace';
+          b.firstElementChild.outerHTML = `<span class="text-sm text-[#EEF3F7] font-medium">${text}</span>`;
+        }
+        b.lastElementChild.className = "font-mono text-sm text-[#98A6B3]";
+      });
+
+      btn.className = "pace-btn flex items-center justify-between px-3.5 py-3 rounded-xl bg-[#313A43] border border-[#3B4650] text-[#EEF3F7] shadow-[0_0_12px_rgba(56,189,248,0.12)] transition-all text-left";
+      const titleSpan = btn.firstElementChild;
+      const titleText = titleSpan.textContent.trim();
+      titleSpan.outerHTML = `
+        <div class="flex items-center space-x-2">
+          <span class="material-symbols-outlined text-base text-[#34D399]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+          <span class="text-sm font-semibold text-[#EEF3F7]">${titleText}</span>
+        </div>
+      `;
+      btn.lastElementChild.className = "font-mono text-sm font-semibold text-[#38BDF8]";
+      updateDisplays();
+    });
+  });
+
+  updateDisplays();
+})();
+</script></main></body></html>

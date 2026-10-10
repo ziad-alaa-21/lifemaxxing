@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-fixed": "#a2eeff", "secondary-fixed-dim": "#2fd9f4", "on-tertiary-container": "#6d51bc", "on-secondary": "#00363e", "on-tertiary-fixed": "#21005e", "on-primary-fixed": "#141f00", "on-primary-fixed-variant": "#384e00", "on-background": "#dee3e9", "background": "#0f1419", "on-error-container": "#ffdad6", "outline-variant": "#434934", "primary-container": "#bdf532", "surface-container-highest": "#30353a", "surface-container": "#1b2025", "inverse-on-surface": "#2c3136", "on-secondary-fixed": "#001f25", "surface-bright": "#353a3f", "secondary": "#5de6ff", "secondary-container": "#00cbe6", "inverse-primary": "#4c6700", "tertiary-fixed": "#e8ddff", "tertiary": "#ffffff", "surface-dim": "#0f1419", "on-primary": "#263500", "surface-container-lowest": "#0a0f13", "on-primary-container": "#516e00", "on-secondary-container": "#00515d", "surface-container-low": "#171c21", "inverse-surface": "#dee3e9", "primary-fixed-dim": "#a2d801", "surface-tint": "#a2d801", "surface-container-high": "#252a30", "on-surface": "#dee3e9", "error": "#ffb4ab", "on-secondary-fixed-variant": "#004e5a", "on-tertiary": "#381385", "on-surface-variant": "#c3c9ae", "on-error": "#690005", "surface-variant": "#30353a", "primary-fixed": "#bdf532", "outline": "#8d937b", "error-container": "#93000a", "surface": "#0f1419", "primary": "#ffffff", "tertiary-container": "#e8ddff", "on-tertiary-fixed-variant": "#4f319c", "tertiary-fixed-dim": "#cebdff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "0.75rem", "space-md": "1rem", "margin": "1rem", "space-xs": "0.25rem", "space-xl": "1.5rem" }, fontFamily: { "headline-sm": ["Inter"], "stat-mono-md": ["JetBrains Mono"], "body-sm": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Inter"], "body-md": ["Inter"], "stat-mono-sm": ["JetBrains Mono"], "display-hero-mobile": ["JetBrains Mono"], "headline-lg": ["JetBrains Mono"], "label-sm": ["Inter"], "display-hero": ["JetBrains Mono"], "label-uppercase": ["Inter"] }, fontSize: { "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }], "stat-mono-md": ["18px", { "lineHeight": "22px", "letterSpacing": "-0.02em", "fontWeight": "500" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }], "stat-mono-sm": ["14px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "500" }], "display-hero-mobile": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "display-hero": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }] } } } }</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;background-color:#0f1419;color:#dee3e9;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.25)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Navigate Back" class="w-11 h-11 -ml-2 rounded-xl flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><div class="flex flex-col ml-1"><div class="flex items-center gap-1.5 font-label-uppercase text-label-uppercase text-outline tracking-wider"><span class="text-secondary">ACADEMICS</span><span>/</span><span class="text-outline-variant">CORE</span></div><h1 class="font-headline-sm text-headline-sm text-on-surface truncate max-w-[200px]">Course Detail</h1></div></div><div class="flex items-center gap-space-xs"><button aria-label="Context Actions" class="w-11 h-11 rounded-xl flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[22px]">tune</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface px-margin"><div class="flex flex-col w-full pb-28 space-y-space-md">
+<!-- Subject Summary Meta Header Card -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container p-space-lg flex flex-col gap-space-sm shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/15 text-secondary font-label-uppercase text-label-uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+          CS 280 • CORE
+        </span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant">4 CREDITS</span>
+</div>
+<div class="flex items-center gap-1">
+<button aria-label="Course Settings" class="w-8 h-8 rounded-lg bg-surface-container-high text-on-surface-variant flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight">Algorithms &amp; Graphs</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Fall 2024 • Prof. S. Vasquez • Hall B</p>
+</div>
+<div class="flex flex-wrap items-center gap-2 pt-1 font-label-sm text-label-sm text-outline">
+<span class="inline-flex items-center gap-1 text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[15px]">verified</span>
+        Passing with Distinction
+      </span>
+<span>•</span>
+<span>Weight 4.0</span>
+<span>•</span>
+<span>7 Graded Items</span>
+</div>
+</div>
+<!-- Hero Standing Telemetry -->
+<div class="rounded-xl bg-surface-container-high p-space-lg shadow-md relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-primary-container/10 blur-3xl pointer-events-none"></div>
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-uppercase text-label-uppercase text-outline tracking-wider block mb-1">CUMULATIVE STANDING</span>
+<div class="flex items-baseline gap-2.5">
+<span class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight font-bold">94.2%</span>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed-dim font-stat-mono-sm text-stat-mono-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+            +1.8%
+          </span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 rounded-lg bg-primary-container text-on-primary-fixed font-stat-mono-md text-stat-mono-md font-bold shadow-[0_0_12px_rgba(198,255,61,0.25)]">
+          4.0 A
+        </span>
+<span class="font-label-uppercase text-label-uppercase text-outline mt-1.5">GRADE TIER</span>
+</div>
+</div>
+<!-- Goal Bar Meter -->
+<div class="mt-space-md pt-space-sm">
+<div class="flex justify-between items-center mb-1.5 font-label-sm text-label-sm">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+          Target: <strong class="text-on-surface font-semibold">92.0% A</strong>
+</span>
+<span class="text-primary-fixed-dim font-stat-mono-sm text-stat-mono-sm">Surplus +2.2%</span>
+</div>
+<!-- Track bar -->
+<div class="w-full h-2 rounded-full bg-surface-container relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 bg-secondary rounded-full" style="width: 94.2%;"></div>
+<!-- Target tick indicator -->
+<div class="absolute top-0 bottom-0 w-0.5 bg-on-surface" style="left: 92%;" title="Target threshold"></div>
+</div>
+</div>
+</div>
+<!-- Grade Velocity & Trajectory Chart -->
+<div class="rounded-xl bg-surface-container p-space-lg shadow-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Velocity &amp; Trajectory</h3>
+<p class="font-label-sm text-label-sm text-outline">Semester pacing &amp; benchmark delta</p>
+</div>
+<!-- Time pill toggle -->
+<div class="inline-flex p-0.5 rounded-full bg-surface-container-low font-label-sm text-label-sm">
+<button class="px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-medium shadow-sm">All</button>
+<button class="px-2.5 py-1 rounded-full text-on-surface-variant">Last 4w</button>
+</div>
+</div>
+<!-- SVG Line Chart Area -->
+<div class="relative w-full aspect-[16/9] bg-surface-container-low rounded-lg p-2 flex flex-col justify-between overflow-hidden">
+<!-- Target & Median Guide Lines -->
+<div class="absolute inset-x-2 top-[24%] border-b border-dashed border-outline-variant/60 flex items-center justify-between pointer-events-none px-1">
+<span class="font-stat-mono-sm text-[10px] text-outline tracking-wider">TARGET 92.0%</span>
+</div>
+<div class="absolute inset-x-2 top-[58%] border-b border-dashed border-outline-variant/40 flex items-center justify-between pointer-events-none px-1">
+<span class="font-stat-mono-sm text-[10px] text-outline-variant tracking-wider">MEDIAN 81.5%</span>
+</div>
+<!-- Native SVG for chart rendering -->
+<svg class="w-full h-full overflow-visible" fill="none" preserveaspectratio="none" viewbox="0 0 320 150">
+<defs>
+<lineargradient id="velocityGlow" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#38bdf8" stop-opacity="0.28"></stop>
+<stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"></stop>
+</lineargradient>
+<filter height="160%" id="neonDiamond" width="160%" x="-30%" y="-30%">
+<fedropshadow dx="0" dy="0" flood-color="#a855f7" flood-opacity="0.8" stddeviation="3"></fedropshadow>
+</filter>
+</defs>
+<!-- Area fill under line -->
+<polygon fill="url(#velocityGlow)" points="15,135 15,45 60,45 110,95 160,30 215,10 265,60 305,45 305,135"></polygon>
+<!-- Connecting Trendline -->
+<path d="M 15 45 L 60 45 L 110 95 L 160 30 L 215 10 L 265 60 L 305 45" stroke="#38bdf8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+<!-- Nodes: Circles (Quizzes) vs Diamonds (Big Exams) -->
+<!-- Quiz 1 (Aug 29: 90%) -->
+<circle cx="15" cy="45" fill="#38bdf8" r="4" stroke="#0f1419" stroke-width="2"></circle>
+<!-- Diagnostic Exam (Sep 04: 78%) -> Diamond -->
+<g filter="url(#neonDiamond)" transform="translate(110, 95) rotate(45)">
+<rect fill="#c084fc" height="9" stroke="#0f1419" stroke-width="1.5" width="9" x="-4.5" y="-4.5"></rect>
+</g>
+<!-- Quiz 2 (Sep 15: 90%) -->
+<circle cx="160" cy="30" fill="#38bdf8" r="4" stroke="#0f1419" stroke-width="2"></circle>
+<!-- Quiz 3 (Sep 28: 100%) -->
+<circle cx="215" cy="10" fill="#38bdf8" r="4" stroke="#0f1419" stroke-width="2"></circle>
+<!-- Quiz 4 (Oct 12: 85%) -->
+<circle cx="265" cy="60" fill="#38bdf8" r="4" stroke="#0f1419" stroke-width="2"></circle>
+<!-- Midterm 1 (Oct 18: 92%) -> Diamond Glowing Peak -->
+<g filter="url(#neonDiamond)" transform="translate(305, 45) rotate(45)">
+<rect fill="#c084fc" height="10" stroke="#ffffff" stroke-width="1.8" width="10" x="-5" y="-5"></rect>
+</g>
+</svg>
+<!-- Active Point Callout Pill -->
+<div class="absolute right-4 top-2 bg-surface-container-highest px-2 py-1 rounded-md shadow-md flex items-center gap-1.5 border-0">
+<span class="w-2 h-2 rotate-45 bg-tertiary-container"></span>
+<span class="font-stat-mono-sm text-[11px] text-on-surface">Midterm 1: 92.0%</span>
+</div>
+</div>
+<!-- Chart Legend & Axes -->
+<div class="flex flex-wrap items-center justify-between text-outline font-label-sm text-label-sm gap-2 pt-1">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-on-surface-variant">Quizzes</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rotate-45 bg-tertiary-container shadow-[0_0_6px_rgba(168,85,247,0.6)]"></span>
+<span class="text-on-surface-variant">Big Exams</span>
+</div>
+</div>
+<div class="flex items-center gap-2 font-stat-mono-sm text-[11px] text-outline">
+<span>SEP</span>
+<span>•</span>
+<span>OCT</span>
+<span>•</span>
+<span>NOV</span>
+</div>
+</div>
+</div>
+<!-- Analytical Split: Assessment Modalities -->
+<div class="rounded-xl bg-surface-container p-space-lg shadow-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Assessment Modalities</h3>
+<span class="font-label-uppercase text-label-uppercase text-outline">DELTA ANALYSIS</span>
+</div>
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Quizzes Tile -->
+<div class="rounded-lg bg-surface-container-high p-space-sm flex flex-col justify-between">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">QUIZZES</span>
+</div>
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-on-surface">91.0% <span class="text-outline text-body-sm font-normal">avg</span></div>
+<div class="font-body-sm text-body-sm text-outline mt-1">5 completed • 85%–100%</div>
+</div>
+<!-- Big Exams Tile -->
+<div class="rounded-lg bg-surface-container-high p-space-sm flex flex-col justify-between">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rotate-45 bg-tertiary-container"></span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">BIG EXAMS</span>
+</div>
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-on-surface">78.0% <span class="text-outline text-body-sm font-normal">avg</span></div>
+<div class="font-body-sm text-body-sm text-outline mt-1">2 completed • 78%–92%</div>
+</div>
+</div>
+<!-- Comparative Differential Alert & Visual Gap Bar -->
+<div class="p-3 rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex justify-between items-center font-stat-mono-sm text-stat-mono-sm">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Exam Variance Split</span>
+<span class="text-error font-semibold">-13.0% Delta</span>
+</div>
+<!-- Visual delta comparative bar -->
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary" style="width: 53.8%;" title="Quiz Ratio"></div>
+<div class="h-full bg-tertiary-container" style="width: 46.2%;" title="Exam Ratio"></div>
+</div>
+<div class="flex items-start gap-2 pt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[17px] text-tertiary-container mt-0.5 shrink-0">info</span>
+<span>Exam performance variance detected. Recommend high-pressure timed mock drills prior to Final Exam.</span>
+</div>
+</div>
+</div>
+<!-- Grade History List Section -->
+<div class="rounded-xl bg-surface-container p-space-lg shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Assessment History</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high font-stat-mono-sm text-stat-mono-sm text-outline">7</span>
+</div>
+<button class="font-label-sm text-label-sm text-primary-fixed-dim hover:text-primary-container flex items-center gap-1 font-semibold transition-colors" onclick="document.getElementById('add-grade-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[16px]">add</span>
+        Add Grade
+      </button>
+</div>
+<div class="flex flex-col space-y-2 pt-1">
+<!-- Item 1: Midterm 1 -->
+<div class="p-3 rounded-lg bg-surface-container-high flex items-center justify-between hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/20 flex items-center justify-center shrink-0">
+<span class="w-2.5 h-2.5 rotate-45 bg-tertiary-container"></span>
+</div>
+<div class="min-w-0 flex flex-col">
+<div class="flex items-center gap-1.5 truncate">
+<span class="font-headline-sm text-[14px] text-on-surface truncate">Midterm 1</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-container/25 text-tertiary-fixed font-label-uppercase text-[10px]">EXAM</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Oct 18 • Weighted 25%</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-on-surface">92%</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-outline">92/100</div>
+</div>
+</div>
+<!-- Item 2: Quiz 4 -->
+<div class="p-3 rounded-lg bg-surface-container-high flex items-center justify-between hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+</div>
+<div class="min-w-0 flex flex-col">
+<div class="flex items-center gap-1.5 truncate">
+<span class="font-headline-sm text-[14px] text-on-surface truncate">Quiz 4: Dynamic Programming</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary/20 text-secondary font-label-uppercase text-[10px]">QUIZ</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Oct 12 • Weighted 5%</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-on-surface">85%</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-outline">17/20</div>
+</div>
+</div>
+<!-- Item 3: Quiz 3 -->
+<div class="p-3 rounded-lg bg-surface-container-high flex items-center justify-between hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+</div>
+<div class="min-w-0 flex flex-col">
+<div class="flex items-center gap-1.5 truncate">
+<span class="font-headline-sm text-[14px] text-on-surface truncate">Quiz 3: Graph Traversal (DFS/BFS)</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary/20 text-secondary font-label-uppercase text-[10px]">QUIZ</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Sep 28 • Weighted 5%</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-primary-fixed-dim">100%</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-outline">20/20</div>
+</div>
+</div>
+<!-- Item 4: Quiz 2 -->
+<div class="p-3 rounded-lg bg-surface-container-high flex items-center justify-between hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+</div>
+<div class="min-w-0 flex flex-col">
+<div class="flex items-center gap-1.5 truncate">
+<span class="font-headline-sm text-[14px] text-on-surface truncate">Quiz 2: Asymptotic Analysis</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary/20 text-secondary font-label-uppercase text-[10px]">QUIZ</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Sep 15 • Weighted 5%</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-on-surface">90%</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-outline">18/20</div>
+</div>
+</div>
+<!-- Item 5: Diagnostic Exam -->
+<div class="p-3 rounded-lg bg-surface-container-high flex items-center justify-between hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/20 flex items-center justify-center shrink-0">
+<span class="w-2.5 h-2.5 rotate-45 bg-tertiary-container"></span>
+</div>
+<div class="min-w-0 flex flex-col">
+<div class="flex items-center gap-1.5 truncate">
+<span class="font-headline-sm text-[14px] text-on-surface truncate">Diagnostic Exam</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-container/25 text-tertiary-fixed font-label-uppercase text-[10px]">EXAM</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Sep 04 • Weighted 10%</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-on-surface">78%</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-outline">78/100</div>
+</div>
+</div>
+<!-- Item 6: Quiz 1 -->
+<div class="p-3 rounded-lg bg-surface-container-high flex items-center justify-between hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+</div>
+<div class="min-w-0 flex flex-col">
+<div class="flex items-center gap-1.5 truncate">
+<span class="font-headline-sm text-[14px] text-on-surface truncate">Quiz 1: Proof Techniques</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary/20 text-secondary font-label-uppercase text-[10px]">QUIZ</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Aug 29 • Weighted 5%</span>
+</div>
+</div>
+<div class="text-right shrink-0 pl-2">
+<div class="font-stat-mono-md text-stat-mono-md font-bold text-on-surface">90%</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-outline">18/20</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Floating Action & Quick Bar (Pinned over bottom safe area) -->
+<div class="fixed bottom-6 inset-x-margin z-40 max-w-[420px] mx-auto flex items-center gap-3 pointer-events-auto">
+<button class="flex-1 h-[52px] rounded-full bg-primary-container text-on-primary-fixed font-headline-sm text-headline-sm font-semibold flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(198,255,61,0.28)] active:scale-[0.98] transition-transform" onclick="document.getElementById('add-grade-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[20px] font-bold">add</span>
+      Log New Grade
+    </button>
+<button aria-label="Course Analytics Report" class="w-[52px] h-[52px] rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[22px]">analytics</span>
+</button>
+</div>
+<!-- Interactive Slide-over / Modal for Adding Grade (Default Hidden) -->
+<div class="hidden fixed inset-0 z-50 bg-[#14171a]/70 backdrop-blur-md flex items-end justify-center p-0 transition-opacity" id="add-grade-modal">
+<div class="w-full max-w-lg bg-surface-container-high rounded-t-2xl p-space-lg flex flex-col gap-space-md shadow-2xl">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed-dim">edit_note</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Record Assessment Grade</h4>
+</div>
+<button class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" onclick="document.getElementById('add-grade-modal').classList.add('hidden')">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Quick Inputs Form -->
+<div class="space-y-3">
+<div>
+<label class="font-label-uppercase text-label-uppercase text-outline block mb-1">Assessment Name</label>
+<input class="w-full h-12 rounded-xl bg-surface-container px-3 text-on-surface font-body-md placeholder:text-outline focus:outline-none focus:bg-surface-bright" placeholder="e.g. Midterm 2, Quiz 5" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-gutter">
+<div>
+<label class="font-label-uppercase text-label-uppercase text-outline block mb-1">Category</label>
+<select class="w-full h-12 rounded-xl bg-surface-container px-3 text-on-surface font-body-md focus:outline-none focus:bg-surface-bright">
+<option value="quiz">Quiz (● Circle)</option>
+<option value="exam">Big Exam (◆ Diamond)</option>
+<option value="project">Project / Lab</option>
+</select>
+</div>
+<div>
+<label class="font-label-uppercase text-label-uppercase text-outline block mb-1">Score (Points / Total)</label>
+<div class="flex items-center gap-2">
+<input class="w-full h-12 rounded-xl bg-surface-container px-3 text-on-surface font-stat-mono-sm focus:outline-none text-center" placeholder="95" type="number"/>
+<span class="text-outline">/</span>
+<input class="w-full h-12 rounded-xl bg-surface-container px-3 text-on-surface font-stat-mono-sm focus:outline-none text-center" placeholder="100" type="number"/>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 h-12 rounded-xl bg-surface-container text-on-surface font-body-md font-medium" onclick="document.getElementById('add-grade-modal').classList.add('hidden')">Cancel</button>
+<button class="flex-1 h-12 rounded-xl bg-primary-container text-on-primary-fixed font-headline-sm font-semibold" onclick="document.getElementById('add-grade-modal').classList.add('hidden')">Save Assessment</button>
+</div>
+</div>
+</div>
+</div></main></body></html>

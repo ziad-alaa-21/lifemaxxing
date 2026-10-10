@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_blank" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed-dim": "#ffb95f", "surface": "#131317", "surface-bright": "#39393d", "on-tertiary-fixed-variant": "#5516be", "tertiary": "#d5c3ff", "secondary-fixed-dim": "#4cd7f6", "surface-container-highest": "#353439", "on-surface": "#e4e1e7", "on-tertiary-fixed": "#23005c", "inverse-primary": "#855300", "primary-fixed": "#ffddb8", "on-error": "#690005", "outline-variant": "#534434", "surface-container-lowest": "#0e0e12", "background": "#131317", "primary": "#ffc174", "on-tertiary-container": "#520fbb", "on-background": "#e4e1e7", "secondary-container": "#03b5d3", "on-secondary-container": "#00424e", "error": "#ffb4ab", "on-error-container": "#ffdad6", "tertiary-fixed": "#e9ddff", "surface-variant": "#353439", "on-primary-fixed-variant": "#653e00", "secondary": "#4cd7f6", "outline": "#a08e7a", "error-container": "#93000a", "on-primary-fixed": "#2a1700", "on-primary": "#472a00", "on-secondary-fixed": "#001f26", "on-surface-variant": "#d8c3ad", "surface-container-low": "#1b1b1f", "surface-tint": "#ffb95f", "surface-dim": "#131317", "on-tertiary": "#3c0091", "primary-container": "#f59e0b", "inverse-on-surface": "#303034", "inverse-surface": "#e4e1e7", "on-secondary": "#003640", "tertiary-container": "#bda2ff", "on-primary-container": "#613b00", "surface-container": "#1f1f23", "secondary-fixed": "#acedff", "on-secondary-fixed-variant": "#004e5c", "surface-container-high": "#2a292e", "tertiary-fixed-dim": "#d0bcff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-md": "1rem", "space-lg": "1.5rem", "gutter": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "margin": "1.25rem", "margin-mobile": "1rem", "gutter-mobile": "0.75rem", "space-xl": "2rem" }, "fontFamily": { "headline-lg": ["Inter"], "telemetry-lg": ["JetBrains Mono"], "headline-md": ["Inter"], "body-sm": ["Inter"], "telemetry-md": ["JetBrains Mono"], "display-hero": ["JetBrains Mono"], "body-lg": ["Inter"], "label-micro": ["JetBrains Mono"], "headline-sm": ["Inter"], "display-hero-mobile": ["JetBrains Mono"], "body-md": ["Inter"], "label-caps": ["JetBrains Mono"] }, "fontSize": { "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "telemetry-lg": ["24px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }], "telemetry-md": ["16px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "500" }], "display-hero": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400" }], "label-micro": ["9px", { "lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" }], "display-hero-mobile": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "label-caps": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }] } } } }</script><style>@layer base{html,body{width:100vw;min-height:100vh;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-container"><main class="flex-1 flex flex-col relative w-full bg-surface pt-safe pb-safe"><div class="flex flex-col w-full text-on-surface">
+<!-- Progress Header & Top Bar -->
+<header class="px-margin-mobile pt-4 pb-2 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<button aria-label="Go back" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<!-- 4-Step Progress Indicator -->
+<div class="flex items-center gap-2">
+<div aria-label="Step 1 of 4" aria-valuemax="4" aria-valuemin="1" aria-valuenow="1" class="flex items-center gap-1.5" role="progressbar">
+<!-- Step 1 (Active Glow) -->
+<span class="w-6 h-2 rounded-full bg-primary-container shadow-[0_0_12px_rgba(245,158,11,0.6)] transition-all duration-300"></span>
+<!-- Step 2 -->
+<span class="w-2 h-2 rounded-full bg-surface-container-highest transition-all"></span>
+<!-- Step 3 -->
+<span class="w-2 h-2 rounded-full bg-surface-container-highest transition-all"></span>
+<!-- Step 4 -->
+<span class="w-2 h-2 rounded-full bg-surface-container-highest transition-all"></span>
+</div>
+<span class="font-label-micro text-label-micro text-on-surface-variant ml-1">01/04</span>
+</div>
+<button class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider py-1 px-2.5 rounded-full bg-surface-container-low active:opacity-75" type="button">
+        Skip
+      </button>
+</div>
+<!-- Telemetry Header Block -->
+<div class="space-y-1.5 mt-2">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-container/10">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-micro text-label-micro text-primary uppercase">Bio-Vector Initialization</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+        What's your primary body protocol?
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Select your baseline metabolic vector. This calibrates your daily macro burn targets, recovery intervals, and strain allocations.
+      </p>
+</div>
+</header>
+<!-- Interactive Goal Cards Form -->
+<main class="flex-1 px-margin-mobile py-3 space-y-3 pb-32">
+<!-- Protocol Card 1: CUT (Active by Default) -->
+<label class="protocol-card group relative block cursor-pointer select-none rounded-xl p-4 bg-surface-container transition-all duration-200 shadow-[0_0_24px_rgba(245,158,11,0.18)]" data-protocol="cut">
+<input checked="" class="sr-only protocol-input" name="body_protocol" type="radio" value="cut"/>
+<!-- Ambient Glow Underlay for Selected State -->
+<div class="card-glow absolute inset-0 rounded-xl bg-gradient-to-br from-primary-container/15 via-transparent to-transparent pointer-events-none opacity-100 transition-opacity"></div>
+<div class="relative z-10 flex flex-col gap-3">
+<!-- Top Row: Icon + Badge + Selection Indicator -->
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="card-icon-box w-11 h-11 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container shadow-inner">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Cut</span>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-primary-container/15 text-primary">
+                  Optimal Deficit Velocity
+                </span>
+</div>
+<span class="font-label-micro text-label-micro text-on-surface-variant uppercase tracking-wider">Protocol V-01</span>
+</div>
+</div>
+<!-- Custom Radio Puck -->
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+</div>
+<!-- Description -->
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Shed adipose mass while preserving lean muscle tissue. Caloric deficit calibrated against circadian baseline.
+        </p>
+<!-- Inset Telemetry Metric Well -->
+<div class="p-2.5 rounded-lg bg-surface-container-low flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-label-micro text-label-micro uppercase">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary">trending_down</span>
+              Target Trajectory
+            </span>
+<span class="text-primary font-telemetry-md text-body-sm font-semibold">-0.5% to -0.75% / wk</span>
+</div>
+<!-- Micro Sparkline / Telemetry Bar -->
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden flex">
+<div class="bg-primary-container h-full w-2/3 rounded-full"></div>
+</div>
+<div class="flex items-center justify-between pt-0.5 font-label-micro text-label-micro text-on-surface-variant">
+<span>Adaptive Thermogenesis Mode</span>
+<span class="font-telemetry-md text-label-micro text-on-surface">1.8-2.2g Protein/kg</span>
+</div>
+</div>
+</div>
+</label>
+<!-- Protocol Card 2: BULK -->
+<label class="protocol-card group relative block cursor-pointer select-none rounded-xl p-4 bg-surface-container-low transition-all duration-200" data-protocol="bulk">
+<input class="sr-only protocol-input" name="body_protocol" type="radio" value="bulk"/>
+<div class="card-glow absolute inset-0 rounded-xl bg-gradient-to-br from-secondary/15 via-transparent to-transparent pointer-events-none opacity-0 transition-opacity"></div>
+<div class="relative z-10 flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="card-icon-box w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[26px]">fitness_center</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Bulk</span>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-surface-container-highest text-secondary">
+                  Hypertrophy Surplus
+                </span>
+</div>
+<span class="font-label-micro text-label-micro text-on-surface-variant uppercase tracking-wider">Protocol V-02</span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-transparent transition-colors">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Maximize contractile tissue and strength adaptation with a controlled, clean surplus.
+        </p>
+<div class="p-2.5 rounded-lg bg-surface-container flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-label-micro text-label-micro uppercase">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-secondary">trending_up</span>
+              Target Trajectory
+            </span>
+<span class="text-secondary font-telemetry-md text-body-sm font-semibold">+0.25% to +0.4% / wk</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden flex">
+<div class="bg-secondary h-full w-1/2 rounded-full"></div>
+</div>
+<div class="flex items-center justify-between pt-0.5 font-label-micro text-label-micro text-on-surface-variant">
+<span>Anabolic Hypertrophy Buffer</span>
+<span class="font-telemetry-md text-label-micro text-on-surface">+300 kcal Surfeit</span>
+</div>
+</div>
+</div>
+</label>
+<!-- Protocol Card 3: RECOMP -->
+<label class="protocol-card group relative block cursor-pointer select-none rounded-xl p-4 bg-surface-container-low transition-all duration-200" data-protocol="recomp">
+<input class="sr-only protocol-input" name="body_protocol" type="radio" value="recomp"/>
+<div class="card-glow absolute inset-0 rounded-xl bg-gradient-to-br from-tertiary/15 via-transparent to-transparent pointer-events-none opacity-0 transition-opacity"></div>
+<div class="relative z-10 flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="card-icon-box w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[26px]">sync_alt</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Recomposition</span>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-surface-container-highest text-tertiary">
+                  Equilibrium Velocity
+                </span>
+</div>
+<span class="font-label-micro text-label-micro text-on-surface-variant uppercase tracking-wider">Protocol V-03</span>
+</div>
+</div>
+<div class="radio-indicator w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-transparent transition-colors">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Simultaneous fat loss and muscle gain at maintenance intake. Ideal for consistent athletic habituation.
+        </p>
+<div class="p-2.5 rounded-lg bg-surface-container flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-label-micro text-label-micro uppercase">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-tertiary">swap_horiz</span>
+              Target Trajectory
+            </span>
+<span class="text-tertiary font-telemetry-md text-body-sm font-semibold">Iso-Caloric Baseline</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden flex">
+<div class="bg-tertiary h-full w-4/5 rounded-full"></div>
+</div>
+<div class="flex items-center justify-between pt-0.5 font-label-micro text-label-micro text-on-surface-variant">
+<span>Substrate Partitioning</span>
+<span class="font-telemetry-md text-label-micro text-on-surface">Circadian Timing</span>
+</div>
+</div>
+</div>
+</label>
+<!-- Biometric Context Pill -->
+<div class="mt-4 p-3 rounded-xl bg-surface-container-lowest flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">neurology</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label-caps text-label-caps text-on-surface">Metabolic Engine Synced</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Algorithms adapt dynamically as resting HR &amp; sleep latency shift.</p>
+</div>
+</div>
+</main>
+<!-- Sticky Bottom Controls -->
+<footer class="fixed bottom-0 inset-x-0 p-margin-mobile bg-surface/90 backdrop-blur-md z-30 flex flex-col gap-2.5 max-w-[540px] mx-auto pb-safe">
+<button class="w-full h-14 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-semibold flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(245,158,11,0.35)] active:scale-[0.98] transition-all" id="submitBtn" type="button">
+<span>Continue to Body Baseline</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<p class="text-center font-label-micro text-label-micro text-on-surface-variant">
+      You can adjust protocol vectors anytime in Body settings.
+    </p>
+</footer>
+</div>
+<script>
+  (function() {
+    const cards = document.querySelectorAll('.protocol-card');
+    
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        // Reset all
+        cards.forEach(c => {
+          c.classList.remove('bg-surface-container', 'shadow-[0_0_24px_rgba(245,158,11,0.18)]');
+          c.classList.add('bg-surface-container-low');
+          
+          const glow = c.querySelector('.card-glow');
+          if (glow) glow.classList.replace('opacity-100', 'opacity-0');
+          
+          const iconBox = c.querySelector('.card-icon-box');
+          if (iconBox) {
+            iconBox.classList.remove('text-primary-container', 'text-secondary', 'text-tertiary', 'shadow-inner', 'bg-surface-container-high');
+            iconBox.classList.add('text-on-surface-variant', 'bg-surface-container');
+          }
+
+          const radioIndicator = c.querySelector('.radio-indicator');
+          if (radioIndicator) {
+            radioIndicator.classList.remove('bg-primary-container', 'text-on-primary-container');
+            radioIndicator.classList.add('bg-surface-container-highest', 'text-transparent');
+          }
+        });
+
+        // Set active
+        card.classList.remove('bg-surface-container-low');
+        card.classList.add('bg-surface-container', 'shadow-[0_0_24px_rgba(245,158,11,0.18)]');
+        
+        const glow = card.querySelector('.card-glow');
+        if (glow) glow.classList.replace('opacity-0', 'opacity-100');
+
+        const radio = card.querySelector('.protocol-input');
+        if (radio) radio.checked = true;
+
+        const iconBox = card.querySelector('.card-icon-box');
+        if (iconBox) {
+          iconBox.classList.remove('text-on-surface-variant', 'bg-surface-container');
+          iconBox.classList.add('bg-surface-container-high', 'shadow-inner');
+          const type = card.getAttribute('data-protocol');
+          if (type === 'cut') iconBox.classList.add('text-primary-container');
+          if (type === 'bulk') iconBox.classList.add('text-secondary');
+          if (type === 'recomp') iconBox.classList.add('text-tertiary');
+        }
+
+        const radioIndicator = card.querySelector('.radio-indicator');
+        if (radioIndicator) {
+          radioIndicator.classList.remove('bg-surface-container-highest', 'text-transparent');
+          radioIndicator.classList.add('bg-primary-container', 'text-on-primary-container');
+        }
+      });
+    });
+
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', () => {
+        const activeRadio = document.querySelector('.protocol-input:checked');
+        const selectedVal = activeRadio ? activeRadio.value : 'cut';
+        submitBtn.classList.add('opacity-80', 'scale-[0.98]');
+        setTimeout(() => {
+          submitBtn.classList.remove('opacity-80', 'scale-[0.98]');
+        }, 150);
+      });
+    }
+  })();
+</script></main></body></html>

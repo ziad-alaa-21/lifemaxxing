@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lifemaxxing Android App Studio - Stitch Web Preview & Review</title>
+  <meta name="description" content="Interactive preview and review dashboard for Lifemaxxing Android App screens designed with Google Stitch.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+  <div class="app-layout" id="appLayout">
+    <!-- Top Header -->
+    <header class="app-header" id="appHeader">
+      <div class="brand-area">
+        <div class="logo-badge">
+          <span class="material-symbols-outlined logo-icon">auto_awesome</span>
+        </div>
+        <div class="brand-text">
+          <h1 class="app-title">Lifemaxxing Mobile Studio</h1>
+          <span class="app-subtitle">Stitch UI Preview & Android Jetpack Compose Transition Hub</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Active Design Theme Badge (Obsidian Kinetic) -->
+        <div class="project-selector-wrapper" style="border-color: var(--volt-lime); box-shadow: 0 0 16px var(--volt-lime-glow); padding: 6px 14px; background: rgba(198, 255, 61, 0.08);">
+          <span class="material-symbols-outlined" style="color: var(--volt-lime); font-size: 18px;">bolt</span>
+          <span style="font-weight: 700; color: var(--volt-lime); font-size: 0.88rem; font-family: var(--font-display);">Obsidian Kinetic</span>
+          <span style="font-size: 0.72rem; color: #a2d801; font-family: var(--font-mono); font-weight: 600;">(Volt Lime & Charcoal)</span>
+        </div>
+
+        <!-- Quick Stats Badge -->
+        <div class="screens-count-badge" id="screensCountBadge">
+          <span class="material-symbols-outlined badge-icon">smartphone</span>
+          <span id="screenCountText">31 Screens</span>
+        </div>
+
+        <!-- Top Actions -->
+        <div class="top-actions">
+          <button id="openNewTabBtn" class="btn-secondary" title="Open active screen full screen in new tab">
+            <span class="material-symbols-outlined">open_in_new</span>
+            <span>Open Screen</span>
+          </button>
+          <button id="toggleNotesBtn" class="btn-primary" title="Open Android Planning & Edit Notes">
+            <span class="material-symbols-outlined">edit_note</span>
+            <span>Edit Planner</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Studio Workspace -->
+    <div class="studio-body">
+      <!-- Left Sidebar: Screen Browser -->
+      <aside class="screens-sidebar" id="screensSidebar">
+        <div class="sidebar-search-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" id="screenSearchInput" placeholder="Filter screens (e.g. Sleep, Lift, Today, CS)..." autocomplete="off">
+          <button id="clearSearchBtn" class="btn-icon hidden" title="Clear search">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="category-pills" id="categoryPills">
+          <button class="pill active" data-cat="all">All</button>
+          <button class="pill" data-cat="onboarding">Onboarding</button>
+          <button class="pill" data-cat="today">Today</button>
+          <button class="pill" data-cat="body">Body & Gym</button>
+          <button class="pill" data-cat="mind">Mind</button>
+          <button class="pill" data-cat="school">School</button>
+          <button class="pill" data-cat="settings">Shell</button>
+        </div>
+
+        <!-- Screen Cards Navigation List -->
+        <div class="screens-list" id="screensList" role="listbox">
+          <!-- Populated by JavaScript -->
+        </div>
+      </aside>
+
+      <!-- Center Stage: Mobile Phone Emulator -->
+      <main class="emulator-stage" id="emulatorStage">
+        <!-- Canvas Toolbar -->
+        <div class="canvas-toolbar" id="canvasToolbar">
+          <div class="device-switcher">
+            <button class="toolbar-btn active" id="devicePixelBtn" data-device="pixel" title="Google Pixel 9 Pro">
+              <span class="material-symbols-outlined">phone_android</span>
+              <span>Pixel 9 Pro</span>
+            </button>
+            <button class="toolbar-btn" id="deviceSamsungBtn" data-device="galaxy" title="Samsung Galaxy S24">
+              <span class="material-symbols-outlined">smartphone</span>
+              <span>Galaxy S24</span>
+            </button>
+            <button class="toolbar-btn" id="deviceIphoneBtn" data-device="iphone" title="iPhone 16 Pro">
+              <span class="material-symbols-outlined">phone_iphone</span>
+              <span>iPhone 16</span>
+            </button>
+          </div>
+
+          <div class="viewport-controls">
+            <button class="toolbar-icon-btn" id="zoomOutBtn" title="Zoom Out">
+              <span class="material-symbols-outlined">zoom_out</span>
+            </button>
+            <span class="zoom-level-text" id="zoomLevelText">100%</span>
+            <button class="toolbar-icon-btn" id="zoomInBtn" title="Zoom In">
+              <span class="material-symbols-outlined">zoom_in</span>
+            </button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-icon-btn" id="toggleFrameBtn" title="Toggle Phone Bezel / Frame">
+              <span class="material-symbols-outlined">crop_portrait</span>
+            </button>
+            <button class="toolbar-icon-btn" id="refreshIframeBtn" title="Reload Active Screen">
+              <span class="material-symbols-outlined">refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Chassis Container -->
+        <div class="emulator-wrapper" id="emulatorWrapper">
+          <div class="phone-frame device-pixel" id="phoneFrame">
+            <!-- Hardware Buttons & Accents -->
+            <div class="phone-volume-up"></div>
+            <div class="phone-volume-down"></div>
+            <div class="phone-power"></div>
+
+            <!-- Screen Glass Screen Area -->
+            <div class="phone-screen" id="phoneScreen">
+              <!-- Android / Mobile Status Bar -->
+              <div class="status-bar" id="statusBar">
+                <div class="status-left">
+                  <span class="status-time" id="statusClock">9:41</span>
+                </div>
+                <div class="camera-cutout" id="cameraCutout"></div>
+                <div class="status-right">
+                  <span class="material-symbols-outlined status-icon">signal_cellular_4_bar</span>
+                  <span class="material-symbols-outlined status-icon">wifi</span>
+                  <span class="material-symbols-outlined status-icon">battery_full</span>
+                </div>
+              </div>
+
+              <!-- Live Iframe View -->
+              <iframe id="screenIframe" class="screen-iframe" title="Active Stitch Screen Preview" src="about:blank"></iframe>
+
+              <!-- Android Navigation Bar Indicator -->
+              <div class="android-nav-indicator" id="androidNavIndicator">
+                <div class="nav-bar-pill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Screen Meta Bar -->
+        <div class="screen-meta-dock" id="screenMetaDock">
+          <div class="meta-info">
+            <span class="meta-tag" id="screenCategoryTag">CATEGORY</span>
+            <h2 class="meta-title" id="screenActiveTitle">Screen Title</h2>
+          </div>
+          <div class="meta-controls">
+            <button class="btn-chip" id="copyStitchIdBtn" title="Copy Stitch Screen ID">
+              <span class="material-symbols-outlined">content_copy</span>
+              <span>Copy ID</span>
+            </button>
+            <button class="btn-chip" id="viewScreenshotBtn" title="View Stitch Raw Screenshot">
+              <span class="material-symbols-outlined">image</span>
+              <span>Screenshot</span>
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Panel: Android Spec & Edit Notes Drawer -->
+      <aside class="spec-panel" id="specPanel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="material-symbols-outlined panel-header-icon">terminal</span>
+            <h3 class="panel-title">Android & Edit Blueprint</h3>
+          </div>
+          <button id="closePanelBtn" class="btn-icon" title="Minimize Panel">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+
+        <!-- Tab Switcher -->
+        <div class="panel-tabs" id="panelTabs">
+          <button class="panel-tab active" data-tab="edit-notes" id="tabNotesBtn">
+            <span class="material-symbols-outlined">checklist</span>
+            <span>Edits Checklist</span>
+          </button>
+          <button class="panel-tab" data-tab="android-spec" id="tabSpecBtn">
+            <span class="material-symbols-outlined">developer_mode</span>
+            <span>Compose Spec</span>
+          </button>
+        </div>
+
+        <!-- Tab 1: Edit Notes & Todo Checklist -->
+        <div class="tab-content active" id="tabContentNotes">
+          <div class="notes-intro-card">
+            <p class="notes-tip">
+              📝 Record what UI elements, copy, or logic you want to modify for this screen before building in Android Jetpack Compose.
+            </p>
+          </div>
+
+          <!-- Add Note Form -->
+          <div class="add-note-box">
+            <input type="text" id="newNoteInput" placeholder="Add an edit task (e.g. replace mock telemetry with Health Connect API)...">
+            <button id="addNoteBtn" class="btn-primary-sm">
+              <span class="material-symbols-outlined">add</span>
+              <span>Add</span>
+            </button>
+          </div>
+
+          <!-- Notes Checklist for Active Screen -->
+          <div class="notes-checklist-container">
+            <div class="checklist-header">
+              <span class="checklist-label">Edit Tasks for this screen:</span>
+              <span class="checklist-count" id="notesProgressCount">0 / 0</span>
+            </div>
+            <div class="checklist-items" id="checklistItems">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- General Screen Feedback / Notes Area -->
+          <div class="screen-notes-textarea-group">
+            <label for="screenFreeNotes" class="textarea-label">Screen Architectural Notes:</label>
+            <textarea id="screenFreeNotes" placeholder="Write any specific Android requirements, intent routing, or state machine notes here..."></textarea>
+          </div>
+
+          <!-- Export / Save Bar -->
+          <div class="notes-footer-actions">
+            <button id="saveNotesBtn" class="btn-action">
+              <span class="material-symbols-outlined">save</span>
+              <span>Save Changes</span>
+            </button>
+            <button id="exportNotesBtn" class="btn-secondary-sm">
+              <span class="material-symbols-outlined">download</span>
+              <span>Export All Notes</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 2: Android Jetpack Compose Architecture Guide -->
+        <div class="tab-content" id="tabContentSpec">
+          <div class="compose-spec-container">
+            <div class="spec-section">
+              <h4 class="spec-section-title">
+                <span class="material-symbols-outlined">layers</span>
+                Recommended Jetpack Compose Tree
+              </h4>
+              <div class="compose-code-block" id="composeTreeBlock">
+                <pre><code id="composeTreeCode">// Compose tree will load based on active screen</code></pre>
+              </div>
+            </div>
+
+            <div class="spec-section">
+              <h4 class="spec-section-title">
+                <span class="material-symbols-outlined">palette</span>
+                Color Tokens & Styling
+              </h4>
+              <div class="tokens-grid" id="tokensGrid">
+                <!-- Color swatches -->
+              </div>
+            </div>
+
+            <div class="spec-section">
+              <h4 class="spec-section-title">
+                <span class="material-symbols-outlined">hub</span>
+                State & ViewModel Mapping
+              </h4>
+              <div class="spec-text-box" id="vmMappingBox">
+                <!-- ViewModel notes -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Screenshot Modal Popup -->
+  <div class="modal-overlay hidden" id="screenshotModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Screen Screenshot</h3>
+        <button id="closeModalBtn" class="btn-icon">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img id="modalScreenshotImg" src="" alt="Stitch Screen Screenshot" class="modal-img">
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

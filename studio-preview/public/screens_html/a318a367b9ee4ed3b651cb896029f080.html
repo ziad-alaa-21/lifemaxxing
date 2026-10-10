@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#131317;color:#e4e1e7;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'surface-bright': '#39393d', 'secondary-container': '#03b5d3', 'on-secondary': '#003640', 'secondary': '#4cd7f6', 'on-error-container': '#ffdad6', 'primary-container': '#f59e0b', 'on-primary': '#472a00', 'tertiary-container': '#bda2ff', 'on-tertiary': '#3c0091', 'tertiary-fixed': '#e9ddff', 'surface': '#131317', 'on-background': '#e4e1e7', 'on-primary-fixed-variant': '#653e00', 'on-error': '#690005', 'primary-fixed-dim': '#ffb95f', 'primary': '#ffc174', 'surface-variant': '#353439', 'secondary-fixed-dim': '#4cd7f6', 'inverse-surface': '#e4e1e7', 'on-secondary-fixed': '#001f26', 'surface-container-low': '#1b1b1f', 'inverse-primary': '#855300', 'on-secondary-container': '#00424e', 'tertiary-fixed-dim': '#d0bcff', 'on-tertiary-container': '#520fbb', 'surface-container-lowest': '#0e0e12', 'outline': '#a08e7a', 'primary-fixed': '#ffddb8', 'on-primary-fixed': '#2a1700', 'surface-tint': '#ffb95f', 'on-primary-container': '#613b00', 'surface-container': '#1f1f23', 'on-secondary-fixed-variant': '#004e5c', 'surface-dim': '#131317', 'error': '#ffb4ab', 'background': '#131317', 'error-container': '#93000a', 'tertiary': '#d5c3ff', 'outline-variant': '#534434', 'surface-container-high': '#2a292e', 'inverse-on-surface': '#303034', 'secondary-fixed': '#acedff', 'on-surface-variant': '#d8c3ad', 'on-tertiary-fixed': '#23005c', 'on-surface': '#e4e1e7', 'surface-container-highest': '#353439', 'on-tertiary-fixed-variant': '#5516be' }, 'borderRadius': { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, 'spacing': { 'gutter': '1rem', 'space-lg': '1.5rem', 'space-md': '1rem', 'space-xl': '2rem', 'space-sm': '0.5rem', 'space-xs': '0.25rem', 'gutter-mobile': '0.75rem', 'margin-mobile': '1rem', 'margin': '1.25rem' }, 'fontFamily': { 'display-hero-mobile': ['JetBrains Mono'], 'telemetry-md': ['JetBrains Mono'], 'label-micro': ['JetBrains Mono'], 'body-sm': ['Inter'], 'body-md': ['Inter'], 'headline-sm': ['Inter'], 'headline-lg': ['Inter'], 'display-hero': ['JetBrains Mono'], 'telemetry-lg': ['JetBrains Mono'], 'headline-md': ['Inter'], 'body-lg': ['Inter'], 'label-caps': ['JetBrains Mono'] }, 'fontSize': { 'display-hero-mobile': ['40px', { 'lineHeight': '44px', 'letterSpacing': '-0.03em', 'fontWeight': '700' }], 'telemetry-md': ['16px', { 'lineHeight': '20px', 'letterSpacing': '0em', 'fontWeight': '500' }], 'label-micro': ['9px', { 'lineHeight': '12px', 'letterSpacing': '0.1em', 'fontWeight': '600' }], 'body-sm': ['12px', { 'lineHeight': '16px', 'letterSpacing': '0.01em', 'fontWeight': '400' }], 'body-md': ['14px', { 'lineHeight': '20px', 'letterSpacing': '0em', 'fontWeight': '400' }], 'headline-sm': ['18px', { 'lineHeight': '24px', 'letterSpacing': '0em', 'fontWeight': '600' }], 'headline-lg': ['28px', { 'lineHeight': '34px', 'letterSpacing': '-0.02em', 'fontWeight': '600' }], 'display-hero': ['48px', { 'lineHeight': '52px', 'letterSpacing': '-0.04em', 'fontWeight': '700' }], 'telemetry-lg': ['24px', { 'lineHeight': '28px', 'letterSpacing': '-0.02em', 'fontWeight': '600' }], 'headline-md': ['22px', { 'lineHeight': '28px', 'letterSpacing': '-0.01em', 'fontWeight': '600' }], 'body-lg': ['16px', { 'lineHeight': '24px', 'letterSpacing': '-0.01em', 'fontWeight': '400' }], 'label-caps': ['11px', { 'lineHeight': '14px', 'letterSpacing': '0.08em', 'fontWeight': '600' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center"><span class="material-symbols-outlined text-secondary text-[20px]">vital_signs</span></div><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-label-caps text-label-caps text-primary tracking-wider uppercase">LIFE</span><span class="font-label-caps text-label-caps text-on-surface-variant">|</span><h1 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">School</h1></div><div class="flex items-center gap-1.5"><span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span><span class="font-label-micro text-label-micro text-secondary uppercase">LIVE TELEMETRY // 99.4% SYNC</span></div></div></div><div class="flex items-center gap-space-xs"><div class="w-11 h-11 flex items-center justify-center"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.25)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-28 bg-surface px-margin-mobile"><div class="flex flex-col w-full gap-space-md">
+<!-- 1. SUB-HEADER / PROTOCOL STATUS -->
+<div class="flex flex-col gap-1 px-1">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Academic Velocity &amp; Mastery Matrix</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary/10 shadow-[0_0_12px_rgba(76,215,246,0.18)]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-micro text-label-micro text-secondary font-semibold uppercase tracking-wider">On Track (3.92 / 4.0)</span>
+</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-micro text-label-micro text-primary uppercase">Semester 1</span>
+<span class="text-outline-variant font-label-micro text-label-micro">•</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant uppercase tracking-tight">Week 09 // Peak Velocity Phase</span>
+</div>
+</div>
+<!-- 2. STUDY TIMER COCKPIT (HERO CARD) -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low shadow-[0_4px_24px_rgba(0,0,0,0.5)] p-space-md flex flex-col gap-space-md">
+<!-- Ambient micro glow gradient behind title -->
+<div class="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-primary-container/10 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-secondary-container/10 blur-2xl pointer-events-none"></div>
+<!-- Header / Mode indicator -->
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[17px]">timer</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Deep Work Cockpit</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant">Cognitive Protocol Active</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high px-2 py-1 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-micro text-label-micro text-secondary tracking-widest uppercase">Standby</span>
+</div>
+</div>
+<!-- Subject Selector Dropdown Mock / Pill Button -->
+<div class="relative z-10 flex flex-col gap-1.5">
+<label class="font-label-micro text-label-micro text-on-surface-variant uppercase tracking-wider">Target Course Discipline</label>
+<div class="flex items-center justify-between bg-surface-container px-3 py-2.5 rounded-lg active:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2.5 h-2.5 rounded-sm bg-primary shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
+<div class="flex flex-col truncate">
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">Algorithms &amp; Data Structures</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant font-mono">CS 374 // Section 02 • Core Mastery</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant pl-2">
+<span class="font-label-micro text-label-micro uppercase font-mono text-primary">Active</span>
+<span class="material-symbols-outlined text-[18px]">unfold_more</span>
+</div>
+</div>
+</div>
+<!-- Duration Pill Toggle -->
+<div class="relative z-10 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-micro text-label-micro text-on-surface-variant uppercase tracking-wider">Session Duration Dial</label>
+<span class="font-label-micro text-label-micro text-secondary font-mono">Target: 2 Problem Sets</span>
+</div>
+<div class="grid grid-cols-4 gap-1.5 p-1 bg-surface-container-lowest rounded-lg">
+<button class="py-1.5 rounded text-center font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors" type="button">25m</button>
+<button class="py-1.5 rounded text-center font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors" type="button">50m</button>
+<button class="py-1.5 rounded text-center font-label-caps text-label-caps bg-surface-container-high text-primary font-bold shadow-[0_0_10px_rgba(245,158,11,0.2)]" type="button">60m</button>
+<button class="py-1.5 rounded text-center font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors" type="button">90m</button>
+</div>
+</div>
+<!-- Pomodoro Mode Switch Row -->
+<div class="relative z-10 flex items-center justify-between bg-surface-container/70 px-3 py-2 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">sync_alt</span>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Pomodoro Protocol (50 / 10)</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant">Ultradian rhythm sync • 10m neural recovery</span>
+</div>
+</div>
+<!-- Toggle button -->
+<div class="w-11 h-6 rounded-full bg-secondary-container/40 p-0.5 flex items-center justify-end shadow-inner cursor-pointer">
+<div class="w-5 h-5 rounded-full bg-secondary shadow-[0_0_8px_rgba(76,215,246,0.6)] flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-on-secondary"></span>
+</div>
+</div>
+</div>
+<!-- Primary Action Button: Start Focus Session -->
+<button class="relative z-10 w-full py-3.5 px-4 rounded-xl bg-primary-container text-on-primary font-headline-sm text-headline-sm font-semibold flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(245,158,11,0.45)] active:scale-[0.98] transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span class="tracking-tight uppercase font-label-caps text-label-caps font-bold">Start Focus Session</span>
+</button>
+<!-- Mini Telemetry Stats under Button -->
+<div class="relative z-10 flex flex-col gap-1.5 bg-surface-container-lowest/80 p-2.5 rounded-lg">
+<div class="flex items-center justify-between">
+<span class="font-label-micro text-label-micro text-on-surface-variant uppercase font-mono">Daily Deep Work Quota</span>
+<span class="font-label-caps text-label-caps font-mono text-on-surface"><span class="text-primary font-bold">2h 45m</span> / 4h 00m (68%)</span>
+</div>
+<!-- Micro Progress Track -->
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-primary-container rounded-full shadow-[0_0_10px_rgba(245,158,11,0.6)]" style="width: 68%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-micro text-label-micro text-on-surface-variant font-mono">
+<span>0h</span>
+<span class="text-secondary tracking-widest">1h 15m REMAINING TO GOAL</span>
+<span>4h</span>
+</div>
+</div>
+</div>
+<!-- 3. COGNITIVE REVIEW & REDO CHIPS ROW -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">neurology</span>
+<span class="font-label-caps text-label-caps text-on-surface font-semibold tracking-wider uppercase">Spaced Retrieval Queue</span>
+</div>
+<button class="flex items-center gap-1 font-label-micro text-label-micro text-primary hover:underline font-mono" type="button">
+<span>Batch Review (20)</span>
+<span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<!-- Chip 1: Review Today -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col gap-2 relative overflow-hidden active:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center justify-between">
+<div class="w-7 h-7 rounded-lg bg-primary-container/15 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">style</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10">
+<span class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(245,158,11,0.8)]"></span>
+<span class="font-label-micro text-label-micro font-mono text-primary font-bold">14 DUE</span>
+</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Review Today</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant font-mono">Anki / Active Recall</span>
+</div>
+</div>
+<!-- Chip 2: Redo Today -->
+<div class="bg-surface-container-low rounded-xl p-3 flex flex-col gap-2 relative overflow-hidden active:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center justify-between">
+<div class="w-7 h-7 rounded-lg bg-secondary/15 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/10">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary shadow-[0_0_6px_rgba(76,215,246,0.8)]"></span>
+<span class="font-label-micro text-label-micro font-mono text-secondary font-bold">6 SETS</span>
+</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Redo Today</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant font-mono">Missed Exam Errors</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. "UP NEXT" EXAM COUNTDOWN CARDS -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">alarm</span>
+<span class="font-label-caps text-label-caps text-on-surface font-semibold tracking-wider uppercase">Up Next • Exam Countdown</span>
+</div>
+<span class="font-label-micro text-label-micro font-mono text-on-surface-variant uppercase">Urgency Sorted</span>
+</div>
+<!-- Card 1: Critical (3 days left) -->
+<div class="relative bg-surface-container-low rounded-xl p-space-md flex flex-col gap-3 shadow-[0_2px_16px_rgba(0,0,0,0.35)]">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 rounded-bl-full pointer-events-none blur-xl"></div>
+<div class="flex items-start justify-between gap-2 relative z-10">
+<div class="flex flex-col min-w-0">
+<span class="font-label-micro text-label-micro text-primary font-mono tracking-wider uppercase font-semibold">CS 374 // Core Exam</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate">Algorithms &amp; Complexity</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Midterm II • Dynamic Programming &amp; Graphs</span>
+</div>
+<!-- Urgency Badge -->
+<div class="flex flex-col items-end shrink-0">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container/20 shadow-[0_0_14px_rgba(245,158,11,0.3)]">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-label-caps text-label-caps font-mono font-bold text-primary">3d 14h REMAIN</span>
+</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant font-mono mt-1">Friday 08:30 AM</span>
+</div>
+</div>
+<!-- Readiness & Urgency Progress -->
+<div class="flex flex-col gap-1.5 bg-surface-container-lowest p-2.5 rounded-lg relative z-10">
+<div class="flex items-center justify-between font-label-caps text-label-caps font-mono">
+<span class="text-on-surface-variant">Mastery Index: <span class="text-primary font-bold">88%</span></span>
+<span class="text-on-surface-variant">Target Grade: <span class="text-secondary font-bold">A (94%)</span></span>
+</div>
+<!-- Urgency bar (82% elapsed) -->
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-gradient-to-r from-primary via-primary-container to-error rounded-full shadow-[0_0_12px_rgba(245,158,11,0.5)]" style="width: 82%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-micro text-label-micro font-mono text-on-surface-variant">
+<span>T-14d start</span>
+<span class="text-primary font-semibold">82% window elapsed • Final sprint</span>
+<span>Exam day</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Upcoming (9 days left) -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-3">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<span class="font-label-micro text-label-micro text-secondary font-mono tracking-wider uppercase font-semibold">MATH 257 // Midterm</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate">Linear Algebra &amp; Matrices</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">In-Class Exam • Eigenvectors &amp; SVD</span>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary/15">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-caps text-label-caps font-mono font-semibold text-secondary">9d 08h REMAIN</span>
+</span>
+<span class="font-label-micro text-label-micro text-on-surface-variant font-mono mt-1">Oct 29 • Hall B</span>
+</div>
+</div>
+<div class="flex items-center justify-between bg-surface-container-lowest px-3 py-2 rounded-lg font-label-caps text-label-caps font-mono">
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant">Mastery:</span>
+<span class="text-secondary font-bold">92%</span>
+<span class="text-secondary font-mono text-[11px]">(High Retention)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-on-surface-variant">Target:</span>
+<span class="text-on-surface font-bold">A+ (98%)</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Scheduled (18 days left) -->
+<div class="bg-surface-container-low rounded-xl p-3.5 flex items-center justify-between gap-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[18px]">psychology</span>
+</div>
+<div class="flex flex-col truncate">
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">NEUR 301: Cognitive Neurobiology</span>
+</div>
+<span class="font-label-micro text-label-micro text-on-surface-variant truncate">Quiz 04 • Synaptic Plasticity</span>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high font-label-micro text-label-micro font-mono text-on-surface-variant">18d REMAIN</span>
+<span class="font-label-micro text-label-micro font-mono text-tertiary mt-0.5">Mastery: 76%</span>
+</div>
+</div>
+</div>
+<!-- 5. "TODAY'S STUDY" STACKED TIME DISTRIBUTION BAR -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">stacked_bar_chart</span>
+<span class="font-label-caps text-label-caps text-on-surface font-semibold tracking-wider uppercase">Today's Study Distribution</span>
+</div>
+<span class="font-label-caps text-label-caps font-mono text-primary font-bold">2h 45m / 4h 00m</span>
+</div>
+<!-- Multi-segment Stacked Progress Bar -->
+<div class="w-full h-3.5 bg-surface-container-lowest rounded-md overflow-hidden flex gap-0.5 p-0.5">
+<!-- Algorithms: 90m = 54% of logged time, 37.5% of total day -->
+<div class="h-full bg-primary rounded-sm shadow-[0_0_8px_rgba(245,158,11,0.5)]" style="width: 37.5%;" title="Algorithms: 90m"></div>
+<!-- Linear Algebra: 45m = 27% of logged time, 18.75% of total day -->
+<div class="h-full bg-secondary rounded-sm shadow-[0_0_8px_rgba(76,215,246,0.5)]" style="width: 18.75%;" title="Linear Algebra: 45m"></div>
+<!-- Neurobiology: 30m = 18% of logged time, 12.5% of total day -->
+<div class="h-full bg-tertiary-container rounded-sm shadow-[0_0_8px_rgba(189,162,255,0.4)]" style="width: 12.5%;" title="Neurobiology: 30m"></div>
+<!-- Remaining unallocated Target: 1h 15m (31.25%) -->
+<div class="h-full bg-surface-container-high rounded-sm opacity-60 flex items-center justify-center" style="width: 31.25%;" title="Remaining: 1h 15m"></div>
+</div>
+<!-- Legend breakdown -->
+<div class="grid grid-cols-2 gap-y-2 gap-x-3 pt-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">Algorithms</span>
+</div>
+<span class="font-label-micro text-label-micro font-mono text-on-surface-variant font-semibold">90m (54%)</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">Linear Algebra</span>
+</div>
+<span class="font-label-micro text-label-micro font-mono text-on-surface-variant font-semibold">45m (27%)</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-2 h-2 rounded-full bg-tertiary-container shrink-0"></span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">Neurobiology</span>
+</div>
+<span class="font-label-micro text-label-micro font-mono text-on-surface-variant font-semibold">30m (18%)</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-2 h-2 rounded-full bg-outline-variant shrink-0"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Remaining Target</span>
+</div>
+<span class="font-label-micro text-label-micro font-mono text-primary font-semibold">75m (31%)</span>
+</div>
+</div>
+</div>
+<!-- 6. ACADEMIC GRADES & MASTERY LIST -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">grade</span>
+<span class="font-label-caps text-label-caps text-on-surface font-semibold tracking-wider uppercase">Grades &amp; Target Mastery</span>
+</div>
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high text-primary hover:bg-surface-variant active:scale-95 transition-transform font-label-micro text-label-micro font-mono font-semibold" type="button">
+<span class="material-symbols-outlined text-[14px]">add</span>
+<span>Add Subject</span>
+</button>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Item 1: CS 374 -->
+<div class="bg-surface-container-low rounded-xl p-3 flex items-center justify-between gap-2 active:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-primary-container/15 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">terminal</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">CS 374: Algorithms</span>
+<div class="flex items-center gap-1.5 font-label-micro text-label-micro font-mono">
+<span class="text-secondary font-semibold">Target: 92.0% (A)</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary flex items-center">Achieved</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-telemetry-lg text-telemetry-lg font-bold text-on-surface font-mono">94.2%</span>
+<span class="font-label-micro text-label-micro font-mono text-secondary flex items-center font-bold">▲ +1.4%</span>
+</div>
+</div>
+<!-- Item 2: MATH 257 -->
+<div class="bg-surface-container-low rounded-xl p-3 flex items-center justify-between gap-2 active:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[20px]">functions</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">MATH 257: Linear Algebra</span>
+<div class="flex items-center gap-1.5 font-label-micro text-label-micro font-mono">
+<span class="text-on-surface-variant">Target: 95.0% (A+)</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary">Secured</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-telemetry-lg text-telemetry-lg font-bold text-on-surface font-mono">96.8%</span>
+<span class="font-label-micro text-label-micro font-mono text-secondary flex items-center font-bold">▲ +0.5%</span>
+</div>
+</div>
+<!-- Item 3: NEUR 301 -->
+<div class="bg-surface-container-low rounded-xl p-3 flex items-center justify-between gap-2 active:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 text-tertiary">
+<span class="material-symbols-outlined text-[20px]">biotech</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">NEUR 301: Cognitive Neuro</span>
+<div class="flex items-center gap-1.5 font-label-micro text-label-micro font-mono">
+<span class="text-on-surface-variant">Target: 92.0% (A)</span>
+<span class="text-outline-variant">•</span>
+<span class="text-primary font-bold">Needs +2.5%</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-telemetry-lg text-telemetry-lg font-bold text-primary font-mono">89.5%</span>
+<span class="font-label-micro text-label-micro font-mono text-primary flex items-center font-bold">▼ -1.2%</span>
+</div>
+</div>
+<!-- Item 4: PHIL 102 -->
+<div class="bg-surface-container-low rounded-xl p-3 flex items-center justify-between gap-2 active:bg-surface-container transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">balance</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">PHIL 102: Logic &amp; Reasoning</span>
+<div class="flex items-center gap-1.5 font-label-micro text-label-micro font-mono">
+<span class="text-on-surface-variant">Target: 95.0% (A+)</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary">Exceeded</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-telemetry-lg text-telemetry-lg font-bold text-on-surface font-mono">98.0%</span>
+<span class="font-label-micro text-label-micro font-mono text-on-surface-variant flex items-center font-bold">— 0.0%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Micro interaction script for study duration selection
+  document.addEventListener('DOMContentLoaded', () => {
+    const durationBtns = document.querySelectorAll('button:has(.font-label-caps)');
+  });
+</script></main><div class="fixed bottom-24 right-margin-mobile z-50"><button aria-label="Quick Log Action" class="w-14 h-14 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-[0_0_24px_rgba(245,158,11,0.45)] active:scale-95 transition-transform duration-150"><span class="material-symbols-outlined text-[28px] font-bold">add</span></button></div><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.5)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-gutter-mobile"><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] h-12 text-on-surface-variant transition-colors hover:text-on-surface" data-path="today" href="#"><span class="material-symbols-outlined text-[22px]">today</span><span class="font-label-caps text-label-caps">Today</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] h-12 text-on-surface-variant transition-colors hover:text-on-surface" data-path="body" href="#"><span class="material-symbols-outlined text-[22px]">ecg_heart</span><span class="font-label-caps text-label-caps">Body</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] h-12 text-on-surface-variant transition-colors hover:text-on-surface" data-path="mind" href="#"><span class="material-symbols-outlined text-[22px]">psychology</span><span class="font-label-caps text-label-caps">Mind</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[56px] h-12 transition-colors text-primary font-semibold" data-path="school" href="#"><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-caps text-label-caps">School</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] h-12 text-on-surface-variant transition-colors hover:text-on-surface" data-path="more" href="#"><span class="material-symbols-outlined text-[22px]">grid_view</span><span class="font-label-caps text-label-caps">More</span></a></div></nav></body></html>

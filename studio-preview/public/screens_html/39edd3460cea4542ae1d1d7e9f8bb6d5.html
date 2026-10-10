@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0f1419;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed-variant": "#4f319c", "outline": "#8d937b", "on-secondary-container": "#00515d", "on-secondary": "#00363e", "surface-variant": "#30353a", "inverse-primary": "#4c6700", "on-primary-container": "#516e00", "surface-container-high": "#252a30", "on-primary": "#263500", "on-secondary-fixed": "#001f25", "on-error": "#690005", "on-secondary-fixed-variant": "#004e5a", "surface-container-highest": "#30353a", "tertiary-fixed-dim": "#cebdff", "on-surface": "#dee3e9", "on-background": "#dee3e9", "surface-container": "#1b2025", "error-container": "#93000a", "tertiary-container": "#e8ddff", "secondary-container": "#00cbe6", "secondary-fixed": "#a2eeff", "on-surface-variant": "#c3c9ae", "primary-fixed-dim": "#a2d801", "on-tertiary-container": "#6d51bc", "on-tertiary": "#381385", "surface-dim": "#0f1419", "tertiary-fixed": "#e8ddff", "error": "#ffb4ab", "on-error-container": "#ffdad6", "outline-variant": "#434934", "primary-fixed": "#bdf532", "on-primary-fixed": "#141f00", "surface-container-lowest": "#0a0f13", "tertiary": "#ffffff", "inverse-surface": "#dee3e9", "inverse-on-surface": "#2c3136", "surface-bright": "#353a3f", "on-primary-fixed-variant": "#384e00", "primary": "#ffffff", "secondary-fixed-dim": "#2fd9f4", "secondary": "#5de6ff", "primary-container": "#bdf532", "on-tertiary-fixed": "#21005e", "background": "#0f1419", "surface": "#0f1419", "surface-tint": "#a2d801", "surface-container-low": "#171c21" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter": "0.75rem", "space-lg": "1.25rem", "space-xs": "0.25rem", "space-xl": "1.5rem", "space-sm": "0.5rem", "space-md": "1rem", "margin": "1rem" }, "fontFamily": { "headline-md": ["Inter"], "body-md": ["Inter"], "stat-mono-md": ["JetBrains Mono"], "headline-lg": ["JetBrains Mono"], "stat-mono-sm": ["JetBrains Mono"], "headline-sm": ["Inter"], "display-hero-mobile": ["JetBrains Mono"], "body-lg": ["Inter"], "label-uppercase": ["Inter"], "display-hero": ["JetBrains Mono"], "label-sm": ["Inter"], "body-sm": ["Inter"] }, "fontSize": { "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }], "stat-mono-md": ["18px", { "lineHeight": "22px", "letterSpacing": "-0.02em", "fontWeight": "500" }], "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "stat-mono-sm": ["14px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "500" }], "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }], "display-hero-mobile": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }], "display-hero": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface-container-low/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.35)] pt-safe"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="Life Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XwwugNt0W_X2s2cA3FlL7rz6ljFok8MWklofXphLMZbrlLUdXPls3dYd_RQdZtLKdNbGsJIv3ZV11lyb9vJZOg9VXT-uSUywP_Dn-5VKN32XRSNPUw4e5hZuYT736y74eOoX0y9cNna8VLxIToWdXyRTidxKblyKdcvBdPYqprKw_R9Km2Kd-e8ac2VUJlWpmNJjBlyx_ds24maJJZ9En4WgH19SUMH063iy5QenR3cbKZQf0DI6pwLipg"/><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-lg text-body-md text-on-surface tracking-widest">LIFE</span><span class="text-on-surface-variant text-label-uppercase font-label-uppercase opacity-40">/</span><span class="font-label-uppercase text-label-uppercase text-primary-container tracking-wider uppercase">Body</span></div><span class="font-stat-mono-sm text-label-sm text-on-surface-variant opacity-75">THU, OCT 24</span></div></div><div class="flex items-center gap-space-sm"><button aria-label="User Profile" class="w-11 h-11 rounded-full flex items-center justify-center transition-opacity hover:opacity-80 active:scale-95"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXJJ_vkSdSscnKbo_k97s-9ewcUuUe_VqE1Pi2RmVtJ4btpDfmOpWHCqxGQ33JKpScAkAgaNsvnxpc72kZx2RnQNMrytj2f71-1MvQWQvJ7FNgJd4HGoA7Bq3NhCUb6UXNyUltZMX2xMRvc_QX_Oc7AQUEusqHCN3y-VxMt7bMMC1KDq7uK0nK9bIC2IW90lQ3QLwX64UZ8a7X-GJY39vk5mnW7zHpGFAZrvlirbSVWe_j3pmOqB-0aw"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full max-w-[390px] mx-auto px-margin pt-16 pb-28 bg-surface"><div class="flex flex-col w-full relative">
+<!-- Interactive Modal Wrapper (Simulating High-End Inset Bottom Sheet Container) -->
+<div class="w-full bg-surface-container rounded-t-3xl shadow-2xl flex flex-col pt-space-sm pb-space-lg">
+<!-- Tactile Drag Pill Handle -->
+<div class="flex justify-center items-center py-space-xs">
+<div class="w-10 h-1 rounded-full bg-surface-variant opacity-60"></div>
+</div>
+<!-- Header Navigation & Context -->
+<div class="px-space-md pt-space-xs pb-space-sm flex items-center justify-between">
+<button aria-label="Back to Step 1" class="flex items-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors py-1 px-2 -ml-2 rounded-lg active:bg-surface-container-high" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span class="font-label-sm text-label-sm">Step 1</span>
+</button>
+<div class="flex flex-col items-center text-center">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Chest Exercises</h2>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider uppercase opacity-80">Step 2 of 3 • Movement Select</span>
+</div>
+<button aria-label="Close sheet" class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Search Input Component -->
+<div class="px-space-md pt-space-xs pb-space-sm">
+<div class="relative flex items-center w-full bg-surface-container-low rounded-xl px-space-md h-12 shadow-inner group">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant mr-space-sm transition-colors group-focus-within:text-secondary">search</span>
+<input class="w-full bg-transparent text-on-surface placeholder:text-outline text-body-md font-body-md outline-none border-none focus:ring-0 p-0" id="exerciseSearch" placeholder="Search chest movements..." type="search"/>
+<span class="font-stat-mono-sm text-label-sm text-outline bg-surface-container-high px-1.5 py-0.5 rounded ml-2 select-none">⌘K</span>
+</div>
+</div>
+<!-- Filter Pills Carousel -->
+<div class="px-space-md py-space-xs overflow-x-auto no-scrollbar flex items-center gap-space-sm">
+<button class="category-pill active flex-shrink-0 h-8 px-3.5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm shadow-sm transition-all" data-category="all" type="button">
+        All (14)
+      </button>
+<button class="category-pill flex-shrink-0 h-8 px-3.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all" data-category="barbell" type="button">
+        Barbell
+      </button>
+<button class="category-pill flex-shrink-0 h-8 px-3.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all" data-category="dumbbell" type="button">
+        Dumbbell
+      </button>
+<button class="category-pill flex-shrink-0 h-8 px-3.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all" data-category="cable" type="button">
+        Cable
+      </button>
+<button class="category-pill flex-shrink-0 h-8 px-3.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all" data-category="machine" type="button">
+        Machine
+      </button>
+</div>
+<!-- Exercise Telemetry Feed List -->
+<div class="px-space-md pt-space-sm flex flex-col gap-space-sm" id="exerciseContainer">
+<!-- 1. Competition Barbell Bench Press (Selected & Flagship) -->
+<div class="exercise-item selected w-full text-left rounded-xl p-space-md bg-surface-container-high relative overflow-hidden transition-all duration-200 active:scale-[0.99] shadow-sm" data-category="barbell" data-name="competition barbell bench press" role="button" tabindex="0">
+<!-- Visual Active Indicator Stroke (Volt Accent Gradient Accent Strip) -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary-container"></div>
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0 pr-2">
+<div class="flex items-center gap-2 flex-wrap mb-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-uppercase text-label-uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px] mr-1" style="font-variation-settings: 'FILL' 1;">stars</span>
+                RANKED
+              </span>
+<span class="font-label-uppercase text-label-uppercase text-primary-container bg-primary-container/10 px-2 py-0.5 rounded-full">Primary Metric</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Competition Bench Press</h3>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-80 uppercase">Barbell Compound</span>
+<span class="text-on-surface-variant opacity-40">•</span>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-tight">Tier I Standard</span>
+</div>
+</div>
+<!-- Radio Status Check Indicator -->
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+</div>
+<!-- Telemetry Data Strip -->
+<div class="mt-space-sm pt-space-sm bg-surface-container-lowest/50 -mx-space-md -mb-space-md px-space-md py-space-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-75 uppercase">Personal Best (1RM)</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface font-semibold">122.5</span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant">KG</span>
+</div>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-2.5 py-1 rounded-lg">
+<div class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface font-medium">Gold Tier Lift</span>
+</div>
+</div>
+</div>
+<!-- 2. Incline Dumbbell Press -->
+<div class="exercise-item w-full text-left rounded-xl p-space-md bg-surface-container-high transition-all duration-200 hover:bg-surface-variant active:scale-[0.99] shadow-sm" data-category="dumbbell" data-name="incline dumbbell press" role="button" tabindex="0">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0 pr-2">
+<div class="flex items-center gap-2 flex-wrap mb-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-uppercase text-label-uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px] mr-1" style="font-variation-settings: 'FILL' 1;">stars</span>
+                RANKED
+              </span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-80 uppercase">Upper Hypertrophy</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Incline Dumbbell Press</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Clavicular Head • 30° Incline Bench</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] opacity-0">check</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-sm bg-surface-container-lowest/40 -mx-space-md -mb-space-md px-space-md py-space-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-75 uppercase">Rep PR Benchmark</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface">36.0</span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant">KG × 8</span>
+</div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">e1RM: 45.6 KG</span>
+</div>
+</div>
+<!-- 3. Weighted Dip -->
+<div class="exercise-item w-full text-left rounded-xl p-space-md bg-surface-container-high transition-all duration-200 hover:bg-surface-variant active:scale-[0.99] shadow-sm" data-category="barbell" data-name="weighted dip calisthenics" role="button" tabindex="0">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0 pr-2">
+<div class="flex items-center gap-2 flex-wrap mb-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-uppercase text-label-uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px] mr-1" style="font-variation-settings: 'FILL' 1;">stars</span>
+                RANKED
+              </span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-80 uppercase">Compound Calisthenics</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Weighted Dip</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Anterior Tilt • Parallel Bar</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] opacity-0">check</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-sm bg-surface-container-lowest/40 -mx-space-md -mb-space-md px-space-md py-space-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-75 uppercase">Load Over Bodyweight</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface">+32.5</span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant">KG × 5</span>
+</div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded">+42% BW Ratio</span>
+</div>
+</div>
+<!-- 4. Flat Dumbbell Bench Press -->
+<div class="exercise-item w-full text-left rounded-xl p-space-md bg-surface-container-high transition-all duration-200 hover:bg-surface-variant active:scale-[0.99] shadow-sm" data-category="dumbbell" data-name="flat dumbbell bench press" role="button" tabindex="0">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0 pr-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant bg-surface-container px-2 py-0.5 rounded uppercase">Secondary</span>
+<span class="font-label-uppercase text-label-uppercase text-outline uppercase">Bilateral Focus</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Flat Dumbbell Press</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Independent Joint Stabilizer</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] opacity-0">check</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-sm bg-surface-container-lowest/40 -mx-space-md -mb-space-md px-space-md py-space-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-75 uppercase">Personal Best</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface">40.0</span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant">KG × 6</span>
+</div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Per Hand</span>
+</div>
+</div>
+<!-- 5. Cable Chest Fly -->
+<div class="exercise-item w-full text-left rounded-xl p-space-md bg-surface-container-high transition-all duration-200 hover:bg-surface-variant active:scale-[0.99] shadow-sm" data-category="cable" data-name="cable chest fly crossover" role="button" tabindex="0">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0 pr-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant bg-surface-container px-2 py-0.5 rounded uppercase">Accessory</span>
+<span class="font-label-uppercase text-label-uppercase text-outline uppercase">Peak Tension</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Cable Chest Fly</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Standing Mid-Pulley Vector</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] opacity-0">check</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-sm bg-surface-container-lowest/40 -mx-space-md -mb-space-md px-space-md py-space-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-75 uppercase">Peak Volume Weight</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface">18.0</span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant">KG × 12</span>
+</div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Constant Tension</span>
+</div>
+</div>
+<!-- 6. Standing Landmine Press -->
+<div class="exercise-item w-full text-left rounded-xl p-space-md bg-surface-container-high transition-all duration-200 hover:bg-surface-variant active:scale-[0.99] shadow-sm" data-category="barbell" data-name="standing landmine press" role="button" tabindex="0">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0 pr-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant bg-surface-container px-2 py-0.5 rounded uppercase">Accessory</span>
+<span class="font-label-uppercase text-label-uppercase text-outline uppercase">Scapular Rhythm</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Standing Landmine Press</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Unilateral Core Anchor</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] opacity-0">check</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-sm bg-surface-container-lowest/40 -mx-space-md -mb-space-md px-space-md py-space-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant opacity-75 uppercase">Personal Best</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-mono-md text-stat-mono-md text-on-surface">45.0</span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant">KG × 10</span>
+</div>
+</div>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Loaded Sleeve</span>
+</div>
+</div>
+</div>
+<!-- Empty Search State (Discreet & Subtle) -->
+<div class="hidden px-space-md py-12 flex-col items-center justify-center text-center" id="noResultsState">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">fitness_center</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface">No movements found</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Try another keyword or change your filter chip</p>
+</div>
+<!-- Pinned Bottom Modal Flow Action Bar -->
+<div class="mt-space-md pt-space-sm px-space-md flex flex-col gap-2">
+<button class="w-full h-12 rounded-full bg-primary-container text-on-primary-fixed font-headline-sm text-headline-sm flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all shadow-[0_4px_20px_rgba(189,245,50,0.22)]" id="continueBtn" type="button">
+<span>Continue to Sets</span>
+<span class="material-symbols-outlined text-[20px] font-bold">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-1.5 py-1">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">lock_clock</span>
+<span class="font-stat-mono-sm text-label-sm text-on-surface-variant">Rest timer calibrated to 180s for ranked items</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    const exerciseItems = document.querySelectorAll('.exercise-item');
+    const searchInput = document.getElementById('exerciseSearch');
+    const categoryPills = document.querySelectorAll('.category-pill');
+    const noResults = document.getElementById('noResultsState');
+
+    let currentFilter = 'all';
+
+    // Selection Switch Logic
+    exerciseItems.forEach(item => {
+      item.addEventListener('click', () => {
+        exerciseItems.forEach(el => {
+          el.classList.remove('selected');
+          const indicator = el.querySelector('.absolute.left-0');
+          if (indicator) indicator.remove();
+
+          const check = el.querySelector('.w-6.h-6');
+          if (check) {
+            check.className = 'w-6 h-6 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center flex-shrink-0 mt-0.5';
+            const icon = check.querySelector('.material-symbols-outlined');
+            if (icon) icon.classList.add('opacity-0');
+          }
+        });
+
+        // Set active item state
+        item.classList.add('selected');
+        
+        // Add Volt Lime edge accent
+        const accentLine = document.createElement('div');
+        accentLine.className = 'absolute left-0 top-0 bottom-0 w-1 bg-primary-container';
+        item.prepend(accentLine);
+
+        // Update radio check icon
+        const activeCheck = item.querySelector('.w-6.h-6');
+        if (activeCheck) {
+          activeCheck.className = 'w-6 h-6 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5';
+          const icon = activeCheck.querySelector('.material-symbols-outlined');
+          if (icon) icon.classList.remove('opacity-0');
+        }
+      });
+    });
+
+    // Category Pill Filtering
+    categoryPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        categoryPills.forEach(p => {
+          p.classList.remove('bg-surface-container-highest', 'text-on-surface');
+          p.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+
+        pill.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        pill.classList.add('bg-surface-container-highest', 'text-on-surface');
+
+        currentFilter = pill.getAttribute('data-category');
+        filterList();
+      });
+    });
+
+    // Search Input Real-Time Filter
+    searchInput.addEventListener('input', () => {
+      filterList();
+    });
+
+    function filterList() {
+      const term = searchInput.value.toLowerCase().trim();
+      let visibleCount = 0;
+
+      exerciseItems.forEach(item => {
+        const name = item.getAttribute('data-name');
+        const cat = item.getAttribute('data-category');
+        const matchesCat = (currentFilter === 'all' || cat === currentFilter);
+        const matchesSearch = name.includes(term);
+
+        if (matchesCat && matchesSearch) {
+          item.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+        noResults.classList.add('flex');
+      } else {
+        noResults.classList.add('hidden');
+        noResults.classList.remove('flex');
+      }
+    }
+  })();
+</script></main><div class="fixed bottom-24 right-margin z-50 pointer-events-auto"><button aria-label="Quick Log Action" class="w-14 h-14 rounded-full bg-primary-container text-on-primary-fixed flex items-center justify-center shadow-[0_4px_20px_rgba(189,245,50,0.28)] hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined text-[28px] leading-none select-none font-semibold">add</span></button></div><nav class="fixed bottom-0 inset-x-0 z-40 pb-safe bg-surface-container-low/90 backdrop-blur-xl shadow-[0_-1px_12px_rgba(0,0,0,0.4)]" data-active-classes="text-on-surface [&amp;_.tab-indicator]:bg-primary-container [&amp;_.tab-indicator]:opacity-100 [&amp;_.tab-icon]:text-on-surface"><div class="max-w-[390px] mx-auto grid grid-cols-5 h-16 items-stretch"><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="today" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">calendar_today</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">Today</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="body" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">vital_signs</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">Body</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="mind" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">psychology</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">Mind</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="school" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">school</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">School</span></a><a class="group relative flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="more" href="#"><span class="tab-indicator absolute top-0 w-4 h-0.5 rounded-full bg-transparent opacity-0 transition-all"></span><span class="tab-icon material-symbols-outlined text-[22px] transition-colors">tune</span><span class="font-label-sm text-label-sm mt-1 leading-none tracking-tight">More</span></a></div></nav></body></html>

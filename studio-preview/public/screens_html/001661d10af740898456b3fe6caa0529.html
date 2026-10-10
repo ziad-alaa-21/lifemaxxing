@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "background": "#0f1419", "on-secondary-fixed": "#001f25", "surface": "#0f1419", "inverse-surface": "#dee3e9", "surface-container-highest": "#30353a", "primary-container": "#bdf532", "surface-bright": "#353a3f", "outline": "#8d937b", "on-primary-fixed": "#141f00", "on-surface-variant": "#c3c9ae", "tertiary": "#ffffff", "on-tertiary-container": "#6d51bc", "secondary-container": "#00cbe6", "inverse-primary": "#4c6700", "on-tertiary": "#381385", "inverse-on-surface": "#2c3136", "primary": "#ffffff", "secondary-fixed": "#a2eeff", "error": "#ffb4ab", "on-primary-fixed-variant": "#384e00", "on-secondary-container": "#00515d", "on-background": "#dee3e9", "surface-container": "#1b2025", "surface-tint": "#a2d801", "on-primary": "#263500", "on-surface": "#dee3e9", "surface-variant": "#30353a", "primary-fixed-dim": "#a2d801", "on-tertiary-fixed-variant": "#4f319c", "on-error-container": "#ffdad6", "secondary": "#5de6ff", "error-container": "#93000a", "surface-dim": "#0f1419", "surface-container-low": "#171c21", "tertiary-fixed": "#e8ddff", "on-tertiary-fixed": "#21005e", "tertiary-fixed-dim": "#cebdff", "primary-fixed": "#bdf532", "outline-variant": "#434934", "on-secondary-fixed-variant": "#004e5a", "on-secondary": "#00363e", "on-error": "#690005", "on-primary-container": "#516e00", "surface-container-high": "#252a30", "surface-container-lowest": "#0a0f13", "tertiary-container": "#e8ddff", "secondary-fixed-dim": "#2fd9f4" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "1rem", "space-lg": "1.25rem", "space-md": "1rem", "space-xl": "1.5rem", "space-xs": "0.25rem", "gutter": "0.75rem", "space-sm": "0.5rem" }, "fontFamily": { "headline-lg": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "label-uppercase": ["Inter"], "headline-sm": ["Inter"], "body-sm": ["Inter"], "display-hero": ["JetBrains Mono"], "headline-md": ["Inter"], "stat-mono-md": ["JetBrains Mono"], "display-hero-mobile": ["JetBrains Mono"], "stat-mono-sm": ["JetBrains Mono"] }, "fontSize": { "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }], "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }], "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }], "display-hero": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "stat-mono-md": ["18px", { "lineHeight": "22px", "letterSpacing": "-0.02em", "fontWeight": "500" }], "display-hero-mobile": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "stat-mono-sm": ["14px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "500" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="Go back" class="w-11 h-11 -ml-space-xs flex items-center justify-center text-on-surface hover:text-primary transition-colors active:scale-95" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Tip Card: English (Dismissible Component Showcase)</h1></div><div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface"><span class="material-symbols-outlined text-[18px]">info</span></div></div></header><main class="flex flex-col relative w-full pt-14 pb-safe px-margin bg-surface"><div class="flex flex-col w-full pb-24 space-y-space-md">
+<!-- Protocol Meta Bar -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim animate-pulse"></span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant uppercase tracking-wider">Thursday, Oct 24 • Morning Protocol</span>
+</div>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant/80 bg-surface-container-high px-2 py-0.5 rounded-full">v4.8 Telemetry</span>
+</div>
+<!-- Header Domain Context Card -->
+<div class="bg-surface-container rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-primary-fixed-dim/5 blur-2xl pointer-events-none"></div>
+<div class="flex items-start justify-between relative z-10">
+<div class="space-y-1">
+<span class="font-label-uppercase text-label-uppercase text-primary-fixed-dim tracking-widest block uppercase">Cognitive Architecture</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Daily Micro-Interventions</h2>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2.5 py-1 rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">bolt</span>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface">3 Active</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 max-w-xs">
+      Targeted behavioral recalibrations calibrated from last night's autonomic and focus recovery metrics.
+    </p>
+</div>
+<!-- Pillar Filter Selector Tabs -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1">
+<button class="pillar-chip active flex items-center gap-1.5 h-8 px-3 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm shadow-sm transition-all" id="filter-all" onclick="filterPillars('all')">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface"></span>
+<span>All Pillars</span>
+<span class="font-stat-mono-sm text-[11px] opacity-70 ml-0.5">3</span>
+</button>
+<button class="pillar-chip flex items-center gap-1.5 h-8 px-3 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all" id="filter-mind" onclick="filterPillars('mind')">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container shadow-[0_0_8px_rgba(232,221,255,0.4)]"></span>
+<span>Mind</span>
+<span class="font-stat-mono-sm text-[11px] opacity-70 ml-0.5">1</span>
+</button>
+<button class="pillar-chip flex items-center gap-1.5 h-8 px-3 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all" id="filter-body" onclick="filterPillars('body')">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container shadow-[0_0_8px_rgba(0,203,230,0.4)]"></span>
+<span>Body</span>
+<span class="font-stat-mono-sm text-[11px] opacity-70 ml-0.5">1</span>
+</button>
+<button class="pillar-chip flex items-center gap-1.5 h-8 px-3 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all" id="filter-school" onclick="filterPillars('school')">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed shadow-[0_0_8px_rgba(189,245,50,0.4)]"></span>
+<span>School</span>
+<span class="font-stat-mono-sm text-[11px] opacity-70 ml-0.5">1</span>
+</button>
+</div>
+<!-- Dismissible Tip Cards Showcase Stack -->
+<div class="space-y-space-md" id="tip-cards-container">
+<!-- VARIANT 1: MIND PILLAR (Violet / Tertiary Accent) -->
+<div class="tip-card bg-surface-container rounded-xl p-space-lg relative transition-all duration-300 shadow-md" data-pillar="mind" id="card-mind">
+<!-- Glow ambient backdrop -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-on-tertiary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Card Top Ribbon -->
+<div class="flex items-center justify-between mb-3 relative z-10">
+<div class="flex items-center gap-2">
+<!-- Pillar Dot -->
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary-fixed-dim opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-tertiary-container"></span>
+</span>
+<!-- Pill Badge -->
+<div class="flex items-center gap-1 bg-surface-container-highest px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">psychology</span>
+<span class="font-label-uppercase text-label-uppercase text-tertiary-fixed tracking-wider uppercase">MIND • Cognitive Recovery</span>
+</div>
+</div>
+<!-- Dismiss Button -->
+<button aria-label="Dismiss tip" class="w-8 h-8 rounded-full bg-surface-container-highest hover:bg-surface-bright flex items-center justify-center text-on-surface-variant hover:text-on-surface active:scale-90 transition-all" onclick="dismissCard('card-mind')">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Card Content -->
+<div class="space-y-2 relative z-10">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">The 10-Minute NSDR Reset</h3>
+<span class="font-stat-mono-sm text-stat-mono-sm text-tertiary-container">10m</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          When afternoon mental latency creeps above 1.8s, initiate Non-Sleep Deep Rest instead of caffeine. A 10-minute session restores striatal dopamine and preserves tonight's sleep latency.
+        </p>
+</div>
+<!-- Interactive Context Micro-Metrics -->
+<div class="grid grid-cols-2 gap-gutter my-4 pt-1 relative z-10">
+<div class="bg-surface-container-low rounded-lg p-2.5 flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+</div>
+<div>
+<div class="font-label-uppercase text-[10px] text-on-surface-variant">Dopamine Baseline</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-on-surface">+18% Target</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2.5 flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[16px]">hourglass_empty</span>
+</div>
+<div>
+<div class="font-label-uppercase text-[10px] text-on-surface-variant">Latency Threshold</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-on-surface">&lt; 1.2s</div>
+</div>
+</div>
+</div>
+<!-- Card Action Row -->
+<div class="flex items-center justify-between pt-1 relative z-10">
+<button class="h-9 px-3.5 rounded-full bg-surface-container-highest hover:bg-surface-bright active:scale-95 text-on-surface flex items-center gap-1.5 transition-all" id="btn-tried-mind" onclick="toggleTried('btn-tried-mind', 'card-mind')">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">check</span>
+<span class="font-label-sm text-label-sm font-semibold">Mark as tried</span>
+</button>
+<button class="flex items-center gap-1 font-label-sm text-label-sm text-tertiary-container hover:text-tertiary active:scale-95 transition-colors group">
+<span class="material-symbols-outlined text-[18px]">headphones</span>
+<span class="font-medium">Listen Audio (10m)</span>
+<span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- VARIANT 2: BODY PILLAR (Cyan / Secondary Accent) -->
+<div class="tip-card bg-surface-container rounded-xl p-space-lg relative transition-all duration-300 shadow-md" data-pillar="body" id="card-body">
+<!-- Glow ambient backdrop -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Card Top Ribbon -->
+<div class="flex items-center justify-between mb-3 relative z-10">
+<div class="flex items-center gap-2">
+<!-- Pillar Dot -->
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-fixed opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary-container"></span>
+</span>
+<!-- Pill Badge -->
+<div class="flex items-center gap-1 bg-surface-container-highest px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-secondary">directions_walk</span>
+<span class="font-label-uppercase text-label-uppercase text-secondary-fixed tracking-wider uppercase">BODY • Glucose Clearance</span>
+</div>
+</div>
+<!-- Dismiss Button -->
+<button aria-label="Dismiss tip" class="w-8 h-8 rounded-full bg-surface-container-highest hover:bg-surface-bright flex items-center justify-center text-on-surface-variant hover:text-on-surface active:scale-90 transition-all" onclick="dismissCard('card-body')">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Card Content -->
+<div class="space-y-2 relative z-10">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">15m Zone 1 Locomotion</h3>
+<span class="font-stat-mono-sm text-stat-mono-sm text-secondary">Post-Dinner</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          A brief 15-minute brisk walk immediately following high-glycemic meals blunts glucose spikes by up to 34% without elevating cortisol or interfering with melatonin onset.
+        </p>
+</div>
+<!-- Data Metric Strip -->
+<div class="bg-surface-container-low rounded-lg p-2.5 my-4 flex items-center justify-between relative z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">monitoring</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Postprandial glycemic reduction</span>
+</div>
+<span class="font-stat-mono-sm text-stat-mono-sm text-secondary-fixed font-semibold">-34% Peak</span>
+</div>
+<!-- Card Action Row -->
+<div class="flex items-center justify-between pt-1 relative z-10">
+<button class="h-9 px-3.5 rounded-full bg-surface-container-highest hover:bg-surface-bright active:scale-95 text-on-surface flex items-center gap-1.5 transition-all" id="btn-tried-body" onclick="toggleTried('btn-tried-body', 'card-body')">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">check</span>
+<span class="font-label-sm text-label-sm font-semibold">Mark as tried</span>
+</button>
+<span class="font-stat-mono-sm text-stat-mono-sm text-on-surface-variant/70 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">history</span> Tried 4x this month
+        </span>
+</div>
+</div>
+<!-- VARIANT 3: SCHOOL PILLAR (Volt Lime / Primary Fixed) -->
+<div class="tip-card bg-surface-container rounded-xl p-space-lg relative transition-all duration-300 shadow-md" data-pillar="school" id="card-school">
+<!-- Glow ambient backdrop -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Card Top Ribbon -->
+<div class="flex items-center justify-between mb-3 relative z-10">
+<div class="flex items-center gap-2">
+<!-- Pillar Dot -->
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-fixed-dim opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-fixed"></span>
+</span>
+<!-- Pill Badge -->
+<div class="flex items-center gap-1 bg-surface-container-highest px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-primary-fixed">menu_book</span>
+<span class="font-label-uppercase text-label-uppercase text-primary-fixed-dim tracking-wider uppercase">SCHOOL • Synaptic Consolidation</span>
+</div>
+</div>
+<!-- Dismiss Button -->
+<button aria-label="Dismiss tip" class="w-8 h-8 rounded-full bg-surface-container-highest hover:bg-surface-bright flex items-center justify-center text-on-surface-variant hover:text-on-surface active:scale-90 transition-all" onclick="dismissCard('card-school')">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Card Content -->
+<div class="space-y-2 relative z-10">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Interleave DP with Graph Theory</h3>
+<span class="font-stat-mono-sm text-stat-mono-sm text-primary-fixed-dim">40m Blk</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Alternate between dynamic programming proofs and linear algebra matrices every 40 minutes to force active retrieval pathways and minimize contextual interference.
+        </p>
+</div>
+<!-- Interleaving Cadence Telemetry -->
+<div class="flex items-center gap-2 my-4 relative z-10">
+<div class="flex-1 bg-surface-container-low rounded-lg p-2 text-center">
+<div class="font-label-uppercase text-[10px] text-on-surface-variant">Block 1</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-primary-fixed">40m Proofs</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">sync_alt</span>
+<div class="flex-1 bg-surface-container-low rounded-lg p-2 text-center">
+<div class="font-label-uppercase text-[10px] text-on-surface-variant">Block 2</div>
+<div class="font-stat-mono-sm text-stat-mono-sm text-primary-fixed-dim">40m Matrices</div>
+</div>
+</div>
+<!-- Card Action Row -->
+<div class="flex items-center justify-between pt-1 relative z-10">
+<button class="h-9 px-3.5 rounded-full bg-surface-container-highest hover:bg-surface-bright active:scale-95 text-on-surface flex items-center gap-1.5 transition-all" id="btn-tried-school" onclick="toggleTried('btn-tried-school', 'card-school')">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">check</span>
+<span class="font-label-sm text-label-sm font-semibold">Mark as tried</span>
+</button>
+<button class="flex items-center gap-1 font-label-sm text-label-sm text-primary-fixed hover:underline active:scale-95 transition-all">
+<span>Set Timer</span>
+<span class="material-symbols-outlined text-[16px]">timer</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty State when all tips dismissed -->
+<div class="hidden bg-surface-container-low rounded-xl p-space-xl text-center space-y-space-sm py-8 transition-all" id="tips-empty-state">
+<div class="w-12 h-12 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[24px]">verified</span>
+</div>
+<div class="space-y-1">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Queue Cleared For Today</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mx-auto">
+        All daily cognitive and biological micro-interventions are triaged. Re-engaging fresh prompts tonight at 21:00.
+      </p>
+</div>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-bright active:scale-95 transition-all mt-2" onclick="restoreTips()">
+<span class="material-symbols-outlined text-[16px]">replay</span>
+<span>Restore tips showcase</span>
+</button>
+</div>
+<!-- Dismissed / History Drawer Footer Module -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface font-semibold" id="archive-count">2 tips archived this week</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Review in Techniques I've Tried</div>
+</div>
+</div>
+<button aria-label="Open archived tips" class="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+<!-- Notification Toast for Delight (Hidden by default) -->
+<div class="fixed bottom-20 left-4 right-4 bg-surface-container-highest/95 backdrop-blur-md rounded-xl p-3.5 shadow-xl flex items-center justify-between translate-y-24 opacity-0 transition-all duration-300 pointer-events-none z-40" id="toast">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[20px]">task_alt</span>
+<span class="font-label-sm text-label-sm text-on-surface" id="toast-message">Tip marked as completed.</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface text-label-uppercase font-label-uppercase" onclick="hideToast()">DISMISS</button>
+</div>
+</div>
+<script>
+  let archivedCount = 2;
+
+  function dismissCard(cardId) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+
+    card.classList.add('opacity-0', 'scale-95', '-translate-y-2');
+    setTimeout(() => {
+      card.classList.add('hidden');
+      archivedCount++;
+      updateArchiveCounter();
+      checkEmptyState();
+      showToast("Card dismissed & stored to Techniques I've Tried");
+    }, 280);
+  }
+
+  function toggleTried(buttonId, cardId) {
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
+
+    const isDone = btn.classList.contains('bg-primary-container');
+
+    if (!isDone) {
+      btn.className = 'h-9 px-3.5 rounded-full bg-primary-container text-on-primary-container flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(189,245,50,0.3)]';
+      btn.innerHTML = `
+        <span class="material-symbols-outlined text-[16px]">check_circle</span>
+        <span class="font-label-sm text-label-sm font-semibold">Tried & Logged</span>
+      `;
+      showToast("Protocol logged to personal telemetry");
+    } else {
+      btn.className = 'h-9 px-3.5 rounded-full bg-surface-container-highest hover:bg-surface-bright active:scale-95 text-on-surface flex items-center gap-1.5 transition-all';
+      btn.innerHTML = `
+        <span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">check</span>
+        <span class="font-label-sm text-label-sm font-semibold">Mark as tried</span>
+      `;
+    }
+  }
+
+  function filterPillars(selectedPillar) {
+    const buttons = document.querySelectorAll('.pillar-chip');
+    buttons.forEach(btn => {
+      btn.classList.remove('bg-surface-container-highest', 'text-on-surface');
+      btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+
+    const activeBtn = document.getElementById(`filter-${selectedPillar}`);
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+      activeBtn.classList.add('bg-surface-container-highest', 'text-on-surface');
+    }
+
+    const cards = document.querySelectorAll('.tip-card');
+    cards.forEach(card => {
+      if (selectedPillar === 'all') {
+        card.classList.remove('hidden');
+      } else {
+        if (card.getAttribute('data-pillar') === selectedPillar) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      }
+    });
+
+    checkEmptyState();
+  }
+
+  function checkEmptyState() {
+    const visibleCards = document.querySelectorAll('.tip-card:not(.hidden)');
+    const emptyState = document.getElementById('tips-empty-state');
+    if (visibleCards.length === 0) {
+      emptyState.classList.remove('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+    }
+  }
+
+  function restoreTips() {
+    const cards = document.querySelectorAll('.tip-card');
+    cards.forEach(card => {
+      card.classList.remove('hidden', 'opacity-0', 'scale-95', '-translate-y-2');
+    });
+    document.getElementById('tips-empty-state').classList.add('hidden');
+    filterPillars('all');
+    showToast("Showcase cards restored");
+  }
+
+  function updateArchiveCounter() {
+    const counter = document.getElementById('archive-count');
+    if (counter) {
+      counter.innerText = `${archivedCount} tips archived this week`;
+    }
+  }
+
+  let toastTimer = null;
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    const msg = document.getElementById('toast-message');
+    if (!toast || !msg) return;
+
+    msg.innerText = message;
+    toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, 3000);
+  }
+
+  function hideToast() {
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }
+  }
+</script></main></body></html>
