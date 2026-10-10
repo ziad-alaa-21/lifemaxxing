@@ -10,7 +10,9 @@ import {
   AlertCircle,
   X,
   Clock,
+  WifiOff,
 } from "lucide-react";
+import { usePWA } from "@/components/pwa/PWAProvider";
 
 interface Subject {
   id: string;
@@ -29,6 +31,7 @@ const colorOptions = [
 ];
 
 export function SchoolView() {
+  const { isOnline } = usePWA();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,6 +74,11 @@ export function SchoolView() {
   async function handleCreateSubject(e: React.FormEvent) {
     e.preventDefault();
     if (!newSubjectName.trim()) return;
+
+    if (!isOnline) {
+      setSaveError("You are currently offline. Saving is disabled to protect database integrity.");
+      return;
+    }
 
     setSaving(true);
     setSaveError(null);
@@ -250,6 +258,14 @@ export function SchoolView() {
               </button>
             </div>
 
+            {/* Offline warning inside modal */}
+            {!isOnline && (
+              <div className="p-3 bg-amber-core/15 border border-amber-core/30 rounded-xl text-amber-core text-xs flex items-center gap-2">
+                <WifiOff className="w-4 h-4 shrink-0" />
+                <span>You are currently offline. Saving is disabled until reconnection.</span>
+              </div>
+            )}
+
             {saveError && (
               <div className="p-3 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl text-crimson-alert text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -317,11 +333,11 @@ export function SchoolView() {
                 </button>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || !isOnline}
                   className="px-4 py-2 rounded-xl bg-primary-lime text-surface text-xs font-semibold font-mono uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer disabled:opacity-50 flex items-center gap-2"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save Subject</span>
+                  <span>{isOnline ? "Save Subject" : "Saving Disabled (Offline)"}</span>
                 </button>
               </div>
             </form>

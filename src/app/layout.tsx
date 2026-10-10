@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { PWAProvider } from "@/components/pwa/PWAProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -15,13 +16,21 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Life • Autonomic Telemetry & Protocol",
+  title: "Life",
   description:
     "Integrated personal telemetry across physical training, cognitive performance, and academic progress.",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Life",
+  },
   icons: {
-    icon: "/icon-192.png",
-    apple: "/icon-512.png",
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
 };
 
@@ -45,7 +54,7 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full bg-surface text-on-surface flex flex-col font-sans selection:bg-primary-lime/20 selection:text-primary-lime">
-        {children}
+        <PWAProvider>{children}</PWAProvider>
       </body>
     </html>
   );

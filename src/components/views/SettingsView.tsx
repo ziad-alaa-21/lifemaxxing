@@ -2,9 +2,17 @@
 
 import React, { useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { User as UserIcon, LogOut, Loader2 } from "lucide-react";
+import {
+  User as UserIcon,
+  LogOut,
+  Loader2,
+  Smartphone,
+  Download,
+  CheckCircle2,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { usePWA } from "@/components/pwa/PWAProvider";
 
 interface SettingsViewProps {
   userEmail: string | null;
@@ -13,13 +21,24 @@ interface SettingsViewProps {
 
 export function SettingsView({ userEmail, userId }: SettingsViewProps) {
   const router = useRouter();
+  const { isInstallable, isInstalled, installApp } = usePWA();
   const [signingOut, setSigningOut] = useState(false);
+  const [installing, setInstalling] = useState(false);
 
   const handleSignOut = async () => {
     setSigningOut(true);
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
+  };
+
+  const handleInstall = async () => {
+    setInstalling(true);
+    try {
+      await installApp();
+    } finally {
+      setInstalling(false);
+    }
   };
 
   return (
@@ -36,7 +55,7 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
               Account & Settings
             </h2>
             <p className="text-xs text-on-surface-variant mt-0.5">
-              Identity and active session
+              Identity, session, and device installation
             </p>
           </div>
         </div>
@@ -82,6 +101,61 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
             )}
             <span>Sign Out</span>
           </button>
+        </div>
+      </div>
+
+      {/* PWA Device Installation Card */}
+      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-primary-lime" />
+            <h3 className="text-sm font-bold font-mono text-on-surface">
+              Progressive Web App (PWA)
+            </h3>
+          </div>
+          {isInstalled && (
+            <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-success px-2 py-0.5 rounded-full bg-emerald-success/10 border border-emerald-success/20">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Standalone Installed</span>
+            </span>
+          )}
+        </div>
+
+        <p className="text-xs text-on-surface-variant leading-relaxed">
+          Install Life on your Android phone (from Chrome) or PC browser for full-screen standalone experience, fast launch, and offline shell caching.
+        </p>
+
+        <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="text-xs font-mono text-text-muted">
+            {isInstalled ? (
+              <span className="text-emerald-success">
+                ✓ Running in standalone application window
+              </span>
+            ) : isInstallable ? (
+              <span className="text-primary-lime">
+                ● Ready for one-click installation
+              </span>
+            ) : (
+              <span>
+                Available via browser menu ("Install App" or "Add to Home screen")
+              </span>
+            )}
+          </div>
+
+          {!isInstalled && (
+            <button
+              onClick={handleInstall}
+              disabled={installing}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-lime text-surface text-xs font-semibold uppercase tracking-wider hover:bg-primary-lime-dim shadow-[0_0_16px_rgba(198,255,61,0.25)] transition-all cursor-pointer disabled:opacity-50"
+            >
+              {installing ? (
+                <Loader2 className="w-4 h-4 animate-spin text-surface" />
+              ) : (
+                <Download className="w-4 h-4 stroke-[2.5]" />
+              )}
+              <span>Install Life App</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
