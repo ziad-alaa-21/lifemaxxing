@@ -26,6 +26,20 @@
   --color-crimson-alert: #ef4444;
   --color-emerald-success: #10b981;
 
+  /* Functional status tokens */
+  --color-ice-blue: #38bdf8;
+  --color-status-success: #34d399;
+  --color-status-negative: #f87171;
+
+  /* Strength standards rank tiers */
+  --color-rank-bronze: #cd7f32;
+  --color-rank-silver: #c0c0c0;
+  --color-rank-gold: #ffd700;
+  --color-rank-platinum: #7dd3fc;
+  --color-rank-diamond: #a5f3fc;
+  --color-rank-olympian: #c084fc;
+  --color-rank-mr-olympia: #ff6b4a;
+
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-mono), monospace;
 }

@@ -3,12 +3,10 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { Shield, Zap, AlertCircle, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-interface AuthViewProps {
-  onSuccess?: () => void;
-}
-
-export function AuthView({ onSuccess }: AuthViewProps) {
+export default function LoginPage() {
+  const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +29,8 @@ export function AuthView({ onSuccess }: AuthViewProps) {
         if (signInErr) {
           setError(signInErr.message);
         } else {
-          onSuccess?.();
+          router.push("/today");
+          router.refresh();
         }
       } else {
         const { data, error: signUpErr } = await supabase.auth.signUp({
@@ -41,8 +40,8 @@ export function AuthView({ onSuccess }: AuthViewProps) {
         if (signUpErr) {
           setError(signUpErr.message);
         } else if (data.session) {
-          setMessage("Account created successfully!");
-          onSuccess?.();
+          router.push("/today");
+          router.refresh();
         } else {
           setMessage("Account created. You can now sign in.");
           setMode("signin");
@@ -69,10 +68,10 @@ export function AuthView({ onSuccess }: AuthViewProps) {
             <Zap className="w-6 h-6 fill-primary-lime/20 text-primary-lime" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-on-surface font-mono">
-            LIFE • PROTOCOL
+            LIFE
           </h1>
           <p className="text-xs uppercase tracking-widest text-on-surface-variant font-mono mt-1">
-            Obsidian Kinetic Architecture
+            Obsidian Kinetic
           </p>
         </div>
 
@@ -83,8 +82,9 @@ export function AuthView({ onSuccess }: AuthViewProps) {
             onClick={() => {
               setMode("signin");
               setError(null);
+              setMessage(null);
             }}
-            className={`py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all ${
+            className={`py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
               mode === "signin"
                 ? "bg-surface-container-high text-primary-lime shadow-sm"
                 : "text-on-surface-variant hover:text-on-surface"
@@ -97,8 +97,9 @@ export function AuthView({ onSuccess }: AuthViewProps) {
             onClick={() => {
               setMode("signup");
               setError(null);
+              setMessage(null);
             }}
-            className={`py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all ${
+            className={`py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
               mode === "signup"
                 ? "bg-surface-container-high text-primary-lime shadow-sm"
                 : "text-on-surface-variant hover:text-on-surface"
@@ -162,17 +163,11 @@ export function AuthView({ onSuccess }: AuthViewProps) {
             ) : (
               <>
                 <Shield className="w-4 h-4 text-surface" />
-                <span>{mode === "signin" ? "Authenticate" : "Register Credentials"}</span>
+                <span>{mode === "signin" ? "Sign In" : "Create Account"}</span>
               </>
             )}
           </button>
         </form>
-
-        {/* Security badge */}
-        <div className="mt-6 pt-4 border-t border-border-subtle flex items-center justify-between text-[11px] text-text-muted font-mono">
-          <span>Row Level Security (RLS) Active</span>
-          <span className="text-primary-lime">v4.8 Verified</span>
-        </div>
       </div>
     </div>
   );

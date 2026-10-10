@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { Dumbbell, Loader2, Award, Zap, Layers, AlertCircle } from "lucide-react";
+import { Dumbbell, Loader2, AlertCircle, Info } from "lucide-react";
 
 interface Exercise {
   id: string;
@@ -57,14 +57,11 @@ export function BodyView() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold font-mono text-on-surface">
-                  Canonical Strength Engine
+                  Strength & Exercise Catalog
                 </h2>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-secondary-cyan/10 text-secondary-cyan border border-secondary-cyan/20">
-                  LIVE SUPABASE DATA
-                </span>
               </div>
               <p className="text-xs text-on-surface-variant mt-0.5">
-                Deterministic UUID canonical lifts seeded in the fresh database
+                Canonical and user-custom lifts in the database
               </p>
             </div>
           </div>
@@ -76,14 +73,11 @@ export function BodyView() {
         </div>
       </div>
 
-      {/* Stage 3 Notice */}
+      {/* Stage Note */}
       <div className="p-4 bg-surface-container-low border border-border-subtle rounded-xl flex items-start gap-3">
-        <Zap className="w-4 h-4 text-amber-core shrink-0 mt-0.5" />
+        <Info className="w-4 h-4 text-secondary-cyan shrink-0 mt-0.5" />
         <div className="text-xs text-on-surface-variant">
-          <span className="font-semibold text-on-surface">
-            Stage 3 Protocol Pipeline:
-          </span>{" "}
-          Active workout logger, set logging with RPE/reps, and Epley 1RM coefficient rankings will be wired in Stage 3. This view currently validates real live Supabase query isolation.
+          Active workout session logging, set tracking, and Epley 1RM rank calculations will be added in Stage 3.
         </div>
       </div>
 
@@ -91,7 +85,7 @@ export function BodyView() {
       {error && (
         <div className="p-4 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-3 text-crimson-alert text-xs font-mono">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>Error loading canonical lifts: {error}</span>
+          <span>Error loading exercises: {error}</span>
         </div>
       )}
 
@@ -99,7 +93,7 @@ export function BodyView() {
       {loading && (
         <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-secondary-cyan" />
-          <span className="text-xs font-mono">Querying Supabase canonical tables...</span>
+          <span className="text-xs font-mono">Loading exercises from database...</span>
         </div>
       )}
 

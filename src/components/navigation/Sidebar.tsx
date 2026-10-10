@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
-import { Pillar } from "@/lib/types";
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Flame,
   Dumbbell,
@@ -10,32 +11,37 @@ import {
   Settings,
   LogOut,
   Zap,
+  Loader2,
 } from "lucide-react";
-import type { User } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase/client";
 
 interface SidebarProps {
-  activePillar: Pillar;
-  setActivePillar: (pillar: Pillar) => void;
-  user: User | null;
-  onSignOut: () => void;
+  userEmail: string | null;
+  userId: string | null;
 }
 
-const navItems: { id: Pillar; label: string; icon: React.ElementType; badge?: string }[] = [
-  { id: "today", label: "Today Telemetry", icon: Flame, badge: "LIVE" },
-  { id: "body", label: "Body & Lifts", icon: Dumbbell, badge: "6 Lifts" },
-  { id: "mind", label: "Mind Architecture", icon: Brain },
-  { id: "school", label: "School & GPA", icon: GraduationCap },
-  { id: "settings", label: "Settings & System", icon: Settings },
+const navItems = [
+  { href: "/today", label: "Today", icon: Flame },
+  { href: "/body", label: "Body", icon: Dumbbell },
+  { href: "/mind", label: "Mind", icon: Brain },
+  { href: "/school", label: "School", icon: GraduationCap },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function Sidebar({
-  activePillar,
-  setActivePillar,
-  user,
-  onSignOut,
-}: SidebarProps) {
+export function Sidebar({ userEmail, userId }: SidebarProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  };
+
   return (
-    <aside className="hidden lg:flex flex-col w-72 shrink-0 h-screen sticky top-0 bg-surface border-r border-border-subtle z-30 select-none">
+    <aside className="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 bg-surface border-r border-border-subtle z-30 select-none">
       {/* Brand Header */}
       <div className="h-16 px-6 flex items-center justify-between border-b border-border-subtle">
         <div className="flex items-center gap-3">
@@ -44,41 +50,25 @@ export function Sidebar({
           </div>
           <div>
             <span className="font-mono text-sm font-bold tracking-tight text-on-surface">
-              LIFE • MAXXING
+              LIFE
             </span>
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-lime animate-pulse" />
-              <span className="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
-                Obsidian Kinetic
-              </span>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
+              Obsidian Kinetic
             </div>
           </div>
         </div>
       </div>
 
-      {/* Telemetry pill */}
-      <div className="px-5 py-4">
-        <div className="p-3 bg-surface-container rounded-xl border border-border-subtle flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-success" />
-            <span className="text-xs font-mono text-on-surface-variant">RLS Protocol</span>
-          </div>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-surface-container-high text-primary-lime border border-primary-lime/20">
-            SECURE
-          </span>
-        </div>
-      </div>
-
       {/* Nav items list */}
-      <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activePillar === item.id;
+          const isActive = pathname === item.href;
           return (
-            <button
-              key={item.id}
-              onClick={() => setActivePillar(item.id)}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-xs transition-all text-left cursor-pointer ${
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-xs transition-all ${
                 isActive
                   ? "bg-surface-container-high text-primary-lime shadow-sm border-l-2 border-primary-lime pl-3"
                   : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60"
@@ -92,45 +82,41 @@ export function Sidebar({
                 />
                 <span className="tracking-wide">{item.label}</span>
               </div>
-              {item.badge && (
-                <span
-                  className={`font-mono text-[10px] px-2 py-0.5 rounded-full uppercase ${
-                    isActive
-                      ? "bg-primary-lime/15 text-primary-lime"
-                      : "bg-surface-container-highest text-text-muted"
-                  }`}
-                >
-                  {item.badge}
-                </span>
-              )}
-            </button>
+            </Link>
           );
         })}
       </nav>
 
       {/* User Session Footer */}
       <div className="p-4 border-t border-border-subtle bg-surface-container/30">
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-border-medium flex items-center justify-center font-mono text-xs text-primary-lime font-bold shrink-0">
-              {user?.email?.[0]?.toUpperCase() || "U"}
+              {userEmail?.[0]?.toUpperCase() || "U"}
             </div>
             <div className="min-w-0 truncate">
               <p className="text-xs font-mono text-on-surface truncate">
-                {user?.email || "Authenticated User"}
+                {userEmail || "Signed In"}
               </p>
-              <p className="text-[10px] font-mono text-text-muted">
-                UID: {user?.id?.slice(0, 8)}...
-              </p>
+              {userId && (
+                <p className="text-[10px] font-mono text-text-muted truncate">
+                  ID: {userId.slice(0, 8)}...
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         <button
-          onClick={onSignOut}
-          className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-surface-container border border-border-subtle hover:border-crimson-alert/40 hover:text-crimson-alert rounded-xl text-xs font-mono text-on-surface-variant transition-colors cursor-pointer"
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-surface-container border border-border-subtle hover:border-crimson-alert/40 hover:text-crimson-alert rounded-xl text-xs font-mono text-on-surface-variant transition-colors cursor-pointer disabled:opacity-50"
         >
-          <LogOut className="w-3.5 h-3.5" />
+          {signingOut ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <LogOut className="w-3.5 h-3.5" />
+          )}
           <span>Sign Out</span>
         </button>
       </div>

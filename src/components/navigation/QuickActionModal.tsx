@@ -1,69 +1,69 @@
 "use client";
 
 import React from "react";
-import { Pillar } from "@/lib/types";
-import { X, Dumbbell, GraduationCap, Brain, Activity, Shield } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { X, Dumbbell, GraduationCap, Brain, Settings } from "lucide-react";
 
 interface QuickActionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectAction: (pillar: Pillar) => void;
 }
 
-export function QuickActionModal({
-  isOpen,
-  onClose,
-  onSelectAction,
-}: QuickActionModalProps) {
+export function QuickActionModal({ isOpen, onClose }: QuickActionModalProps) {
+  const router = useRouter();
+
   if (!isOpen) return null;
 
   const actions = [
     {
-      title: "Log Workout Session",
-      desc: "Record sets, reps, and compute Epley 1RM progression",
-      pillar: "body" as Pillar,
+      title: "View Strength & Lifts",
+      desc: "Inspect canonical lifts and upcoming workout logger",
+      href: "/body",
       icon: Dumbbell,
       accent: "text-secondary-cyan border-secondary-cyan/30 bg-secondary-cyan/10",
     },
     {
-      title: "Record Academic Grade",
-      desc: "Log quiz or exam score against target GPA",
-      pillar: "school" as Pillar,
+      title: "School & Subjects",
+      desc: "Manage subjects, grades, deadlines and mistake log",
+      href: "/school",
       icon: GraduationCap,
       accent: "text-primary-lime border-primary-lime/30 bg-primary-lime/10",
     },
     {
-      title: "Cognitive Check-in",
-      desc: "Evaluate autonomic recovery & mental clarity",
-      pillar: "mind" as Pillar,
+      title: "Mind & Sleep",
+      desc: "Cognitive readiness and sleep architecture",
+      href: "/mind",
       icon: Brain,
       accent: "text-tertiary-purple border-tertiary-purple/30 bg-tertiary-purple/10",
     },
     {
-      title: "System & RLS Telemetry",
-      desc: "Inspect Supabase user token & security boundary",
-      pillar: "settings" as Pillar,
-      icon: Shield,
+      title: "Account Settings",
+      desc: "Inspect user account and system configuration",
+      href: "/settings",
+      icon: Settings,
       accent: "text-amber-core border-amber-core/30 bg-amber-core/10",
     },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-bg-darkest/80 backdrop-blur-md animate-fade-in">
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-bg-darkest/80 backdrop-blur-md"
+      onClick={onClose}
+    >
       <div
-        className="w-full sm:max-w-md bg-surface-container border border-border-subtle rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl relative animate-slide-up"
+        className="w-full sm:max-w-md bg-surface-container border border-border-subtle rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-4">
           <div>
             <h2 className="text-base font-bold font-mono text-on-surface">
-              Fast Protocol Log
+              Fast Navigation
             </h2>
-            <p className="text-xs text-text-muted">Select an action vector</p>
+            <p className="text-xs text-text-muted">Jump to section</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-surface-container-high border border-border-subtle flex items-center justify-center text-text-muted hover:text-on-surface transition-colors"
+            className="w-8 h-8 rounded-lg bg-surface-container-high border border-border-subtle flex items-center justify-center text-text-muted hover:text-on-surface transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -74,9 +74,9 @@ export function QuickActionModal({
             const Icon = act.icon;
             return (
               <button
-                key={act.pillar}
+                key={act.href}
                 onClick={() => {
-                  onSelectAction(act.pillar);
+                  router.push(act.href);
                   onClose();
                 }}
                 className="w-full flex items-start gap-3.5 p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle hover:border-primary-lime/40 transition-all text-left cursor-pointer group"
