@@ -14,6 +14,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
+import { clearPWACaches } from "@/components/pwa/PWAProvider";
 
 interface SidebarProps {
   userEmail: string | null;
@@ -35,6 +36,7 @@ export function Sidebar({ userEmail, userId }: SidebarProps) {
 
   const handleSignOut = async () => {
     setSigningOut(true);
+    await clearPWACaches();
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();

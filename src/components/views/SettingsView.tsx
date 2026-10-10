@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { usePWA } from "@/components/pwa/PWAProvider";
+import { usePWA, clearPWACaches } from "@/components/pwa/PWAProvider";
 
 interface SettingsViewProps {
   userEmail: string | null;
@@ -27,6 +27,7 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
 
   const handleSignOut = async () => {
     setSigningOut(true);
+    await clearPWACaches();
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();

@@ -1,0 +1,12 @@
+# Dev-only Stitch studio preview
+studio-preview/
+
+# Local agent artifacts and temporary test scripts
+.agents/
+scratch/
+.tempmediaStorage/
+
+# Logs and environment files
+*.log
+.env*
+!.env.example

@@ -1,7 +1,7 @@
-const CACHE_NAME = 'life-pwa-v1';
-const STATIC_CACHE_NAME = 'life-static-v1';
+const CACHE_VERSION = 'life-v2.0.0';
+const STATIC_CACHE_NAME = `life-static-${CACHE_VERSION}`;
 
-const APP_SHELL_URLS = [
+const SHELL_ASSETS = [
   '/offline',
   '/manifest.json',
   '/icon-192.png',
@@ -12,25 +12,26 @@ const APP_SHELL_URLS = [
   '/favicon.ico',
 ];
 
-// Install: pre-cache the critical offline shell
+// Install: pre-cache shell and offline fallback only
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_SHELL_URLS);
-    }).then(() => {
-      return self.skipWaiting();
+      return cache.addAll(SHELL_ASSETS);
     })
   );
 });
 
-// Activate: clean up old caches and take control immediately
+// Activate: delete all old caches and take control
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => name !== CACHE_NAME && name !== STATIC_CACHE_NAME)
-          .map((name) => caches.delete(name))
+          .filter((name) => name !== STATIC_CACHE_NAME)
+          .map((name) => {
+            console.log('[SW] Purging outdated cache:', name);
+            return caches.delete(name);
+          })
       );
     }).then(() => {
       return self.clients.claim();
@@ -38,12 +39,27 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch: smart caching strategy
+// Message listener: handle SKIP_WAITING and CLEAR_CACHES
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  if (event.data && event.data.type === 'CLEAR_CACHES') {
+    event.waitUntil(
+      caches.keys().then((names) => {
+        return Promise.all(names.map((name) => caches.delete(name)));
+      })
+    );
+  }
+});
+
+// Fetch: Never cache authenticated pages or Next.js RSC data responses.
+// Cache only static assets and provide /offline fallback when network fails.
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // 1. NEVER cache POST/PUT/PATCH/DELETE mutations or Supabase API / auth requests
+  // 1. Never intercept or cache non-GET requests or Supabase API calls
   if (
     request.method !== 'GET' ||
     url.hostname.includes('supabase.co') ||
@@ -53,41 +69,35 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Navigation requests (HTML pages)
+  // 2. Never cache Next.js RSC payload requests or API calls
+  if (
+    url.searchParams.has('_rsc') ||
+    request.headers.get('RSC') === '1' ||
+    url.pathname.startsWith('/api/')
+  ) {
+    // Network-only for dynamic RSC data
+    return;
+  }
+
+  // 3. Navigation requests (HTML pages): Network-only, NEVER cache authenticated pages
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // If valid response, clone and cache for offline read-only use
-          if (response && response.status === 200) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, copy);
-            });
-          }
-          return response;
-        })
-        .catch(async () => {
-          // Try to return from dynamic cache
-          const cached = await caches.match(request);
-          if (cached) {
-            return cached;
-          }
-          // Fallback to offline page
-          const offlineFallback = await caches.match('/offline');
-          if (offlineFallback) {
-            return offlineFallback;
-          }
-          return new Response('Offline - No connection available', {
-            status: 503,
-            headers: { 'Content-Type': 'text/plain' },
-          });
-        })
+      fetch(request).catch(async () => {
+        // When completely offline, serve the offline fallback shell page
+        const offlineResponse = await caches.match('/offline');
+        if (offlineResponse) {
+          return offlineResponse;
+        }
+        return new Response('Offline - No connection available', {
+          status: 503,
+          headers: { 'Content-Type': 'text/plain' },
+        });
+      })
     );
     return;
   }
 
-  // 3. Static assets (_next/static, images, fonts)
+  // 4. Static assets (_next/static, icons, images, styles)
   if (
     url.pathname.startsWith('/_next/static/') ||
     url.pathname.endsWith('.png') ||

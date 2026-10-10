@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { WifiOff, AlertTriangle } from "lucide-react";
+import { WifiOff, RefreshCw, Sparkles, X } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -13,6 +13,9 @@ interface PWAContextType {
   isInstallable: boolean;
   isInstalled: boolean;
   installApp: () => Promise<void>;
+  updateAvailable: boolean;
+  applyUpdate: () => void;
+  clearCaches: () => Promise<void>;
 }
 
 const PWAContext = createContext<PWAContextType>({
@@ -20,16 +23,31 @@ const PWAContext = createContext<PWAContextType>({
   isInstallable: false,
   isInstalled: false,
   installApp: async () => {},
+  updateAvailable: false,
+  applyUpdate: () => {},
+  clearCaches: async () => {},
 });
 
 export function usePWA() {
   return useContext(PWAContext);
 }
 
+export async function clearPWACaches() {
+  if (typeof window !== "undefined" && "caches" in window) {
+    const names = await caches.keys();
+    await Promise.all(names.map((n) => caches.delete(n)));
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: "CLEAR_CACHES" });
+    }
+  }
+}
+
 export function PWAProvider({ children }: { children: React.ReactNode }) {
   const [isOnline, setIsOnline] = useState(true);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
 
   useEffect(() => {
     // 1. Initial online status
@@ -43,22 +61,53 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    // 2. Check if already running standalone
+    // 2. Standalone detection
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as unknown as { standalone?: boolean }).standalone === true;
     setIsInstalled(isStandalone);
 
-    // 3. Register Service Worker
+    // 3. Service Worker registration & update listener
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => {
           console.log("[PWA] Service Worker registered with scope:", reg.scope);
+
+          // Check if already waiting
+          if (reg.waiting) {
+            setWaitingWorker(reg.waiting);
+            setUpdateAvailable(true);
+          }
+
+          // Listen for new service worker installation
+          reg.addEventListener("updatefound", () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+
+            newWorker.addEventListener("statechange", () => {
+              if (
+                newWorker.state === "installed" &&
+                navigator.serviceWorker.controller
+              ) {
+                setWaitingWorker(newWorker);
+                setUpdateAvailable(true);
+              }
+            });
+          });
         })
         .catch((err) => {
           console.error("[PWA] Service Worker registration failed:", err);
         });
+
+      // Reload when new worker takes control
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
     }
 
     // 4. Capture beforeinstallprompt
@@ -70,7 +119,6 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     const handleAppInstalled = () => {
       setIsInstalled(true);
       setDeferredPrompt(null);
-      console.log("[PWA] Life App was successfully installed");
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -86,7 +134,9 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
 
   const installApp = async () => {
     if (!deferredPrompt) {
-      alert("Installation is already complete or not supported in this browser. You can install directly via your browser's 'Add to Home screen' or 'Install' menu.");
+      alert(
+        "Installation can be triggered via your browser menu ('Add to Home screen' or 'Install Life' in Chrome's address bar)."
+      );
       return;
     }
 
@@ -98,6 +148,12 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const applyUpdate = () => {
+    if (waitingWorker) {
+      waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    }
+  };
+
   return (
     <PWAContext.Provider
       value={{
@@ -105,14 +161,49 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
         isInstallable: !!deferredPrompt && !isInstalled,
         isInstalled,
         installApp,
+        updateAvailable,
+        applyUpdate,
+        clearCaches: clearPWACaches,
       }}
     >
       {/* Global Offline Warning Bar */}
       {!isOnline && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-core/95 text-bg-darkest px-4 py-2 text-xs font-mono flex items-center justify-center gap-2 shadow-lg backdrop-blur-md animate-slide-down">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-core text-bg-darkest px-4 py-2 text-xs font-mono flex items-center justify-center gap-2 shadow-lg backdrop-blur-md">
           <WifiOff className="w-4 h-4 shrink-0 stroke-[2.5]" />
           <span className="font-bold">Offline Mode:</span>
-          <span>Read-only cache active. Saving & data modifications are temporarily blocked.</span>
+          <span>Read-only cache active. Saving and modifications are temporarily blocked.</span>
+        </div>
+      )}
+
+      {/* Update Available Banner */}
+      {updateAvailable && (
+        <div className="fixed bottom-20 lg:bottom-6 right-4 z-50 bg-surface-container border border-primary-lime/40 rounded-2xl p-4 shadow-2xl flex items-center gap-3 max-w-sm animate-slide-up">
+          <div className="w-9 h-9 rounded-xl bg-primary-lime/15 border border-primary-lime/30 flex items-center justify-center text-primary-lime shrink-0">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div className="space-y-0.5 min-w-0 flex-1">
+            <h4 className="text-xs font-bold font-mono text-on-surface">
+              Update Available
+            </h4>
+            <p className="text-[11px] text-on-surface-variant">
+              A new version of Life is ready.
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={applyUpdate}
+              className="px-3 py-1.5 rounded-lg bg-primary-lime text-surface text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim flex items-center gap-1 cursor-pointer shadow-[0_0_12px_rgba(198,255,61,0.25)]"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Update</span>
+            </button>
+            <button
+              onClick={() => setUpdateAvailable(false)}
+              className="w-7 h-7 rounded-lg bg-surface-container-high border border-border-subtle flex items-center justify-center text-text-muted hover:text-on-surface cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 

@@ -12,7 +12,7 @@ import {
   Clock,
   WifiOff,
 } from "lucide-react";
-import { usePWA } from "@/components/pwa/PWAProvider";
+import { useOnlineGuard } from "@/hooks/useOnlineGuard";
 
 interface Subject {
   id: string;
@@ -31,7 +31,7 @@ const colorOptions = [
 ];
 
 export function SchoolView() {
-  const { isOnline } = usePWA();
+  const { isOnline, isBlocked, saveButtonProps } = useOnlineGuard();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export function SchoolView() {
     e.preventDefault();
     if (!newSubjectName.trim()) return;
 
-    if (!isOnline) {
+    if (isBlocked) {
       setSaveError("You are currently offline. Saving is disabled to protect database integrity.");
       return;
     }
@@ -333,7 +333,8 @@ export function SchoolView() {
                 </button>
                 <button
                   type="submit"
-                  disabled={saving || !isOnline}
+                  disabled={saving || saveButtonProps.disabled}
+                  title={saveButtonProps.title}
                   className="px-4 py-2 rounded-xl bg-primary-lime text-surface text-xs font-semibold font-mono uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer disabled:opacity-50 flex items-center gap-2"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
