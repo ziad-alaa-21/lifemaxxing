@@ -66,8 +66,21 @@ ALTER TABLE public.strength_standards ADD CONSTRAINT strength_standards_multipli
 
 -- Also update user_rank_history constraint if it exists
 ALTER TABLE public.user_rank_history DROP CONSTRAINT IF EXISTS user_rank_history_tier_check;
+
+-- Migrate any existing historical PR rows from the legacy 5 tiers to the approved 7 tiers
+UPDATE public.user_rank_history
+SET tier = CASE
+  WHEN tier = 'Untrained' THEN 'Bronze'
+  WHEN tier = 'Novice' THEN 'Silver'
+  WHEN tier = 'Intermediate' THEN 'Gold'
+  WHEN tier = 'Advanced' THEN 'Platinum'
+  WHEN tier = 'Elite' THEN 'Diamond'
+  WHEN tier NOT IN ('Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Olympian', 'Mr. Olympia') THEN 'Bronze'
+  ELSE tier
+END;
+
 ALTER TABLE public.user_rank_history ADD CONSTRAINT user_rank_history_tier_check 
-  CHECK (tier IN ('Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Olympian', 'Mr. Olympia'));
+  CHECK (tier IS NULL OR tier IN ('Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Olympian', 'Mr. Olympia'));
 
 -- MEN'S STANDARDS
 -- Bench: 0.7, 1.0, 1.3, 1.6, 1.8, 2.0, 2.2
