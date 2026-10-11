@@ -9,12 +9,16 @@ import {
   GraduationCap,
   ArrowRight,
   Calendar,
+  Award,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
+import { getTierColor } from "@/lib/strength";
 
 export function TodayView() {
   const [exerciseCount, setExerciseCount] = useState<number | null>(null);
   const [subjectCount, setSubjectCount] = useState<number | null>(null);
+  const [latestWorkoutName, setLatestWorkoutName] = useState<string | null>(null);
+  const [highestRankTier, setHighestRankTier] = useState<string | null>(null);
   const [todayDate, setTodayDate] = useState("");
 
   useEffect(() => {
@@ -43,6 +47,36 @@ export function TodayView() {
       .then(({ count }) => {
         setSubjectCount(count ?? 0);
       });
+
+    // Fetch user's latest workout and best rank tier
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        supabase
+          .from("workouts")
+          .select("name, started_at")
+          .eq("user_id", user.id)
+          .is("deleted_at", null)
+          .order("started_at", { ascending: false })
+          .limit(1)
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              setLatestWorkoutName(data[0].name);
+            }
+          });
+
+        supabase
+          .from("user_rank_history")
+          .select("tier, ratio")
+          .eq("user_id", user.id)
+          .order("ratio", { ascending: false })
+          .limit(1)
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              setHighestRankTier(data[0].tier);
+            }
+          });
+      }
+    });
   }, []);
 
   return (
@@ -64,18 +98,28 @@ export function TodayView() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Card 1: Physical / Body */}
         <Link
-          href="/body"
+          href="/body?tab=logger"
           className="bg-surface-container border border-border-subtle hover:border-secondary-cyan/40 rounded-2xl p-5 transition-all group relative overflow-hidden block"
         >
           <div className="flex items-center justify-between mb-4">
             <div className="w-9 h-9 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan">
               <Dumbbell className="w-4 h-4" />
             </div>
-            <span className="font-mono text-xs text-secondary-cyan px-2 py-0.5 rounded-full bg-secondary-cyan/10">
-              {exerciseCount !== null
-                ? `${exerciseCount} Exercises`
-                : "Checking..."}
-            </span>
+            {highestRankTier ? (
+              <span
+                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border ${getTierColor(
+                  highestRankTier
+                )}`}
+              >
+                {highestRankTier} Tier
+              </span>
+            ) : (
+              <span className="font-mono text-xs text-secondary-cyan px-2 py-0.5 rounded-full bg-secondary-cyan/10">
+                {exerciseCount !== null
+                  ? `${exerciseCount} Exercises`
+                  : "Checking..."}
+              </span>
+            )}
           </div>
           <div className="space-y-1">
             <div className="text-xs font-mono uppercase tracking-wider text-text-muted">
@@ -85,11 +129,13 @@ export function TodayView() {
               Strength & Lifts
             </div>
             <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
-              Canonical lift catalog and upcoming workout logger.
+              {latestWorkoutName
+                ? `Latest Session: ${latestWorkoutName}`
+                : "Active workout session logger, set tracking, and Epley 1RM PR rank standards."}
             </p>
           </div>
           <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-secondary-cyan">
-            <span>Open Catalog</span>
+            <span>{latestWorkoutName ? "Start New Session" : "Open Workout Logger"}</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>

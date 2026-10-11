@@ -1,8 +1,21 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import {
+  Dumbbell,
+  Award,
+  History,
+  BookOpen,
+  Plus,
+  Loader2,
+  AlertCircle,
+  Search,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import { Dumbbell, Loader2, AlertCircle, Info } from "lucide-react";
+import { ActiveWorkoutSession } from "@/components/strength/ActiveWorkoutSession";
+import { RankStandardsMatrix } from "@/components/strength/RankStandardsMatrix";
+import { WorkoutHistory } from "@/components/strength/WorkoutHistory";
 
 interface Exercise {
   id: string;
@@ -14,129 +27,269 @@ interface Exercise {
   ranked_key: string | null;
 }
 
-export function BodyView() {
+type TabKey = "logger" | "standards" | "history" | "catalog";
+
+function BodyViewContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const tabParam = (searchParams.get("tab") as TabKey) || "logger";
+  const [activeTab, setActiveTab] = useState<TabKey>(tabParam);
+
+  // Catalog State
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loadingCatalog, setLoadingCatalog] = useState(true);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
+  const [catalogSearch, setCatalogSearch] = useState("");
+  const [selectedMuscle, setSelectedMuscle] = useState<string>("all");
+
+  useEffect(() => {
+    const t = searchParams.get("tab") as TabKey;
+    if (t && ["logger", "standards", "history", "catalog"].includes(t)) {
+      setActiveTab(t);
+    }
+  }, [searchParams]);
+
+  const switchTab = (tab: TabKey) => {
+    setActiveTab(tab);
+    router.replace(`/body?tab=${tab}`, { scroll: false });
+  };
 
   useEffect(() => {
     async function loadExercises() {
       try {
-        setLoading(true);
+        setLoadingCatalog(true);
         const { data, error: err } = await supabase
           .from("exercises")
           .select("id, name, muscle_group, equipment, is_compound, is_ranked, ranked_key")
+          .order("is_ranked", { ascending: false })
           .order("name", { ascending: true });
 
         if (err) {
-          setError(err.message);
+          setCatalogError(err.message);
         } else if (data) {
           setExercises(data);
         }
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "Failed to load exercises";
-        setError(msg);
+        setCatalogError(msg);
       } finally {
-        setLoading(false);
+        setLoadingCatalog(false);
       }
     }
 
-    loadExercises();
-  }, []);
+    if (activeTab === "catalog") {
+      loadExercises();
+    }
+  }, [activeTab]);
+
+  const muscleGroups = ["all", ...Array.from(new Set(exercises.map((e) => e.muscle_group)))];
+
+  const filteredExercises = exercises.filter((ex) => {
+    const matchesSearch =
+      ex.name.toLowerCase().includes(catalogSearch.toLowerCase()) ||
+      ex.equipment.toLowerCase().includes(catalogSearch.toLowerCase());
+    const matchesMuscle = selectedMuscle === "all" || ex.muscle_group === selectedMuscle;
+    return matchesSearch && matchesMuscle;
+  });
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="bg-surface-container rounded-2xl p-6 border border-border-subtle relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-secondary-cyan/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan shadow-[0_0_16px_rgba(93,230,255,0.2)]">
-              <Dumbbell className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold font-mono text-on-surface">
-                  Strength & Exercise Catalog
-                </h2>
+      {/* Top Navigation Tabs */}
+      <div className="flex items-center gap-1.5 p-1.5 bg-surface-container rounded-2xl border border-border-subtle overflow-x-auto">
+        <button
+          onClick={() => switchTab("logger")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            activeTab === "logger"
+              ? "bg-primary-lime text-charcoal-dark shadow-[0_0_15px_rgba(198,255,61,0.25)] font-bold"
+              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+          }`}
+        >
+          <Dumbbell className="w-4 h-4" />
+          <span>Active Session</span>
+        </button>
+
+        <button
+          onClick={() => switchTab("standards")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            activeTab === "standards"
+              ? "bg-rank-gold text-charcoal-dark shadow-[0_0_15px_rgba(255,215,0,0.25)] font-bold"
+              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+          }`}
+        >
+          <Award className="w-4 h-4" />
+          <span>Rank Standards</span>
+        </button>
+
+        <button
+          onClick={() => switchTab("history")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            activeTab === "history"
+              ? "bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] font-bold"
+              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+          }`}
+        >
+          <History className="w-4 h-4" />
+          <span>Session History</span>
+        </button>
+
+        <button
+          onClick={() => switchTab("catalog")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            activeTab === "catalog"
+              ? "bg-surface-container-highest text-on-surface border border-border-subtle font-bold"
+              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+          }`}
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Exercise Catalog</span>
+        </button>
+      </div>
+
+      {/* Tab 1: Active Workout Session */}
+      {activeTab === "logger" && (
+        <ActiveWorkoutSession
+          onWorkoutSaved={() => {
+            switchTab("history");
+          }}
+        />
+      )}
+
+      {/* Tab 2: Strength Standards & Radar Matrix */}
+      {activeTab === "standards" && <RankStandardsMatrix />}
+
+      {/* Tab 3: Workout History & Volume Tracking */}
+      {activeTab === "history" && (
+        <WorkoutHistory
+          onStartWorkoutClick={() => {
+            switchTab("logger");
+          }}
+        />
+      )}
+
+      {/* Tab 4: Exercise Catalog */}
+      {activeTab === "catalog" && (
+        <div className="space-y-5">
+          {/* Catalog Top Filter */}
+          <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base font-bold font-mono text-on-surface">
+                  Lifting & Exercise Library
+                </h3>
+                <p className="text-xs text-on-surface-variant">
+                  Canonical rated benchmarks and custom movements
+                </p>
               </div>
-              <p className="text-xs text-on-surface-variant mt-0.5">
-                Canonical and user-custom lifts in the database
-              </p>
+              <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-on-surface self-start sm:self-auto">
+                {filteredExercises.length} Exercises Listed
+              </span>
+            </div>
+
+            {/* Search & Muscle Filters */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-text-muted absolute left-3 top-3" />
+                <input
+                  type="text"
+                  placeholder="Filter by name or equipment..."
+                  value={catalogSearch}
+                  onChange={(e) => setCatalogSearch(e.target.value)}
+                  className="w-full bg-surface-container-low border border-border-subtle rounded-xl pl-9 pr-4 py-2 text-xs font-mono text-on-surface focus:border-secondary-cyan focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                {muscleGroups.map((muscle) => (
+                  <button
+                    key={muscle}
+                    onClick={() => setSelectedMuscle(muscle)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono capitalize transition-all cursor-pointer whitespace-nowrap ${
+                      selectedMuscle === muscle
+                        ? "bg-secondary-cyan/15 text-secondary-cyan border border-secondary-cyan/40 font-bold"
+                        : "bg-surface-container-low text-text-muted border border-border-subtle hover:text-on-surface"
+                    }`}
+                  >
+                    {muscle}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-on-surface">
-              {exercises.length} Exercises Loaded
-            </span>
-          </div>
-        </div>
-      </div>
 
-      {/* Stage Note */}
-      <div className="p-4 bg-surface-container-low border border-border-subtle rounded-xl flex items-start gap-3">
-        <Info className="w-4 h-4 text-secondary-cyan shrink-0 mt-0.5" />
-        <div className="text-xs text-on-surface-variant">
-          Active workout session logging, set tracking, and Epley 1RM rank calculations will be added in Stage 3.
-        </div>
-      </div>
+          {/* Catalog Error */}
+          {catalogError && (
+            <div className="p-4 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-3 text-crimson-alert text-xs font-mono">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>Error loading catalog: {catalogError}</span>
+            </div>
+          )}
 
-      {/* Error state */}
-      {error && (
-        <div className="p-4 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-3 text-crimson-alert text-xs font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>Error loading exercises: {error}</span>
-        </div>
-      )}
+          {/* Catalog Loading */}
+          {loadingCatalog && (
+            <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
+              <Loader2 className="w-6 h-6 animate-spin text-secondary-cyan" />
+              <span className="text-xs font-mono">Loading library...</span>
+            </div>
+          )}
 
-      {/* Loading state */}
-      {loading && (
-        <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-secondary-cyan" />
-          <span className="text-xs font-mono">Loading exercises from database...</span>
-        </div>
-      )}
+          {/* Catalog Grid */}
+          {!loadingCatalog && filteredExercises.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {filteredExercises.map((ex) => (
+                <div
+                  key={ex.id}
+                  className="bg-surface-container border border-border-subtle hover:border-secondary-cyan/30 rounded-xl p-4 transition-all space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h4 className="text-sm font-semibold text-on-surface tracking-tight">
+                        {ex.name}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[11px] font-mono text-text-muted capitalize">
+                          {ex.muscle_group}
+                        </span>
+                        <span className="text-[11px] text-text-muted">•</span>
+                        <span className="text-[11px] font-mono text-text-muted capitalize">
+                          {ex.equipment}
+                        </span>
+                      </div>
+                    </div>
+                    {ex.is_ranked && (
+                      <span className="px-2 py-0.5 rounded-md bg-primary-lime/10 border border-primary-lime/30 text-[10px] font-mono text-primary-lime font-bold uppercase shrink-0">
+                        Ranked
+                      </span>
+                    )}
+                  </div>
 
-      {/* Exercises Grid */}
-      {!loading && exercises.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {exercises.map((ex) => (
-            <div
-              key={ex.id}
-              className="bg-surface-container border border-border-subtle hover:border-secondary-cyan/30 rounded-xl p-4 transition-all space-y-3"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-sm font-semibold text-on-surface tracking-tight">
-                    {ex.name}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[11px] font-mono text-text-muted capitalize">
-                      {ex.muscle_group}
-                    </span>
-                    <span className="text-[11px] text-text-muted">•</span>
-                    <span className="text-[11px] font-mono text-text-muted capitalize">
-                      {ex.equipment}
+                  <div className="pt-2 border-t border-border-subtle/50 flex items-center justify-between text-[10px] font-mono text-text-muted">
+                    <span>Key: {ex.ranked_key || "custom"}</span>
+                    <span className="truncate max-w-[120px]">
+                      ID: {ex.id.slice(0, 8)}...
                     </span>
                   </div>
                 </div>
-                {ex.is_ranked && (
-                  <span className="px-2 py-0.5 rounded-md bg-primary-lime/10 border border-primary-lime/30 text-[10px] font-mono text-primary-lime font-bold uppercase shrink-0">
-                    Ranked
-                  </span>
-                )}
-              </div>
-
-              <div className="pt-2 border-t border-border-subtle/50 flex items-center justify-between text-[10px] font-mono text-text-muted">
-                <span>Key: {ex.ranked_key || "custom"}</span>
-                <span className="truncate max-w-[120px]">
-                  ID: {ex.id.slice(0, 8)}...
-                </span>
-              </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+export function BodyView() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
+          <span className="text-xs font-mono">Loading strength module...</span>
+        </div>
+      }
+    >
+      <BodyViewContent />
+    </Suspense>
   );
 }
