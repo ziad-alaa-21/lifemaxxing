@@ -9,7 +9,8 @@ import {
   GraduationCap,
   ArrowRight,
   Calendar,
-  Award,
+  Weight,
+  CheckCircle2,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { getTierColor } from "@/lib/strength";
@@ -19,6 +20,8 @@ export function TodayView() {
   const [subjectCount, setSubjectCount] = useState<number | null>(null);
   const [latestWorkoutName, setLatestWorkoutName] = useState<string | null>(null);
   const [highestRankTier, setHighestRankTier] = useState<string | null>(null);
+  const [currentWeight, setCurrentWeight] = useState<number | null>(null);
+  const [isWeightLoggedToday, setIsWeightLoggedToday] = useState(false);
   const [todayDate, setTodayDate] = useState("");
 
   useEffect(() => {
@@ -48,9 +51,10 @@ export function TodayView() {
         setSubjectCount(count ?? 0);
       });
 
-    // Fetch user's latest workout and best rank tier
+    // Fetch user profile and telemetry
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
+        // Fetch workout
         supabase
           .from("workouts")
           .select("name, started_at")
@@ -64,6 +68,7 @@ export function TodayView() {
             }
           });
 
+        // Fetch rank
         supabase
           .from("user_rank_history")
           .select("tier, ratio")
@@ -73,6 +78,26 @@ export function TodayView() {
           .then(({ data }) => {
             if (data && data.length > 0) {
               setHighestRankTier(data[0].tier);
+            }
+          });
+
+        // Fetch weight from events
+        supabase
+          .from("events")
+          .select("occurred_at, data")
+          .eq("user_id", user.id)
+          .eq("event_type", "weight_log")
+          .is("deleted_at", null)
+          .order("occurred_at", { ascending: false })
+          .limit(1)
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              const w = data[0].data?.weight_kg || data[0].data?.weight;
+              if (w) setCurrentWeight(Number(w));
+
+              const logDate = new Date(data[0].occurred_at).toDateString();
+              const nowDate = new Date().toDateString();
+              setIsWeightLoggedToday(logDate === nowDate);
             }
           });
       }
@@ -89,9 +114,23 @@ export function TodayView() {
             {todayDate || "Today"}
           </span>
         </div>
-        <span className="text-[11px] font-mono text-text-muted">
-          Active Session
-        </span>
+        <div className="flex items-center gap-2">
+          {currentWeight && (
+            <Link
+              href="/body?tab=weight"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-high border border-border-subtle text-[11px] font-mono text-secondary-cyan hover:border-secondary-cyan/40 transition-colors"
+            >
+              <Weight className="w-3.5 h-3.5" />
+              <span>{currentWeight} kg</span>
+              {isWeightLoggedToday && (
+                <CheckCircle2 className="w-3 h-3 text-status-success ml-0.5" />
+              )}
+            </Link>
+          )}
+          <span className="text-[11px] font-mono text-text-muted">
+            Active Session
+          </span>
+        </div>
       </div>
 
       {/* 3 Domain Status Cards Grid */}
@@ -126,16 +165,17 @@ export function TodayView() {
               Physical Domain
             </div>
             <div className="text-lg font-bold font-mono text-on-surface group-hover:text-secondary-cyan transition-colors">
-              Strength & Lifts
+              Strength & Body
             </div>
             <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
               {latestWorkoutName
                 ? `Latest Session: ${latestWorkoutName}`
-                : "Active workout session logger, set tracking, and Epley 1RM PR rank standards."}
+                : "Active workout session logger, bodyweight progression, and Epley 1RM ranks."}
             </p>
           </div>
+
           <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-secondary-cyan">
-            <span>{latestWorkoutName ? "Start New Session" : "Open Workout Logger"}</span>
+            <span>{currentWeight ? `Weight: ${currentWeight} kg` : "Log Bodyweight"}</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
@@ -161,7 +201,7 @@ export function TodayView() {
               Mind Architecture
             </div>
             <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
-              Sleep telemetry and focus session tracking will be wired in upcoming stages.
+              Sleep telemetry, mental math trainer, and focus session tracking will be wired in upcoming stages.
             </p>
           </div>
           <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-tertiary-purple">
@@ -212,7 +252,7 @@ export function TodayView() {
           </h3>
         </div>
         <p className="text-xs text-on-surface-variant leading-relaxed">
-          Daily telemetry logging, morning/evening check-in forms, and habit rings will be fully connected in the upcoming vertical slices.
+          Daily bodyweight tracking is live. Sleep telemetry forms and morning check-in will be added next.
         </p>
       </div>
     </div>
