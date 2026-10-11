@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Loader2,
   TrendingUp,
+  Bookmark,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import {
@@ -22,12 +23,18 @@ import {
   getLocalDateString,
   GoalPhase,
   CaloriePacing,
+  SavedMealItem,
+  MealType,
 } from "@/lib/nutrition";
+import { collapseDailyWeights, calculateRateOfChange } from "@/lib/weight";
 import { ConfirmFoodModal } from "./ConfirmFoodModal";
 import { ManualFoodModal } from "./ManualFoodModal";
 import { TargetSettingsModal } from "./TargetSettingsModal";
 import { HydrationCard } from "./HydrationCard";
 import { MealTimeline } from "./MealTimeline";
+import { FrequentFoodsBar } from "./FrequentFoodsBar";
+import { SavedMealsDrawer } from "./SavedMealsDrawer";
+import { WeeklyAnalyticsCard } from "./WeeklyAnalyticsCard";
 
 export function NutritionDashboard() {
   const [loading, setLoading] = useState(true);
@@ -49,6 +56,7 @@ export function NutritionDashboard() {
     timezone: string;
     targetBedtime: string;
     caffeineCutoffHours: number;
+    hideAdherenceScores: boolean;
   }>({
     weightKg: null,
     heightCm: null,
@@ -64,6 +72,7 @@ export function NutritionDashboard() {
     timezone: "UTC",
     targetBedtime: "23:00",
     caffeineCutoffHours: 10,
+    hideAdherenceScores: false,
   });
 
   // Selected date (defaults to today in user's timezone)
@@ -72,11 +81,28 @@ export function NutritionDashboard() {
   // Telemetry data
   const [meals, setMeals] = useState<MealLogEntry[]>([]);
   const [intakeEntries, setIntakeEntries] = useState<IntakeLogEntry[]>([]);
+  const [weeklyDaysData, setWeeklyDaysData] = useState<
+    Array<{
+      date: string;
+      calories: number;
+      proteinG: number;
+      carbsG: number;
+      fatsG: number;
+      mealCount: number;
+    }>
+  >([]);
+  const [realWeightTrend, setRealWeightTrend] = useState<number | null>(null);
 
   // Modals state
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isSavedMealsOpen, setIsSavedMealsOpen] = useState(false);
+  const [prefillTemplate, setPrefillTemplate] = useState<{
+    name: string;
+    meal_type: MealType;
+    items: SavedMealItem[];
+  } | null>(null);
 
   // Fetch initial profile
   const fetchProfileAndData = useCallback(async () => {
@@ -121,10 +147,11 @@ export function NutritionDashboard() {
         timezone: tz,
         targetBedtime: prof?.target_bedtime || "23:00",
         caffeineCutoffHours: prof?.caffeine_cutoff_hours || 10,
+        hideAdherenceScores: prof?.hide_adherence_scores ?? false,
       });
 
       // Load meals for initial date
-      await loadDayLogs(user.id, initialDate);
+      await loadDayLogs(user.id, initialDate, tz);
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to initialize nutrition telemetry");
     } finally {
@@ -132,9 +159,10 @@ export function NutritionDashboard() {
     }
   }, []);
 
-  const loadDayLogs = async (userId: string, dateStr: string) => {
+  const loadDayLogs = async (userId: string, dateStr: string, tzParam?: string) => {
+    const tz = tzParam || userProfile.timezone;
     try {
-      // 1. Fetch meals
+      // 1. Fetch meals for selected day
       const { data: mealData, error: mealErr } = await supabase
         .from("meal_logs")
         .select("*")
@@ -156,7 +184,6 @@ export function NutritionDashboard() {
       }
 
       // 2. Fetch intake logs (all non-deleted for this day)
-      // Note: intake_logs stores logged_at timestamptz. We fetch recent rows and filter by localDate.
       const { data: intakeData, error: intakeErr } = await supabase
         .from("intake_logs")
         .select("*")
@@ -173,11 +200,58 @@ export function NutritionDashboard() {
           console.error("Intake fetch error:", intakeErr);
         }
       } else {
-        // Filter by local date
         const dayIntakes = (intakeData || []).filter((item: IntakeLogEntry) => {
-          return getLocalDateString(item.logged_at, userProfile.timezone) === dateStr;
+          return getLocalDateString(item.logged_at, tz) === dateStr;
         });
         setIntakeEntries(dayIntakes);
+      }
+
+      // 3. Compute 7 calendar days ending at dateStr for WeeklyAnalyticsCard
+      const days: string[] = [];
+      const [y, m, d] = dateStr.split("-").map(Number);
+      const refDate = new Date(Date.UTC(y, m - 1, d));
+      for (let i = 6; i >= 0; i--) {
+        const cur = new Date(refDate);
+        cur.setUTCDate(cur.getUTCDate() - i);
+        days.push(cur.toISOString().split("T")[0]);
+      }
+      const startDate = days[0];
+
+      const { data: weekMeals } = await supabase
+        .from("meal_logs")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("logged_date", startDate)
+        .lte("logged_date", dateStr)
+        .is("deleted_at", null);
+
+      const daysData = days.map((day) => {
+        const dayMeals = (weekMeals || []).filter((item: MealLogEntry) => item.logged_date === day);
+        return {
+          date: day,
+          calories: dayMeals.reduce((s, item) => s + (item.calories || 0), 0),
+          proteinG: Math.round(dayMeals.reduce((s, item) => s + (item.protein_g || 0), 0) * 10) / 10,
+          carbsG: Math.round(dayMeals.reduce((s, item) => s + (item.carbs_g || 0), 0) * 10) / 10,
+          fatsG: Math.round(dayMeals.reduce((s, item) => s + (item.fats_g || 0), 0) * 10) / 10,
+          mealCount: dayMeals.length,
+        };
+      });
+      setWeeklyDaysData(daysData);
+
+      // 4. Fetch weight_logs to compute Stage 4 OLS slope for real trend headline (Item 3)
+      const { data: weightLogs } = await supabase
+        .from("weight_logs")
+        .select("*")
+        .eq("user_id", userId)
+        .is("deleted_at", null)
+        .order("logged_at", { ascending: true });
+
+      if (weightLogs && weightLogs.length >= 4) {
+        const collapsed = collapseDailyWeights(weightLogs);
+        const roc = calculateRateOfChange(collapsed, 14);
+        setRealWeightTrend(roc.rateKgPerWeek);
+      } else {
+        setRealWeightTrend(null);
       }
     } catch (err: any) {
       console.error("Logs load error:", err);
@@ -383,24 +457,64 @@ export function NutritionDashboard() {
         </div>
       )}
 
+      {/* Frequent Foods 1-Tap Bar (Item 7) */}
+      <FrequentFoodsBar
+        onFoodLogged={handleRefresh}
+        userTimezone={userProfile.timezone}
+      />
+
       {/* Action Bar */}
-      <div className="grid grid-cols-2 gap-3 font-mono text-xs">
-        <button
-          onClick={() => setIsAiModalOpen(true)}
-          className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-lime text-charcoal-dark font-bold shadow-[0_0_15px_rgba(198,255,61,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
-        >
-          <Sparkles className="w-4 h-4" />
-          <span>Parse Meal with AI</span>
-        </button>
+      <div className="space-y-2.5 font-mono text-xs">
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setIsAiModalOpen(true)}
+            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-lime text-charcoal-dark font-bold shadow-[0_0_15px_rgba(198,255,61,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Parse Meal with AI</span>
+          </button>
+
+          <button
+            onClick={() => setIsManualModalOpen(true)}
+            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4 text-secondary-cyan" />
+            <span>+ Manual Food Entry</span>
+          </button>
+        </div>
 
         <button
-          onClick={() => setIsManualModalOpen(true)}
-          className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
+          onClick={() => {
+            setPrefillTemplate(null);
+            setIsSavedMealsOpen(true);
+          }}
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
         >
-          <Plus className="w-4 h-4 text-secondary-cyan" />
-          <span>+ Manual Food Entry</span>
+          <Bookmark className="w-4 h-4 text-secondary-cyan" />
+          <span>Saved Meals & Templates</span>
         </button>
       </div>
+
+      {/* Weekly Nutrition Analytics & Projections (Items 2, 3, 5) */}
+      <WeeklyAnalyticsCard
+        daysData={weeklyDaysData}
+        targets={
+          userProfile.targetCalories && userProfile.targetProteinG
+            ? {
+                calories: userProfile.targetCalories,
+                proteinGrams: userProfile.targetProteinG,
+                carbsGrams: userProfile.targetCarbsG || 0,
+                fatsGrams: userProfile.targetFatsG || 0,
+                waterTargetMl: userProfile.waterTargetMl || 3000,
+                isEstimated: false,
+                calorieFloorApplied: false,
+              }
+            : null
+        }
+        realWeightTrendKgPerWk={realWeightTrend}
+        hideAdherenceScoresDefault={userProfile.hideAdherenceScores}
+        onOpenTargetSettings={() => setIsSettingsModalOpen(true)}
+      />
 
       {/* Hydration & Caffeine Telemetry Section */}
       <HydrationCard
@@ -414,11 +528,41 @@ export function NutritionDashboard() {
         onIntakeUpdated={handleRefresh}
       />
 
-      {/* Meals Timeline */}
+      {/* Meals Timeline with Protein per Meal guideline & Template saving (Item 4 & 6) */}
       <MealTimeline
         meals={meals}
         onMealsUpdated={handleRefresh}
         userTimezone={userProfile.timezone}
+        currentWeightKg={userProfile.weightKg}
+        onSaveAsTemplate={(mealType, items) => {
+          setPrefillTemplate({
+            name: `${mealType.charAt(0).toUpperCase() + mealType.slice(1)} Template`,
+            meal_type: mealType,
+            items: items.map((m) => ({
+              food_name: m.food_name,
+              quantity: m.quantity,
+              unit: m.unit,
+              calories: m.calories,
+              protein_g: m.protein_g,
+              carbs_g: m.carbs_g,
+              fats_g: m.fats_g,
+              source: m.source || "manual",
+            })),
+          });
+          setIsSavedMealsOpen(true);
+        }}
+      />
+
+      {/* Modals & Drawers */}
+      <SavedMealsDrawer
+        isOpen={isSavedMealsOpen}
+        onClose={() => {
+          setIsSavedMealsOpen(false);
+          setPrefillTemplate(null);
+        }}
+        onMealLogged={handleRefresh}
+        userTimezone={userProfile.timezone}
+        prefillTemplate={prefillTemplate}
       />
 
       {/* Modals */}

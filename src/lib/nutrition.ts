@@ -7,7 +7,7 @@ export type GoalPhase = "cut" | "bulk" | "recomp";
 export type CaloriePacing = "conservative" | "optimal" | "aggressive";
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
 export type ConfidenceTier = "high" | "medium" | "low" | "could_not_estimate";
-export type FoodSource = "dictionary" | "ai" | "manual";
+export type FoodSource = "dictionary" | "ai" | "manual" | "saved";
 
 export interface MacroTargets {
   calories: number;
@@ -362,3 +362,538 @@ export function matchDictionaryFood(query: string): ParsedFoodItem | null {
 
   return null;
 }
+
+// ==============================================================================
+// STAGE 6b: SAVED MEALS, FREQUENT FOODS & NUTRITION ANALYTICS
+// ==============================================================================
+
+export interface SavedMealItem {
+  food_name: string;
+  quantity: number;
+  unit: string;
+  calories: number | null;
+  protein_g: number;
+  carbs_g: number;
+  fats_g: number;
+  source?: FoodSource;
+}
+
+export interface SavedMeal {
+  id: string;
+  user_id?: string;
+  name: string;
+  meal_type: MealType;
+  items: SavedMealItem[];
+  total_calories: number;
+  total_protein_g: number;
+  total_carbs_g: number;
+  total_fats_g: number;
+  is_favorite: boolean;
+  created_at?: string;
+  deleted_at?: string | null;
+}
+
+export interface FrequentFoodItem {
+  normalized_name: string;
+  display_name: string;
+  frequency: number;
+  typical_quantity: number;
+  typical_unit: string;
+  typical_calories: number;
+  typical_protein_g: number;
+  typical_carbs_g: number;
+  typical_fats_g: number;
+  source: FoodSource;
+}
+
+/**
+ * Normalizes food names across whitespace, casing, and common Arabic/English spellings
+ */
+export function normalizeFoodName(name: string): string {
+  if (!name) return "";
+  let s = name.trim().toLowerCase();
+
+  // Strip Arabic diacritics / tashkeel
+  s = s.replace(/[\u064B-\u065F\u0670]/g, "");
+
+  // Normalize Arabic letter variants
+  s = s.replace(/[أإآ]/g, "ا");
+  s = s.replace(/ة/g, "ه");
+  s = s.replace(/ى/g, "ي");
+
+  // Normalize common bilingual synonyms
+  const SYNONYMS: Record<string, string> = {
+    koshary: "koshari",
+    kosharry: "koshari",
+    "كشري": "koshari",
+    fool: "ful",
+    foul: "ful",
+    "فول": "ful",
+    ta3meya: "taameya",
+    "طعميه": "taameya",
+    "طعمية": "taameya",
+    falafel: "taameya",
+    "فلافل": "taameya",
+    "حواوشي": "hawawshi",
+    "حواوشى": "hawawshi",
+    "ملوخية": "molokhia",
+    "ملوخيه": "molokhia",
+    eggs: "egg",
+    bayd: "egg",
+    baydat: "egg",
+    "بيض": "egg",
+    ferakh: "chicken",
+    "فراخ": "chicken",
+    "صدور دجاج": "chicken",
+    "دجاج": "chicken",
+    roz: "rice",
+    "ارز": "rice",
+    "رز": "rice",
+    toast: "bread",
+    "عيش": "bread",
+    "شوفان": "oats",
+  };
+
+  return SYNONYMS[s] || s;
+}
+
+/**
+ * Validates saved meal JSONB items structure and data integrity
+ */
+export function validateSavedMealItems(items: any[]): {
+  isValid: boolean;
+  error?: string;
+  cleanItems: SavedMealItem[];
+} {
+  if (!Array.isArray(items) || items.length === 0) {
+    return { isValid: false, error: "Meal must have at least one food item.", cleanItems: [] };
+  }
+
+  const cleanItems: SavedMealItem[] = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (!item || typeof item !== "object") {
+      return { isValid: false, error: `Invalid item at index ${i}`, cleanItems: [] };
+    }
+
+    const name = String(item.food_name || "").trim();
+    if (!name) {
+      return { isValid: false, error: `Item at index ${i} is missing food name`, cleanItems: [] };
+    }
+
+    const qty = Number(item.quantity);
+    if (isNaN(qty) || qty <= 0) {
+      return { isValid: false, error: `Item "${name}" has invalid quantity`, cleanItems: [] };
+    }
+
+    const unit = String(item.unit || "serving").trim();
+
+    const cal = item.calories !== null && item.calories !== undefined ? Number(item.calories) : null;
+    if (cal !== null && (isNaN(cal) || cal < 0)) {
+      return { isValid: false, error: `Item "${name}" has negative calories`, cleanItems: [] };
+    }
+
+    const p = Math.max(0, Number(item.protein_g) || 0);
+    const c = Math.max(0, Number(item.carbs_g) || 0);
+    const f = Math.max(0, Number(item.fats_g) || 0);
+
+    cleanItems.push({
+      food_name: name,
+      quantity: Math.round(qty * 100) / 100,
+      unit,
+      calories: cal !== null ? Math.round(cal) : null,
+      protein_g: Math.round(p * 10) / 10,
+      carbs_g: Math.round(c * 10) / 10,
+      fats_g: Math.round(f * 10) / 10,
+      source: item.source || "manual",
+    });
+  }
+
+  return { isValid: true, cleanItems };
+}
+
+/**
+ * Computes consistent meal totals from verified items
+ */
+export function computeSavedMealTotals(items: SavedMealItem[]): {
+  total_calories: number;
+  total_protein_g: number;
+  total_carbs_g: number;
+  total_fats_g: number;
+} {
+  let cals = 0;
+  let p = 0;
+  let c = 0;
+  let f = 0;
+
+  for (const it of items) {
+    if (it.calories !== null) cals += it.calories;
+    p += it.protein_g || 0;
+    c += it.carbs_g || 0;
+    f += it.fats_g || 0;
+  }
+
+  return {
+    total_calories: Math.round(cals),
+    total_protein_g: Math.round(p * 10) / 10,
+    total_carbs_g: Math.round(c * 10) / 10,
+    total_fats_g: Math.round(f * 10) / 10,
+  };
+}
+
+/**
+ * Scales saved meal items by a multiplier (e.g. 0.5x, 1x, 1.5x, 2x)
+ */
+export function scaleSavedMealItems(items: SavedMealItem[], multiplier: number): SavedMealItem[] {
+  if (multiplier <= 0) multiplier = 1;
+  return items.map((it) => ({
+    ...it,
+    quantity: Math.round(it.quantity * multiplier * 100) / 100,
+    calories: it.calories !== null ? Math.round(it.calories * multiplier) : null,
+    protein_g: Math.round(it.protein_g * multiplier * 10) / 10,
+    carbs_g: Math.round(it.carbs_g * multiplier * 10) / 10,
+    fats_g: Math.round(it.fats_g * multiplier * 10) / 10,
+  }));
+}
+
+/**
+ * Protein Per Meal guideline: 0.4 g/kg if bodyweight exists, otherwise 30g
+ */
+export function calculateProteinPerMealGuideline(weightKg?: number | null): number {
+  if (weightKg && weightKg >= 30) {
+    return Math.round(weightKg * 0.4);
+  }
+  return 30;
+}
+
+/**
+ * Evaluates meal protein against general guideline with neutral tone (no snack shaming)
+ */
+export function evaluateMealProtein(
+  proteinG: number,
+  guidelineG: number,
+  isSnack: boolean = false
+): {
+  isSnack: boolean;
+  meetsGuideline: boolean;
+  label: string;
+  diffG: number;
+} {
+  const p = Math.round(proteinG * 10) / 10;
+  const diff = Math.round((p - guidelineG) * 10) / 10;
+
+  if (isSnack) {
+    return {
+      isSnack: true,
+      meetsGuideline: false,
+      label: `Snack: ${p}g protein`,
+      diffG: diff,
+    };
+  }
+
+  const meets = p >= guidelineG;
+  return {
+    isSnack: false,
+    meetsGuideline: meets,
+    label: meets
+      ? `Guideline met (${p}g / ${guidelineG}g)`
+      : `Below guideline (${p}g / ${guidelineG}g)`,
+    diffG: diff,
+  };
+}
+
+/**
+ * Determines whether a day qualifies for adherence and weekly averages
+ * (Day qualifies when total calories >= 800 (or >= 40% of target), or mealCount >= 3, or marked complete)
+ */
+export function isQualifyingDay(
+  day: { totalCalories: number; mealCount: number; isMarkedComplete?: boolean },
+  targetCalories?: number | null
+): boolean {
+  if (day.isMarkedComplete) return true;
+  const minThreshold = targetCalories && targetCalories > 0 ? Math.round(targetCalories * 0.4) : 800;
+  return day.totalCalories >= minThreshold || day.mealCount >= 3;
+}
+
+/**
+ * EXACT Macro Adherence Formula (Item 5):
+ * Calorie tolerance (40% weight): delta <= max(100, 5% of target) -> 100
+ * Protein threshold (35% weight): >= target -> 100, no upper penalty
+ * Carb / Fat tolerance (25% weight): 30% flexible buffer
+ * Unit-testable boundaries: 100, 80, 50, 0
+ */
+export function calculateMacroAdherenceScore(
+  dailyLog: { calories: number; proteinG: number; carbsG?: number; fatsG?: number },
+  targets: { calories: number; proteinGrams: number; carbsGrams?: number; fatsGrams?: number }
+): {
+  totalScore: number;
+  calorieScore: number;
+  proteinScore: number;
+  macroScore: number;
+  label: string;
+} {
+  // 1. Calorie Component (Weight = 0.40)
+  const calDelta = Math.abs(dailyLog.calories - targets.calories);
+  const calTol = Math.max(100, Math.round(targets.calories * 0.05)); // 100 kcal or 5%
+  const maxCalDelta = Math.max(500, Math.round(targets.calories * 0.30)); // 30% or 500 kcal
+
+  let calScore = 100;
+  if (calDelta > calTol) {
+    const excess = calDelta - calTol;
+    const range = maxCalDelta - calTol;
+    calScore = Math.max(0, Math.round(100 * (1 - excess / range)));
+  }
+
+  // 2. Protein Component (Weight = 0.35)
+  // No upper limit penalty! Hitting or exceeding target gets 100.
+  let protScore = 100;
+  if (dailyLog.proteinG < targets.proteinGrams) {
+    const ratio = dailyLog.proteinG / targets.proteinGrams;
+    if (ratio >= 0.9) {
+      // 90% - 100% of target scores 90 - 100
+      protScore = 90 + Math.round(((ratio - 0.9) / 0.1) * 10);
+    } else {
+      // Scaled down to 0 at 40% of target
+      const dropRange = 0.9 - 0.4;
+      const progress = Math.max(0, ratio - 0.4);
+      protScore = Math.max(0, Math.round((progress / dropRange) * 90));
+    }
+  }
+
+  // 3. Carb / Fat Balance (Weight = 0.25) - 30% flexible buffer
+  let carbScore = 100;
+  if (targets.carbsGrams && targets.carbsGrams > 0 && dailyLog.carbsG !== undefined) {
+    const cDelta = Math.abs(dailyLog.carbsG - targets.carbsGrams);
+    const cTol = targets.carbsGrams * 0.30; // 30% flexible buffer
+    if (cDelta > cTol) {
+      const excess = cDelta - cTol;
+      const maxExcess = targets.carbsGrams * 0.40; // scales down across next 40%
+      carbScore = Math.max(0, Math.round(100 * (1 - excess / maxExcess)));
+    }
+  }
+
+  let fatScore = 100;
+  if (targets.fatsGrams && targets.fatsGrams > 0 && dailyLog.fatsG !== undefined) {
+    const fDelta = Math.abs(dailyLog.fatsG - targets.fatsGrams);
+    const fTol = targets.fatsGrams * 0.30; // 30% flexible buffer
+    if (fDelta > fTol) {
+      const excess = fDelta - fTol;
+      const maxExcess = targets.fatsGrams * 0.40;
+      fatScore = Math.max(0, Math.round(100 * (1 - excess / maxExcess)));
+    }
+  }
+
+  const macroScore = Math.round((carbScore + fatScore) / 2);
+
+  // Total Weighted Score (0 - 100)
+  const totalScore = Math.max(
+    0,
+    Math.min(100, Math.round(0.4 * calScore + 0.35 * protScore + 0.25 * macroScore))
+  );
+
+  // Neutral non-judgmental wording
+  let label = "Target Aligned";
+  if (totalScore < 65) {
+    label = "Variable Intake";
+  } else if (totalScore < 85) {
+    label = "Moderate Alignment";
+  }
+
+  return {
+    totalScore,
+    calorieScore: calScore,
+    proteinScore: protScore,
+    macroScore,
+    label,
+  };
+}
+
+/**
+ * Calculates 7-day Weekly Analytics, requiring min 4 qualifying days (Item 2 & 3)
+ */
+export function calculateWeeklyNutritionAnalytics(
+  dailyLogs: Array<{
+    date: string;
+    calories: number;
+    proteinG: number;
+    carbsG: number;
+    fatsG: number;
+    mealCount: number;
+    isMarkedComplete?: boolean;
+  }>,
+  targets: MacroTargets | null,
+  realWeightTrendKgPerWk: number | null = null
+): {
+  hasTargets: boolean;
+  hasEnoughDays: boolean;
+  message?: string;
+  qualifyingDaysCount: number;
+  totalDays: number;
+  averageCalories: number | null;
+  averageProteinG: number | null;
+  averageCarbsG: number | null;
+  averageFatsG: number | null;
+  adherenceScore: number | null;
+  adherenceLabel: string | null;
+  projectedWeightChangeKgPerWk: number | null; // From 7700 kcal rule (Estimate)
+  realWeightTrendKgPerWk: number | null; // From real scale weigh-ins
+  headlineTrend: {
+    valueFormatted: string;
+    source: "weigh_in" | "caloric_estimate" | "insufficient_data";
+    isDiscrepancy: boolean;
+    description: string;
+  };
+  dailyScores: Array<{
+    date: string;
+    calories: number;
+    proteinG: number;
+    qualifying: boolean;
+    score: number | null;
+  }>;
+} {
+  // If targets are unset, show "Set your targets" and compute nothing (Item 2)
+  if (!targets || !targets.calories || !targets.proteinGrams) {
+    return {
+      hasTargets: false,
+      hasEnoughDays: false,
+      message: "Set your targets",
+      qualifyingDaysCount: 0,
+      totalDays: dailyLogs.length,
+      averageCalories: null,
+      averageProteinG: null,
+      averageCarbsG: null,
+      averageFatsG: null,
+      adherenceScore: null,
+      adherenceLabel: null,
+      projectedWeightChangeKgPerWk: null,
+      realWeightTrendKgPerWk: null,
+      headlineTrend: {
+        valueFormatted: "--",
+        source: "insufficient_data",
+        isDiscrepancy: false,
+        description: "Set your targets to enable weekly adherence and projections.",
+      },
+      dailyScores: [],
+    };
+  }
+
+  // Filter qualifying days
+  const dailyScores: Array<{
+    date: string;
+    calories: number;
+    proteinG: number;
+    qualifying: boolean;
+    score: number | null;
+  }> = [];
+
+  const qualifyingLogs: typeof dailyLogs = [];
+
+  for (const log of dailyLogs) {
+    const qualifies = isQualifyingDay(
+      { totalCalories: log.calories, mealCount: log.mealCount, isMarkedComplete: log.isMarkedComplete },
+      targets.calories
+    );
+
+    let score: number | null = null;
+    if (qualifies) {
+      qualifyingLogs.push(log);
+      const evalRes = calculateMacroAdherenceScore(
+        { calories: log.calories, proteinG: log.proteinG, carbsG: log.carbsG, fatsG: log.fatsG },
+        { calories: targets.calories, proteinGrams: targets.proteinGrams, carbsGrams: targets.carbsGrams, fatsGrams: targets.fatsGrams }
+      );
+      score = evalRes.totalScore;
+    }
+
+    dailyScores.push({
+      date: log.date,
+      calories: log.calories,
+      proteinG: log.proteinG,
+      qualifying: qualifies,
+      score,
+    });
+  }
+
+  const qCount = qualifyingLogs.length;
+
+  // Require at least 4 qualifying days (Item 2)
+  if (qCount < 4) {
+    return {
+      hasTargets: true,
+      hasEnoughDays: false,
+      message: "Not enough logged days",
+      qualifyingDaysCount: qCount,
+      totalDays: dailyLogs.length,
+      averageCalories: null,
+      averageProteinG: null,
+      averageCarbsG: null,
+      averageFatsG: null,
+      adherenceScore: null,
+      adherenceLabel: null,
+      projectedWeightChangeKgPerWk: null,
+      realWeightTrendKgPerWk,
+      headlineTrend: {
+        valueFormatted: realWeightTrendKgPerWk !== null ? `${realWeightTrendKgPerWk > 0 ? "+" : ""}${realWeightTrendKgPerWk.toFixed(2)} kg/wk` : "--",
+        source: realWeightTrendKgPerWk !== null ? "weigh_in" : "insufficient_data",
+        isDiscrepancy: false,
+        description: `Based on ${qCount} of 7 logged days (minimum 4 qualifying days required).`,
+      },
+      dailyScores,
+    };
+  }
+
+  // Calculate averages across qualifying days
+  const avgCals = Math.round(qualifyingLogs.reduce((s, l) => s + l.calories, 0) / qCount);
+  const avgProt = Math.round((qualifyingLogs.reduce((s, l) => s + l.proteinG, 0) / qCount) * 10) / 10;
+  const avgCarbs = Math.round((qualifyingLogs.reduce((s, l) => s + l.carbsG, 0) / qCount) * 10) / 10;
+  const avgFats = Math.round((qualifyingLogs.reduce((s, l) => s + l.fatsG, 0) / qCount) * 10) / 10;
+
+  const validScores = dailyScores.filter((s) => s.score !== null).map((s) => s.score!);
+  const avgAdherence = Math.round(validScores.reduce((s, sc) => s + sc, 0) / validScores.length);
+
+  let adherenceLabel = "Target Aligned";
+  if (avgAdherence < 65) adherenceLabel = "Variable Intake";
+  else if (avgAdherence < 85) adherenceLabel = "Moderate Alignment";
+
+  // Caloric projection from 7700 kcal rule (Item 3)
+  const netWeeklyDeficit = (avgCals - targets.calories) * 7;
+  const projectedWeightChange = Math.round((netWeeklyDeficit / 7700) * 100) / 100;
+
+  // Headline rule: Real weigh-in trend is the headline if available! (Item 3)
+  let headlineSource: "weigh_in" | "caloric_estimate" = "caloric_estimate";
+  let headlineFormatted = `${projectedWeightChange > 0 ? "+" : ""}${projectedWeightChange.toFixed(2)} kg/wk (Estimated)`;
+  let isDiscrepancy = false;
+  let headlineDesc = `Based on ${qCount} of 7 logged days. Estimated from net intake (${netWeeklyDeficit > 0 ? "+" : ""}${netWeeklyDeficit} kcal/wk).`;
+
+  if (realWeightTrendKgPerWk !== null) {
+    headlineSource = "weigh_in";
+    headlineFormatted = `${realWeightTrendKgPerWk > 0 ? "+" : ""}${realWeightTrendKgPerWk.toFixed(2)} kg/wk`;
+    isDiscrepancy = Math.abs(realWeightTrendKgPerWk - projectedWeightChange) > 0.2;
+    headlineDesc = isDiscrepancy
+      ? `Real scale trend from weigh-ins takes precedence. Caloric estimate projects ${projectedWeightChange > 0 ? "+" : ""}${projectedWeightChange.toFixed(2)} kg/wk.`
+      : `Real scale trend closely matches caloric projection (${projectedWeightChange > 0 ? "+" : ""}${projectedWeightChange.toFixed(2)} kg/wk estimate).`;
+  }
+
+  return {
+    hasTargets: true,
+    hasEnoughDays: true,
+    qualifyingDaysCount: qCount,
+    totalDays: dailyLogs.length,
+    averageCalories: avgCals,
+    averageProteinG: avgProt,
+    averageCarbsG: avgCarbs,
+    averageFatsG: avgFats,
+    adherenceScore: avgAdherence,
+    adherenceLabel,
+    projectedWeightChangeKgPerWk: projectedWeightChange,
+    realWeightTrendKgPerWk,
+    headlineTrend: {
+      valueFormatted: headlineFormatted,
+      source: headlineSource,
+      isDiscrepancy,
+      description: headlineDesc,
+    },
+    dailyScores,
+  };
+}
+

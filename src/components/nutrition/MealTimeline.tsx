@@ -11,6 +11,7 @@ import {
   Sparkles,
   Layers,
   Check,
+  BookmarkPlus,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
@@ -19,12 +20,16 @@ import {
   MealType,
   rescaleItemNutrients,
   ConfidenceTier,
+  calculateProteinPerMealGuideline,
+  evaluateMealProtein,
 } from "@/lib/nutrition";
 
 interface MealTimelineProps {
   meals: MealLogEntry[];
   onMealsUpdated: () => void;
   userTimezone: string;
+  currentWeightKg?: number | null;
+  onSaveAsTemplate?: (mealType: MealType, items: MealLogEntry[]) => void;
 }
 
 const MEAL_ORDER: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
@@ -39,8 +44,11 @@ export function MealTimeline({
   meals,
   onMealsUpdated,
   userTimezone,
+  currentWeightKg,
+  onSaveAsTemplate,
 }: MealTimelineProps) {
   const { isOnline, guardAction } = useOnlineGuard();
+  const guidelineG = calculateProteinPerMealGuideline(currentWeightKg);
 
   const [deletedMeal, setDeletedMeal] = useState<{ id: string; name: string } | null>(null);
   const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -178,7 +186,8 @@ export function MealTimeline({
         if (groupMeals.length === 0) return null;
 
         const groupCals = groupMeals.reduce((sum, m) => sum + (m.calories || 0), 0);
-        const groupProt = groupMeals.reduce((sum, m) => sum + (m.protein_g || 0), 0);
+        const groupProt = Math.round(groupMeals.reduce((sum, m) => sum + (m.protein_g || 0), 0) * 10) / 10;
+        const protEval = evaluateMealProtein(groupProt, guidelineG, type === "snack");
 
         return (
           <div
@@ -186,16 +195,44 @@ export function MealTimeline({
             className="p-4 rounded-3xl bg-surface-container border border-border-subtle space-y-3"
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-2 border-b border-border-subtle font-mono">
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-border-subtle font-mono">
               <div className="flex items-center gap-2">
                 <Utensils className="w-4 h-4 text-secondary-cyan" />
                 <span className="text-xs font-bold uppercase tracking-wider text-on-surface">
                   {MEAL_LABELS[type]}
                 </span>
+
+                {/* Protein per meal guideline badge (Item 4: neutral, snacks unjudged) */}
+                {type === "snack" ? (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-surface-container-high text-text-muted border border-border-subtle">
+                    {protEval.label}
+                  </span>
+                ) : protEval.meetsGuideline ? (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary-lime/10 text-primary-lime border border-primary-lime/20 flex items-center gap-1">
+                    <Check className="w-2.5 h-2.5" />
+                    <span>Target met ({groupProt}g / {guidelineG}g)</span>
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-surface-container-high text-text-muted border border-border-subtle">
+                    {groupProt}g / {guidelineG}g guideline
+                  </span>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-xs">
+
+              <div className="flex items-center gap-2.5 text-xs">
                 <span className="font-bold text-on-surface">{groupCals} kcal</span>
-                <span className="text-primary-lime font-semibold">{Math.round(groupProt * 10) / 10}g Prot</span>
+                <span className="text-primary-lime font-semibold">{groupProt}g Prot</span>
+
+                {onSaveAsTemplate && (
+                  <button
+                    onClick={() => onSaveAsTemplate(type, groupMeals)}
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-[10px] text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+                    title="Save this meal as a reusable template"
+                  >
+                    <BookmarkPlus className="w-3 h-3 text-secondary-cyan" />
+                    <span>Save</span>
+                  </button>
+                )}
               </div>
             </div>
 
