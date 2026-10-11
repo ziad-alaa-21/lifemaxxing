@@ -16,10 +16,10 @@ export function MindView() {
             </div>
             <div>
               <h2 className="text-lg font-bold font-mono text-on-surface">
-                Mind & Sleep Architecture
+                Cognitive & Focus Architecture
               </h2>
               <p className="text-xs text-on-surface-variant mt-0.5">
-                Cognitive readiness, sleep telemetry, and focus intervals
+                Mental math trainer, spaced repetition flashcards, and ultradian focus intervals
               </p>
             </div>
           </div>
@@ -29,19 +29,19 @@ export function MindView() {
       {/* Honest Empty State / Coming Soon */}
       <div className="p-8 sm:p-12 bg-surface-container rounded-2xl border border-border-subtle text-center space-y-4 max-w-xl mx-auto">
         <div className="w-12 h-12 rounded-2xl bg-tertiary-purple/10 border border-tertiary-purple/20 flex items-center justify-center text-tertiary-purple mx-auto">
-          <Moon className="w-6 h-6" />
+          <Brain className="w-6 h-6" />
         </div>
         <div className="space-y-1">
           <h3 className="text-base font-bold font-mono text-on-surface">
-            Coming Soon
+            Coming Soon: Cognitive Engine
           </h3>
           <p className="text-xs text-on-surface-variant leading-relaxed">
-            Sleep telemetry check-ins and ultradian focus intervals will be built in an upcoming stage. No hardcoded mock telemetry is presented.
+            Mental math fluency, Leitner spaced repetition flashcards, and Pomodoro/Ultradian focus timers will be activated in upcoming stages.
           </p>
         </div>
         <div className="pt-2 flex items-center justify-center gap-2 text-[11px] font-mono text-text-muted">
           <Clock className="w-3.5 h-3.5" />
-          <span>Scheduled after Strength & PWA stages</span>
+          <span>Cognitive domain engine</span>
         </div>
       </div>
     </div>

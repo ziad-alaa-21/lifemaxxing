@@ -32,9 +32,9 @@ DROP POLICY IF EXISTS "Users can delete own weight logs" ON public.weight_logs;
 DROP POLICY IF EXISTS "Users can manage own weight logs" ON public.weight_logs;
 
 -- Strict CRUD policies
-CREATE POLICY "Users can view own non-deleted weight logs" ON public.weight_logs
+CREATE POLICY "Users can view own weight logs" ON public.weight_logs
   FOR SELECT TO authenticated
-  USING (auth.uid() = user_id AND deleted_at IS NULL);
+  USING (auth.uid() = user_id);
 
 CREATE POLICY "Users can insert own weight logs" ON public.weight_logs
   FOR INSERT TO authenticated

@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import {
   Dumbbell,
   Weight,
+  Moon,
   Award,
   History,
   BookOpen,
@@ -17,6 +18,7 @@ import { ActiveWorkoutSession } from "@/components/strength/ActiveWorkoutSession
 import { RankStandardsMatrix } from "@/components/strength/RankStandardsMatrix";
 import { WorkoutHistory } from "@/components/strength/WorkoutHistory";
 import { WeightDashboard } from "@/components/weight/WeightDashboard";
+import { SleepDashboard } from "@/components/sleep/SleepDashboard";
 
 interface Exercise {
   id: string;
@@ -28,7 +30,7 @@ interface Exercise {
   ranked_key: string | null;
 }
 
-type TabKey = "logger" | "weight" | "standards" | "history" | "catalog";
+type TabKey = "logger" | "weight" | "sleep" | "standards" | "history" | "catalog";
 
 function BodyViewContent() {
   const searchParams = useSearchParams();
@@ -46,7 +48,7 @@ function BodyViewContent() {
 
   useEffect(() => {
     const t = searchParams.get("tab") as TabKey;
-    if (t && ["logger", "weight", "standards", "history", "catalog"].includes(t)) {
+    if (t && ["logger", "weight", "sleep", "standards", "history", "catalog"].includes(t)) {
       setActiveTab(t);
     }
   }, [searchParams]);
@@ -123,6 +125,18 @@ function BodyViewContent() {
         </button>
 
         <button
+          onClick={() => switchTab("sleep")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            activeTab === "sleep"
+              ? "bg-[#7DD3FC] text-charcoal-dark shadow-[0_0_15px_rgba(125,211,252,0.3)] font-bold"
+              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+          }`}
+        >
+          <Moon className="w-4 h-4" />
+          <span>Sleep & Rest</span>
+        </button>
+
+        <button
           onClick={() => switchTab("standards")}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             activeTab === "standards"
@@ -171,10 +185,13 @@ function BodyViewContent() {
       {/* Tab 2: Body Weight Dashboard & Composition */}
       {activeTab === "weight" && <WeightDashboard />}
 
-      {/* Tab 3: Strength Standards & Radar Matrix */}
+      {/* Tab 3: Sleep & Circadian Telemetry */}
+      {activeTab === "sleep" && <SleepDashboard />}
+
+      {/* Tab 4: Strength Standards & Radar Matrix */}
       {activeTab === "standards" && <RankStandardsMatrix />}
 
-      {/* Tab 4: Workout History & Volume Tracking */}
+      {/* Tab 5: Workout History & Volume Tracking */}
       {activeTab === "history" && (
         <WorkoutHistory
           onStartWorkoutClick={() => {

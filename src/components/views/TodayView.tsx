@@ -11,9 +11,11 @@ import {
   Calendar,
   Weight,
   CheckCircle2,
+  Moon,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { getTierColor } from "@/lib/strength";
+import { calculateSleepScore } from "@/lib/sleep";
 
 export function TodayView() {
   const [exerciseCount, setExerciseCount] = useState<number | null>(null);
@@ -22,6 +24,12 @@ export function TodayView() {
   const [highestRankTier, setHighestRankTier] = useState<string | null>(null);
   const [currentWeight, setCurrentWeight] = useState<number | null>(null);
   const [isWeightLoggedToday, setIsWeightLoggedToday] = useState(false);
+  const [latestSleep, setLatestSleep] = useState<{
+    score: number;
+    tier: string;
+    durationFormatted: string;
+    hexColor: string;
+  } | null>(null);
   const [todayDate, setTodayDate] = useState("");
 
   useEffect(() => {
@@ -107,6 +115,34 @@ export function TodayView() {
               setIsWeightLoggedToday(logDate === nowDate);
             }
           });
+
+        // Fetch sleep telemetry from sleep_logs (single source of truth)
+        supabase
+          .from("sleep_logs")
+          .select("duration_minutes, quality_rating, awakenings_count, sleep_date")
+          .eq("user_id", user.id)
+          .is("deleted_at", null)
+          .order("sleep_date", { ascending: false })
+          .limit(1)
+          .then(({ data: sleepLogs }) => {
+            if (sleepLogs && sleepLogs.length > 0) {
+              const latest = sleepLogs[0];
+              const scoreObj = calculateSleepScore(
+                latest.duration_minutes,
+                8.0,
+                latest.quality_rating,
+                latest.awakenings_count
+              );
+              const h = Math.floor(latest.duration_minutes / 60);
+              const m = latest.duration_minutes % 60;
+              setLatestSleep({
+                score: scoreObj.score,
+                tier: scoreObj.tier,
+                durationFormatted: `${h}h ${m}m`,
+                hexColor: scoreObj.hexColor,
+              });
+            }
+          });
       }
     });
   }, []);
@@ -169,20 +205,36 @@ export function TodayView() {
           </div>
           <div className="space-y-1">
             <div className="text-xs font-mono uppercase tracking-wider text-text-muted">
-              Physical Domain
+              Physical & Recovery Domain
             </div>
             <div className="text-lg font-bold font-mono text-on-surface group-hover:text-secondary-cyan transition-colors">
-              Strength & Body
+              Body & Sleep Telemetry
             </div>
-            <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
+            <p className="text-xs text-on-surface-variant line-clamp-2 mt-1">
               {latestWorkoutName
                 ? `Latest Session: ${latestWorkoutName}`
                 : "Active workout session logger, bodyweight progression, and Epley 1RM ranks."}
             </p>
+
+            {/* Recovery / Sleep Score Banner */}
+            {latestSleep && (
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2.5">
+                <div className="flex items-center gap-2">
+                  <Moon className="w-3.5 h-3.5 text-[#7DD3FC]" />
+                  <span className="text-[11px] font-mono text-on-surface">Sleep Score</span>
+                </div>
+                <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                  <span className="font-bold" style={{ color: latestSleep.hexColor }}>
+                    {latestSleep.score}/100
+                  </span>
+                  <span className="text-text-muted">({latestSleep.tier}, {latestSleep.durationFormatted})</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-secondary-cyan">
-            <span>{currentWeight ? `Weight: ${currentWeight} kg` : "Log Bodyweight"}</span>
+            <span>{currentWeight ? `Weight: ${currentWeight} kg` : "Log Bodyweight & Sleep"}</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
@@ -208,7 +260,7 @@ export function TodayView() {
               Mind Architecture
             </div>
             <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
-              Sleep telemetry, mental math trainer, and focus session tracking will be wired in upcoming stages.
+              Mental math trainer, spaced repetition flashcards, and focus session telemetry.
             </p>
           </div>
           <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-tertiary-purple">
