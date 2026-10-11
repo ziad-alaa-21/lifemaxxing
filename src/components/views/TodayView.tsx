@@ -18,7 +18,7 @@ import {
 import { supabase } from "@/lib/supabase/client";
 import { getTierColor } from "@/lib/strength";
 import { calculateSleepScore } from "@/lib/sleep";
-import { calculateDailyFocusStats } from "@/lib/mind";
+import { calculateFocusScore, FOCUS_PRESETS, FocusMode } from "@/lib/mind";
 
 export function TodayView() {
   const [exerciseCount, setExerciseCount] = useState<number | null>(null);
@@ -33,9 +33,9 @@ export function TodayView() {
   } | null>(null);
   const [todayFocus, setTodayFocus] = useState<{
     totalMinutes: number;
-    completedCycles: number;
-    deepWorkScore: number;
-    goalMinutes: number;
+    completedCount: number;
+    score: number | null;
+    defaultMode: FocusMode;
   } | null>(null);
   const [latestSleep, setLatestSleep] = useState<{
     score: number;
@@ -105,7 +105,7 @@ export function TodayView() {
         // Fetch weight & nutrition targets from profiles & logs
         supabase
           .from("profiles")
-          .select("current_weight_kg, target_calories, timezone, daily_focus_goal_minutes")
+          .select("current_weight_kg, target_calories, timezone, daily_focus_goal_minutes, default_focus_mode")
           .eq("id", user.id)
           .single()
           .then(({ data: profData }) => {
@@ -136,24 +136,24 @@ export function TodayView() {
                 }
               });
 
-            // Fetch mind & focus telemetry for today
+            // Fetch focus telemetry for today
             supabase
               .from("focus_sessions")
-              .select("id, task_name, mode, work_duration_minutes, break_duration_minutes, completed, rating, friction_tags, started_at, ended_at, logged_date")
+              .select("*")
               .eq("user_id", user.id)
               .eq("logged_date", todayStr)
               .is("deleted_at", null)
               .then(({ data: focusData }) => {
                 if (focusData) {
-                  const stats = calculateDailyFocusStats(
+                  const stats = calculateFocusScore(
                     focusData as any,
-                    prof?.daily_focus_goal_minutes || 180
+                    prof?.daily_focus_goal_minutes
                   );
                   setTodayFocus({
-                    totalMinutes: stats.totalMinutes,
-                    completedCycles: stats.completedUltradianCycles,
-                    deepWorkScore: stats.deepWorkScore,
-                    goalMinutes: prof?.daily_focus_goal_minutes || 180,
+                    totalMinutes: stats.totalActualMinutes,
+                    completedCount: stats.completedCount,
+                    score: stats.score,
+                    defaultMode: (prof?.default_focus_mode as FocusMode) || "sprint_50",
                   });
                 }
               });
@@ -330,7 +330,7 @@ export function TodayView() {
               </span>
             ) : (
               <span className="font-mono text-[10px] text-text-muted px-2 py-0.5 rounded-full bg-surface-container-high">
-                90m Ultradian
+                {FOCUS_PRESETS[todayFocus?.defaultMode || "sprint_50"]?.badge || "50 / 10"} Sprint
               </span>
             )}
           </div>
@@ -339,34 +339,31 @@ export function TodayView() {
               Cognitive Domain
             </div>
             <div className="text-lg font-bold font-mono text-on-surface group-hover:text-tertiary-purple transition-colors">
-              Mind & Focus Engine
+              Focus Engine
             </div>
             <p className="text-xs text-on-surface-variant line-clamp-2 mt-1">
               {todayFocus && todayFocus.totalMinutes > 0
-                ? `${todayFocus.completedCycles} ultradian cycle${todayFocus.completedCycles === 1 ? '' : 's'} logged today.`
-                : "0m focused today. Start an ultradian rhythm sprint to track deep work telemetry."}
+                ? `${todayFocus.completedCount} completed focus sprint${todayFocus.completedCount === 1 ? '' : 's'} logged today.`
+                : "0m focused today. Start your default focus sprint to track deep work telemetry."}
             </p>
 
-            {/* Deep Work Score Banner */}
-            {todayFocus && todayFocus.totalMinutes > 0 && (
+            {/* Focus Score Banner */}
+            {todayFocus && todayFocus.score !== null && (
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
-                  <span className="text-[11px] font-mono text-on-surface">Deep Work Score</span>
+                  <span className="text-[11px] font-mono text-on-surface">Focus score (from your sessions)</span>
                 </div>
                 <div className="flex items-center gap-1.5 font-mono text-[11px]">
                   <span className="font-bold text-tertiary-purple">
-                    {todayFocus.deepWorkScore}/100
-                  </span>
-                  <span className="text-text-muted">
-                    ({todayFocus.totalMinutes}m / {todayFocus.goalMinutes}m)
+                    {todayFocus.score}/100
                   </span>
                 </div>
               </div>
             )}
           </div>
           <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-tertiary-purple">
-            <span>Start Focus Sprint</span>
+            <span>Start {FOCUS_PRESETS[todayFocus?.defaultMode || "sprint_50"]?.name || "Focus Sprint"}</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>

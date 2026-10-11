@@ -9,8 +9,8 @@ import {
   Star,
   CheckCircle2,
   Tag,
-  Coffee,
-  Sparkles,
+  AlertCircle,
+  Pause,
 } from "lucide-react";
 import { FocusSession, FOCUS_PRESETS } from "@/lib/mind";
 import { supabase } from "@/lib/supabase/client";
@@ -82,10 +82,10 @@ export function FocusHistoryList({
           <Brain className="w-6 h-6" />
         </div>
         <div className="text-sm font-bold text-on-surface">
-          No Focus Sprints Logged Today
+          No Sessions Logged Today
         </div>
         <p className="text-xs text-text-muted max-w-sm mx-auto">
-          Start your first 90-minute ultradian cycle or sprint above to record deep work telemetry.
+          Start your first 50-minute focus sprint above to record deep work telemetry.
         </p>
       </div>
     );
@@ -112,11 +112,11 @@ export function FocusHistoryList({
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-tertiary-purple" />
             <span className="font-bold uppercase tracking-wider text-on-surface">
-              Completed Focus Sprints ({sessions.length})
+              Today&apos;s Focus Sessions ({sessions.length})
             </span>
           </div>
           <span className="text-text-muted text-[11px]">
-            {sessions.reduce((s, item) => s + item.work_duration_minutes, 0)}m Total
+            {sessions.reduce((s, item) => s + (item.actual_minutes || 0), 0)}m Total
           </span>
         </div>
 
@@ -126,7 +126,7 @@ export function FocusHistoryList({
               hour: "2-digit",
               minute: "2-digit",
             });
-            const preset = FOCUS_PRESETS[s.mode] || FOCUS_PRESETS.ultradian_90;
+            const preset = FOCUS_PRESETS[s.mode] || FOCUS_PRESETS.sprint_50;
 
             return (
               <div
@@ -135,12 +135,26 @@ export function FocusHistoryList({
               >
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
+                    {/* Category pill */}
+                    <span className="px-2 py-0.5 rounded-lg text-[10px] bg-surface-container-high text-on-surface border border-border-subtle font-bold">
+                      {s.task_category || "General"}
+                    </span>
+
                     <span className="font-bold text-on-surface truncate">
                       {s.task_name}
                     </span>
+
                     <span className="px-2 py-0.5 rounded-lg text-[10px] bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30 font-bold">
                       {preset.badge}
                     </span>
+
+                    {/* Status badge */}
+                    {s.status === "ended_early" && (
+                      <span className="px-1.5 py-0.5 rounded-md text-[9px] bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                        Ended Early
+                      </span>
+                    )}
+
                     {s.rating && (
                       <span className="flex items-center gap-1 text-[11px] text-rank-gold font-bold">
                         <Star className="w-3 h-3 fill-current" />
@@ -149,7 +163,7 @@ export function FocusHistoryList({
                     )}
                   </div>
 
-                  {/* Friction and Cognitive State Tags */}
+                  {/* Friction and Flow Tags */}
                   {s.friction_tags && s.friction_tags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {s.friction_tags.map((tag) => (
@@ -173,10 +187,12 @@ export function FocusHistoryList({
                 <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border-subtle text-text-muted">
                   <div className="flex items-center gap-2 text-[11px]">
                     <span className="font-bold text-on-surface">
-                      {s.work_duration_minutes}m work
+                      {s.actual_minutes}m active
                     </span>
-                    {s.break_duration_minutes > 0 && (
-                      <span>+ {s.break_duration_minutes}m rest</span>
+                    {s.paused_seconds > 0 && (
+                      <span className="text-text-muted">
+                        ({Math.round(s.paused_seconds / 60)}m paused)
+                      </span>
                     )}
                     <span>at {timeStr}</span>
                   </div>

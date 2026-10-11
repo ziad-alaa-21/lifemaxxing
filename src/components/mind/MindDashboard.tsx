@@ -6,10 +6,8 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Flame,
   Settings2,
   Sparkles,
-  Coffee,
   Clock,
   Target,
   Star,
@@ -19,13 +17,14 @@ import {
   X,
   Volume2,
   VolumeX,
+  Vibrate,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import {
   FocusMode,
   FocusSession,
   FOCUS_PRESETS,
-  calculateDailyFocusStats,
+  calculateFocusScore,
 } from "@/lib/mind";
 import { getLocalDateString } from "@/lib/nutrition";
 import { UltradianTimer } from "./UltradianTimer";
@@ -41,14 +40,18 @@ export function MindDashboard() {
 
   // User Settings & Profile
   const [userProfile, setUserProfile] = useState<{
-    dailyFocusGoalMinutes: number;
+    dailyFocusGoalMinutes: number | null;
     defaultFocusMode: FocusMode;
     soundChimeEnabled: boolean;
+    soundVolume: number;
+    vibrationEnabled: boolean;
     timezone: string;
   }>({
-    dailyFocusGoalMinutes: 180,
-    defaultFocusMode: "ultradian_90",
+    dailyFocusGoalMinutes: null,
+    defaultFocusMode: "sprint_50",
     soundChimeEnabled: true,
+    soundVolume: 80,
+    vibrationEnabled: true,
     timezone: "UTC",
   });
 
@@ -60,9 +63,11 @@ export function MindDashboard() {
 
   // Settings modal
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [tempGoalMinutes, setTempGoalMinutes] = useState(180);
-  const [tempDefaultMode, setTempDefaultMode] = useState<FocusMode>("ultradian_90");
+  const [tempGoalMinutes, setTempGoalMinutes] = useState<string>("");
+  const [tempDefaultMode, setTempDefaultMode] = useState<FocusMode>("sprint_50");
   const [tempChimeEnabled, setTempChimeEnabled] = useState(true);
+  const [tempSoundVolume, setTempSoundVolume] = useState(80);
+  const [tempVibrationEnabled, setTempVibrationEnabled] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
 
   // Initialize timezone & date
@@ -83,27 +88,33 @@ export function MindDashboard() {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("daily_focus_goal_minutes, default_focus_mode, sound_chime_enabled, timezone")
+        .select(
+          "daily_focus_goal_minutes, default_focus_mode, sound_chime_enabled, sound_volume, vibration_enabled, timezone"
+        )
         .eq("id", user.id)
         .single();
 
       if (error) {
-        // columns might not exist if migration pending, fallback gracefully
-        console.warn("Profile preferences fetch note:", error.message);
+        console.warn("Profile preferences note:", error.message);
         return;
       }
 
       if (data) {
-        const mode = (data.default_focus_mode as FocusMode) || "ultradian_90";
+        const mode = (data.default_focus_mode as FocusMode) || "sprint_50";
+        const goal = data.daily_focus_goal_minutes ?? null;
         setUserProfile((prev) => ({
-          dailyFocusGoalMinutes: data.daily_focus_goal_minutes || 180,
-          defaultFocusMode: mode in FOCUS_PRESETS ? mode : "ultradian_90",
+          dailyFocusGoalMinutes: goal,
+          defaultFocusMode: mode in FOCUS_PRESETS ? mode : "sprint_50",
           soundChimeEnabled: data.sound_chime_enabled ?? true,
+          soundVolume: data.sound_volume ?? 80,
+          vibrationEnabled: data.vibration_enabled ?? true,
           timezone: data.timezone || prev.timezone,
         }));
-        setTempGoalMinutes(data.daily_focus_goal_minutes || 180);
-        setTempDefaultMode(mode in FOCUS_PRESETS ? mode : "ultradian_90");
+        setTempGoalMinutes(goal !== null ? String(goal) : "");
+        setTempDefaultMode(mode in FOCUS_PRESETS ? mode : "sprint_50");
         setTempChimeEnabled(data.sound_chime_enabled ?? true);
+        setTempSoundVolume(data.sound_volume ?? 80);
+        setTempVibrationEnabled(data.vibration_enabled ?? true);
       }
     } catch (e) {
       console.warn("Profile fetch error:", e);
@@ -177,8 +188,8 @@ export function MindDashboard() {
   const isToday =
     selectedDate === getLocalDateString(new Date(), userProfile.timezone);
 
-  // Stats calculation
-  const stats = calculateDailyFocusStats(
+  // Item 4: Focus Score calculation
+  const scoreData = calculateFocusScore(
     sessions,
     userProfile.dailyFocusGoalMinutes
   );
@@ -193,12 +204,17 @@ export function MindDashboard() {
         } = await supabase.auth.getUser();
         if (!user) throw new Error("Please log in to save settings.");
 
+        const goalVal =
+          tempGoalMinutes.trim() !== "" ? Number(tempGoalMinutes) : null;
+
         const { error } = await supabase
           .from("profiles")
           .update({
-            daily_focus_goal_minutes: tempGoalMinutes,
+            daily_focus_goal_minutes: goalVal,
             default_focus_mode: tempDefaultMode,
             sound_chime_enabled: tempChimeEnabled,
+            sound_volume: tempSoundVolume,
+            vibration_enabled: tempVibrationEnabled,
           })
           .eq("id", user.id);
 
@@ -206,9 +222,11 @@ export function MindDashboard() {
 
         setUserProfile((prev) => ({
           ...prev,
-          dailyFocusGoalMinutes: tempGoalMinutes,
+          dailyFocusGoalMinutes: goalVal,
           defaultFocusMode: tempDefaultMode,
           soundChimeEnabled: tempChimeEnabled,
+          soundVolume: tempSoundVolume,
+          vibrationEnabled: tempVibrationEnabled,
         }));
         setIsSettingsOpen(false);
       } catch (err: any) {
@@ -233,14 +251,14 @@ export function MindDashboard() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold font-mono text-on-surface">
-                  Mind & Ultradian Focus Engine
+                  Focus Engine
                 </h1>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
-                  90m BRAC
+                  Sprint & Intervals
                 </span>
               </div>
               <p className="text-xs text-on-surface-variant mt-0.5 font-mono">
-                Biological rest-activity cycle, sprint intervals, and friction telemetry
+                Sprint intervals, flow telemetry, and session reflections
               </p>
             </div>
           </div>
@@ -265,7 +283,7 @@ export function MindDashboard() {
             <span>Database Table &lsquo;focus_sessions&rsquo; Pending Migration</span>
           </div>
           <p className="text-text-muted leading-relaxed">
-            Run <code className="text-amber-200">supabase/migrations/006_mind_and_focus_engine.sql</code> in your Supabase SQL editor to activate persistence. Timer runs smoothly in local memory.
+            Run <code className="text-amber-200">supabase/migrations/006_mind_and_focus_engine.sql</code> in your Supabase SQL editor to activate persistence. Timer runs locally on this device.
           </p>
         </div>
       )}
@@ -320,24 +338,28 @@ export function MindDashboard() {
         </div>
       </div>
 
-      {/* Daily Metrics 4-Card Grid */}
+      {/* Daily Metrics: Item 4 Focus score (from your sessions) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 font-mono">
-        {/* Card 1: Deep Work Score */}
+        {/* Card 1: Focus Score */}
         <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1 relative overflow-hidden">
           <div className="flex items-center justify-between text-text-muted text-[11px]">
-            <span>Deep Work Score</span>
+            <span>Focus score</span>
             <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
           </div>
           <div className="text-2xl font-extrabold text-on-surface flex items-baseline gap-1">
-            <span>{stats.deepWorkScore}</span>
-            <span className="text-xs text-text-muted font-normal">/ 100</span>
+            {scoreData.score !== null ? (
+              <>
+                <span>{scoreData.score}</span>
+                <span className="text-xs text-text-muted font-normal">/ 100</span>
+              </>
+            ) : (
+              <span className="text-sm font-bold text-text-muted">No sessions yet</span>
+            )}
           </div>
           <div className="text-[10px] text-text-muted">
-            {stats.completedSessionsCount === 0
-              ? "0 sessions logged today"
-              : `${stats.completedSessionsCount} completed session${
-                  stats.completedSessionsCount > 1 ? "s" : ""
-                }`}
+            {scoreData.score !== null
+              ? "From your sessions"
+              : "Log a session to calculate"}
           </div>
         </div>
 
@@ -345,52 +367,67 @@ export function MindDashboard() {
         <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2">
           <div className="flex items-center justify-between text-text-muted text-[11px]">
             <span>Focus Volume</span>
-            <Clock className="w-3.5 h-3.5 text-primary-lime" />
+            <Clock className="w-3.5 h-3.5 text-tertiary-purple" />
           </div>
           <div>
             <div className="text-2xl font-extrabold text-on-surface flex items-baseline gap-1">
-              <span>{stats.totalMinutes}m</span>
-              <span className="text-xs text-text-muted font-normal">
-                / {userProfile.dailyFocusGoalMinutes}m
-              </span>
+              <span>{scoreData.totalActualMinutes}m</span>
+              {userProfile.dailyFocusGoalMinutes ? (
+                <span className="text-xs text-text-muted font-normal">
+                  / {userProfile.dailyFocusGoalMinutes}m
+                </span>
+              ) : (
+                <span className="text-[10px] text-text-muted font-normal italic">
+                  (No goal set)
+                </span>
+              )}
             </div>
             {/* Progress bar */}
-            <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1.5">
-              <div
-                className="bg-primary-lime h-full rounded-full transition-all duration-500"
-                style={{ width: `${stats.goalProgressPercent}%` }}
-              />
-            </div>
+            {userProfile.dailyFocusGoalMinutes ? (
+              <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div
+                  className="bg-tertiary-purple h-full rounded-full transition-all duration-500"
+                  style={{ width: `${scoreData.goalProgressPercent || 0}%` }}
+                />
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="text-[10px] text-tertiary-purple hover:underline mt-1 block"
+              >
+                + Set daily goal
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Card 3: Completed Ultradian Cycles */}
+        {/* Card 3: Completed Sessions */}
         <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
           <div className="flex items-center justify-between text-text-muted text-[11px]">
-            <span>Ultradian Cycles</span>
+            <span>Completed Sprints</span>
             <Target className="w-3.5 h-3.5 text-secondary-cyan" />
           </div>
           <div className="text-2xl font-extrabold text-on-surface flex items-baseline gap-1">
-            <span>{stats.completedUltradianCycles}</span>
-            <span className="text-xs text-text-muted font-normal">cycles</span>
+            <span>{scoreData.completedCount}</span>
+            <span className="text-xs text-text-muted font-normal">sprints</span>
           </div>
           <div className="text-[10px] text-text-muted">
-            {stats.completedUltradianCycles > 0
-              ? `${stats.completedUltradianCycles * 90}m in 90/20 rhythm`
-              : "90 min work + 20 min rest"}
+            {scoreData.completedCount > 0
+              ? `${scoreData.totalActualMinutes}m active time logged`
+              : "0 completed today"}
           </div>
         </div>
 
-        {/* Card 4: Flow Quality Rating */}
+        {/* Card 4: Flow Rating */}
         <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
           <div className="flex items-center justify-between text-text-muted text-[11px]">
-            <span>Avg Flow Depth</span>
+            <span>Avg Session Depth</span>
             <Star className="w-3.5 h-3.5 text-rank-gold" />
           </div>
           <div className="text-2xl font-extrabold text-on-surface flex items-baseline gap-1">
-            {stats.averageRating ? (
+            {scoreData.averageRating ? (
               <>
-                <span>{stats.averageRating}</span>
+                <span>{scoreData.averageRating}</span>
                 <span className="text-xs text-rank-gold">★</span>
               </>
             ) : (
@@ -398,49 +435,79 @@ export function MindDashboard() {
             )}
           </div>
           <div className="text-[10px] text-text-muted">
-            {stats.averageRating ? "Self-rated focus depth" : "No ratings logged"}
+            {scoreData.averageRating ? "Self-rated depth" : "No ratings logged"}
           </div>
         </div>
       </div>
 
-      {/* Cognitive State & Friction Tags Summary (if any logged) */}
-      {Object.keys(stats.tagCounts).length > 0 && (
-        <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2 font-mono text-xs">
-          <div className="text-text-muted text-[11px] uppercase tracking-wider font-semibold">
-            Today&apos;s Cognitive & Friction Signals
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {Object.entries(stats.tagCounts).map(([tag, count]) => (
-              <span
-                key={tag}
-                className="px-2.5 py-1 rounded-xl bg-surface-container-high border border-border-subtle text-on-surface text-[11px] flex items-center gap-1.5"
-              >
-                <span>{tag}</span>
-                <span className="px-1.5 py-0.2 rounded-md bg-tertiary-purple/20 text-tertiary-purple font-bold text-[10px]">
-                  {count}
-                </span>
-              </span>
-            ))}
-          </div>
+      {/* Category & Friction Signals Summary */}
+      {(Object.keys(scoreData.categoryCounts).length > 0 ||
+        Object.keys(scoreData.tagCounts).length > 0) && (
+        <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2.5 font-mono text-xs">
+          {/* Categories */}
+          {Object.keys(scoreData.categoryCounts).length > 0 && (
+            <div className="space-y-1.5">
+              <div className="text-text-muted text-[10px] uppercase tracking-wider font-semibold">
+                Categories
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {Object.entries(scoreData.categoryCounts).map(([cat, count]) => (
+                  <span
+                    key={cat}
+                    className="px-2.5 py-1 rounded-xl bg-surface-container-high border border-border-subtle text-on-surface text-[11px] flex items-center gap-1.5"
+                  >
+                    <span>{cat}</span>
+                    <span className="px-1.5 py-0.2 rounded-md bg-tertiary-purple/20 text-tertiary-purple font-bold text-[10px]">
+                      {count}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Friction Tags */}
+          {Object.keys(scoreData.tagCounts).length > 0 && (
+            <div className="space-y-1.5 pt-1 border-t border-border-subtle">
+              <div className="text-text-muted text-[10px] uppercase tracking-wider font-semibold">
+                Friction & Flow Signals
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {Object.entries(scoreData.tagCounts).map(([tag, count]) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-text-muted text-[11px] flex items-center gap-1.5"
+                  >
+                    <span>{tag}</span>
+                    <span className="px-1.5 py-0.2 rounded-md bg-surface-container-high text-on-surface font-bold text-[10px]">
+                      {count}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Ultradian Wall-Clock Timer Component */}
+      {/* Focus Timer Component (50/10 default, Violet dial) */}
       <UltradianTimer
         onSessionLogged={fetchSessions}
         userTimezone={userProfile.timezone}
         defaultMode={userProfile.defaultFocusMode}
         chimeEnabledDefault={userProfile.soundChimeEnabled}
+        soundVolumeDefault={userProfile.soundVolume}
+        vibrationDefault={userProfile.vibrationEnabled}
       />
 
-      {/* Focus Sprints History List for Selected Date */}
+      {/* Sessions History List */}
       <FocusHistoryList
         sessions={sessions}
         onSessionsUpdated={fetchSessions}
         userTimezone={userProfile.timezone}
       />
 
-      {/* Settings Modal */}
+      {/* Settings Modal (Nullable goal, volume, vibration) */}
       {isSettingsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md">
           <div className="w-full max-w-md bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl space-y-5 font-mono text-xs animate-fade-in">
@@ -459,45 +526,58 @@ export function MindDashboard() {
               </button>
             </div>
 
-            {/* Daily Goal Input */}
+            {/* Daily Goal Input (Nullable) */}
             <div className="space-y-2">
-              <label className="text-text-muted uppercase tracking-wider text-[10px]">
-                Daily Deep Work Goal (Minutes)
-              </label>
+              <div className="flex justify-between items-center text-[10px]">
+                <label className="text-text-muted uppercase tracking-wider">
+                  Daily Focus Goal (Minutes)
+                </label>
+                <span className="text-text-muted italic">Optional</span>
+              </div>
               <input
                 type="number"
-                min={30}
+                min={15}
                 max={600}
                 step={15}
                 value={tempGoalMinutes}
-                onChange={(e) => setTempGoalMinutes(Number(e.target.value))}
+                onChange={(e) => setTempGoalMinutes(e.target.value)}
+                placeholder="No goal set (optional)"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface focus:outline-none focus:border-tertiary-purple"
               />
               <div className="flex gap-2 pt-1">
-                {[120, 180, 240, 300].map((m) => (
+                {[100, 150, 180, 240].map((m) => (
                   <button
                     key={m}
                     type="button"
-                    onClick={() => setTempGoalMinutes(m)}
+                    onClick={() => setTempGoalMinutes(String(m))}
                     className={`px-2.5 py-1 rounded-lg text-[11px] border cursor-pointer ${
-                      tempGoalMinutes === m
-                        ? "bg-primary-lime/20 text-primary-lime border-primary-lime/40 font-bold"
+                      tempGoalMinutes === String(m)
+                        ? "bg-tertiary-purple/20 text-tertiary-purple border-tertiary-purple/40 font-bold"
                         : "bg-surface-container-high text-text-muted border-border-subtle hover:text-on-surface"
                     }`}
                   >
-                    {m}m ({Math.round(m / 60)}h)
+                    {m}m
                   </button>
                 ))}
+                {tempGoalMinutes !== "" && (
+                  <button
+                    type="button"
+                    onClick={() => setTempGoalMinutes("")}
+                    className="px-2 py-1 rounded-lg text-[10px] text-text-muted hover:text-[#F87171]"
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Default Mode */}
+            {/* Default Mode (Default 50/10) */}
             <div className="space-y-2">
               <label className="text-text-muted uppercase tracking-wider text-[10px]">
-                Default Interval Preset
+                Default Focus Interval
               </label>
               <div className="grid grid-cols-3 gap-2">
-                {(["ultradian_90", "sprint_50", "pomodoro_25"] as FocusMode[]).map((m) => {
+                {(["sprint_50", "ultradian_90", "pomodoro_25"] as FocusMode[]).map((m) => {
                   const p = FOCUS_PRESETS[m];
                   const isSel = tempDefaultMode === m;
                   return (
@@ -519,27 +599,51 @@ export function MindDashboard() {
               </div>
             </div>
 
-            {/* Sound Chime Toggle */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-lowest border border-border-subtle">
-              <div className="flex items-center gap-2.5">
-                {tempChimeEnabled ? (
+            {/* Audio Chime, Volume & Vibration */}
+            <div className="space-y-3 p-3 rounded-2xl bg-surface-container-lowest border border-border-subtle">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   <Volume2 className="w-4 h-4 text-secondary-cyan" />
-                ) : (
-                  <VolumeX className="w-4 h-4 text-text-muted" />
-                )}
-                <div>
-                  <div className="font-bold text-on-surface">Harmonic Bell Chime</div>
-                  <div className="text-[10px] text-text-muted">
-                    Web Audio API synthesized bell at interval completion
-                  </div>
+                  <span className="text-on-surface font-bold">Chime Sound</span>
                 </div>
+                <input
+                  type="checkbox"
+                  checked={tempChimeEnabled}
+                  onChange={(e) => setTempChimeEnabled(e.target.checked)}
+                  className="w-4 h-4 accent-tertiary-purple cursor-pointer"
+                />
               </div>
-              <input
-                type="checkbox"
-                checked={tempChimeEnabled}
-                onChange={(e) => setTempChimeEnabled(e.target.checked)}
-                className="w-4 h-4 accent-tertiary-purple cursor-pointer"
-              />
+
+              {tempChimeEnabled && (
+                <div className="flex items-center justify-between gap-3 pt-1">
+                  <span className="text-text-muted text-[11px]">Volume:</span>
+                  <input
+                    type="range"
+                    min={10}
+                    max={100}
+                    step={5}
+                    value={tempSoundVolume}
+                    onChange={(e) => setTempSoundVolume(Number(e.target.value))}
+                    className="flex-1 accent-tertiary-purple cursor-pointer"
+                  />
+                  <span className="text-on-surface text-[11px] w-8 text-right">
+                    {tempSoundVolume}%
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-1 border-t border-border-subtle">
+                <div className="flex items-center gap-2">
+                  <Vibrate className="w-4 h-4 text-tertiary-purple" />
+                  <span className="text-on-surface font-bold">Vibration</span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={tempVibrationEnabled}
+                  onChange={(e) => setTempVibrationEnabled(e.target.checked)}
+                  className="w-4 h-4 accent-tertiary-purple cursor-pointer"
+                />
+              </div>
             </div>
 
             {/* Actions */}

@@ -1,9 +1,12 @@
 /**
- * Mind & Ultradian Focus Engine
+ * Mind & Focus Sessions Engine (Stage 7a)
  * Pure math, presets, wall-clock telemetry, audio synth, and stats aggregation
  */
 
-export type FocusMode = "ultradian_90" | "sprint_50" | "pomodoro_25" | "custom";
+import { getLocalDateString } from "./nutrition";
+
+export type FocusMode = "sprint_50" | "ultradian_90" | "pomodoro_25" | "custom";
+export type SessionStatus = "completed" | "ended_early" | "abandoned";
 
 export interface FocusModePreset {
   id: FocusMode;
@@ -15,28 +18,28 @@ export interface FocusModePreset {
 }
 
 export const FOCUS_PRESETS: Record<FocusMode, FocusModePreset> = {
-  ultradian_90: {
-    id: "ultradian_90",
-    name: "Ultradian Rhythm",
-    workMinutes: 90,
-    breakMinutes: 20,
-    description: "Natural basic rest-activity cycle (BRAC) for peak deep work",
-    badge: "90 / 20",
-  },
   sprint_50: {
     id: "sprint_50",
     name: "Deep Sprint",
     workMinutes: 50,
     breakMinutes: 10,
-    description: "High-intensity sprint for analytical problems and engineering",
+    description: "50-minute focused sprint with a 10-minute renewal break",
     badge: "50 / 10",
+  },
+  ultradian_90: {
+    id: "ultradian_90",
+    name: "Ultradian Rhythm",
+    workMinutes: 90,
+    breakMinutes: 20,
+    description: "90-minute sustained work interval with a 20-minute renewal break",
+    badge: "90 / 20",
   },
   pomodoro_25: {
     id: "pomodoro_25",
     name: "Classic Pomodoro",
     workMinutes: 25,
     breakMinutes: 5,
-    description: "Rapid iteration cycles for high-resistance or initial inertia",
+    description: "25-minute focused interval with a 5-minute renewal break",
     badge: "25 / 5",
   },
   custom: {
@@ -44,32 +47,45 @@ export const FOCUS_PRESETS: Record<FocusMode, FocusModePreset> = {
     name: "Custom Interval",
     workMinutes: 45,
     breakMinutes: 15,
-    description: "Custom user-defined work and break intervals",
+    description: "Custom user-defined focus and renewal intervals",
     badge: "Custom",
   },
 };
 
-export const PRESEEDED_TAGS = [
-  "Coding / Engineering Deep Work",
-  "Reading & Paper Study",
-  "Writing & Documentation",
-  "Creative Ideation / Design",
-  "Phone / Social Media Distraction",
-  "Mental Fatigue / Low Energy",
-  "Flow State",
-  "High Friction",
+// Item 8: Separate Task Categories
+export const TASK_CATEGORIES = [
+  "Coding",
+  "Study",
+  "Reading",
+  "Writing",
+  "Research",
+  "Other",
 ] as const;
 
-export type CognitiveTag = typeof PRESEEDED_TAGS[number] | string;
+export type TaskCategory = (typeof TASK_CATEGORIES)[number] | string;
+
+// Item 8: Separate Friction Tags (Neutral Wording)
+export const FRICTION_TAGS = [
+  "Deep flow",
+  "High resistance",
+  "Phone distraction",
+  "Low energy",
+  "Context switching",
+] as const;
+
+export type FrictionTag = (typeof FRICTION_TAGS)[number] | string;
 
 export interface FocusSession {
   id: string;
   user_id?: string;
+  subject_id?: string | null;
+  task_category: string;
   task_name: string;
   mode: FocusMode;
-  work_duration_minutes: number;
-  break_duration_minutes: number;
-  completed: boolean;
+  planned_minutes: number;
+  actual_minutes: number;
+  paused_seconds: number;
+  status: SessionStatus;
   rating?: number | null; // 1 - 5
   friction_tags: string[];
   notes?: string | null;
@@ -84,14 +100,40 @@ export interface FocusSession {
  * Wall-clock remaining seconds calculation
  * Prevents timer freezing when browser tab is inactive or phone sleeps
  */
-export function calculateRemainingSeconds(targetEndTimeMs: number): number {
-  const now = Date.now();
-  const diffMs = targetEndTimeMs - now;
+export function calculateRemainingSeconds(
+  targetEndTimeMs: number,
+  pausedAtMs?: number | null,
+  nowMs: number = Date.now()
+): number {
+  if (pausedAtMs && pausedAtMs > 0) {
+    const diffMs = targetEndTimeMs - pausedAtMs;
+    return Math.max(0, Math.ceil(diffMs / 1000));
+  }
+  const diffMs = targetEndTimeMs - nowMs;
   return Math.max(0, Math.ceil(diffMs / 1000));
 }
 
 /**
- * Formats seconds into MM:SS or H:MM:SS
+ * Resumes timer after pause, pushing the target end time forward
+ * by the elapsed paused seconds
+ */
+export function resumeSessionTimer(
+  targetEndTimeMs: number,
+  pausedAtMs: number,
+  currentTotalPausedSec: number,
+  resumeTimeMs: number = Date.now()
+): { newTargetEndTimeMs: number; newTotalPausedSeconds: number } {
+  const pauseDurationSec = Math.max(
+    0,
+    Math.round((resumeTimeMs - pausedAtMs) / 1000)
+  );
+  const newTotalPausedSeconds = currentTotalPausedSec + pauseDurationSec;
+  const newTargetEndTimeMs = targetEndTimeMs + pauseDurationSec * 1000;
+  return { newTargetEndTimeMs, newTotalPausedSeconds };
+}
+
+/**
+ * Formats seconds into MM:SS
  */
 export function formatSeconds(totalSeconds: number): string {
   const s = Math.max(0, Math.floor(totalSeconds));
@@ -102,7 +144,7 @@ export function formatSeconds(totalSeconds: number): string {
 }
 
 /**
- * Calculates session progress (0.0 to 1.0)
+ * Calculates session progress ratio (0.0 to 1.0)
  */
 export function calculateSessionProgress(
   elapsedSeconds: number,
@@ -113,40 +155,73 @@ export function calculateSessionProgress(
 }
 
 /**
- * Calculates daily focus stats and deep work score
+ * Derives logged_date from the session start timestamp in the user's timezone.
+ * Handles midnight crossing correctly (session started before midnight belongs to that date).
  */
-export function calculateDailyFocusStats(
+export function deriveSessionLoggedDate(
+  startedAtIso: string,
+  userTimezone: string
+): string {
+  const startDate = new Date(startedAtIso);
+  return getLocalDateString(startDate, userTimezone);
+}
+
+/**
+ * Item 4: Focus Score Formula
+ * Focus score = minutes vs goal plus average rating of rated sessions.
+ * Label: "Focus score (from your sessions)"
+ * With no sessions show null (rendered as "No sessions yet").
+ *
+ * Formula:
+ * - Minutes component (up to 70 pts): min(70, (actual_minutes / goal) * 70)
+ * - Quality / Rating component (up to 30 pts): (avg_rating / 5) * 30 (or neutral 15 pts if unrated)
+ */
+export function calculateFocusScore(
   sessions: FocusSession[],
-  dailyGoalMinutes: number = 180
+  dailyGoalMinutes: number | null | undefined
 ): {
-  totalMinutes: number;
-  completedSessionsCount: number;
-  completedUltradianCycles: number;
+  score: number | null;
+  totalActualMinutes: number;
+  completedCount: number;
   averageRating: number | null;
-  goalProgressPercent: number;
-  deepWorkScore: number;
+  goalProgressPercent: number | null;
   tagCounts: Record<string, number>;
+  categoryCounts: Record<string, number>;
+  label: string;
 } {
   const activeSessions = sessions.filter((s) => !s.deleted_at);
 
-  let totalMinutes = 0;
+  if (activeSessions.length === 0) {
+    return {
+      score: null,
+      totalActualMinutes: 0,
+      completedCount: 0,
+      averageRating: null,
+      goalProgressPercent: null,
+      tagCounts: {},
+      categoryCounts: {},
+      label: "No sessions yet",
+    };
+  }
+
+  let totalActualMinutes = 0;
   let completedCount = 0;
-  let ultradianCycles = 0;
   let ratingSum = 0;
   let ratingCount = 0;
   const tagCounts: Record<string, number> = {};
+  const categoryCounts: Record<string, number> = {};
 
   for (const s of activeSessions) {
-    totalMinutes += s.work_duration_minutes;
-    if (s.completed) {
+    totalActualMinutes += s.actual_minutes;
+    if (s.status === "completed") {
       completedCount++;
-      if (s.mode === "ultradian_90") {
-        ultradianCycles++;
-      }
     }
     if (s.rating && s.rating >= 1 && s.rating <= 5) {
       ratingSum += s.rating;
       ratingCount++;
+    }
+    if (s.task_category) {
+      categoryCounts[s.task_category] = (categoryCounts[s.task_category] || 0) + 1;
     }
     for (const tag of s.friction_tags || []) {
       tagCounts[tag] = (tagCounts[tag] || 0) + 1;
@@ -156,43 +231,55 @@ export function calculateDailyFocusStats(
   const averageRating =
     ratingCount > 0 ? Math.round((ratingSum / ratingCount) * 10) / 10 : null;
 
-  const goalProgressPercent =
-    dailyGoalMinutes > 0
-      ? Math.min(100, Math.round((totalMinutes / dailyGoalMinutes) * 100))
-      : 0;
+  const goal = dailyGoalMinutes && dailyGoalMinutes > 0 ? dailyGoalMinutes : 180;
+  const goalProgressPercent = Math.min(
+    100,
+    Math.round((totalActualMinutes / goal) * 100)
+  );
 
-  // Deep Work Score (0 - 100)
-  // Duration: 50%
-  // Quality / Rating: 30%
-  // Completed cycles: 20%
-  let durationPts = Math.min(50, (totalMinutes / (dailyGoalMinutes || 180)) * 50);
-  let qualityPts = averageRating ? (averageRating / 5) * 30 : 15; // neutral 15 if unrated
-  let cyclePts = Math.min(20, ultradianCycles * 10);
+  // Minutes contribution (70 pts max)
+  const minutesPts = Math.min(70, (totalActualMinutes / goal) * 70);
 
-  const deepWorkScore =
-    activeSessions.length > 0
-      ? Math.round(durationPts + qualityPts + cyclePts)
-      : 0;
+  // Quality contribution (30 pts max)
+  const qualityPts = averageRating ? (averageRating / 5) * 30 : 15;
+
+  const score = Math.min(100, Math.round(minutesPts + qualityPts));
 
   return {
-    totalMinutes,
-    completedSessionsCount: completedCount,
-    completedUltradianCycles: ultradianCycles,
+    score,
+    totalActualMinutes,
+    completedCount,
     averageRating,
-    goalProgressPercent,
-    deepWorkScore,
+    goalProgressPercent: dailyGoalMinutes ? goalProgressPercent : null,
     tagCounts,
+    categoryCounts,
+    label: "Focus score (from your sessions)",
   };
 }
 
 /**
- * Web Audio API Harmonic Chime Synthesizer
- * Generates pure harmonic bell chords with zero external audio assets
+ * Web Audio API Harmonic Chime Synthesizer & Vibration
+ * Native in-memory audio oscillator with volume control and haptic feedback
  */
 export function playHarmonicChime(
-  type: "work_complete" | "break_complete" | "tick" = "work_complete"
+  type: "work_complete" | "break_complete" | "tick" = "work_complete",
+  volumePct: number = 80,
+  vibrationEnabled: boolean = true
 ): void {
   if (typeof window === "undefined") return;
+
+  // Haptic feedback
+  if (vibrationEnabled && typeof navigator !== "undefined" && "vibrate" in navigator) {
+    try {
+      if (type === "work_complete") {
+        navigator.vibrate([200, 100, 200, 100, 300]);
+      } else if (type === "break_complete") {
+        navigator.vibrate([150, 100, 150]);
+      }
+    } catch {
+      // ignore mobile vibration errors
+    }
+  }
 
   try {
     const AudioCtx =
@@ -203,9 +290,12 @@ export function playHarmonicChime(
 
     const ctx = new AudioCtx();
     const now = ctx.currentTime;
+    const gainScale = Math.max(0, Math.min(1, volumePct / 100));
+
+    if (gainScale <= 0) return;
 
     if (type === "work_complete") {
-      // Harmonic Triad Bell (C5, E5, G5, C6) - Rewarding, celebratory bell
+      // Harmonic Triad Bell (C5, E5, G5, C6) - Rewarding harmonic bell
       const freqs = [523.25, 659.25, 783.99, 1046.5];
       freqs.forEach((freq, index) => {
         const osc = ctx.createOscillator();
@@ -214,9 +304,9 @@ export function playHarmonicChime(
         osc.type = "sine";
         osc.frequency.setValueAtTime(freq, now + index * 0.08);
 
-        // Exponential decay envelope
+        const targetGain = 0.15 * gainScale;
         gain.gain.setValueAtTime(0, now + index * 0.08);
-        gain.gain.linearRampToValueAtTime(0.15, now + index * 0.08 + 0.04);
+        gain.gain.linearRampToValueAtTime(targetGain, now + index * 0.08 + 0.04);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.08 + 1.8);
 
         osc.connect(gain);
@@ -226,7 +316,7 @@ export function playHarmonicChime(
         osc.stop(now + index * 0.08 + 1.85);
       });
     } else if (type === "break_complete") {
-      // Gentle Awakening Bell (A4, E5, A5) - Calm transition back to focus
+      // Awakening Bell (A4, E5, A5) - Calm transition back to focus
       const freqs = [440.0, 659.25, 880.0];
       freqs.forEach((freq, index) => {
         const osc = ctx.createOscillator();
@@ -235,8 +325,9 @@ export function playHarmonicChime(
         osc.type = "sine";
         osc.frequency.setValueAtTime(freq, now + index * 0.1);
 
+        const targetGain = 0.12 * gainScale;
         gain.gain.setValueAtTime(0, now + index * 0.1);
-        gain.gain.linearRampToValueAtTime(0.12, now + index * 0.1 + 0.05);
+        gain.gain.linearRampToValueAtTime(targetGain, now + index * 0.1 + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.1 + 1.5);
 
         osc.connect(gain);
@@ -245,24 +336,8 @@ export function playHarmonicChime(
         osc.start(now + index * 0.1);
         osc.stop(now + index * 0.1 + 1.55);
       });
-    } else if (type === "tick") {
-      // Subtle cue
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(800, now);
-
-      gain.gain.setValueAtTime(0.02, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.05);
     }
   } catch (e) {
-    console.warn("Web Audio API chime could not play:", e);
+    console.warn("Web Audio API chime error:", e);
   }
 }
