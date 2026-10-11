@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS public.sleep_logs (
   bedtime timestamptz NOT NULL,
   wake_time timestamptz NOT NULL,
   duration_minutes integer GENERATED ALWAYS AS (
-    ROUND(EXTRACT(EPOCH FROM (wake_time - bedtime)) / 60)::integer
+    ROUND((EXTRACT(EPOCH FROM wake_time) - EXTRACT(EPOCH FROM bedtime)) / 60)::integer
   ) STORED,
   quality_rating integer CHECK (quality_rating IS NULL OR (quality_rating >= 1 AND quality_rating <= 5)),
   awakenings_count integer DEFAULT 0 CHECK (awakenings_count >= 0),
