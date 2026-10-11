@@ -13,10 +13,12 @@ import {
   CheckCircle2,
   Moon,
   Utensils,
+  Sparkles,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { getTierColor } from "@/lib/strength";
 import { calculateSleepScore } from "@/lib/sleep";
+import { calculateDailyFocusStats } from "@/lib/mind";
 
 export function TodayView() {
   const [exerciseCount, setExerciseCount] = useState<number | null>(null);
@@ -28,6 +30,12 @@ export function TodayView() {
   const [todayNutrition, setTodayNutrition] = useState<{
     calories: number;
     target: number | null;
+  } | null>(null);
+  const [todayFocus, setTodayFocus] = useState<{
+    totalMinutes: number;
+    completedCycles: number;
+    deepWorkScore: number;
+    goalMinutes: number;
   } | null>(null);
   const [latestSleep, setLatestSleep] = useState<{
     score: number;
@@ -97,10 +105,11 @@ export function TodayView() {
         // Fetch weight & nutrition targets from profiles & logs
         supabase
           .from("profiles")
-          .select("current_weight_kg, target_calories, timezone")
+          .select("current_weight_kg, target_calories, timezone, daily_focus_goal_minutes")
           .eq("id", user.id)
           .single()
-          .then(({ data: prof }) => {
+          .then(({ data: profData }) => {
+            const prof = profData as any;
             if (prof?.current_weight_kg) {
               setCurrentWeight(Number(prof.current_weight_kg));
             }
@@ -123,6 +132,28 @@ export function TodayView() {
                   setTodayNutrition({
                     calories: totalCals,
                     target: prof?.target_calories ? Number(prof.target_calories) : null,
+                  });
+                }
+              });
+
+            // Fetch mind & focus telemetry for today
+            supabase
+              .from("focus_sessions")
+              .select("id, task_name, mode, work_duration_minutes, break_duration_minutes, completed, rating, friction_tags, started_at, ended_at, logged_date")
+              .eq("user_id", user.id)
+              .eq("logged_date", todayStr)
+              .is("deleted_at", null)
+              .then(({ data: focusData }) => {
+                if (focusData) {
+                  const stats = calculateDailyFocusStats(
+                    focusData as any,
+                    prof?.daily_focus_goal_minutes || 180
+                  );
+                  setTodayFocus({
+                    totalMinutes: stats.totalMinutes,
+                    completedCycles: stats.completedUltradianCycles,
+                    deepWorkScore: stats.deepWorkScore,
+                    goalMinutes: prof?.daily_focus_goal_minutes || 180,
                   });
                 }
               });
@@ -293,23 +324,49 @@ export function TodayView() {
             <div className="w-9 h-9 rounded-xl bg-tertiary-purple/10 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple">
               <Brain className="w-4 h-4" />
             </div>
-            <span className="font-mono text-[10px] text-text-muted px-2 py-0.5 rounded-full bg-surface-container-high">
-              Coming Soon
-            </span>
+            {todayFocus && todayFocus.totalMinutes > 0 ? (
+              <span className="font-mono text-[10px] text-tertiary-purple px-2 py-0.5 rounded-full bg-tertiary-purple/15 border border-tertiary-purple/30 font-bold">
+                {todayFocus.totalMinutes}m Focused
+              </span>
+            ) : (
+              <span className="font-mono text-[10px] text-text-muted px-2 py-0.5 rounded-full bg-surface-container-high">
+                90m Ultradian
+              </span>
+            )}
           </div>
           <div className="space-y-1">
             <div className="text-xs font-mono uppercase tracking-wider text-text-muted">
               Cognitive Domain
             </div>
             <div className="text-lg font-bold font-mono text-on-surface group-hover:text-tertiary-purple transition-colors">
-              Mind Architecture
+              Mind & Focus Engine
             </div>
-            <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
-              Mental math trainer, spaced repetition flashcards, and focus session telemetry.
+            <p className="text-xs text-on-surface-variant line-clamp-2 mt-1">
+              {todayFocus && todayFocus.totalMinutes > 0
+                ? `${todayFocus.completedCycles} ultradian cycle${todayFocus.completedCycles === 1 ? '' : 's'} logged today.`
+                : "0m focused today. Start an ultradian rhythm sprint to track deep work telemetry."}
             </p>
+
+            {/* Deep Work Score Banner */}
+            {todayFocus && todayFocus.totalMinutes > 0 && (
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
+                  <span className="text-[11px] font-mono text-on-surface">Deep Work Score</span>
+                </div>
+                <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                  <span className="font-bold text-tertiary-purple">
+                    {todayFocus.deepWorkScore}/100
+                  </span>
+                  <span className="text-text-muted">
+                    ({todayFocus.totalMinutes}m / {todayFocus.goalMinutes}m)
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
           <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-tertiary-purple">
-            <span>View Architecture</span>
+            <span>Start Focus Sprint</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
