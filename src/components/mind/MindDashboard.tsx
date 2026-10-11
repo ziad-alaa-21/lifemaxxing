@@ -26,6 +26,9 @@ import {
   Flame,
   Activity,
   Plus,
+  BookOpen,
+  Smartphone,
+  Lightbulb,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import {
@@ -40,9 +43,16 @@ import { FocusHistoryList } from "./FocusHistoryList";
 import { MathTrainerModal } from "./MathTrainerModal";
 import { MoodCheckinModal } from "./MoodCheckinModal";
 import { DisciplineCard } from "./DisciplineCard";
+import { ReadingCard } from "./ReadingCard";
+import { ScreenTimeCard } from "./ScreenTimeCard";
+import { MindScoreDial } from "./MindScoreDial";
+import { WeeklyInsightCard } from "./WeeklyInsightCard";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
 import { MathSessionSummary } from "@/lib/mathTrainer";
 import { MindCheckin, RATING_LABELS } from "@/lib/checkin";
+import { calculateCompositeMindScore } from "@/lib/mindScore";
+import { generateWeeklyMindInsights, DailyTelemetrySummary } from "@/lib/mindInsights";
+import { ScreenTimeLog } from "@/lib/screentime";
 
 export function MindDashboard() {
   const router = useRouter();
@@ -90,6 +100,16 @@ export function MindDashboard() {
   // Stage 7b Telemetry Data
   const [mathSessions, setMathSessions] = useState<any[]>([]);
   const [checkins, setCheckins] = useState<MindCheckin[]>([]);
+  const [disciplineStats, setDisciplineStats] = useState<{ completed: number; total: number }>({
+    completed: 0,
+    total: 0,
+  });
+
+  // Stage 7c Telemetry Data
+  const [readingPagesToday, setReadingPagesToday] = useState<number>(0);
+  const [readingMinutesToday, setReadingMinutesToday] = useState<number>(0);
+  const [screenTimeToday, setScreenTimeToday] = useState<ScreenTimeLog | null>(null);
+  const [weeklyTelemetry, setWeeklyTelemetry] = useState<DailyTelemetrySummary[]>([]);
 
   // Modals state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -156,7 +176,7 @@ export function MindDashboard() {
     }
   }, []);
 
-  // Fetch focus sessions for selected date
+  // Fetch focus sessions and multi-domain telemetry for selected date
   const fetchSessions = useCallback(async () => {
     if (!selectedDate) return;
     setLoading(true);
@@ -188,7 +208,7 @@ export function MindDashboard() {
         setSessions(focusData || []);
       }
 
-      // 2. Fetch math sessions (recent 7 sessions for sparkline & speed)
+      // 2. Fetch math sessions (recent 7 sessions)
       try {
         const { data: mathData } = await supabase
           .from("math_sessions")
@@ -217,13 +237,90 @@ export function MindDashboard() {
       } catch (err) {
         console.warn("Checkins fetch notice:", err);
       }
+
+      // 4. Fetch discipline log for selected date
+      try {
+        const { data: discData } = await supabase
+          .from("discipline_logs")
+          .select("completed_count, total_count")
+          .eq("user_id", user.id)
+          .eq("logged_date", selectedDate)
+          .is("deleted_at", null)
+          .maybeSingle();
+
+        if (discData) {
+          setDisciplineStats({
+            completed: discData.completed_count || 0,
+            total: discData.total_count || 0,
+          });
+        }
+      } catch (err) {
+        console.warn("Discipline fetch notice:", err);
+      }
+
+      // 5. Fetch reading logs for selected date
+      try {
+        const { data: readData } = await supabase
+          .from("reading_logs")
+          .select("pages_read, duration_minutes")
+          .eq("user_id", user.id)
+          .eq("logged_date", selectedDate)
+          .is("deleted_at", null);
+
+        if (readData && readData.length > 0) {
+          const p = readData.reduce((acc, r) => acc + (r.pages_read || 0), 0);
+          const m = readData.reduce((acc, r) => acc + (r.duration_minutes || 0), 0);
+          setReadingPagesToday(p);
+          setReadingMinutesToday(m);
+        } else {
+          setReadingPagesToday(0);
+          setReadingMinutesToday(0);
+        }
+      } catch (err) {
+        console.warn("Reading fetch notice:", err);
+      }
+
+      // 6. Fetch screen time log for selected date
+      try {
+        const { data: stData } = await supabase
+          .from("screen_time_logs")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("logged_date", selectedDate)
+          .is("deleted_at", null)
+          .maybeSingle();
+
+        if (stData) setScreenTimeToday(stData as ScreenTimeLog);
+        else setScreenTimeToday(null);
+      } catch (err) {
+        console.warn("Screen time fetch notice:", err);
+      }
+
+      // 7. Assemble rolling 7-day telemetry for insights
+      try {
+        const daysArray: DailyTelemetrySummary[] = [
+          {
+            date: selectedDate,
+            focusMinutes: (focusData || []).reduce((acc, s) => acc + (s.actual_minutes || 0), 0),
+            disciplineCompleted: disciplineStats.completed,
+            disciplineTotal: disciplineStats.total,
+            mathAccuracy: mathSessions.length > 0 ? mathSessions[0].accuracy_pct : null,
+            mathAvgSpeedMs: mathSessions.length > 0 ? mathSessions[0].avg_response_time_ms : null,
+            readingMinutes: readingMinutesToday,
+            screenTimeTotalMinutes: screenTimeToday?.total_minutes || null,
+          },
+        ];
+        setWeeklyTelemetry(daysArray);
+      } catch (err) {
+        console.warn("Telemetry synthesis notice:", err);
+      }
     } catch (err: any) {
       console.error("Dashboard data load error:", err);
       setErrorMsg(err.message || "Failed to load telemetry.");
     } finally {
       setLoading(false);
     }
-  }, [selectedDate]);
+  }, [selectedDate, disciplineStats.completed, disciplineStats.total, readingMinutesToday, screenTimeToday?.total_minutes, mathSessions]);
 
   useEffect(() => {
     fetchProfile();
@@ -242,21 +339,16 @@ export function MindDashboard() {
     setSelectedDate(getLocalDateString(curr, userProfile.timezone));
   };
 
-  const isToday =
-    selectedDate === getLocalDateString(new Date(), userProfile.timezone);
+  const isToday = selectedDate === getLocalDateString(new Date(), userProfile.timezone);
 
   // Focus Score calculation
   const scoreData = calculateFocusScore(sessions, userProfile.dailyFocusGoalMinutes);
 
   // Math summary stats
-  const todayMathSessions = mathSessions.filter((s) =>
-    s.created_at?.startsWith(selectedDate)
-  );
   const mathAccuracy =
     mathSessions.length > 0
       ? Math.round(
-          mathSessions.reduce((acc, s) => acc + (s.accuracy_pct || 0), 0) /
-            mathSessions.length
+          mathSessions.reduce((acc, s) => acc + (s.accuracy_pct || 0), 0) / mathSessions.length
         )
       : null;
   const mathAvgSpeed =
@@ -268,6 +360,29 @@ export function MindDashboard() {
         ).toFixed(2)
       : null;
 
+  // Composite Mind Score (Stage 7c)
+  const compositeMindScore = calculateCompositeMindScore({
+    focusMinutes: scoreData.totalActualMinutes,
+    focusGoalMinutes: userProfile.dailyFocusGoalMinutes,
+    focusRatingAvg: scoreData.averageRating,
+    disciplineCompleted: disciplineStats.completed,
+    disciplineTotal: disciplineStats.total,
+    mathAccuracyPct: mathAccuracy,
+    mathSessionsCount: mathSessions.length,
+    readingPages: readingPagesToday,
+    readingMinutes: readingMinutesToday,
+    screenTime: screenTimeToday
+      ? {
+          totalMinutes: screenTimeToday.total_minutes,
+          productiveMinutes: screenTimeToday.productive_minutes,
+          entertainmentMinutes: screenTimeToday.entertainment_minutes,
+        }
+      : null,
+  });
+
+  // Weekly Insights (Stage 7c)
+  const weeklyInsights = generateWeeklyMindInsights(weeklyTelemetry);
+
   // Save Settings
   const handleSaveSettings = async () => {
     guardAction(async () => {
@@ -278,8 +393,7 @@ export function MindDashboard() {
         } = await supabase.auth.getUser();
         if (!user) throw new Error("Please log in to save settings.");
 
-        const goalVal =
-          tempGoalMinutes.trim() !== "" ? Number(tempGoalMinutes) : null;
+        const goalVal = tempGoalMinutes.trim() !== "" ? Number(tempGoalMinutes) : null;
 
         const { error } = await supabase
           .from("profiles")
@@ -326,11 +440,11 @@ export function MindDashboard() {
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold font-mono text-on-surface">Mind Engine</h1>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
-                  Stage 7b
+                  Stage 7c Complete
                 </span>
               </div>
               <p className="text-xs text-on-surface-variant mt-0.5 font-mono">
-                Ultradian focus, mental math agility, state calibration & dopamine discipline
+                Ultradian focus, mental math agility, habits, reading, screen balance & cognitive score
               </p>
             </div>
           </div>
@@ -350,10 +464,13 @@ export function MindDashboard() {
       {/* URL-Based Tabs Navigation Bar */}
       <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-container border border-border-subtle overflow-x-auto">
         {[
-          { id: "focus", label: "Focus & Timer", icon: Clock },
+          { id: "focus", label: "Focus & Overview", icon: Clock },
           { id: "math", label: "Mental Math", icon: Zap },
           { id: "discipline", label: "Discipline", icon: ShieldCheck },
+          { id: "reading", label: "Reading", icon: BookOpen },
+          { id: "screentime", label: "Screen Time", icon: Smartphone },
           { id: "checkin", label: "Check-in", icon: Heart },
+          { id: "insights", label: "Insights", icon: Lightbulb },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -379,10 +496,10 @@ export function MindDashboard() {
         <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono space-y-1">
           <div className="flex items-center gap-2 font-bold">
             <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Database Table Pending Migration</span>
+            <span>Database Tables Pending Migration</span>
           </div>
           <p className="text-text-muted leading-relaxed">
-            Run <code className="text-amber-200">supabase/migrations/006_mind_and_focus_engine.sql</code> and <code className="text-amber-200">007_mind_training_and_checkins.sql</code> in your Supabase SQL editor.
+            Run <code className="text-amber-200">supabase/migrations/007_mind_training_and_checkins.sql</code> and <code className="text-amber-200">008_mind_reading_and_screentime.sql</code> in your Supabase SQL editor.
           </p>
         </div>
       )}
@@ -418,9 +535,7 @@ export function MindDashboard() {
         <div className="flex items-center gap-1">
           {!isToday && (
             <button
-              onClick={() =>
-                setSelectedDate(getLocalDateString(new Date(), userProfile.timezone))
-              }
+              onClick={() => setSelectedDate(getLocalDateString(new Date(), userProfile.timezone))}
               className="px-2.5 py-1 rounded-xl bg-surface-container-high text-[11px] text-on-surface hover:text-primary-lime transition-colors cursor-pointer"
             >
               Today
@@ -441,15 +556,18 @@ export function MindDashboard() {
           TAB CONTENT
           ====================================================================== */}
 
-      {/* TAB 1: FOCUS & TIMER (Also contains Main Overview Cards) */}
+      {/* TAB 1: FOCUS & COMPREHENSIVE OVERVIEW */}
       {currentTab === "focus" && (
         <div className="space-y-6">
+          {/* Hero 1: Composite Mind Score Dial */}
+          <MindScoreDial scoreData={compositeMindScore} />
+
           {/* Daily Metrics: Focus score, Deep Work, Sessions, Rating */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 font-mono">
-            {/* Card 1: Focus Score */}
+            {/* Focus Score */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1 relative overflow-hidden">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>Focus score</span>
+                <span>Focus Score</span>
                 <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface flex items-baseline gap-1">
@@ -462,15 +580,13 @@ export function MindDashboard() {
                   <span className="text-sm text-text-muted font-normal">No rating</span>
                 )}
               </div>
-              <div className="text-[10px] text-on-surface-variant truncate">
-                {scoreData.label}
-              </div>
+              <div className="text-[10px] text-on-surface-variant truncate">{scoreData.label}</div>
             </div>
 
-            {/* Card 2: Deep Work Time */}
+            {/* Deep Work Time */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>Deep work</span>
+                <span>Deep Work</span>
                 <Clock className="w-3.5 h-3.5 text-secondary-cyan" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface">
@@ -484,7 +600,7 @@ export function MindDashboard() {
               </div>
             </div>
 
-            {/* Card 3: Sessions & Cycles */}
+            {/* Sessions Done */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
                 <span>Sessions</span>
@@ -494,15 +610,13 @@ export function MindDashboard() {
                 {scoreData.completedCount}
                 <span className="text-xs text-text-muted font-normal ml-1">done</span>
               </div>
-              <div className="text-[10px] text-on-surface-variant">
-                Sprints & intervals
-              </div>
+              <div className="text-[10px] text-on-surface-variant">Sprints & intervals</div>
             </div>
 
-            {/* Card 4: Avg Friction / Quality Rating */}
+            {/* Avg Rating */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>Session rating</span>
+                <span>Session Rating</span>
                 <Star className="w-3.5 h-3.5 text-amber-core" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface">
@@ -523,28 +637,24 @@ export function MindDashboard() {
             </div>
           </div>
 
-          {/* OVERVIEW SECTION: Math Summary & Discipline Cards (Item 9 requirement) */}
+          {/* Row 1: Math Summary & Discipline Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Math Summary Card with Sparkline */}
-            <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
+            <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-4 font-mono">
               <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl bg-primary-lime/10 border border-primary-lime/30 flex items-center justify-center text-primary-lime">
                     <Zap className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold font-mono text-on-surface">
-                      Mental Math Summary
-                    </h3>
-                    <p className="text-[10px] font-mono text-on-surface-variant">
-                      Agility & calculation speed
-                    </p>
+                    <h3 className="text-sm font-bold text-on-surface">Mental Math Summary</h3>
+                    <p className="text-[10px] text-on-surface-variant">Agility & calculation speed</p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setIsMathModalOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-primary-lime text-surface font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer transition-all"
+                  className="px-3 py-1.5 rounded-xl bg-primary-lime text-surface font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer transition-all"
                 >
                   Train Now
                 </button>
@@ -552,15 +662,13 @@ export function MindDashboard() {
 
               {mathSessions.length === 0 ? (
                 <div className="p-4 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-1.5">
-                  <p className="text-xs font-mono text-text-muted">
-                    No training today.
-                  </p>
-                  <p className="text-[10px] font-mono text-on-surface-variant">
+                  <p className="text-xs text-text-muted">No training today.</p>
+                  <p className="text-[10px] text-on-surface-variant">
                     Sharpen mental processing speed in a 60-second sprint.
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3 font-mono">
+                <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
                       <div className="text-[10px] uppercase text-text-muted">Accuracy</div>
@@ -601,11 +709,17 @@ export function MindDashboard() {
               )}
             </div>
 
-            {/* Discipline & Commitments Card */}
+            {/* Discipline Card */}
             <DisciplineCard selectedDate={selectedDate} />
           </div>
 
-          {/* Today's Check-in Status Card */}
+          {/* Row 2: Reading Card & Screen Time Card */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ReadingCard selectedDate={selectedDate} onReadingUpdated={fetchSessions} />
+            <ScreenTimeCard selectedDate={selectedDate} onScreenTimeUpdated={fetchSessions} />
+          </div>
+
+          {/* Row 3: Daily State Check-in card */}
           <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-3 font-mono">
             <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -660,13 +774,14 @@ export function MindDashboard() {
             )}
           </div>
 
-          {/* Interactive Focus Timer */}
+          {/* Row 4: Weekly Cognitive Insights Card */}
+          <WeeklyInsightCard insights={weeklyInsights} />
+
+          {/* Focus Timer */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-base font-bold font-mono text-on-surface">
-                  Focus Session Timer
-                </h2>
+                <h2 className="text-base font-bold font-mono text-on-surface">Focus Session Timer</h2>
                 <p className="text-xs text-on-surface-variant font-mono">
                   Ultradian rhythm, sprints, and interval renewals
                 </p>
@@ -694,15 +809,13 @@ export function MindDashboard() {
         </div>
       )}
 
-      {/* TAB 2: MENTAL MATH DEDICATED TAB */}
+      {/* TAB 2: MENTAL MATH ARENA */}
       {currentTab === "math" && (
         <div className="space-y-6">
           <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-subtle">
               <div>
-                <h2 className="text-base font-bold font-mono text-on-surface">
-                  Mental Math Arena
-                </h2>
+                <h2 className="text-base font-bold font-mono text-on-surface">Mental Math Arena</h2>
                 <p className="text-xs text-on-surface-variant font-mono">
                   Sprint (60s) or Precision (20 questions) training
                 </p>
@@ -715,13 +828,10 @@ export function MindDashboard() {
               </button>
             </div>
 
-            {/* Math History List */}
             {mathSessions.length === 0 ? (
               <div className="p-8 text-center space-y-2">
                 <Zap className="w-8 h-8 text-text-muted mx-auto" />
-                <p className="text-xs font-mono text-text-muted">
-                  No math sessions recorded yet.
-                </p>
+                <p className="text-xs font-mono text-text-muted">No math sessions recorded yet.</p>
               </div>
             ) : (
               <div className="space-y-2 font-mono">
@@ -759,23 +869,35 @@ export function MindDashboard() {
         </div>
       )}
 
-      {/* TAB 3: DISCIPLINE DEDICATED TAB */}
+      {/* TAB 3: DISCIPLINE COMMITMENTS */}
       {currentTab === "discipline" && (
         <div className="space-y-6">
           <DisciplineCard selectedDate={selectedDate} />
         </div>
       )}
 
-      {/* TAB 4: CHECK-IN DEDICATED TAB */}
+      {/* TAB 4: READING ENGINE */}
+      {currentTab === "reading" && (
+        <div className="space-y-6">
+          <ReadingCard selectedDate={selectedDate} onReadingUpdated={fetchSessions} />
+        </div>
+      )}
+
+      {/* TAB 5: SCREEN TIME TELEMETRY */}
+      {currentTab === "screentime" && (
+        <div className="space-y-6">
+          <ScreenTimeCard selectedDate={selectedDate} onScreenTimeUpdated={fetchSessions} />
+        </div>
+      )}
+
+      {/* TAB 6: MOOD & ENERGY CHECK-INS */}
       {currentTab === "checkin" && (
         <div className="space-y-6">
           <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-4 font-mono">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div>
                 <h2 className="text-base font-bold text-on-surface">Mood & Energy Logs</h2>
-                <p className="text-xs text-on-surface-variant">
-                  Honest calibration without clinical labels
-                </p>
+                <p className="text-xs text-on-surface-variant">Honest calibration without clinical labels</p>
               </div>
               <button
                 onClick={() => setIsCheckinModalOpen(true)}
@@ -831,6 +953,13 @@ export function MindDashboard() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* TAB 7: WEEKLY INSIGHTS */}
+      {currentTab === "insights" && (
+        <div className="space-y-6">
+          <WeeklyInsightCard insights={weeklyInsights} />
         </div>
       )}
 

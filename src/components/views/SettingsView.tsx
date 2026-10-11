@@ -71,6 +71,9 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
         "discipline_commitments",
         "discipline_logs",
         "mind_checkins",
+        "reading_books",
+        "reading_logs",
+        "screen_time_logs",
       ];
 
       const exportPayload: Record<string, any[]> = {
