@@ -32,6 +32,12 @@ export function FocusHistoryList({
   const [deletedSession, setDeletedSession] = useState<{ id: string; name: string } | null>(null);
   const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout | null>(null);
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo_undo") === "true") {
+      setDeletedSession({ id: "demo-undo-id", name: "Deep Work Sprint (Algorithms Practice)" });
+    }
+  }, []);
+
   const handleSoftDelete = async (session: FocusSession) => {
     guardAction(async () => {
       try {

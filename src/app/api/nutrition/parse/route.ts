@@ -161,27 +161,57 @@ If impossible to estimate, return confidence "could_not_estimate" with null calo
   },
 };
 
+import { createClient } from "@/lib/supabase/server";
+
 // Registered providers priority
 const PROVIDERS: LLMProvider[] = [OpenAIProvider, GeminiProvider];
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get("x-forwarded-for") || "local";
-    if (!checkRateLimit(ip)) {
+    // 1. Authentication check via Supabase session cookie or Bearer token
+    const supabase = await createClient();
+    const authHeader = req.headers.get("authorization");
+    const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+
+    let user = null;
+    if (token) {
+      const { data } = await supabase.auth.getUser(token);
+      user = data.user;
+    } else {
+      const { data } = await supabase.auth.getUser();
+      user = data.user;
+    }
+
+    if (!user) {
       return NextResponse.json(
-        { error: "Rate limit exceeded. Please wait a minute before re-parsing." },
+        { error: "Unauthorized. You must be signed in to access the AI food parser." },
+        { status: 401 }
+      );
+    }
+
+    // 2. Per-user Rate Limiting (30 requests/minute)
+    if (!checkRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded. Please wait a minute before making more requests." },
         { status: 429 }
       );
     }
 
-    const body = await req.json();
+    // 3. Request Body & Input Validation
+    let body: any;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON request body." }, { status: 400 });
+    }
+
     const { query } = body;
 
     if (!query || typeof query !== "string") {
-      return NextResponse.json({ error: "Missing 'query' field" }, { status: 400 });
+      return NextResponse.json({ error: "Missing or invalid 'query' field." }, { status: 400 });
     }
 
-    // Input length limit guard
+    // Input length limit guard (max 500 characters)
     if (query.length > 500) {
       return NextResponse.json(
         { error: "Query exceeds maximum limit of 500 characters." },
@@ -194,7 +224,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ items: [] });
     }
 
-    // 1. Try splitting into segments by commas or conjunctions
+    // 4. Grounding: Match segments against local Egyptian & common dictionary first
     const segments = trimmed
       .split(/[,،\n]|(?:\s+(?:and|with|مع|و|\+)\s+)/i)
       .map((s) => s.trim())
@@ -203,7 +233,6 @@ export async function POST(req: NextRequest) {
     const parsedItems: ParsedFoodItem[] = [];
     const unparsedSegments: string[] = [];
 
-    // Check each segment against dictionary grounding
     for (const segment of segments) {
       const match = matchDictionaryFood(segment);
       if (match) {
@@ -213,49 +242,33 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. If there are unparsed segments, try swappable LLM provider
+    // 5. LLM Provider for unparsed items
     if (unparsedSegments.length > 0) {
       const activeProvider = PROVIDERS.find((p) => p.isAvailable());
 
-      if (activeProvider) {
-        try {
-          const aiItems = await activeProvider.parse(unparsedSegments.join(", "));
-          parsedItems.push(...aiItems);
-        } catch (llmErr) {
-          console.error("LLM Provider parsing failed:", llmErr);
-          // Return real error or fallback items with could_not_estimate
-          for (const unparsed of unparsedSegments) {
-            parsedItems.push({
-              food_name: unparsed,
-              quantity: 1,
-              unit: "item",
-              calories: null,
-              protein_g: 0,
-              carbs_g: 0,
-              fats_g: 0,
-              confidence: "could_not_estimate",
-              source: "manual",
-              note: "AI service unavailable. Enter macros manually.",
-            });
-          }
-        }
-      } else {
-        // No LLM provider key configured: return honest "could not estimate"
-        // NEVER INVENT NUMBERS!
-        for (const unparsed of unparsedSegments) {
-          parsedItems.push({
-            food_name: unparsed,
-            quantity: 1,
-            unit: "item",
-            calories: null,
-            protein_g: 0,
-            carbs_g: 0,
-            fats_g: 0,
-            confidence: "could_not_estimate",
-            source: "manual",
-            note: "Could not estimate. Tap item to input macros manually.",
-          });
-        }
+      if (!activeProvider) {
+        return NextResponse.json(
+          {
+            error: "No AI nutrition parsing provider is currently available. Please enter macros manually.",
+            items: parsedItems,
+          },
+          { status: 503 }
+        );
+      }
+
+      try {
+        const aiItems = await activeProvider.parse(unparsedSegments.join(", "));
+        parsedItems.push(...aiItems);
+      } catch (llmErr) {
+        console.error("AI Provider parsing error:", (llmErr as Error)?.message || llmErr);
+        // Clean error returned to client — zero leaked keys, zero stack traces
+        return NextResponse.json(
+          {
+            error: "AI nutrition service encountered an error. Please try again or enter macros manually.",
+            items: parsedItems.length > 0 ? parsedItems : undefined,
+          },
+          { status: 502 }
+        );
       }
     }
 

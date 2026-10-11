@@ -55,6 +55,10 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
       setIsOnline(navigator.onLine);
     }
 
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo_offline") === "true") {
+      setIsOnline(false);
+    }
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 

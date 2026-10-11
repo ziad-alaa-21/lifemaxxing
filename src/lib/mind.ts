@@ -188,8 +188,12 @@ export function calculateFocusScore(
   tagCounts: Record<string, number>;
   categoryCounts: Record<string, number>;
   label: string;
+  hasGoal: boolean;
+  hasRatings: boolean;
 } {
   const activeSessions = sessions.filter((s) => !s.deleted_at);
+
+  const hasGoal = typeof dailyGoalMinutes === "number" && dailyGoalMinutes > 0;
 
   if (activeSessions.length === 0) {
     return {
@@ -201,6 +205,8 @@ export function calculateFocusScore(
       tagCounts: {},
       categoryCounts: {},
       label: "No sessions yet",
+      hasGoal,
+      hasRatings: false,
     };
   }
 
@@ -216,7 +222,7 @@ export function calculateFocusScore(
     if (s.status === "completed") {
       completedCount++;
     }
-    if (s.rating && s.rating >= 1 && s.rating <= 5) {
+    if (typeof s.rating === "number" && s.rating >= 1 && s.rating <= 5) {
       ratingSum += s.rating;
       ratingCount++;
     }
@@ -230,30 +236,46 @@ export function calculateFocusScore(
 
   const averageRating =
     ratingCount > 0 ? Math.round((ratingSum / ratingCount) * 10) / 10 : null;
+  const hasRatings = ratingCount > 0;
 
-  const goal = dailyGoalMinutes && dailyGoalMinutes > 0 ? dailyGoalMinutes : 180;
-  const goalProgressPercent = Math.min(
-    100,
-    Math.round((totalActualMinutes / goal) * 100)
-  );
+  const goalProgressPercent = hasGoal
+    ? Math.min(100, Math.round((totalActualMinutes / dailyGoalMinutes!) * 100))
+    : null;
 
-  // Minutes contribution (70 pts max)
-  const minutesPts = Math.min(70, (totalActualMinutes / goal) * 70);
+  let score: number | null = null;
+  let label = "Focus score (from your sessions)";
 
-  // Quality contribution (30 pts max)
-  const qualityPts = averageRating ? (averageRating / 5) * 30 : 15;
-
-  const score = Math.min(100, Math.round(minutesPts + qualityPts));
+  if (!hasGoal && !hasRatings) {
+    // Goal not set and no ratings: cannot compute volume or quality
+    score = null;
+    label = "Set a goal";
+  } else if (!hasGoal && hasRatings) {
+    // Goal not set: volume component NOT computed. Rating quality only.
+    score = Math.round((averageRating! / 5) * 100);
+    label = "Focus score (quality only - set a goal)";
+  } else if (hasGoal && !hasRatings) {
+    // No rated sessions: compute from volume ONLY (no neutral 15 points!)
+    score = Math.min(100, Math.round((totalActualMinutes / dailyGoalMinutes!) * 100));
+    label = "Focus score (volume only - unrated)";
+  } else if (hasGoal && hasRatings) {
+    // Both goal and ratings present: 70 pts volume + 30 pts quality
+    const volumePts = Math.min(70, (totalActualMinutes / dailyGoalMinutes!) * 70);
+    const qualityPts = (averageRating! / 5) * 30;
+    score = Math.min(100, Math.round(volumePts + qualityPts));
+    label = "Focus score (from your sessions)";
+  }
 
   return {
     score,
     totalActualMinutes,
     completedCount,
     averageRating,
-    goalProgressPercent: dailyGoalMinutes ? goalProgressPercent : null,
+    goalProgressPercent,
     tagCounts,
     categoryCounts,
-    label: "Focus score (from your sessions)",
+    label,
+    hasGoal,
+    hasRatings,
   };
 }
 

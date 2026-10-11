@@ -353,13 +353,13 @@ export function MindDashboard() {
                 <span className="text-xs text-text-muted font-normal">/ 100</span>
               </>
             ) : (
-              <span className="text-sm font-bold text-text-muted">No sessions yet</span>
+              <span className="text-sm font-bold text-text-muted">{scoreData.label}</span>
             )}
           </div>
           <div className="text-[10px] text-text-muted">
             {scoreData.score !== null
-              ? "From your sessions"
-              : "Log a session to calculate"}
+              ? scoreData.label
+              : (scoreData.label === "Set a goal" ? "Set a goal in settings" : "Log a session to calculate")}
           </div>
         </div>
 

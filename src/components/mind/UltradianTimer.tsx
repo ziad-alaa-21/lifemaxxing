@@ -99,6 +99,17 @@ export function UltradianTimer({
   // Restore active timer or handle killed/closed recovery from localStorage
   useEffect(() => {
     try {
+      if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo_recovery") === "true") {
+        setRecoveryPrompt({
+          elapsedMinutes: 50,
+          plannedMinutes: 50,
+          startedAt: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+          category: "Study",
+          taskName: "Algorithms Practice",
+        });
+        return;
+      }
+
       const saved = localStorage.getItem("mind_active_timer");
       if (saved) {
         const parsed = JSON.parse(saved);

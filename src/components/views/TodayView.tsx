@@ -35,6 +35,7 @@ export function TodayView() {
     totalMinutes: number;
     completedCount: number;
     score: number | null;
+    label?: string;
     defaultMode: FocusMode;
   } | null>(null);
   const [latestSleep, setLatestSleep] = useState<{
@@ -153,6 +154,7 @@ export function TodayView() {
                     totalMinutes: stats.totalActualMinutes,
                     completedCount: stats.completedCount,
                     score: stats.score,
+                    label: stats.label,
                     defaultMode: (prof?.default_focus_mode as FocusMode) || "sprint_50",
                   });
                 }
@@ -352,7 +354,9 @@ export function TodayView() {
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
-                  <span className="text-[11px] font-mono text-on-surface">Focus score (from your sessions)</span>
+                  <span className="text-[11px] font-mono text-on-surface">
+                    {todayFocus.label || "Focus score"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5 font-mono text-[11px]">
                   <span className="font-bold text-tertiary-purple">
