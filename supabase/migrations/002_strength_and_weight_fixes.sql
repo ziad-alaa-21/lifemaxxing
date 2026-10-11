@@ -50,13 +50,17 @@ CREATE POLICY "Users can delete own weight logs" ON public.weight_logs
   USING (auth.uid() = user_id);
 
 -- 3. Replace seeded strength_standards with approved 7-tier standards
--- Drop legacy 5-tier check constraint from initial schema (which only allowed Untrained, Novice, Intermediate, Advanced, Elite)
+-- Drop legacy constraints from initial schema first
 ALTER TABLE public.strength_standards DROP CONSTRAINT IF EXISTS strength_standards_tier_check;
+ALTER TABLE public.strength_standards DROP CONSTRAINT IF EXISTS strength_standards_multiplier_check;
+
+-- Clear old seeded standards BEFORE adding the new constraint so old rows don't trigger a check violation
+DELETE FROM public.strength_standards;
+
+-- Now add the approved 7-tier and multiplier constraints
 ALTER TABLE public.strength_standards ADD CONSTRAINT strength_standards_tier_check 
   CHECK (tier IN ('Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Olympian', 'Mr. Olympia'));
 
--- Ensure multiplier allows 0.0 for bodyweight pull-ups
-ALTER TABLE public.strength_standards DROP CONSTRAINT IF EXISTS strength_standards_multiplier_check;
 ALTER TABLE public.strength_standards ADD CONSTRAINT strength_standards_multiplier_check 
   CHECK (multiplier >= 0);
 
@@ -64,8 +68,6 @@ ALTER TABLE public.strength_standards ADD CONSTRAINT strength_standards_multipli
 ALTER TABLE public.user_rank_history DROP CONSTRAINT IF EXISTS user_rank_history_tier_check;
 ALTER TABLE public.user_rank_history ADD CONSTRAINT user_rank_history_tier_check 
   CHECK (tier IN ('Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Olympian', 'Mr. Olympia'));
-
-DELETE FROM public.strength_standards;
 
 -- MEN'S STANDARDS
 -- Bench: 0.7, 1.0, 1.3, 1.6, 1.8, 2.0, 2.2
