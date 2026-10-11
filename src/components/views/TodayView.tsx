@@ -81,21 +81,28 @@ export function TodayView() {
             }
           });
 
-        // Fetch weight from events
+        // Fetch weight from profiles & weight_logs (single source of truth)
         supabase
-          .from("events")
-          .select("occurred_at, data")
-          .eq("user_id", user.id)
-          .eq("event_type", "weight_log")
-          .is("deleted_at", null)
-          .order("occurred_at", { ascending: false })
-          .limit(1)
-          .then(({ data }) => {
-            if (data && data.length > 0) {
-              const w = data[0].data?.weight_kg || data[0].data?.weight;
-              if (w) setCurrentWeight(Number(w));
+          .from("profiles")
+          .select("current_weight_kg")
+          .eq("id", user.id)
+          .single()
+          .then(({ data: prof }) => {
+            if (prof?.current_weight_kg) {
+              setCurrentWeight(Number(prof.current_weight_kg));
+            }
+          });
 
-              const logDate = new Date(data[0].occurred_at).toDateString();
+        supabase
+          .from("weight_logs")
+          .select("logged_at")
+          .eq("user_id", user.id)
+          .is("deleted_at", null)
+          .order("logged_at", { ascending: false })
+          .limit(1)
+          .then(({ data: logs }) => {
+            if (logs && logs.length > 0) {
+              const logDate = new Date(logs[0].logged_at).toDateString();
               const nowDate = new Date().toDateString();
               setIsWeightLoggedToday(logDate === nowDate);
             }

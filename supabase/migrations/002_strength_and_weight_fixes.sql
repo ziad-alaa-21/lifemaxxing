@@ -5,28 +5,49 @@
 
 -- 1. Add current_weight_kg to profiles if missing
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS current_weight_kg numeric;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS target_weight_kg numeric;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS goal_type text check (goal_type in ('cut', 'bulk', 'recomp'));
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS height_cm numeric;
 
--- 2. Create weight_logs table if missing with strict RLS
+-- 2. Create weight_logs table if missing with strict multi-tenant RLS & soft deletes
 CREATE TABLE IF NOT EXISTS public.weight_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  weight_kg numeric NOT NULL,
+  weight_kg numeric NOT NULL CHECK (weight_kg > 0),
+  note text,
   logged_at timestamptz NOT NULL DEFAULT now(),
-  created_at timestamptz NOT NULL DEFAULT now()
+  created_at timestamptz NOT NULL DEFAULT now(),
+  deleted_at timestamptz
 );
 
+-- Enable RLS
 ALTER TABLE public.weight_logs ENABLE ROW LEVEL SECURITY;
 
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE tablename = 'weight_logs' AND policyname = 'Users can manage own weight logs'
-  ) THEN
-    CREATE POLICY "Users can manage own weight logs" ON public.weight_logs
-      FOR ALL TO authenticated
-      USING (auth.uid() = user_id)
-      WITH CHECK (auth.uid() = user_id);
-  END IF;
-END $$;
+-- Drop previous policies if re-running
+DROP POLICY IF EXISTS "Users can view own weight logs" ON public.weight_logs;
+DROP POLICY IF EXISTS "Users can view own non-deleted weight logs" ON public.weight_logs;
+DROP POLICY IF EXISTS "Users can insert own weight logs" ON public.weight_logs;
+DROP POLICY IF EXISTS "Users can update own weight logs" ON public.weight_logs;
+DROP POLICY IF EXISTS "Users can delete own weight logs" ON public.weight_logs;
+DROP POLICY IF EXISTS "Users can manage own weight logs" ON public.weight_logs;
+
+-- Strict CRUD policies
+CREATE POLICY "Users can view own non-deleted weight logs" ON public.weight_logs
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id AND deleted_at IS NULL);
+
+CREATE POLICY "Users can insert own weight logs" ON public.weight_logs
+  FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own weight logs" ON public.weight_logs
+  FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own weight logs" ON public.weight_logs
+  FOR DELETE TO authenticated
+  USING (auth.uid() = user_id);
 
 -- 3. Replace seeded strength_standards with approved 7-tier standards
 DELETE FROM public.strength_standards;
@@ -133,4 +154,3 @@ INSERT INTO public.strength_standards (exercise_id, gender, tier, multiplier) VA
 ('00000000-0000-0000-0000-000000000006', 'female', 'Diamond', 1.2),
 ('00000000-0000-0000-0000-000000000006', 'female', 'Olympian', 1.4),
 ('00000000-0000-0000-0000-000000000006', 'female', 'Mr. Olympia', 1.5);
--- Note: Women's Pull-up stays unranked.

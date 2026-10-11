@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   Award,
   TrendingUp,
@@ -65,7 +66,6 @@ export function RankStandardsMatrix() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userGender, setUserGender] = useState<string | null>(null);
   const [bodyweightKg, setBodyweightKg] = useState<number | null>(null);
-  const [tempWeightInput, setTempWeightInput] = useState<string>("");
   const [liftSummaries, setLiftSummaries] = useState<CanonicalLiftSummary[]>([]);
   const [selectedLift, setSelectedLift] = useState<string>(
     CANONICAL_EXERCISES[0].id
@@ -192,39 +192,6 @@ export function RankStandardsMatrix() {
     loadData();
   }, [loadData]);
 
-  // Handle saving entered bodyweight
-  const handleSaveBodyweight = async () => {
-    const val = Number(tempWeightInput);
-    if (!val || val < 30 || val > 300) {
-      alert("Please enter a valid bodyweight between 30 and 300 kg.");
-      return;
-    }
-    if (!userId) return;
-
-    try {
-      await supabase.from("profiles").update({ target_weight_kg: val }).eq("id", userId);
-      try {
-        await supabase
-          .from("profiles")
-          .update({ current_weight_kg: val } as Record<string, unknown>)
-          .eq("id", userId);
-      } catch {}
-      try {
-        await supabase.from("events").insert({
-          user_id: userId,
-          event_type: "weight_log",
-          data: { weight_kg: val },
-        });
-      } catch {}
-
-      setBodyweightKg(val);
-      setTempWeightInput("");
-      loadData();
-    } catch (err) {
-      console.error("Error updating bodyweight:", err);
-    }
-  };
-
   // Quick set gender if unset
   const handleSetGender = async (selectedGender: "male" | "female") => {
     if (!userId) return;
@@ -290,31 +257,22 @@ export function RankStandardsMatrix() {
         </div>
       )}
 
-      {/* Bodyweight Prompt if Missing */}
+      {/* Bodyweight Missing Notice linking to Body Weight tab */}
       {!bodyweightKg && (
-        <div className="bg-primary-lime/10 border border-primary-lime/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-2 text-on-surface">
-            <Weight className="w-4 h-4 text-primary-lime shrink-0" />
+        <div className="bg-surface-container border border-border-subtle rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2 text-text-muted">
+            <Weight className="w-4 h-4 text-secondary-cyan shrink-0" />
             <span>
-              <strong>Bodyweight Required:</strong> Enter your current bodyweight to calculate weight multipliers and ranks:
+              Bodyweight unset. Target thresholds will use 75kg default until logged.
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              placeholder="e.g. 75"
-              value={tempWeightInput}
-              onChange={(e) => setTempWeightInput(e.target.value)}
-              className="w-20 px-2 py-1 rounded-lg bg-surface-container border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-lime focus:outline-none text-right"
-            />
-            <span className="text-text-muted">kg</span>
-            <button
-              onClick={handleSaveBodyweight}
-              className="px-3 py-1 rounded-lg bg-primary-lime text-charcoal-dark font-bold uppercase transition-colors cursor-pointer hover:bg-primary-lime/90"
-            >
-              Save
-            </button>
-          </div>
+          <Link
+            href="/body?tab=weight"
+            className="text-xs font-mono text-secondary-cyan hover:underline flex items-center gap-1 font-bold"
+          >
+            <span>Log in Weight Engine</span>
+            <span>&rarr;</span>
+          </Link>
         </div>
       )}
 
