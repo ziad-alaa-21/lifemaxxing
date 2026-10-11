@@ -1,0 +1,447 @@
+"use client";
+
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  Flame,
+  Plus,
+  Sparkles,
+  Settings2,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  ShieldCheck,
+  AlertCircle,
+  HelpCircle,
+  Loader2,
+  TrendingUp,
+} from "lucide-react";
+import { supabase } from "@/lib/supabase/client";
+import {
+  MealLogEntry,
+  IntakeLogEntry,
+  getLocalDateString,
+  GoalPhase,
+  CaloriePacing,
+} from "@/lib/nutrition";
+import { ConfirmFoodModal } from "./ConfirmFoodModal";
+import { ManualFoodModal } from "./ManualFoodModal";
+import { TargetSettingsModal } from "./TargetSettingsModal";
+import { HydrationCard } from "./HydrationCard";
+import { MealTimeline } from "./MealTimeline";
+
+export function NutritionDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // User Profile & Settings
+  const [userProfile, setUserProfile] = useState<{
+    weightKg: number | null;
+    heightCm: number | null;
+    birthYear: number | null;
+    sex: "male" | "female" | null;
+    goalType: GoalPhase | null;
+    caloriePacing: CaloriePacing | null;
+    targetCalories: number | null;
+    targetProteinG: number | null;
+    targetCarbsG: number | null;
+    targetFatsG: number | null;
+    waterTargetMl: number | null;
+    timezone: string;
+    targetBedtime: string;
+    caffeineCutoffHours: number;
+  }>({
+    weightKg: null,
+    heightCm: null,
+    birthYear: null,
+    sex: null,
+    goalType: "cut",
+    caloriePacing: "optimal",
+    targetCalories: null,
+    targetProteinG: null,
+    targetCarbsG: null,
+    targetFatsG: null,
+    waterTargetMl: null,
+    timezone: "UTC",
+    targetBedtime: "23:00",
+    caffeineCutoffHours: 10,
+  });
+
+  // Selected date (defaults to today in user's timezone)
+  const [selectedDate, setSelectedDate] = useState<string>("");
+
+  // Telemetry data
+  const [meals, setMeals] = useState<MealLogEntry[]>([]);
+  const [intakeEntries, setIntakeEntries] = useState<IntakeLogEntry[]>([]);
+
+  // Modals state
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  // Fetch initial profile
+  const fetchProfileAndData = useCallback(async () => {
+    setLoading(true);
+    setErrorMsg(null);
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: prof, error: profErr } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (profErr && profErr.code !== "PGRST116") {
+        console.error("Profile load warning:", profErr);
+      }
+
+      const tz = prof?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+      const initialDate = getLocalDateString(new Date(), tz);
+      setSelectedDate(initialDate);
+
+      setUserProfile({
+        weightKg: prof?.current_weight_kg ? Number(prof.current_weight_kg) : null,
+        heightCm: prof?.height_cm ? Number(prof.height_cm) : null,
+        birthYear: prof?.birth_year ? Number(prof.birth_year) : null,
+        sex: prof?.sex || null,
+        goalType: prof?.goal_type || "cut",
+        caloriePacing: prof?.calorie_pacing || "optimal",
+        targetCalories: prof?.target_calories ? Number(prof.target_calories) : null,
+        targetProteinG: prof?.target_protein_g ? Number(prof.target_protein_g) : null,
+        targetCarbsG: prof?.target_carbs_g ? Number(prof.target_carbs_g) : null,
+        targetFatsG: prof?.target_fats_g ? Number(prof.target_fats_g) : null,
+        waterTargetMl: prof?.water_target_ml ? Number(prof.water_target_ml) : null,
+        timezone: tz,
+        targetBedtime: prof?.target_bedtime || "23:00",
+        caffeineCutoffHours: prof?.caffeine_cutoff_hours || 10,
+      });
+
+      // Load meals for initial date
+      await loadDayLogs(user.id, initialDate);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to initialize nutrition telemetry");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const loadDayLogs = async (userId: string, dateStr: string) => {
+    try {
+      // 1. Fetch meals
+      const { data: mealData, error: mealErr } = await supabase
+        .from("meal_logs")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("logged_date", dateStr)
+        .is("deleted_at", null)
+        .order("logged_at", { ascending: true });
+
+      if (mealErr) {
+        if (mealErr.message.includes("Could not find the table")) {
+          setErrorMsg(
+            "Database table 'meal_logs' not found. Please apply migration 004_nutrition_and_intake.sql."
+          );
+        } else {
+          console.error("Meal fetch error:", mealErr);
+        }
+      } else {
+        setMeals(mealData || []);
+      }
+
+      // 2. Fetch intake logs (all non-deleted for this day)
+      // Note: intake_logs stores logged_at timestamptz. We fetch recent rows and filter by localDate.
+      const { data: intakeData, error: intakeErr } = await supabase
+        .from("intake_logs")
+        .select("*")
+        .eq("user_id", userId)
+        .is("deleted_at", null)
+        .order("logged_at", { ascending: false });
+
+      if (intakeErr) {
+        if (intakeErr.message.includes("Could not find the table")) {
+          setErrorMsg(
+            "Database table 'intake_logs' not found. Please apply migration 004_nutrition_and_intake.sql."
+          );
+        } else {
+          console.error("Intake fetch error:", intakeErr);
+        }
+      } else {
+        // Filter by local date
+        const dayIntakes = (intakeData || []).filter((item: IntakeLogEntry) => {
+          return getLocalDateString(item.logged_at, userProfile.timezone) === dateStr;
+        });
+        setIntakeEntries(dayIntakes);
+      }
+    } catch (err: any) {
+      console.error("Logs load error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfileAndData();
+  }, [fetchProfileAndData]);
+
+  const handleRefresh = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user && selectedDate) {
+      await loadDayLogs(user.id, selectedDate);
+    }
+  };
+
+  // Consumed sums
+  const totalCalories = meals.reduce((sum, m) => sum + (m.calories || 0), 0);
+  const totalProtein = Math.round(meals.reduce((sum, m) => sum + (m.protein_g || 0), 0) * 10) / 10;
+  const totalCarbs = Math.round(meals.reduce((sum, m) => sum + (m.carbs_g || 0), 0) * 10) / 10;
+  const totalFats = Math.round(meals.reduce((sum, m) => sum + (m.fats_g || 0), 0) * 10) / 10;
+
+  // Intakes sums
+  const totalWater = intakeEntries
+    .filter((i) => i.type === "water")
+    .reduce((sum, i) => sum + i.amount, 0);
+
+  const totalCaffeine = intakeEntries
+    .filter((i) => i.type === "caffeine")
+    .reduce((sum, i) => sum + i.amount, 0);
+
+  // Targets
+  const targetCals = userProfile.targetCalories;
+  const targetProt = userProfile.targetProteinG;
+  const targetCarbs = userProfile.targetCarbsG;
+  const targetFats = userProfile.targetFatsG;
+
+  const caloriesRemaining = targetCals !== null ? targetCals - totalCalories : null;
+  const calPercent = targetCals && targetCals > 0 ? Math.min(100, Math.round((totalCalories / targetCals) * 100)) : 0;
+  const protPercent = targetProt && targetProt > 0 ? Math.min(100, Math.round((totalProtein / targetProt) * 100)) : 0;
+  const carbsPercent = targetCarbs && targetCarbs > 0 ? Math.min(100, Math.round((totalCarbs / targetCarbs) * 100)) : 0;
+  const fatsPercent = targetFats && targetFats > 0 ? Math.min(100, Math.round((totalFats / targetFats) * 100)) : 0;
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 text-center space-y-3 font-mono">
+        <Loader2 className="w-8 h-8 animate-spin text-secondary-cyan" />
+        <span className="text-xs text-text-muted">Loading Nutrition Engine...</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Error Banner */}
+      {errorMsg && (
+        <div className="p-4 rounded-2xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-3 text-xs font-mono text-[#F87171]">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <div className="font-bold">Schema Notice</div>
+            <div>{errorMsg}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Date Header & Target Settings Button */}
+      <div className="flex items-center justify-between p-4 bg-surface-container rounded-2xl border border-border-subtle">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-secondary-cyan" />
+          <span className="text-xs font-mono font-bold text-on-surface">
+            {selectedDate === getLocalDateString(new Date(), userProfile.timezone)
+              ? `Today (${selectedDate})`
+              : selectedDate}
+          </span>
+        </div>
+
+        <button
+          onClick={() => setIsSettingsModalOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-text-muted hover:text-on-surface hover:border-secondary-cyan transition-colors"
+        >
+          <Settings2 className="w-3.5 h-3.5 text-secondary-cyan" />
+          <span>Target Settings</span>
+        </button>
+      </div>
+
+      {/* Energy & Macro Gauge Card */}
+      {targetCals === null ? (
+        /* Honest Unconfigured State */
+        <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle text-center space-y-3">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan">
+            <Flame className="w-6 h-6" />
+          </div>
+          <div className="font-mono text-base font-bold text-on-surface">
+            Set Your Nutritional Targets
+          </div>
+          <p className="font-mono text-xs text-text-muted max-w-md mx-auto">
+            No default numbers are invented. Provide your bodyweight, height, and birth year to compute estimated targets, or set custom targets manually.
+          </p>
+          <button
+            onClick={() => setIsSettingsModalOpen(true)}
+            className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+          >
+            Configure Targets Now
+          </button>
+        </div>
+      ) : (
+        /* Configured Energy Telemetry */
+        <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-6">
+          <div className="flex items-start justify-between font-mono">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-text-muted">
+                Energy Balance
+              </div>
+              <div className="text-3xl font-extrabold text-on-surface mt-1 flex items-baseline gap-2">
+                <span>{totalCalories}</span>
+                <span className="text-sm font-medium text-text-muted">
+                  / {targetCals} kcal
+                </span>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <div className="text-[11px] uppercase tracking-wider text-text-muted">
+                {caloriesRemaining !== null && caloriesRemaining >= 0 ? "Remaining" : "Over Budget"}
+              </div>
+              <div
+                className={`text-2xl font-bold mt-1 ${
+                  caloriesRemaining !== null && caloriesRemaining >= 0
+                    ? "text-secondary-cyan"
+                    : "text-[#F87171]"
+                }`}
+              >
+                {caloriesRemaining !== null ? Math.abs(caloriesRemaining) : 0} kcal
+              </div>
+            </div>
+          </div>
+
+          {/* Calorie Progress Bar */}
+          <div className="w-full h-3 bg-surface-container-lowest rounded-full overflow-hidden border border-border-subtle">
+            <div
+              className={`h-full rounded-full transition-all duration-500 shadow-sm ${
+                caloriesRemaining !== null && caloriesRemaining < 0
+                  ? "bg-[#F87171]"
+                  : "bg-secondary-cyan"
+              }`}
+              style={{ width: `${Math.min(100, calPercent)}%` }}
+            />
+          </div>
+
+          {/* 3 Macro Gauges */}
+          <div className="grid grid-cols-3 gap-3 font-mono pt-2">
+            {/* Protein */}
+            <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-primary-lime font-bold">Protein</span>
+                <span className="text-text-muted text-[11px]">
+                  {targetProt ? `${totalProtein}/${targetProt}g` : `${totalProtein}g`}
+                </span>
+              </div>
+              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary-lime rounded-full transition-all duration-500"
+                  style={{ width: `${protPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Carbs */}
+            <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-secondary-cyan font-bold">Carbs</span>
+                <span className="text-text-muted text-[11px]">
+                  {targetCarbs ? `${totalCarbs}/${targetCarbs}g` : `${totalCarbs}g`}
+                </span>
+              </div>
+              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-secondary-cyan rounded-full transition-all duration-500"
+                  style={{ width: `${carbsPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Fats */}
+            <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-rank-gold font-bold">Fats</span>
+                <span className="text-text-muted text-[11px]">
+                  {targetFats ? `${totalFats}/${targetFats}g` : `${totalFats}g`}
+                </span>
+              </div>
+              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-rank-gold rounded-full transition-all duration-500"
+                  style={{ width: `${fatsPercent}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Action Bar */}
+      <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+        <button
+          onClick={() => setIsAiModalOpen(true)}
+          className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-lime text-charcoal-dark font-bold shadow-[0_0_15px_rgba(198,255,61,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>Parse Meal with AI</span>
+        </button>
+
+        <button
+          onClick={() => setIsManualModalOpen(true)}
+          className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
+        >
+          <Plus className="w-4 h-4 text-secondary-cyan" />
+          <span>+ Manual Food Entry</span>
+        </button>
+      </div>
+
+      {/* Hydration & Caffeine Telemetry Section */}
+      <HydrationCard
+        waterToday={totalWater}
+        waterTarget={userProfile.waterTargetMl}
+        caffeineToday={totalCaffeine}
+        intakeEntries={intakeEntries}
+        targetBedtime={userProfile.targetBedtime}
+        caffeineCutoffHours={userProfile.caffeineCutoffHours}
+        userTimezone={userProfile.timezone}
+        onIntakeUpdated={handleRefresh}
+      />
+
+      {/* Meals Timeline */}
+      <MealTimeline
+        meals={meals}
+        onMealsUpdated={handleRefresh}
+        userTimezone={userProfile.timezone}
+      />
+
+      {/* Modals */}
+      <ConfirmFoodModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        onLogged={handleRefresh}
+        userTimezone={userProfile.timezone}
+      />
+
+      <ManualFoodModal
+        isOpen={isManualModalOpen}
+        onClose={() => setIsManualModalOpen(false)}
+        onLogged={handleRefresh}
+        userTimezone={userProfile.timezone}
+      />
+
+      <TargetSettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        currentProfile={userProfile}
+        onSaved={fetchProfileAndData}
+      />
+    </div>
+  );
+}

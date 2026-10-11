@@ -37,6 +37,7 @@ export async function updateSession(request: NextRequest) {
 
   const isLoginRoute = pathname === "/login";
   const isAuthCallback = pathname.startsWith("/auth");
+  const isApiRoute = pathname.startsWith("/api");
   const isPublicAsset =
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon.ico") ||
@@ -45,7 +46,7 @@ export async function updateSession(request: NextRequest) {
     pathname.includes(".");
 
   // 1. Unauthenticated user trying to access protected routes
-  if (!user && !isLoginRoute && !isAuthCallback && !isPublicAsset) {
+  if (!user && !isLoginRoute && !isAuthCallback && !isPublicAsset && !isApiRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

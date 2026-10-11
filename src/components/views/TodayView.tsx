@@ -12,6 +12,7 @@ import {
   Weight,
   CheckCircle2,
   Moon,
+  Utensils,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { getTierColor } from "@/lib/strength";
@@ -24,6 +25,10 @@ export function TodayView() {
   const [highestRankTier, setHighestRankTier] = useState<string | null>(null);
   const [currentWeight, setCurrentWeight] = useState<number | null>(null);
   const [isWeightLoggedToday, setIsWeightLoggedToday] = useState(false);
+  const [todayNutrition, setTodayNutrition] = useState<{
+    calories: number;
+    target: number | null;
+  } | null>(null);
   const [latestSleep, setLatestSleep] = useState<{
     score: number;
     tier: string;
@@ -89,16 +94,38 @@ export function TodayView() {
             }
           });
 
-        // Fetch weight from profiles & weight_logs (single source of truth)
+        // Fetch weight & nutrition targets from profiles & logs
         supabase
           .from("profiles")
-          .select("current_weight_kg")
+          .select("current_weight_kg, target_calories, timezone")
           .eq("id", user.id)
           .single()
           .then(({ data: prof }) => {
             if (prof?.current_weight_kg) {
               setCurrentWeight(Number(prof.current_weight_kg));
             }
+            const tz = prof?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+            let todayStr = new Date().toISOString().split("T")[0];
+            try {
+              todayStr = new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(new Date());
+            } catch {
+              // fallback
+            }
+            supabase
+              .from("meal_logs")
+              .select("calories")
+              .eq("user_id", user.id)
+              .eq("logged_date", todayStr)
+              .is("deleted_at", null)
+              .then(({ data: mealData }) => {
+                if (mealData) {
+                  const totalCals = mealData.reduce((sum, m) => sum + (m.calories || 0), 0);
+                  setTodayNutrition({
+                    calories: totalCals,
+                    target: prof?.target_calories ? Number(prof.target_calories) : null,
+                  });
+                }
+              });
           });
 
         supabase
@@ -228,6 +255,24 @@ export function TodayView() {
                     {latestSleep.score}/100
                   </span>
                   <span className="text-text-muted">({latestSleep.tier}, {latestSleep.durationFormatted})</span>
+                </div>
+              </div>
+            )}
+
+            {/* Nutrition / Energy Banner */}
+            {todayNutrition && (
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2">
+                <div className="flex items-center gap-2">
+                  <Utensils className="w-3.5 h-3.5 text-secondary-cyan" />
+                  <span className="text-[11px] font-mono text-on-surface">Energy In</span>
+                </div>
+                <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                  <span className="font-bold text-on-surface">
+                    {todayNutrition.calories} kcal
+                  </span>
+                  <span className="text-text-muted">
+                    {todayNutrition.target ? `/ ${todayNutrition.target} kcal` : "(No target set)"}
+                  </span>
                 </div>
               </div>
             )}

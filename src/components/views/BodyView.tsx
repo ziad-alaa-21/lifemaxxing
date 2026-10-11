@@ -12,6 +12,7 @@ import {
   Loader2,
   AlertCircle,
   Search,
+  Utensils,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { ActiveWorkoutSession } from "@/components/strength/ActiveWorkoutSession";
@@ -19,6 +20,7 @@ import { RankStandardsMatrix } from "@/components/strength/RankStandardsMatrix";
 import { WorkoutHistory } from "@/components/strength/WorkoutHistory";
 import { WeightDashboard } from "@/components/weight/WeightDashboard";
 import { SleepDashboard } from "@/components/sleep/SleepDashboard";
+import { NutritionDashboard } from "@/components/nutrition/NutritionDashboard";
 
 interface Exercise {
   id: string;
@@ -30,7 +32,7 @@ interface Exercise {
   ranked_key: string | null;
 }
 
-type TabKey = "logger" | "weight" | "sleep" | "standards" | "history" | "catalog";
+type TabKey = "logger" | "weight" | "sleep" | "nutrition" | "standards" | "history" | "catalog";
 
 function BodyViewContent() {
   const searchParams = useSearchParams();
@@ -48,7 +50,7 @@ function BodyViewContent() {
 
   useEffect(() => {
     const t = searchParams.get("tab") as TabKey;
-    if (t && ["logger", "weight", "sleep", "standards", "history", "catalog"].includes(t)) {
+    if (t && ["logger", "weight", "sleep", "nutrition", "standards", "history", "catalog"].includes(t)) {
       setActiveTab(t);
     }
   }, [searchParams]);
@@ -137,6 +139,18 @@ function BodyViewContent() {
         </button>
 
         <button
+          onClick={() => switchTab("nutrition")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            activeTab === "nutrition"
+              ? "bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] font-bold"
+              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+          }`}
+        >
+          <Utensils className="w-4 h-4" />
+          <span>Nutrition & Macros</span>
+        </button>
+
+        <button
           onClick={() => switchTab("standards")}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             activeTab === "standards"
@@ -188,7 +202,10 @@ function BodyViewContent() {
       {/* Tab 3: Sleep & Circadian Telemetry */}
       {activeTab === "sleep" && <SleepDashboard />}
 
-      {/* Tab 4: Strength Standards & Radar Matrix */}
+      {/* Tab 4: Nutrition & Macro Telemetry Engine */}
+      {activeTab === "nutrition" && <NutritionDashboard />}
+
+      {/* Tab 5: Strength Standards & Radar Matrix */}
       {activeTab === "standards" && <RankStandardsMatrix />}
 
       {/* Tab 5: Workout History & Volume Tracking */}
