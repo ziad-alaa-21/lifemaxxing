@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Award,
   TrendingUp,
@@ -11,6 +11,7 @@ import {
   AlertCircle,
   BarChart2,
   Info,
+  HelpCircle,
 } from "lucide-react";
 import {
   Radar,
@@ -24,23 +25,20 @@ import {
 import { supabase } from "@/lib/supabase/client";
 import {
   CANONICAL_EXERCISES,
+  TIER_NAMES,
   determineTier,
   getTierColor,
+  getStandardsForGender,
+  calculateOverallRank,
+  TierName,
 } from "@/lib/strength";
-
-interface DbStandard {
-  id: string;
-  exercise_id: string;
-  tier: string;
-  multiplier: number;
-}
 
 interface UserPR {
   exercise_id: string;
   e1rm_kg: number;
   bodyweight_kg: number;
   ratio: number;
-  tier: string;
+  tier: TierName;
   achieved_at: string;
 }
 
@@ -48,169 +46,199 @@ interface CanonicalLiftSummary {
   id: string;
   name: string;
   key: string;
+  muscle: string;
   currentPR: UserPR | null;
   standards: { tier: string; multiplier: number }[];
-  currentTier: string;
+  currentTier: TierName;
   ratio: number;
   nextTier?: string;
   nextTargetKg?: number;
   kgToGo?: number;
   progressPercent: number;
+  isUnranked: boolean;
+  unrankedReason?: string;
 }
 
 export function RankStandardsMatrix() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [bodyweightKg, setBodyweightKg] = useState<number>(75);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userGender, setUserGender] = useState<string | null>(null);
+  const [bodyweightKg, setBodyweightKg] = useState<number | null>(null);
+  const [tempWeightInput, setTempWeightInput] = useState<string>("");
   const [liftSummaries, setLiftSummaries] = useState<CanonicalLiftSummary[]>([]);
-  const [selectedLift, setSelectedLift] = useState<string | null>(
+  const [selectedLift, setSelectedLift] = useState<string>(
     CANONICAL_EXERCISES[0].id
   );
+  const [overallRank, setOverallRank] = useState<{
+    overallTier: TierName;
+    averageRatio: number;
+    liftsCount: number;
+    maxLifts: number;
+  } | null>(null);
 
-  useEffect(() => {
-    async function loadStandardsAndHistory() {
-      try {
-        setLoading(true);
-        setError(null);
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // 1. Fetch strength standards
-        const { data: stdData, error: stdErr } = await supabase
-          .from("strength_standards")
-          .select("id, exercise_id, tier, multiplier")
-          .eq("gender", "male")
-          .order("multiplier", { ascending: true });
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-        if (stdErr) {
-          throw new Error(`Failed to load standards: ${stdErr.message}`);
-        }
+      if (!user) return;
+      setUserId(user.id);
 
-        // 2. Fetch authenticated user's rank history
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+      // 1. Fetch Profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("gender, current_weight_kg, target_weight_kg")
+        .eq("id", user.id)
+        .single();
 
-        let prMap: Record<string, UserPR> = {};
+      const gender = profile?.gender || null;
+      setUserGender(gender);
 
-        if (user) {
-          const { data: rankData, error: rankErr } = await supabase
-            .from("user_rank_history")
-            .select("exercise_id, e1rm_kg, bodyweight_kg, ratio, tier, achieved_at")
-            .eq("user_id", user.id)
-            .order("achieved_at", { ascending: false });
-
-          if (!rankErr && rankData) {
-            // Keep the best ratio PR for each exercise
-            for (const r of rankData) {
-              const exId = r.exercise_id;
-              if (!prMap[exId] || Number(r.ratio) > Number(prMap[exId].ratio)) {
-                prMap[exId] = {
-                  exercise_id: exId,
-                  e1rm_kg: Number(r.e1rm_kg),
-                  bodyweight_kg: Number(r.bodyweight_kg),
-                  ratio: Number(r.ratio),
-                  tier: r.tier,
-                  achieved_at: r.achieved_at,
-                };
-              }
-            }
-
-            // Set default bodyweight from latest PR
-            if (rankData.length > 0 && rankData[0].bodyweight_kg) {
-              setBodyweightKg(Number(rankData[0].bodyweight_kg));
-            }
-          }
-        }
-
-        // 3. Assemble summaries for the 6 canonical lifts
-        const summaries: CanonicalLiftSummary[] = CANONICAL_EXERCISES.map((canonical) => {
-          const exStandards = (stdData || [])
-            .filter((s) => s.exercise_id === canonical.id)
-            .sort((a, b) => a.multiplier - b.multiplier);
-
-          const pr = prMap[canonical.id] || null;
-          const currentE1rm = pr ? pr.e1rm_kg : 0;
-          const userBw = pr ? pr.bodyweight_kg : bodyweightKg;
-
-          const calculated = determineTier(
-            canonical.id,
-            currentE1rm,
-            userBw,
-            exStandards
-          );
-
-          let kgToGo: number | undefined;
-          let progressPercent = 0;
-
-          if (calculated.nextTargetKg && currentE1rm) {
-            kgToGo = Math.max(0, Math.round((calculated.nextTargetKg - currentE1rm) * 10) / 10);
-            const currentRatio = calculated.ratio;
-            const nextStd = exStandards.find((s) => s.tier === calculated.nextTier);
-            if (nextStd) {
-              progressPercent = Math.min(100, Math.round((currentRatio / nextStd.multiplier) * 100));
-            }
-          }
-
-          return {
-            id: canonical.id,
-            name: canonical.name,
-            key: canonical.key,
-            currentPR: pr,
-            standards: exStandards,
-            currentTier: calculated.tier,
-            ratio: calculated.ratio,
-            nextTier: calculated.nextTier,
-            nextTargetKg: calculated.nextTargetKg,
-            kgToGo,
-            progressPercent,
-          };
-        });
-
-        setLiftSummaries(summaries);
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Error loading standards";
-        setError(msg);
-      } finally {
-        setLoading(false);
+      let currentWeight: number | null = null;
+      if (profile?.current_weight_kg) {
+        currentWeight = Number(profile.current_weight_kg);
+      } else if (profile?.target_weight_kg) {
+        currentWeight = Number(profile.target_weight_kg);
       }
-    }
 
-    loadStandardsAndHistory();
-  }, [bodyweightKg]);
+      // 2. Fetch authenticated user's rank history
+      const { data: rankData } = await supabase
+        .from("user_rank_history")
+        .select("exercise_id, e1rm_kg, bodyweight_kg, ratio, tier, achieved_at")
+        .eq("user_id", user.id)
+        .order("achieved_at", { ascending: false });
 
-  // Recalculate summaries when user edits bodyweight
-  const handleBodyweightChange = (newBw: number) => {
-    setBodyweightKg(newBw);
-    setLiftSummaries((prev) =>
-      prev.map((item) => {
-        const currentE1rm = item.currentPR ? item.currentPR.e1rm_kg : 0;
-        const calculated = determineTier(item.id, currentE1rm, newBw, item.standards);
-        let kgToGo: number | undefined;
-        let progressPercent = 0;
+      const prMap: Record<string, UserPR> = {};
+      if (rankData) {
+        if (!currentWeight && rankData.length > 0 && rankData[0].bodyweight_kg) {
+          currentWeight = Number(rankData[0].bodyweight_kg);
+        }
 
-        if (calculated.nextTargetKg && currentE1rm) {
-          kgToGo = Math.max(0, Math.round((calculated.nextTargetKg - currentE1rm) * 10) / 10);
-          const nextStd = item.standards.find((s) => s.tier === calculated.nextTier);
-          if (nextStd) {
-            progressPercent = Math.min(100, Math.round((calculated.ratio / nextStd.multiplier) * 100));
+        for (const r of rankData) {
+          const exId = r.exercise_id;
+          if (!prMap[exId] || Number(r.ratio) > Number(prMap[exId].ratio)) {
+            prMap[exId] = {
+              exercise_id: exId,
+              e1rm_kg: Number(r.e1rm_kg),
+              bodyweight_kg: Number(r.bodyweight_kg),
+              ratio: Number(r.ratio),
+              tier: r.tier as TierName,
+              achieved_at: r.achieved_at,
+            };
           }
         }
+      }
+
+      setBodyweightKg(currentWeight);
+
+      const effectiveBw = currentWeight || 75;
+      const { standards: activeStandards } = getStandardsForGender(gender);
+
+      // 3. Assemble summaries for the 6 canonical lifts
+      const summaries: CanonicalLiftSummary[] = CANONICAL_EXERCISES.map((canonical) => {
+        const multipliers = activeStandards[canonical.key] || [];
+        const exStandards = multipliers.map((mult, idx) => ({
+          tier: TIER_NAMES[idx],
+          multiplier: mult,
+        }));
+
+        const pr = prMap[canonical.id] || null;
+        const currentE1rm = pr ? pr.e1rm_kg : 0;
+        const userBw = pr ? pr.bodyweight_kg : effectiveBw;
+
+        const calculated = determineTier(canonical.id, currentE1rm, userBw, gender);
 
         return {
-          ...item,
+          id: canonical.id,
+          name: canonical.name,
+          key: canonical.key,
+          muscle: canonical.muscle,
+          currentPR: pr,
+          standards: exStandards,
           currentTier: calculated.tier,
           ratio: calculated.ratio,
           nextTier: calculated.nextTier,
           nextTargetKg: calculated.nextTargetKg,
-          kgToGo,
-          progressPercent,
+          kgToGo: calculated.kgToGo,
+          progressPercent: calculated.progressPercent,
+          isUnranked: calculated.isUnranked,
+          unrankedReason: calculated.unrankedReason,
         };
-      })
-    );
+      });
+
+      setLiftSummaries(summaries);
+
+      // 4. Calculate overall rank
+      const loggedLifts = summaries
+        .filter((s) => s.currentPR !== null)
+        .map((s) => ({ key: s.key, ratio: s.ratio }));
+
+      const overall = calculateOverallRank(loggedLifts, gender);
+      setOverallRank(overall);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Error loading standards";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Handle saving entered bodyweight
+  const handleSaveBodyweight = async () => {
+    const val = Number(tempWeightInput);
+    if (!val || val < 30 || val > 300) {
+      alert("Please enter a valid bodyweight between 30 and 300 kg.");
+      return;
+    }
+    if (!userId) return;
+
+    try {
+      await supabase.from("profiles").update({ target_weight_kg: val }).eq("id", userId);
+      try {
+        await supabase
+          .from("profiles")
+          .update({ current_weight_kg: val } as Record<string, unknown>)
+          .eq("id", userId);
+      } catch {}
+      try {
+        await supabase.from("events").insert({
+          user_id: userId,
+          event_type: "weight_log",
+          data: { weight_kg: val },
+        });
+      } catch {}
+
+      setBodyweightKg(val);
+      setTempWeightInput("");
+      loadData();
+    } catch (err) {
+      console.error("Error updating bodyweight:", err);
+    }
+  };
+
+  // Quick set gender if unset
+  const handleSetGender = async (selectedGender: "male" | "female") => {
+    if (!userId) return;
+    try {
+      await supabase.from("profiles").update({ gender: selectedGender }).eq("id", userId);
+      setUserGender(selectedGender);
+      loadData();
+    } catch (err) {
+      console.error("Error setting gender:", err);
+    }
   };
 
   // Prepare radar chart data
   const radarData = liftSummaries.map((item) => {
-    // Short clean name for axis
     const shortNames: Record<string, string> = {
       bench_press: "Bench",
       squat: "Squat",
@@ -220,23 +248,78 @@ export function RankStandardsMatrix() {
       barbell_row: "Row",
     };
 
-    const intermediateStd = item.standards.find((s) => s.tier === "Intermediate")?.multiplier || 1.0;
-    const advancedStd = item.standards.find((s) => s.tier === "Advanced")?.multiplier || 1.25;
+    const silverStd = item.standards.find((s) => s.tier === "Silver")?.multiplier || 1.0;
+    const goldStd = item.standards.find((s) => s.tier === "Gold")?.multiplier || 1.3;
 
     return {
       lift: shortNames[item.key] || item.name,
       userRatio: item.ratio,
-      intermediate: intermediateStd,
-      advanced: advancedStd,
+      silver: silverStd,
+      gold: goldStd,
     };
   });
 
   const activeLift = liftSummaries.find((l) => l.id === selectedLift) || liftSummaries[0];
+  const effectiveBw = bodyweightKg || 75;
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle relative overflow-hidden">
+      {/* Gender Unset Warning Banner */}
+      {userGender === null && (
+        <div className="bg-amber-core/10 border border-amber-core/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2 text-amber-core">
+            <HelpCircle className="w-4 h-4 shrink-0" />
+            <span>
+              <strong>Gender Unset:</strong> Rank standards are currently using neutral averages. Set your gender for calibrated thresholds:
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleSetGender("male")}
+              className="px-3 py-1 rounded-lg bg-surface-container-high border border-border-subtle hover:border-amber-core text-on-surface hover:text-amber-core transition-colors cursor-pointer"
+            >
+              Male
+            </button>
+            <button
+              onClick={() => handleSetGender("female")}
+              className="px-3 py-1 rounded-lg bg-surface-container-high border border-border-subtle hover:border-amber-core text-on-surface hover:text-amber-core transition-colors cursor-pointer"
+            >
+              Female
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bodyweight Prompt if Missing */}
+      {!bodyweightKg && (
+        <div className="bg-primary-lime/10 border border-primary-lime/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2 text-on-surface">
+            <Weight className="w-4 h-4 text-primary-lime shrink-0" />
+            <span>
+              <strong>Bodyweight Required:</strong> Enter your current bodyweight to calculate weight multipliers and ranks:
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              placeholder="e.g. 75"
+              value={tempWeightInput}
+              onChange={(e) => setTempWeightInput(e.target.value)}
+              className="w-20 px-2 py-1 rounded-lg bg-surface-container border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-lime focus:outline-none text-right"
+            />
+            <span className="text-text-muted">kg</span>
+            <button
+              onClick={handleSaveBodyweight}
+              className="px-3 py-1 rounded-lg bg-primary-lime text-charcoal-dark font-bold uppercase transition-colors cursor-pointer hover:bg-primary-lime/90"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Header Banner with Overall Strength Rank */}
+      <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle relative overflow-hidden space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-rank-gold/15 border border-rank-gold/30 flex items-center justify-center text-rank-gold shadow-[0_0_20px_rgba(255,215,0,0.15)]">
@@ -247,24 +330,55 @@ export function RankStandardsMatrix() {
                 Strength Standards & Tier Matrix
               </h2>
               <p className="text-xs text-on-surface-variant">
-                Scientific bodyweight multipliers across the 6 canonical compound lifts
+                Official 7-tier scientific bodyweight multipliers ({userGender ? (userGender === "male" ? "Men's Standards" : "Women's Standards") : "Neutral Averages"})
               </p>
             </div>
           </div>
 
-          {/* Interactive Bodyweight Calibration */}
-          <div className="flex items-center gap-2 bg-surface-container-high px-3 py-2 rounded-xl border border-border-subtle self-start sm:self-auto">
+          <div className="flex items-center gap-2 bg-surface-container-high px-3 py-2 rounded-xl border border-border-subtle text-xs font-mono">
             <Weight className="w-4 h-4 text-secondary-cyan" />
-            <span className="text-xs font-mono text-text-muted">Target BW:</span>
-            <input
-              type="number"
-              value={bodyweightKg}
-              onChange={(e) => handleBodyweightChange(Math.max(30, Number(e.target.value)))}
-              className="w-14 text-xs font-mono font-bold text-on-surface bg-transparent focus:outline-none text-right"
-            />
-            <span className="text-xs font-mono text-text-muted">kg</span>
+            <span className="text-text-muted">Current BW:</span>
+            <span className="font-bold text-on-surface">
+              {bodyweightKg ? `${bodyweightKg} kg` : "75 kg (default)"}
+            </span>
           </div>
         </div>
+
+        {/* Overall Rank Summary */}
+        {overallRank && (
+          <div className="pt-3 border-t border-border-subtle/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-low/60 -mx-5 -mb-5 p-4 rounded-b-2xl">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-rank-gold/10 border border-rank-gold/30 flex items-center justify-center text-rank-gold">
+                <Award className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
+                  Overall Strength Rank
+                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-md border ${getTierColor(
+                      overallRank.overallTier
+                    )}`}
+                  >
+                    {overallRank.overallTier}
+                  </span>
+                  <span className="text-xs font-mono text-text-muted">
+                    (Avg. {overallRank.averageRatio.toFixed(2)}x BW)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-xs font-mono text-text-muted self-start sm:self-auto">
+              Based on{" "}
+              <strong className="text-on-surface">
+                {overallRank.liftsCount} of {overallRank.maxLifts}
+              </strong>{" "}
+              canonical ranked lifts
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mt-4 p-3 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-2 text-crimson-alert text-xs font-mono">
@@ -315,7 +429,7 @@ export function RankStandardsMatrix() {
                     />
                     <PolarRadiusAxis
                       angle={30}
-                      domain={[0, 2]}
+                      domain={[0, 2.5]}
                       tick={{ fill: "#64748B", fontSize: 9 }}
                       axisLine={false}
                     />
@@ -327,10 +441,10 @@ export function RankStandardsMatrix() {
                       fillOpacity={0.4}
                     />
                     <Radar
-                      name="Intermediate Standard"
-                      dataKey="intermediate"
-                      stroke="#5DE6FF"
-                      fill="#5DE6FF"
+                      name="Gold Standard"
+                      dataKey="gold"
+                      stroke="#FFD700"
+                      fill="#FFD700"
                       fillOpacity={0.08}
                       strokeDasharray="3 3"
                     />
@@ -350,11 +464,11 @@ export function RankStandardsMatrix() {
               <div className="flex items-center justify-center gap-4 text-[10px] font-mono border-t border-border-subtle pt-3">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-primary-lime" />
-                  <span className="text-on-surface">Your 1RM Ratio</span>
+                  <span className="text-on-surface">Your Ratio</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-0.5 bg-secondary-cyan" />
-                  <span className="text-text-muted">Intermediate Target</span>
+                  <span className="w-2.5 h-0.5 bg-rank-gold" />
+                  <span className="text-text-muted">Gold Benchmark</span>
                 </div>
               </div>
             </div>
@@ -386,7 +500,11 @@ export function RankStandardsMatrix() {
                     <div className="bg-surface-container-high p-3 rounded-xl border border-border-subtle">
                       <span className="text-[10px] font-mono text-text-muted block">CURRENT PR 1RM</span>
                       <span className="text-base font-bold font-mono text-primary-lime">
-                        {activeLift.currentPR ? `${activeLift.currentPR.e1rm_kg} kg` : "Unlogged"}
+                        {activeLift.currentPR
+                          ? activeLift.key === "pull_up" && activeLift.currentPR.e1rm_kg === 0
+                            ? "Strict BW"
+                            : `${activeLift.currentPR.e1rm_kg} kg`
+                          : "Unlogged"}
                       </span>
                     </div>
                     <div className="bg-surface-container-high p-3 rounded-xl border border-border-subtle">
@@ -398,13 +516,17 @@ export function RankStandardsMatrix() {
                     <div className="bg-surface-container-high p-3 rounded-xl border border-border-subtle">
                       <span className="text-[10px] font-mono text-text-muted block">NEXT TIER TARGET</span>
                       <span className="text-base font-bold font-mono text-on-surface">
-                        {activeLift.nextTargetKg ? `${activeLift.nextTargetKg} kg` : "Max Tier"}
+                        {activeLift.nextTargetKg !== undefined
+                          ? `${activeLift.nextTargetKg} kg`
+                          : activeLift.isUnranked
+                          ? "Unranked"
+                          : "Mr. Olympia (Peak)"}
                       </span>
                     </div>
                   </div>
 
                   {/* Next Rank Progress Bar */}
-                  {activeLift.nextTier && (
+                  {activeLift.nextTier && !activeLift.isUnranked && (
                     <div className="p-3.5 bg-surface-container-low border border-border-subtle rounded-xl space-y-2">
                       <div className="flex items-center justify-between text-xs font-mono">
                         <span className="text-text-muted">
@@ -423,45 +545,53 @@ export function RankStandardsMatrix() {
                     </div>
                   )}
 
-                  {/* Standards Table for this Lift */}
-                  <div className="pt-3">
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-text-muted block mb-2">
-                      Tier Multipliers for {bodyweightKg} kg Bodyweight
-                    </span>
-                    <div className="grid grid-cols-5 gap-2 text-center text-xs font-mono">
-                      {activeLift.standards.map((s) => {
-                        const requiredKg = Math.round(s.multiplier * bodyweightKg * 10) / 10;
-                        const isCurrentOrPassed = activeLift.ratio >= s.multiplier;
-
-                        return (
-                          <div
-                            key={s.tier}
-                            className={`p-2.5 rounded-xl border transition-all ${
-                              isCurrentOrPassed
-                                ? "bg-primary-lime/10 border-primary-lime/40 text-on-surface font-semibold"
-                                : "bg-surface-container-low border-border-subtle text-text-muted"
-                            }`}
-                          >
-                            <span className="text-[10px] block uppercase font-bold truncate">
-                              {s.tier}
-                            </span>
-                            <span className="text-xs font-bold font-mono text-on-surface block mt-1">
-                              {requiredKg} kg
-                            </span>
-                            <span className="text-[10px] text-text-muted block">
-                              {s.multiplier}x
-                            </span>
-                          </div>
-                        );
-                      })}
+                  {activeLift.isUnranked && activeLift.unrankedReason && (
+                    <div className="p-3.5 bg-surface-container-low border border-border-subtle rounded-xl text-xs font-mono text-text-muted">
+                      Status: <span className="text-on-surface font-semibold">{activeLift.unrankedReason}</span>
                     </div>
-                  </div>
+                  )}
+
+                  {/* 7-Tier Standards Table for this Lift */}
+                  {activeLift.standards.length > 0 && (
+                    <div className="pt-3">
+                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-text-muted block mb-2">
+                        Visible 7-Tier Ladder ({effectiveBw} kg BW)
+                      </span>
+                      <div className="grid grid-cols-7 gap-1.5 text-center text-xs font-mono">
+                        {activeLift.standards.map((s) => {
+                          const requiredKg = Math.round(s.multiplier * effectiveBw * 10) / 10;
+                          const isCurrentOrPassed = activeLift.ratio >= s.multiplier;
+
+                          return (
+                            <div
+                              key={s.tier}
+                              className={`p-2 rounded-xl border transition-all ${
+                                isCurrentOrPassed
+                                  ? "bg-primary-lime/10 border-primary-lime/40 text-on-surface font-semibold"
+                                  : "bg-surface-container-low border-border-subtle text-text-muted"
+                              }`}
+                            >
+                              <span className="text-[9px] block uppercase font-bold truncate">
+                                {s.tier}
+                              </span>
+                              <span className="text-xs font-bold font-mono text-on-surface block mt-0.5">
+                                {requiredKg} kg
+                              </span>
+                              <span className="text-[9px] text-text-muted block">
+                                {s.multiplier}x
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 text-[11px] text-text-muted pt-2 border-t border-border-subtle">
                   <Info className="w-3.5 h-3.5 text-secondary-cyan shrink-0" />
                   <span>
-                    Select any lift card below to view detailed breakdown and tier milestones.
+                    Below Bronze ratio shows Unranked. Pull-up ratio uses added weight only.
                   </span>
                 </div>
               </div>
@@ -486,7 +616,7 @@ export function RankStandardsMatrix() {
                       {lift.name}
                     </h4>
                     <span className="text-[10px] font-mono text-text-muted capitalize">
-                      Key: {lift.key}
+                      {lift.muscle} • Key: {lift.key}
                     </span>
                   </div>
                   <span
@@ -502,19 +632,23 @@ export function RankStandardsMatrix() {
                   <div className="bg-surface-container-high p-2 rounded-xl border border-border-subtle">
                     <span className="text-[10px] text-text-muted block">1RM RECORD</span>
                     <span className="text-xs font-bold text-primary-lime">
-                      {lift.currentPR ? `${lift.currentPR.e1rm_kg} kg` : "-"}
+                      {lift.currentPR
+                        ? lift.key === "pull_up" && lift.currentPR.e1rm_kg === 0
+                          ? "Strict BW"
+                          : `${lift.currentPR.e1rm_kg} kg`
+                        : "-"}
                     </span>
                   </div>
                   <div className="bg-surface-container-high p-2 rounded-xl border border-border-subtle">
                     <span className="text-[10px] text-text-muted block">NEXT GOAL</span>
                     <span className="text-xs font-bold text-on-surface">
-                      {lift.nextTargetKg ? `${lift.nextTargetKg} kg` : "Peak"}
+                      {lift.nextTargetKg !== undefined ? `${lift.nextTargetKg} kg` : "Peak"}
                     </span>
                   </div>
                 </div>
 
                 {/* Progress to next tier */}
-                {lift.nextTier && (
+                {lift.nextTier && !lift.isUnranked && (
                   <div className="space-y-1">
                     <div className="flex justify-between text-[10px] font-mono text-text-muted">
                       <span>To {lift.nextTier}</span>

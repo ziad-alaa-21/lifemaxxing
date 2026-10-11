@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Timer, Play, Pause, RotateCcw, X, Volume2 } from "lucide-react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Timer, Play, Pause, RotateCcw, X } from "lucide-react";
 
 interface RestTimerProps {
   initialSeconds?: number;
@@ -9,25 +9,36 @@ interface RestTimerProps {
   onClose: () => void;
 }
 
+const STORAGE_KEY = "life_rest_timer_end";
+
 export function RestTimer({
   initialSeconds = 90,
   isOpen,
   onClose,
 }: RestTimerProps) {
-  const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
   const [totalSeconds, setTotalSeconds] = useState(initialSeconds);
+  const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
   const [isRunning, setIsRunning] = useState(true);
 
-  // Play a soft synthesized audio beep on timer complete
-  const playBeep = () => {
+  // Target end timestamp in milliseconds
+  const endTimeRef = useRef<number | null>(null);
+  const pausedRemainingRef = useRef<number>(initialSeconds);
+
+  // Audio synthesis for completion chime
+  const playBeep = useCallback(() => {
     try {
-      const audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextClass) return;
+
+      const audioCtx = new AudioContextClass();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
 
       osc.type = "sine";
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 chime
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
 
       osc.connect(gain);
@@ -35,44 +46,111 @@ export function RestTimer({
       osc.start();
       osc.stop(audioCtx.currentTime + 0.6);
     } catch {
-      // AudioContext not allowed without user gesture
+      // AudioContext requires user gesture or is muted
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    setSecondsLeft(initialSeconds);
-    setTotalSeconds(initialSeconds);
-    setIsRunning(true);
-  }, [initialSeconds, isOpen]);
+  // Start timer from timestamp
+  const startTimerWithDuration = useCallback(
+    (seconds: number) => {
+      const now = Date.now();
+      const targetEnd = now + seconds * 1000;
+      endTimeRef.current = targetEnd;
+      pausedRemainingRef.current = seconds;
+      setTotalSeconds(seconds);
+      setSecondsLeft(seconds);
+      setIsRunning(true);
+      try {
+        localStorage.setItem(STORAGE_KEY, targetEnd.toString());
+      } catch {}
+    },
+    []
+  );
 
+  // Initialize or re-open
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isRunning && secondsLeft > 0) {
-      interval = setInterval(() => {
-        setSecondsLeft((prev) => {
-          if (prev <= 1) {
-            playBeep();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    if (isOpen) {
+      startTimerWithDuration(initialSeconds);
+    } else {
+      endTimeRef.current = null;
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {}
     }
-    return () => {
-      if (interval) clearInterval(interval);
+  }, [isOpen, initialSeconds, startTimerWithDuration]);
+
+  // Main countdown tick loop driven by wall-clock timestamps
+  useEffect(() => {
+    if (!isRunning || !isOpen || !endTimeRef.current) return;
+
+    const tick = () => {
+      if (!endTimeRef.current) return;
+      const now = Date.now();
+      const diffMs = endTimeRef.current - now;
+      const remaining = Math.max(0, Math.ceil(diffMs / 1000));
+
+      setSecondsLeft(remaining);
+
+      if (remaining <= 0) {
+        setIsRunning(false);
+        endTimeRef.current = null;
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch {}
+        playBeep();
+      }
     };
-  }, [isRunning, secondsLeft]);
+
+    tick();
+    const interval = setInterval(tick, 250); // fast interval to avoid second jumps
+
+    // Handle visibility changes when phone screen wakes up
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        tick();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isRunning, isOpen, playBeep]);
 
   if (!isOpen) return null;
 
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
-  const progressPercent = totalSeconds > 0 ? ((totalSeconds - secondsLeft) / totalSeconds) * 100 : 0;
+  const progressPercent =
+    totalSeconds > 0 ? ((totalSeconds - secondsLeft) / totalSeconds) * 100 : 0;
+
+  const togglePause = () => {
+    if (isRunning) {
+      // Pause: save remaining seconds and clear end timestamp
+      pausedRemainingRef.current = secondsLeft;
+      endTimeRef.current = null;
+      setIsRunning(false);
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {}
+    } else {
+      // Resume: set new target end from paused remaining
+      const targetEnd = Date.now() + pausedRemainingRef.current * 1000;
+      endTimeRef.current = targetEnd;
+      setIsRunning(true);
+      try {
+        localStorage.setItem(STORAGE_KEY, targetEnd.toString());
+      } catch {}
+    }
+  };
+
+  const handleReset = () => {
+    startTimerWithDuration(totalSeconds);
+  };
 
   const setPreset = (s: number) => {
-    setTotalSeconds(s);
-    setSecondsLeft(s);
-    setIsRunning(true);
+    startTimerWithDuration(s);
   };
 
   return (
@@ -99,17 +177,16 @@ export function RestTimer({
         </div>
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => setIsRunning(!isRunning)}
+            onClick={togglePause}
             className="w-8 h-8 rounded-lg bg-ice-blue/15 hover:bg-ice-blue/25 text-ice-blue flex items-center justify-center transition-colors cursor-pointer"
+            title={isRunning ? "Pause" : "Resume"}
           >
             {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </button>
           <button
-            onClick={() => {
-              setSecondsLeft(totalSeconds);
-              setIsRunning(true);
-            }}
+            onClick={handleReset}
             className="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant flex items-center justify-center transition-colors cursor-pointer"
+            title="Reset"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -119,7 +196,7 @@ export function RestTimer({
       {/* Progress Bar */}
       <div className="w-full h-1.5 bg-surface-container-low rounded-full overflow-hidden my-3">
         <div
-          className="h-full bg-ice-blue transition-all duration-500 ease-linear rounded-full"
+          className="h-full bg-ice-blue transition-all duration-300 ease-linear rounded-full"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
