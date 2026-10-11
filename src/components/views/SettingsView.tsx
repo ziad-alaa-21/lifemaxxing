@@ -9,6 +9,10 @@ import {
   Smartphone,
   Download,
   CheckCircle2,
+  Database,
+  Trash2,
+  ShieldAlert,
+  Lock,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -24,6 +28,8 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
   const { isInstallable, isInstalled, installApp } = usePWA();
   const [signingOut, setSigningOut] = useState(false);
   const [installing, setInstalling] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -42,6 +48,71 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
     }
   };
 
+  // Comprehensive Data Export including Stage 7b mind check-ins and discipline logs
+  const handleExportData = async () => {
+    setExporting(true);
+    setExportSuccess(false);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Please log in to export your data.");
+
+      const tables = [
+        "profiles",
+        "weight_logs",
+        "sleep_logs",
+        "intake_logs",
+        "meal_logs",
+        "saved_meals",
+        "focus_sessions",
+        "math_sessions",
+        "math_attempts",
+        "discipline_commitments",
+        "discipline_logs",
+        "mind_checkins",
+      ];
+
+      const exportPayload: Record<string, any[]> = {
+        meta: [
+          {
+            exported_at: new Date().toISOString(),
+            user_id: user.id,
+            email: user.email,
+          },
+        ],
+      };
+
+      for (const t of tables) {
+        try {
+          const { data } = await supabase.from(t).select("*").eq("user_id", user.id);
+          exportPayload[t] = data || [];
+        } catch {
+          exportPayload[t] = [];
+        }
+      }
+
+      const jsonStr = JSON.stringify(exportPayload, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `lifemaxxing_export_${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setExportSuccess(true);
+      setTimeout(() => setExportSuccess(false), 4000);
+    } catch (err: any) {
+      console.error("Export error:", err);
+      alert(err.message || "Failed to export data.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Banner */}
@@ -56,7 +127,7 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
               Account & Settings
             </h2>
             <p className="text-xs text-on-surface-variant mt-0.5">
-              Identity, session, and device installation
+              Identity, telemetry data export, and device installation
             </p>
           </div>
         </div>
@@ -105,6 +176,53 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
         </div>
       </div>
 
+      {/* Data Export & Privacy Card */}
+      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+          <div className="flex items-center gap-2">
+            <Database className="w-4 h-4 text-tertiary-purple" />
+            <h3 className="text-sm font-bold font-mono text-on-surface">
+              Telemetry Data Export & Privacy
+            </h3>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] font-mono text-text-muted">
+            <Lock className="w-3 h-3" />
+            <span>Encrypted at Rest</span>
+          </div>
+        </div>
+
+        <p className="text-xs text-on-surface-variant leading-relaxed">
+          Export your complete health, mind, and habit telemetry into a standardized JSON file.
+          Includes mental math sessions, mood/energy check-ins, discipline commitments, and nutritional logs.
+        </p>
+
+        <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="text-xs font-mono text-text-muted">
+            {exportSuccess ? (
+              <span className="text-emerald-success flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Export downloaded successfully</span>
+              </span>
+            ) : (
+              <span>Full account archive (JSON)</span>
+            )}
+          </div>
+
+          <button
+            onClick={handleExportData}
+            disabled={exporting}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-on-surface text-xs font-mono font-semibold transition-all cursor-pointer disabled:opacity-50"
+          >
+            {exporting ? (
+              <Loader2 className="w-4 h-4 animate-spin text-primary-lime" />
+            ) : (
+              <Download className="w-4 h-4 text-primary-lime" />
+            )}
+            <span>Export All Data</span>
+          </button>
+        </div>
+      </div>
+
       {/* PWA Device Installation Card */}
       <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
@@ -138,7 +256,7 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
               </span>
             ) : (
               <span>
-                Available via browser menu ("Install App" or "Add to Home screen")
+                Available via browser menu (&ldquo;Install App&rdquo; or &ldquo;Add to Home screen&rdquo;)
               </span>
             )}
           </div>
