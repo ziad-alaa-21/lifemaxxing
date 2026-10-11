@@ -42,3 +42,6 @@ next-env.d.ts
 
 # scratch test scripts
 /scratch/
+
+# agent config (contains API keys)
+.agents/mcp_config.json
