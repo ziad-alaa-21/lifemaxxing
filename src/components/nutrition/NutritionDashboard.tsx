@@ -124,6 +124,12 @@ export function NutritionDashboard() {
         .eq("id", user.id)
         .single();
 
+      const { data: sett } = await supabase
+        .from("user_settings")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
       if (profErr && profErr.code !== "PGRST116") {
         console.error("Profile load warning:", profErr);
       }
@@ -132,22 +138,29 @@ export function NutritionDashboard() {
       const initialDate = getLocalDateString(new Date(), tz);
       setSelectedDate(initialDate);
 
+      const targetCal = sett?.target_calories ?? prof?.target_calories;
+      const targetP = sett?.target_protein_g ?? prof?.target_protein_g;
+      const targetC = sett?.target_carbs_g ?? prof?.target_carbs_g;
+      const targetF = sett?.target_fats_g ?? prof?.target_fats_g;
+      const targetWater = sett?.water_target_ml ?? prof?.water_target_ml;
+      const pacing = sett?.calorie_pacing ?? prof?.calorie_pacing;
+
       setUserProfile({
         weightKg: prof?.current_weight_kg ? Number(prof.current_weight_kg) : null,
         heightCm: prof?.height_cm ? Number(prof.height_cm) : null,
         birthYear: prof?.birth_year ? Number(prof.birth_year) : null,
         sex: prof?.sex || null,
         goalType: prof?.goal_type || "cut",
-        caloriePacing: prof?.calorie_pacing || "optimal",
-        targetCalories: prof?.target_calories ? Number(prof.target_calories) : null,
-        targetProteinG: prof?.target_protein_g ? Number(prof.target_protein_g) : null,
-        targetCarbsG: prof?.target_carbs_g ? Number(prof.target_carbs_g) : null,
-        targetFatsG: prof?.target_fats_g ? Number(prof.target_fats_g) : null,
-        waterTargetMl: prof?.water_target_ml ? Number(prof.water_target_ml) : null,
+        caloriePacing: pacing || "optimal",
+        targetCalories: targetCal ? Number(targetCal) : null,
+        targetProteinG: targetP ? Number(targetP) : null,
+        targetCarbsG: targetC ? Number(targetC) : null,
+        targetFatsG: targetF ? Number(targetF) : null,
+        waterTargetMl: targetWater ? Number(targetWater) : null,
         timezone: tz,
-        targetBedtime: prof?.target_bedtime || "23:00",
-        caffeineCutoffHours: prof?.caffeine_cutoff_hours || 10,
-        hideAdherenceScores: prof?.hide_adherence_scores ?? false,
+        targetBedtime: sett?.bedtime_target || prof?.target_bedtime || "23:00",
+        caffeineCutoffHours: sett?.caffeine_cutoff_hours ?? prof?.caffeine_cutoff_hours ?? 10,
+        hideAdherenceScores: sett?.hide_adherence_scores ?? prof?.hide_adherence_scores ?? false,
       });
 
       // Load meals for initial date

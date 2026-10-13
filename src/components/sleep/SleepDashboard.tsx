@@ -36,10 +36,10 @@ export function SleepDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Settings
-  const [sleepTargetHours, setSleepTargetHours] = useState<number>(8.0);
-  const [caffeineCutoffHours, setCaffeineCutoffHours] = useState<number>(10.0);
-  const [screenCutoffMinutes, setScreenCutoffMinutes] = useState<number>(60);
+  // Settings (All targets strictly nullable: NO invented defaults)
+  const [sleepTargetHours, setSleepTargetHours] = useState<number | null>(null);
+  const [caffeineCutoffHours, setCaffeineCutoffHours] = useState<number | null>(null);
+  const [screenCutoffMinutes, setScreenCutoffMinutes] = useState<number | null>(null);
   const [timezone, setTimezone] = useState<string>("UTC");
 
   // Modals & UI States
@@ -67,19 +67,40 @@ export function SleepDashboard() {
       }
       setUserId(user.id);
 
-      // 1. Fetch user settings from profiles
+      // 1. Fetch user targets from user_settings (with profiles fallback)
+      const { data: settData } = await supabase
+        .from("user_settings")
+        .select("target_sleep_hours, caffeine_cutoff_hours, screen_cutoff_minutes")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
       const { data: profile } = await supabase
         .from("profiles")
         .select("sleep_target_hours, caffeine_cutoff_hours, screen_cutoff_minutes, timezone")
         .eq("id", user.id)
         .single();
 
-      if (profile) {
-        if (profile.sleep_target_hours) setSleepTargetHours(Number(profile.sleep_target_hours));
-        if (profile.caffeine_cutoff_hours) setCaffeineCutoffHours(Number(profile.caffeine_cutoff_hours));
-        if (profile.screen_cutoff_minutes) setScreenCutoffMinutes(Number(profile.screen_cutoff_minutes));
-        if (profile.timezone) setTimezone(profile.timezone);
+      if (settData?.target_sleep_hours !== null && settData?.target_sleep_hours !== undefined) {
+        setSleepTargetHours(Number(settData.target_sleep_hours));
+      } else if (profile?.sleep_target_hours !== null && profile?.sleep_target_hours !== undefined) {
+        setSleepTargetHours(Number(profile.sleep_target_hours));
+      } else {
+        setSleepTargetHours(null);
       }
+
+      if (settData?.caffeine_cutoff_hours !== null && settData?.caffeine_cutoff_hours !== undefined) {
+        setCaffeineCutoffHours(Number(settData.caffeine_cutoff_hours));
+      } else if (profile?.caffeine_cutoff_hours !== null && profile?.caffeine_cutoff_hours !== undefined) {
+        setCaffeineCutoffHours(Number(profile.caffeine_cutoff_hours));
+      }
+
+      if (settData?.screen_cutoff_minutes !== null && settData?.screen_cutoff_minutes !== undefined) {
+        setScreenCutoffMinutes(Number(settData.screen_cutoff_minutes));
+      } else if (profile?.screen_cutoff_minutes !== null && profile?.screen_cutoff_minutes !== undefined) {
+        setScreenCutoffMinutes(Number(profile.screen_cutoff_minutes));
+      }
+
+      if (profile?.timezone) setTimezone(profile.timezone);
 
       // 2. Fetch from sleep_logs table (Single Source of Truth - NO events fallback)
       const { data: logsData, error: logsErr } = await supabase
@@ -285,13 +306,13 @@ export function SleepDashboard() {
   };
 
   // Metrics computation
-  const stats = calculateSleepStats(entries, sleepTargetHours);
+  const stats = calculateSleepStats(entries, sleepTargetHours ?? undefined);
   const midpoint = calculateCircularMidpointConsistency(entries);
   const latestEntry = entries.length > 0 ? entries[0] : null;
   const latestScore = latestEntry
     ? calculateSleepScore(
         latestEntry.duration_minutes,
-        sleepTargetHours,
+        sleepTargetHours ?? undefined,
         latestEntry.quality_rating,
         latestEntry.awakenings_count
       )
@@ -419,7 +440,7 @@ export function SleepDashboard() {
             </span>
           </div>
           <p className="text-[11px] text-on-surface-variant font-mono">
-            Target: {sleepTargetHours}h ({stats.count} nights recorded)
+            Target: {sleepTargetHours ? `${sleepTargetHours}h` : "Not set"} ({stats.count} nights recorded)
           </p>
         </div>
 
@@ -474,12 +495,12 @@ export function SleepDashboard() {
       <CircadianDial
         targetBedtime="23:00"
         targetWakeTime="07:00"
-        caffeineCutoffHours={caffeineCutoffHours}
-        screenCutoffMinutes={screenCutoffMinutes}
+        caffeineCutoffHours={caffeineCutoffHours ?? undefined}
+        screenCutoffMinutes={screenCutoffMinutes ?? undefined}
       />
 
       {/* Sleep Trend & Architecture Chart */}
-      <SleepTrendChart entries={entries} targetHours={sleepTargetHours} />
+      <SleepTrendChart entries={entries} targetHours={sleepTargetHours ?? undefined} />
 
       {/* Recorded History List */}
       <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
@@ -499,7 +520,7 @@ export function SleepDashboard() {
             {entries.map((entry) => {
               const scoreObj = calculateSleepScore(
                 entry.duration_minutes,
-                sleepTargetHours,
+                sleepTargetHours ?? undefined,
                 entry.quality_rating,
                 entry.awakenings_count
               );
@@ -611,7 +632,7 @@ export function SleepDashboard() {
                   step="0.5"
                   min="5"
                   max="12"
-                  value={sleepTargetHours}
+                  value={sleepTargetHours ?? ""}
                   onChange={(e) => setSleepTargetHours(parseFloat(e.target.value) || 8.0)}
                   className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-[#7DD3FC]"
                 />
@@ -624,7 +645,7 @@ export function SleepDashboard() {
                   step="1"
                   min="6"
                   max="14"
-                  value={caffeineCutoffHours}
+                  value={caffeineCutoffHours ?? ""}
                   onChange={(e) => setCaffeineCutoffHours(parseInt(e.target.value) || 10)}
                   className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-[#7DD3FC]"
                 />
@@ -637,7 +658,7 @@ export function SleepDashboard() {
                   step="15"
                   min="30"
                   max="180"
-                  value={screenCutoffMinutes}
+                  value={screenCutoffMinutes ?? ""}
                   onChange={(e) => setScreenCutoffMinutes(parseInt(e.target.value) || 60)}
                   className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-[#7DD3FC]"
                 />

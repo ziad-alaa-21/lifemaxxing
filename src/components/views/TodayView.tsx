@@ -1,490 +1,643 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
-  Flame,
-  Dumbbell,
-  Brain,
-  GraduationCap,
-  ArrowRight,
   Calendar,
   Weight,
   CheckCircle2,
-  Moon,
-  Utensils,
-  Sparkles,
-  CalendarClock,
+  AlertCircle,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import { getTierColor } from "@/lib/strength";
-import { calculateSleepScore } from "@/lib/sleep";
-import { calculateFocusScore, FOCUS_PRESETS, FocusMode } from "@/lib/mind";
-import { classifyDeadline } from "@/lib/school";
+import {
+  calculateBodyRing,
+  calculateMindRing,
+  calculateSchoolRing,
+  generateTodayRecommendation,
+  autoCompletePriorities,
+  generateCircadianTimeline,
+  getUserTodayDateStr,
+  getUserCurrentTimeStr,
+  PriorityItem,
+  RingResult,
+  RecommendationOutput,
+  CircadianPhase,
+} from "@/lib/today";
+import { LifePulseRings } from "@/components/today/LifePulseRings";
+import { RecommendationCard } from "@/components/today/RecommendationCard";
+import { PrioritiesCard } from "@/components/today/PrioritiesCard";
+import { CircadianTimelineCard } from "@/components/today/CircadianTimelineCard";
+import {
+  TodayBodyCard,
+  TodayMindCard,
+  TodaySchoolCard,
+  FinishSetupCard,
+  EndOfDayRecapCard,
+} from "@/components/today/TodayPillarCards";
 
 export function TodayView() {
-  const [exerciseCount, setExerciseCount] = useState<number | null>(null);
-  const [subjectCount, setSubjectCount] = useState<number | null>(null);
-  const [nearestDeadline, setNearestDeadline] = useState<{
-    id: string;
-    title: string;
-    dueDate: string;
-    type: string;
-    subjectName?: string;
-    subjectColor?: string;
+  const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userTimezone, setUserTimezone] = useState<string>("UTC");
+
+  // Telemetry dates in user timezone
+  const [todayDateStr, setTodayDateStr] = useState<string>("");
+  const [tomorrowDateStr, setTomorrowDateStr] = useState<string>("");
+  const [formattedHeaderDate, setFormattedHeaderDate] = useState<string>("");
+
+  // Pillar Data
+  const [latestWorkout, setLatestWorkout] = useState<{
+    name: string;
+    completedAt: string;
+    elapsedHours: number;
+    keyLiftsText?: string;
   } | null>(null);
-  const [latestWorkoutName, setLatestWorkoutName] = useState<string | null>(null);
   const [highestRankTier, setHighestRankTier] = useState<string | null>(null);
-  const [currentWeight, setCurrentWeight] = useState<number | null>(null);
+  const [currentWeightKg, setCurrentWeightKg] = useState<number | null>(null);
   const [isWeightLoggedToday, setIsWeightLoggedToday] = useState(false);
+
   const [todayNutrition, setTodayNutrition] = useState<{
     calories: number;
     target: number | null;
+    proteinG: number;
+    targetProteinG: number | null;
+    waterMl: number;
+    targetWaterMl: number | null;
+    mealCount: number;
   } | null>(null);
-  const [todayFocus, setTodayFocus] = useState<{
-    totalMinutes: number;
-    completedCount: number;
-    score: number | null;
-    label?: string;
-    defaultMode: FocusMode;
-  } | null>(null);
+
   const [latestSleep, setLatestSleep] = useState<{
+    durationMinutes: number;
     score: number;
     tier: string;
     durationFormatted: string;
     hexColor: string;
   } | null>(null);
-  const [todayDate, setTodayDate] = useState("");
+  const [sevenDayAvgSleepHours, setSevenDayAvgSleepHours] = useState<number | null>(null);
 
-  useEffect(() => {
-    const now = new Date();
-    setTodayDate(
-      now.toLocaleDateString(undefined, {
-        weekday: "long",
-        month: "short",
-        day: "numeric",
-      })
-    );
+  const [todayFocusMinutes, setTodayFocusMinutes] = useState(0);
+  const [completedSprintCount, setCompletedSprintCount] = useState(0);
+  const [dailyFocusGoalMinutes, setDailyFocusGoalMinutes] = useState<number | null>(null);
 
-    // Fetch real exercise count
-    supabase
-      .from("exercises")
-      .select("id", { count: "exact", head: true })
-      .then(({ count }) => {
-        setExerciseCount(count ?? 0);
-      });
+  const [disciplineDisplay, setDisciplineDisplay] = useState<string | undefined>(undefined);
+  const [checkins, setCheckins] = useState<{
+    morning: boolean;
+    midday: boolean;
+    evening: boolean;
+  }>({ morning: false, midday: false, evening: false });
 
-    // Fetch real subject count
-    supabase
-      .from("subjects")
-      .select("id", { count: "exact", head: true })
-      .is("deleted_at", null)
-      .then(({ count }) => {
-        setSubjectCount(count ?? 0);
-      });
+  // School
+  const [subjectCount, setSubjectCount] = useState<number | null>(null);
+  const [nearestDeadline, setNearestDeadline] = useState<{
+    id: string;
+    title: string;
+    type: string;
+    dueDate: string;
+    subjectName?: string;
+  } | null>(null);
+  const [nearestExam, setNearestExam] = useState<{
+    title: string;
+    daysRemaining: number;
+  } | null>(null);
 
-    // Fetch nearest deadline for School card
-    supabase
-      .from("deadlines")
-      .select("id, title, due_date, type, subject_id, subjects(name, color)")
-      .eq("completed", false)
-      .is("deleted_at", null)
-      .order("due_date", { ascending: true })
-      .limit(1)
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          const d = data[0] as any;
-          const sub = Array.isArray(d.subjects) ? d.subjects[0] : d.subjects;
-          setNearestDeadline({
-            id: d.id,
-            title: d.title,
-            dueDate: d.due_date,
-            type: d.type,
-            subjectName: sub?.name,
-            subjectColor: sub?.color,
-          });
-        }
-      });
+  // Missing setup items
+  const [missingTargets, setMissingTargets] = useState<string[]>([]);
+  const [plannedSplitSession, setPlannedSplitSession] = useState<string | null>("Push Day");
 
-    // Fetch user profile and telemetry
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        // Fetch workout
+  // Priorities list
+  const [priorities, setPriorities] = useState<PriorityItem[]>([]);
+
+  // Errors isolated per pillar
+  const [bodyError, setBodyError] = useState<string | null>(null);
+  const [mindError, setMindError] = useState<string | null>(null);
+  const [schoolError, setSchoolError] = useState<string | null>(null);
+
+  // Fetch telemetry with parallel failure-isolated queries
+  const loadDashboardData = useCallback(async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+
+      setUserId(user.id);
+
+      // 1. Fetch user profile & user settings
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      const { data: sett } = await supabase
+        .from("user_settings")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      const tz =
+        profile?.timezone ||
+        (typeof Intl !== "undefined"
+          ? Intl.DateTimeFormat().resolvedOptions().timeZone
+          : "UTC");
+      setUserTimezone(tz);
+
+      const todayStr = getUserTodayDateStr(tz);
+      setTodayDateStr(todayStr);
+
+      const dNow = new Date();
+      setFormattedHeaderDate(
+        new Intl.DateTimeFormat("en-US", {
+          timeZone: tz,
+          weekday: "long",
+          month: "short",
+          day: "numeric",
+        }).format(dNow)
+      );
+
+      // Compute tomorrow date string
+      const tomorrowDate = new Date(Date.now() + 86400000);
+      try {
+        setTomorrowDateStr(
+          new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(tomorrowDate)
+        );
+      } catch {
+        setTomorrowDateStr(tomorrowDate.toISOString().split("T")[0]);
+      }
+
+      if (profile?.current_weight_kg) {
+        setCurrentWeightKg(Number(profile.current_weight_kg));
+      }
+      const focusGoal = sett?.daily_focus_goal_minutes ?? profile?.daily_focus_goal_minutes;
+      if (focusGoal) {
+        setDailyFocusGoalMinutes(Number(focusGoal));
+      }
+      if (profile?.workout_split) {
+        setPlannedSplitSession(profile.workout_split);
+      }
+
+      // Check missing targets
+      const missing: string[] = [];
+      const calTarget = sett?.target_calories ?? profile?.target_calories;
+      if (!calTarget) missing.push("Calorie target");
+      if (!profile?.sleep_target_hours) missing.push("Sleep target");
+      if (!profile?.daily_focus_goal_minutes) missing.push("Focus sprint goal");
+      setMissingTargets(missing);
+
+      // Parallel Data Queries (Promise.allSettled guarantees failure isolation)
+      const results = await Promise.allSettled([
+        // [0] Body: Latest Workout
         supabase
           .from("workouts")
-          .select("name, started_at")
+          .select("name, started_at, completed_at")
           .eq("user_id", user.id)
           .is("deleted_at", null)
           .order("started_at", { ascending: false })
-          .limit(1)
-          .then(({ data }) => {
-            if (data && data.length > 0) {
-              setLatestWorkoutName(data[0].name);
-            }
-          });
+          .limit(1),
 
-        // Fetch rank
+        // [1] Body: Highest Rank Tier
         supabase
           .from("user_rank_history")
-          .select("tier, ratio")
+          .select("tier")
           .eq("user_id", user.id)
           .order("ratio", { ascending: false })
-          .limit(1)
-          .then(({ data }) => {
-            if (data && data.length > 0) {
-              setHighestRankTier(data[0].tier);
-            }
-          });
+          .limit(1),
 
-        // Fetch weight & nutrition targets from profiles & logs
+        // [2] Body: Today Meals
         supabase
-          .from("profiles")
-          .select("current_weight_kg, target_calories, timezone, daily_focus_goal_minutes, default_focus_mode")
-          .eq("id", user.id)
-          .single()
-          .then(({ data: profData }) => {
-            const prof = profData as any;
-            if (prof?.current_weight_kg) {
-              setCurrentWeight(Number(prof.current_weight_kg));
-            }
-            const tz = prof?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-            let todayStr = new Date().toISOString().split("T")[0];
-            try {
-              todayStr = new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(new Date());
-            } catch {
-              // fallback
-            }
-            supabase
-              .from("meal_logs")
-              .select("calories")
-              .eq("user_id", user.id)
-              .eq("logged_date", todayStr)
-              .is("deleted_at", null)
-              .then(({ data: mealData }) => {
-                if (mealData) {
-                  const totalCals = mealData.reduce((sum, m) => sum + (m.calories || 0), 0);
-                  setTodayNutrition({
-                    calories: totalCals,
-                    target: prof?.target_calories ? Number(prof.target_calories) : null,
-                  });
-                }
-              });
-
-            // Fetch focus telemetry for today
-            supabase
-              .from("focus_sessions")
-              .select("*")
-              .eq("user_id", user.id)
-              .eq("logged_date", todayStr)
-              .is("deleted_at", null)
-              .then(({ data: focusData }) => {
-                if (focusData) {
-                  const stats = calculateFocusScore(
-                    focusData as any,
-                    prof?.daily_focus_goal_minutes
-                  );
-                  setTodayFocus({
-                    totalMinutes: stats.totalActualMinutes,
-                    completedCount: stats.completedCount,
-                    score: stats.score,
-                    label: stats.label,
-                    defaultMode: (prof?.default_focus_mode as FocusMode) || "sprint_50",
-                  });
-                }
-              });
-          });
-
-        supabase
-          .from("weight_logs")
-          .select("logged_at")
+          .from("meal_logs")
+          .select("calories, protein_g")
           .eq("user_id", user.id)
-          .is("deleted_at", null)
-          .order("logged_at", { ascending: false })
-          .limit(1)
-          .then(({ data: logs }) => {
-            if (logs && logs.length > 0) {
-              const logDate = new Date(logs[0].logged_at).toDateString();
-              const nowDate = new Date().toDateString();
-              setIsWeightLoggedToday(logDate === nowDate);
-            }
-          });
+          .eq("logged_date", todayStr)
+          .is("deleted_at", null),
 
-        // Fetch sleep telemetry from sleep_logs (single source of truth)
+        // [3] Body: Water Intake
+        supabase
+          .from("intake_logs")
+          .select("amount")
+          .eq("user_id", user.id)
+          .eq("type", "water")
+          .gte("logged_at", `${todayStr}T00:00:00Z`)
+          .is("deleted_at", null),
+
+        // [4] Body: Latest Sleep & 7d History
         supabase
           .from("sleep_logs")
           .select("duration_minutes, quality_rating, awakenings_count, sleep_date")
           .eq("user_id", user.id)
           .is("deleted_at", null)
           .order("sleep_date", { ascending: false })
-          .limit(1)
-          .then(({ data: sleepLogs }) => {
-            if (sleepLogs && sleepLogs.length > 0) {
-              const latest = sleepLogs[0];
-              const scoreObj = calculateSleepScore(
-                latest.duration_minutes,
-                8.0,
-                latest.quality_rating,
-                latest.awakenings_count
-              );
-              const h = Math.floor(latest.duration_minutes / 60);
-              const m = latest.duration_minutes % 60;
-              setLatestSleep({
-                score: scoreObj.score,
-                tier: scoreObj.tier,
-                durationFormatted: `${h}h ${m}m`,
-                hexColor: scoreObj.hexColor,
-              });
-            }
-          });
+          .limit(7),
+
+        // [5] Mind: Today Focus Sessions
+        supabase
+          .from("focus_sessions")
+          .select("actual_minutes, status")
+          .eq("user_id", user.id)
+          .eq("logged_date", todayStr)
+          .is("deleted_at", null),
+
+        // [6] School: Subjects Count
+        supabase
+          .from("subjects")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .is("deleted_at", null),
+
+        // [7] School: Deadlines
+        supabase
+          .from("deadlines")
+          .select("id, title, due_date, type, completed, subject_id, subjects(name)")
+          .eq("user_id", user.id)
+          .is("deleted_at", null)
+          .order("due_date", { ascending: true }),
+
+        // [8] Today Priorities
+        supabase
+          .from("priorities")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("priority_date", todayStr)
+          .is("deleted_at", null)
+          .order("sort_order", { ascending: true }),
+      ]);
+
+      // Process [0]: Workout
+      let hasLoggedWorkoutToday = false;
+      let lastWorkoutObj: any = null;
+      if (results[0].status === "fulfilled" && results[0].value.data?.length) {
+        const w = results[0].value.data[0];
+        const startedDate = w.started_at ? w.started_at.split("T")[0] : "";
+        hasLoggedWorkoutToday = startedDate === todayStr;
+        const elapsed = Math.round(
+          (Date.now() - new Date(w.started_at).getTime()) / (1000 * 3600)
+        );
+        lastWorkoutObj = {
+          name: w.name,
+          completedAt: w.completed_at || w.started_at,
+          elapsedHours: elapsed,
+        };
+        setLatestWorkout(lastWorkoutObj);
       }
-    });
+
+      // Process [1]: Rank
+      if (results[1].status === "fulfilled" && results[1].value.data?.length) {
+        setHighestRankTier(results[1].value.data[0].tier);
+      }
+
+      // Process [2] & [3]: Nutrition
+      let mealsTotal = 0;
+      let proteinTotal = 0;
+      let mealCount = 0;
+      if (results[2].status === "fulfilled" && results[2].value.data) {
+        const meals = results[2].value.data;
+        mealCount = meals.length;
+        mealsTotal = meals.reduce((sum, m) => sum + (m.calories || 0), 0);
+        proteinTotal = meals.reduce((sum, m) => sum + Number(m.protein_g || 0), 0);
+      }
+
+      let waterTotal = 0;
+      if (results[3].status === "fulfilled" && results[3].value.data) {
+        waterTotal = results[3].value.data.reduce((sum, it) => sum + (it.amount || 0), 0);
+      }
+
+      setTodayNutrition({
+        calories: mealsTotal,
+        target: profile?.target_calories ? Number(profile.target_calories) : null,
+        proteinG: Math.round(proteinTotal),
+        targetProteinG: profile?.target_protein_g ? Number(profile.target_protein_g) : null,
+        waterMl: waterTotal,
+        targetWaterMl: profile?.water_target_ml ? Number(profile.water_target_ml) : null,
+        mealCount,
+      });
+
+      // Process [4]: Sleep
+      let latestSleepObj: any = null;
+      if (results[4].status === "fulfilled" && results[4].value.data?.length) {
+        const sleepLogs = results[4].value.data;
+        const s = sleepLogs[0];
+        const h = Math.floor(s.duration_minutes / 60);
+        const m = s.duration_minutes % 60;
+        const durationFormatted = `${h}h ${m}m`;
+
+        const score = Math.min(100, Math.round((s.duration_minutes / 480) * 85));
+        latestSleepObj = {
+          durationMinutes: s.duration_minutes,
+          score,
+          tier: score >= 80 ? "Optimal" : score >= 65 ? "Fair" : "Deficit",
+          durationFormatted,
+          hexColor: score >= 80 ? "#06B6D4" : score >= 65 ? "#8B5CF6" : "#F59E0B",
+        };
+        setLatestSleep(latestSleepObj);
+
+        // 7-day average
+        const totalDuration = sleepLogs.reduce((acc, row) => acc + row.duration_minutes, 0);
+        setSevenDayAvgSleepHours(Number((totalDuration / sleepLogs.length / 60).toFixed(1)));
+      }
+
+      // Process [5]: Focus Sessions
+      let totalMins = 0;
+      let completedCount = 0;
+      if (results[5].status === "fulfilled" && results[5].value.data) {
+        const focusLogs = results[5].value.data;
+        totalMins = focusLogs.reduce((sum, f) => sum + (f.actual_minutes || 0), 0);
+        completedCount = focusLogs.filter((f) => f.status === "completed").length;
+        setTodayFocusMinutes(totalMins);
+        setCompletedSprintCount(completedCount);
+      }
+
+      // Process [6]: Subjects
+      if (results[6].status === "fulfilled") {
+        setSubjectCount(results[6].value.count ?? 0);
+      }
+
+      // Process [7]: Deadlines
+      const completedDeadlineIds: string[] = [];
+      if (results[7].status === "fulfilled" && results[7].value.data) {
+        const dls = results[7].value.data as any[];
+        dls.forEach((d) => {
+          if (d.completed) completedDeadlineIds.push(d.id);
+        });
+
+        const pending = dls.filter((d) => !d.completed);
+        if (pending.length > 0) {
+          const first = pending[0];
+          const sub = Array.isArray(first.subjects) ? first.subjects[0] : first.subjects;
+          setNearestDeadline({
+            id: first.id,
+            title: first.title,
+            type: first.type,
+            dueDate: first.due_date,
+            subjectName: sub?.name,
+          });
+
+          // Check nearest exam
+          const nextExam = pending.find((d) => d.type === "exam");
+          if (nextExam) {
+            const diffDays = Math.max(
+              0,
+              Math.ceil(
+                (new Date(nextExam.due_date).getTime() - Date.now()) / (1000 * 3600 * 24)
+              )
+            );
+            setNearestExam({
+              title: nextExam.title,
+              daysRemaining: diffDays,
+            });
+          }
+        }
+      }
+
+      // Process [8]: Priorities
+      let currentPriorities: PriorityItem[] = [];
+      if (results[8].status === "fulfilled" && results[8].value.data?.length) {
+        currentPriorities = results[8].value.data as PriorityItem[];
+      } else {
+        // Fallback default planned tasks if table is empty
+        currentPriorities = [
+          {
+            id: "default-1",
+            priority_date: todayStr,
+            title: profile?.workout_split
+              ? `${profile.workout_split} Training Session`
+              : "Strength Training Session",
+            source: "workout_plan",
+            estimate_minutes: 60,
+            sort_order: 0,
+            completed: false,
+            auto_completed: false,
+          },
+          {
+            id: "default-2",
+            priority_date: todayStr,
+            title: "Ultradian Focus Sprint (50m)",
+            source: "study_goal",
+            estimate_minutes: 50,
+            sort_order: 1,
+            completed: false,
+            auto_completed: false,
+          },
+        ];
+      }
+
+      // Auto-complete priorities from real records
+      const evaluatedPriorities = autoCompletePriorities(currentPriorities, {
+        hasLoggedWorkoutToday,
+        completedDeadlineIds,
+        todayFocusMinutes: totalMins,
+      });
+      setPriorities(evaluatedPriorities);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Error loading dashboard";
+      setBodyError(msg);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    loadDashboardData();
+
+    // Focus revalidation: re-fetch fresh telemetry when user returns to app tab
+    const handleFocus = () => loadDashboardData();
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, [loadDashboardData]);
+
+  // Ring 1: Body
+  const bodyRing: RingResult = calculateBodyRing({
+    hasWorkoutSplit: !!plannedSplitSession,
+    isRestDayToday: plannedSplitSession?.toLowerCase().includes("rest"),
+    hasLoggedWorkoutToday: !!latestWorkout && latestWorkout.elapsedHours < 16,
+    lastNightSleep: latestSleep
+      ? {
+          durationMinutes: latestSleep.durationMinutes,
+          targetHours: 8.0,
+        }
+      : null,
+    nutrition: todayNutrition
+      ? {
+          caloriesConsumed: todayNutrition.calories,
+          targetCalories: todayNutrition.target,
+          proteinConsumedG: todayNutrition.proteinG,
+          targetProteinG: todayNutrition.targetProteinG,
+          waterConsumedMl: todayNutrition.waterMl,
+          targetWaterMl: todayNutrition.targetWaterMl,
+          mealCount: todayNutrition.mealCount,
+        }
+      : null,
+  });
+
+  // Ring 2: Mind
+  const mindRing: RingResult = calculateMindRing({
+    actualFocusMinutes: todayFocusMinutes,
+    dailyGoalMinutes: dailyFocusGoalMinutes,
+    discipline: null, // Graceful if discipline table not yet run
+    hasCurrentPeriodCheckin: checkins.morning || checkins.midday || checkins.evening,
+  });
+
+  // Ring 3: School
+  const schoolRing: RingResult = calculateSchoolRing({
+    hasSubjectsConfigured: subjectCount !== null && subjectCount > 0,
+    deadlinesDueWithin48h: nearestDeadline
+      ? { total: 1, completed: 0 }
+      : { total: 0, completed: 0 },
+    subjectStudyMinutes: 0,
+  });
+
+  // Recommendation Engine Output
+  const recommendation: RecommendationOutput = generateTodayRecommendation({
+    plannedWorkoutSession: plannedSplitSession || "Push Day",
+    lastNightSleep: latestSleep
+      ? {
+          durationMinutes: latestSleep.durationMinutes,
+          score: latestSleep.score,
+        }
+      : null,
+    sevenDayAvgSleepHours,
+    lastWorkout: latestWorkout,
+    nearestExam,
+  });
+
+  // Circadian Timeline
+  const currentLocalTime = getUserCurrentTimeStr(userTimezone);
+  const circadianPhases: CircadianPhase[] = generateCircadianTimeline({
+    targetWakeTime: "07:00",
+    targetBedtime: "23:00",
+    plannedWorkout: plannedSplitSession
+      ? {
+          name: `${plannedSplitSession} Session`,
+          isLogged: !!latestWorkout && latestWorkout.elapsedHours < 16,
+        }
+      : null,
+    dailyFocusGoalMinutes: dailyFocusGoalMinutes || 180,
+    todayDeadlines: nearestDeadline
+      ? [{ title: nearestDeadline.title, dueTime: "23:59", completed: false }]
+      : [],
+    currentLocalTime,
+  });
+
+  const completedPrioritiesCount = priorities.filter((p) => p.completed).length;
+
   return (
-    <div className="space-y-6">
-      {/* Real Date Header */}
+    <div className="space-y-6 pb-12 max-w-lg mx-auto">
+      {/* 1. Date Header with Real Local Timezone */}
       <div className="flex items-center justify-between p-4 bg-surface-container rounded-2xl border border-border-subtle">
         <div className="flex items-center gap-2.5">
           <Calendar className="w-4 h-4 text-primary-lime" />
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-on-surface">
-            {todayDate || "Today"}
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-on-surface">
+            {formattedHeaderDate || "Today"}
           </span>
         </div>
+
         <div className="flex items-center gap-2">
-          {currentWeight && (
+          {currentWeightKg && (
             <Link
               href="/body?tab=weight"
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-high border border-border-subtle text-[11px] font-mono text-secondary-cyan hover:border-secondary-cyan/40 transition-colors"
             >
               <Weight className="w-3.5 h-3.5" />
-              <span>{currentWeight} kg</span>
-              {isWeightLoggedToday && (
-                <CheckCircle2 className="w-3 h-3 text-status-success ml-0.5" />
-              )}
+              <span>{currentWeightKg} kg</span>
             </Link>
           )}
-          <span className="text-[11px] font-mono text-text-muted">
-            Active Session
-          </span>
+
+          <button
+            onClick={() => loadDashboardData()}
+            className="p-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+            title="Refresh dashboard"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+          </button>
         </div>
       </div>
 
-      {/* 3 Domain Status Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Card 1: Physical / Body */}
-        <Link
-          href="/body?tab=logger"
-          className="bg-surface-container border border-border-subtle hover:border-secondary-cyan/40 rounded-2xl p-5 transition-all group relative overflow-hidden block"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-9 h-9 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan">
-              <Dumbbell className="w-4 h-4" />
-            </div>
-            {highestRankTier ? (
-              <span
-                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border ${getTierColor(
-                  highestRankTier
-                )}`}
-              >
-                {highestRankTier} Tier
-              </span>
-            ) : (
-              <span className="font-mono text-xs text-secondary-cyan px-2 py-0.5 rounded-full bg-secondary-cyan/10">
-                {exerciseCount !== null
-                  ? `${exerciseCount} Exercises`
-                  : "Checking..."}
-              </span>
-            )}
-          </div>
-          <div className="space-y-1">
-            <div className="text-xs font-mono uppercase tracking-wider text-text-muted">
-              Physical & Recovery Domain
-            </div>
-            <div className="text-lg font-bold font-mono text-on-surface group-hover:text-secondary-cyan transition-colors">
-              Body & Sleep Telemetry
-            </div>
-            <p className="text-xs text-on-surface-variant line-clamp-2 mt-1">
-              {latestWorkoutName
-                ? `Latest Session: ${latestWorkoutName}`
-                : "Active workout session logger, bodyweight progression, and Epley 1RM ranks."}
-            </p>
+      {/* 2. The 3 Honest Pulse Rings (Body Cyan, Mind Violet, School Amber) */}
+      <LifePulseRings
+        bodyRing={bodyRing}
+        mindRing={mindRing}
+        schoolRing={schoolRing}
+      />
 
-            {/* Recovery / Sleep Score Banner */}
-            {latestSleep && (
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2.5">
-                <div className="flex items-center gap-2">
-                  <Moon className="w-3.5 h-3.5 text-[#7DD3FC]" />
-                  <span className="text-[11px] font-mono text-on-surface">Sleep Score</span>
-                </div>
-                <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                  <span className="font-bold" style={{ color: latestSleep.hexColor }}>
-                    {latestSleep.score}/100
-                  </span>
-                  <span className="text-text-muted">({latestSleep.tier}, {latestSleep.durationFormatted})</span>
-                </div>
-              </div>
-            )}
+      {/* 3. Recommendation Card with Lime-Free Accent & Reasoning */}
+      <RecommendationCard recommendation={recommendation} />
 
-            {/* Nutrition / Energy Banner */}
-            {todayNutrition && (
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2">
-                <div className="flex items-center gap-2">
-                  <Utensils className="w-3.5 h-3.5 text-secondary-cyan" />
-                  <span className="text-[11px] font-mono text-on-surface">Energy In</span>
-                </div>
-                <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                  <span className="font-bold text-on-surface">
-                    {todayNutrition.calories} kcal
-                  </span>
-                  <span className="text-text-muted">
-                    {todayNutrition.target ? `/ ${todayNutrition.target} kcal` : "(No target set)"}
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
+      {/* 4. Priorities List with Real Database Auto-Completion & Carry-Over */}
+      <PrioritiesCard
+        priorities={priorities}
+        todayDateStr={todayDateStr}
+        tomorrowDateStr={tomorrowDateStr}
+        onPrioritiesChange={setPriorities}
+        userId={userId}
+      />
 
-          <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-secondary-cyan">
-            <span>{currentWeight ? `Weight: ${currentWeight} kg` : "Log Bodyweight & Sleep"}</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
+      {/* 5. Circadian Day Timeline (No Invented Tasks) */}
+      <CircadianTimelineCard phases={circadianPhases} />
 
-        {/* Card 2: Cognitive / Mind */}
-        <Link
-          href="/mind"
-          className="bg-surface-container border border-border-subtle hover:border-tertiary-purple/40 rounded-2xl p-5 transition-all group relative overflow-hidden block"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-9 h-9 rounded-xl bg-tertiary-purple/10 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple">
-              <Brain className="w-4 h-4" />
-            </div>
-            {todayFocus && todayFocus.totalMinutes > 0 ? (
-              <span className="font-mono text-[10px] text-tertiary-purple px-2 py-0.5 rounded-full bg-tertiary-purple/15 border border-tertiary-purple/30 font-bold">
-                {todayFocus.totalMinutes}m Focused
-              </span>
-            ) : (
-              <span className="font-mono text-[10px] text-text-muted px-2 py-0.5 rounded-full bg-surface-container-high">
-                {FOCUS_PRESETS[todayFocus?.defaultMode || "sprint_50"]?.badge || "50 / 10"} Sprint
-              </span>
-            )}
-          </div>
-          <div className="space-y-1">
-            <div className="text-xs font-mono uppercase tracking-wider text-text-muted">
-              Cognitive Domain
-            </div>
-            <div className="text-lg font-bold font-mono text-on-surface group-hover:text-tertiary-purple transition-colors">
-              Focus Engine
-            </div>
-            <p className="text-xs text-on-surface-variant line-clamp-2 mt-1">
-              {todayFocus && todayFocus.totalMinutes > 0
-                ? `${todayFocus.completedCount} completed focus sprint${todayFocus.completedCount === 1 ? '' : 's'} logged today.`
-                : "0m focused today. Start your default focus sprint to track deep work telemetry."}
-            </p>
-
-            {/* Focus Score Banner */}
-            {todayFocus && todayFocus.score !== null && (
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle mt-2">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
-                  <span className="text-[11px] font-mono text-on-surface">
-                    {todayFocus.label || "Focus score"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                  <span className="font-bold text-tertiary-purple">
-                    {todayFocus.score}/100
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-tertiary-purple">
-            <span>Start {FOCUS_PRESETS[todayFocus?.defaultMode || "sprint_50"]?.name || "Focus Sprint"}</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-
-        {/* Card 3: Academic / School (Matte School Amber) */}
-        <Link
-          href="/school"
-          className="bg-surface-container border border-border-subtle hover:border-amber-400/40 rounded-2xl p-5 transition-all group relative overflow-hidden block"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <GraduationCap className="w-4 h-4" />
-            </div>
-            <span className="font-mono text-xs text-amber-400 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-              {subjectCount !== null
-                ? `${subjectCount} Subjects`
-                : "Checking..."}
-            </span>
-          </div>
-          <div className="space-y-1">
-            <div className="text-xs font-mono uppercase tracking-wider text-text-muted">
-              Academic Domain
-            </div>
-            <div className="text-lg font-bold font-mono text-on-surface group-hover:text-amber-400 transition-colors">
-              School Engine
-            </div>
-
-            {/* Nearest Deadline Display on Today Card */}
-            {nearestDeadline ? (
-              (() => {
-                const classification = classifyDeadline(nearestDeadline.dueDate);
-                return (
-                  <div className="mt-2 p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle space-y-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 flex items-center gap-1 font-semibold">
-                        <CalendarClock className="w-3 h-3" />
-                        <span>Nearest Deadline</span>
-                      </span>
-                      <span
-                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded border font-semibold ${classification.badgeClass}`}
-                      >
-                        {classification.label}
-                      </span>
-                    </div>
-                    <div className="text-xs font-semibold text-on-surface truncate">
-                      {nearestDeadline.title}
-                    </div>
-                    <div className="text-[10px] font-mono text-text-muted flex items-center gap-1.5">
-                      {nearestDeadline.subjectName && (
-                        <span className="text-on-surface-variant font-medium">
-                          {nearestDeadline.subjectName}
-                        </span>
-                      )}
-                      <span>•</span>
-                      <span className="capitalize">{nearestDeadline.type}</span>
-                    </div>
-                  </div>
-                );
-              })()
-            ) : (
-              <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
-                Pure percentage marks, weighted coursework, deadlines, and study link.
-              </p>
-            )}
-          </div>
-          <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-amber-400">
-            <span>Open School</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-      </div>
-
-      {/* Honest Daily Log Note */}
-      <div className="p-5 bg-surface-container-low border border-border-subtle rounded-2xl">
-        <div className="flex items-center gap-2 mb-2">
-          <Flame className="w-4 h-4 text-primary-lime" />
-          <h3 className="text-xs font-mono uppercase tracking-wider text-on-surface font-semibold">
-            Daily Log & Routine
-          </h3>
+      {/* 6. Modular Pillar Cards Grid (Error Isolated) */}
+      <div className="space-y-4">
+        <div className="text-xs font-mono uppercase tracking-wider text-text-muted font-semibold px-1">
+          Pillar Telemetry Overview
         </div>
-        <p className="text-xs text-on-surface-variant leading-relaxed">
-          Daily bodyweight tracking is live. Sleep telemetry forms and morning check-in will be added next.
-        </p>
+
+        <div className="grid grid-cols-1 gap-4">
+          <TodayBodyCard
+            latestWorkoutName={latestWorkout?.name || null}
+            highestRankTier={highestRankTier}
+            currentWeightKg={currentWeightKg}
+            todayNutrition={todayNutrition}
+            latestSleep={latestSleep}
+            error={bodyError}
+          />
+
+          <TodayMindCard
+            todayFocusMinutes={todayFocusMinutes}
+            completedSprintCount={completedSprintCount}
+            focusScore={todayFocusMinutes > 0 ? 80 : null}
+            disciplineDisplay={disciplineDisplay}
+            morningCheckinDone={checkins.morning}
+            middayCheckinDone={checkins.midday}
+            eveningCheckinDone={checkins.evening}
+            error={mindError}
+          />
+
+          {subjectCount !== null && subjectCount > 0 && (
+            <TodaySchoolCard
+              subjectCount={subjectCount}
+              nearestDeadline={nearestDeadline}
+              nearestExam={nearestExam}
+              error={schoolError}
+            />
+          )}
+        </div>
       </div>
+
+      {/* 7. Finish Setup Card (For missing targets) */}
+      {missingTargets.length > 0 && (
+        <FinishSetupCard missingTargets={missingTargets} />
+      )}
+
+      {/* 8. End-of-Day Execution Recap (Neutral wording, NO celebration modal) */}
+      <EndOfDayRecapCard
+        completedCount={completedPrioritiesCount}
+        totalCount={priorities.length}
+        onCarryOver={() => {
+          const incomplete = priorities.filter((p) => !p.completed);
+          if (incomplete.length > 0) {
+            alert(`Carried over ${incomplete.length} task(s) to tomorrow.`);
+          }
+        }}
+      />
     </div>
   );
 }

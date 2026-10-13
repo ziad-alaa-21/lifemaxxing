@@ -147,30 +147,37 @@ export function MindDashboard() {
         .eq("id", user.id)
         .single();
 
-      if (error) {
-        console.warn("Profile preferences note:", error.message);
-        return;
-      }
+      const { data: sett } = await supabase
+        .from("user_settings")
+        .select(
+          "daily_focus_goal_minutes, default_focus_mode, sound_chime_enabled, sound_volume, vibration_enabled"
+        )
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-      if (data) {
-        setUserProfile((prev) => ({
-          ...prev,
-          dailyFocusGoalMinutes: data.daily_focus_goal_minutes ?? null,
-          defaultFocusMode: (data.default_focus_mode as FocusMode) || "sprint_50",
-          soundChimeEnabled: data.sound_chime_enabled ?? true,
-          soundVolume: data.sound_volume ?? 80,
-          vibrationEnabled: data.vibration_enabled ?? true,
-          timezone: data.timezone || prev.timezone,
-        }));
+      const focusGoal = sett?.daily_focus_goal_minutes !== undefined && sett?.daily_focus_goal_minutes !== null
+        ? sett.daily_focus_goal_minutes
+        : (data?.daily_focus_goal_minutes ?? null);
+      const defaultMode = (sett?.default_focus_mode || data?.default_focus_mode || "sprint_50") as FocusMode;
+      const chime = sett?.sound_chime_enabled ?? data?.sound_chime_enabled ?? true;
+      const vol = sett?.sound_volume ?? data?.sound_volume ?? 80;
+      const vib = sett?.vibration_enabled ?? data?.vibration_enabled ?? true;
 
-        setTempGoalMinutes(
-          data.daily_focus_goal_minutes ? String(data.daily_focus_goal_minutes) : ""
-        );
-        setTempDefaultMode((data.default_focus_mode as FocusMode) || "sprint_50");
-        setTempChimeEnabled(data.sound_chime_enabled ?? true);
-        setTempSoundVolume(data.sound_volume ?? 80);
-        setTempVibrationEnabled(data.vibration_enabled ?? true);
-      }
+      setUserProfile((prev) => ({
+        ...prev,
+        dailyFocusGoalMinutes: focusGoal,
+        defaultFocusMode: defaultMode,
+        soundChimeEnabled: chime,
+        soundVolume: vol,
+        vibrationEnabled: vib,
+        timezone: data?.timezone || prev.timezone,
+      }));
+
+      setTempGoalMinutes(focusGoal ? String(focusGoal) : "");
+      setTempDefaultMode(defaultMode);
+      setTempChimeEnabled(chime);
+      setTempSoundVolume(vol);
+      setTempVibrationEnabled(vib);
     } catch (err) {
       console.warn("Profile fetch error:", err);
     }
