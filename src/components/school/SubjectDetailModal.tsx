@@ -116,7 +116,7 @@ export function SubjectDetailModal({
             />
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold font-mono text-on-surface truncate">
+                <h2 dir="auto" className="text-lg font-bold font-mono text-on-surface truncate">
                   {subject.name}
                 </h2>
                 {subject.code && (

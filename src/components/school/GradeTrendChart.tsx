@@ -9,11 +9,14 @@ interface GradeTrendChartProps {
   subjectColor?: string;
 }
 
+type RangeOption = "30D" | "90D" | "ALL";
+
 export function GradeTrendChart({
   grades,
   targetGrade,
   subjectColor = "#F59E0B",
 }: GradeTrendChartProps) {
+  const [range, setRange] = useState<RangeOption>("ALL");
   const [hoveredGrade, setHoveredGrade] = useState<{
     grade: GradeItem;
     x: number;
@@ -21,12 +24,25 @@ export function GradeTrendChart({
     pct: number;
   } | null>(null);
 
-  const activeGrades = [...grades]
-    .filter((g) => !g.deleted_at && g.mark_total > 0 && g.mark_achieved >= 0)
-    .sort(
-      (a, b) =>
-        new Date(a.entry_date).getTime() - new Date(b.entry_date).getTime()
-    );
+  const filteredGrades = React.useMemo(() => {
+    const active = [...grades]
+      .filter((g) => !g.deleted_at && g.mark_total > 0 && g.mark_achieved >= 0)
+      .sort(
+        (a, b) =>
+          new Date(a.entry_date).getTime() - new Date(b.entry_date).getTime()
+      );
+
+    if (range === "ALL") return active;
+
+    const days = range === "30D" ? 30 : 90;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    const cutoffStr = cutoff.toISOString().split("T")[0];
+
+    return active.filter((g) => g.entry_date >= cutoffStr);
+  }, [grades, range]);
+
+  const activeGrades = filteredGrades;
 
   if (activeGrades.length === 0) {
     return (
@@ -105,9 +121,27 @@ export function GradeTrendChart({
             </div>
           )}
         </div>
-        <span className="text-[10px] text-text-muted">
-          {activeGrades.length} {activeGrades.length === 1 ? "entry" : "entries"}
-        </span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center bg-surface-container-highest p-0.5 rounded-lg border border-border-subtle font-mono text-[10px]">
+            {(["30D", "90D", "ALL"] as RangeOption[]).map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRange(r)}
+                className={`px-2 py-0.5 rounded-md font-semibold transition-all cursor-pointer ${
+                  range === r
+                    ? "bg-amber-400 text-charcoal-dark shadow-sm"
+                    : "text-text-muted hover:text-on-surface"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+          <span className="text-[10px] text-text-muted">
+            {activeGrades.length} {activeGrades.length === 1 ? "entry" : "entries"}
+          </span>
+        </div>
       </div>
 
       {/* SVG Canvas */}
