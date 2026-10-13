@@ -14,15 +14,25 @@ import {
   Moon,
   Utensils,
   Sparkles,
+  CalendarClock,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { getTierColor } from "@/lib/strength";
 import { calculateSleepScore } from "@/lib/sleep";
 import { calculateFocusScore, FOCUS_PRESETS, FocusMode } from "@/lib/mind";
+import { classifyDeadline } from "@/lib/school";
 
 export function TodayView() {
   const [exerciseCount, setExerciseCount] = useState<number | null>(null);
   const [subjectCount, setSubjectCount] = useState<number | null>(null);
+  const [nearestDeadline, setNearestDeadline] = useState<{
+    id: string;
+    title: string;
+    dueDate: string;
+    type: string;
+    subjectName?: string;
+    subjectColor?: string;
+  } | null>(null);
   const [latestWorkoutName, setLatestWorkoutName] = useState<string | null>(null);
   const [highestRankTier, setHighestRankTier] = useState<string | null>(null);
   const [currentWeight, setCurrentWeight] = useState<number | null>(null);
@@ -71,6 +81,29 @@ export function TodayView() {
       .is("deleted_at", null)
       .then(({ count }) => {
         setSubjectCount(count ?? 0);
+      });
+
+    // Fetch nearest deadline for School card
+    supabase
+      .from("deadlines")
+      .select("id, title, due_date, type, subject_id, subjects(name, color)")
+      .eq("completed", false)
+      .is("deleted_at", null)
+      .order("due_date", { ascending: true })
+      .limit(1)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const d = data[0] as any;
+          const sub = Array.isArray(d.subjects) ? d.subjects[0] : d.subjects;
+          setNearestDeadline({
+            id: d.id,
+            title: d.title,
+            dueDate: d.due_date,
+            type: d.type,
+            subjectName: sub?.name,
+            subjectColor: sub?.color,
+          });
+        }
       });
 
     // Fetch user profile and telemetry
@@ -372,16 +405,16 @@ export function TodayView() {
           </div>
         </Link>
 
-        {/* Card 3: Academic / School */}
+        {/* Card 3: Academic / School (Matte School Amber) */}
         <Link
           href="/school"
-          className="bg-surface-container border border-border-subtle hover:border-primary-lime/40 rounded-2xl p-5 transition-all group relative overflow-hidden block"
+          className="bg-surface-container border border-border-subtle hover:border-amber-400/40 rounded-2xl p-5 transition-all group relative overflow-hidden block"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="w-9 h-9 rounded-xl bg-primary-lime/10 border border-primary-lime/30 flex items-center justify-center text-primary-lime">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
               <GraduationCap className="w-4 h-4" />
             </div>
-            <span className="font-mono text-xs text-primary-lime px-2 py-0.5 rounded-full bg-primary-lime/10">
+            <span className="font-mono text-xs text-amber-400 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
               {subjectCount !== null
                 ? `${subjectCount} Subjects`
                 : "Checking..."}
@@ -391,14 +424,49 @@ export function TodayView() {
             <div className="text-xs font-mono uppercase tracking-wider text-text-muted">
               Academic Domain
             </div>
-            <div className="text-lg font-bold font-mono text-on-surface group-hover:text-primary-lime transition-colors">
-              School & Subjects
+            <div className="text-lg font-bold font-mono text-on-surface group-hover:text-amber-400 transition-colors">
+              School Engine
             </div>
-            <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
-              Subjects, grades (quiz / big exam), deadlines, and mistake log.
-            </p>
+
+            {/* Nearest Deadline Display on Today Card */}
+            {nearestDeadline ? (
+              (() => {
+                const classification = classifyDeadline(nearestDeadline.dueDate);
+                return (
+                  <div className="mt-2 p-2.5 rounded-xl bg-surface-container-high/80 border border-border-subtle space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 flex items-center gap-1 font-semibold">
+                        <CalendarClock className="w-3 h-3" />
+                        <span>Nearest Deadline</span>
+                      </span>
+                      <span
+                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded border font-semibold ${classification.badgeClass}`}
+                      >
+                        {classification.label}
+                      </span>
+                    </div>
+                    <div className="text-xs font-semibold text-on-surface truncate">
+                      {nearestDeadline.title}
+                    </div>
+                    <div className="text-[10px] font-mono text-text-muted flex items-center gap-1.5">
+                      {nearestDeadline.subjectName && (
+                        <span className="text-on-surface-variant font-medium">
+                          {nearestDeadline.subjectName}
+                        </span>
+                      )}
+                      <span>•</span>
+                      <span className="capitalize">{nearestDeadline.type}</span>
+                    </div>
+                  </div>
+                );
+              })()
+            ) : (
+              <p className="text-xs text-on-surface-variant line-clamp-2 mt-2">
+                Pure percentage marks, weighted coursework, deadlines, and study link.
+              </p>
+            )}
           </div>
-          <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-primary-lime">
+          <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-xs font-mono text-amber-400">
             <span>Open School</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>

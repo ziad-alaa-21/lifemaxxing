@@ -38,6 +38,9 @@ interface UltradianTimerProps {
   chimeEnabledDefault?: boolean;
   soundVolumeDefault?: number;
   vibrationDefault?: boolean;
+  initialSubjectId?: string | null;
+  initialTaskCategory?: string;
+  initialTaskIntention?: string;
 }
 
 type TimerPhase = "idle" | "working" | "paused" | "break" | "break_paused";
@@ -49,15 +52,18 @@ export function UltradianTimer({
   chimeEnabledDefault = true,
   soundVolumeDefault = 80,
   vibrationDefault = true,
+  initialSubjectId = null,
+  initialTaskCategory = "Coding",
+  initialTaskIntention = "",
 }: UltradianTimerProps) {
   // Preset mode: default 50/10
   const [selectedMode, setSelectedMode] = useState<FocusMode>(defaultMode);
   const [phase, setPhase] = useState<TimerPhase>("idle");
 
   // Category and Task Intention
-  const [taskCategory, setTaskCategory] = useState<string>("Coding");
-  const [taskIntention, setTaskIntention] = useState("");
-  const [subjectId, setSubjectId] = useState<string | null>(null);
+  const [taskCategory, setTaskCategory] = useState<string>(initialTaskCategory);
+  const [taskIntention, setTaskIntention] = useState(initialTaskIntention);
+  const [subjectId, setSubjectId] = useState<string | null>(initialSubjectId);
 
   // Audio & Vibration settings
   const [chimeEnabled, setChimeEnabled] = useState(chimeEnabledDefault);
