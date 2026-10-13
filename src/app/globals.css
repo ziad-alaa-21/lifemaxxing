@@ -96,3 +96,59 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #30353a;
 }
+
+/* Academic Session Type Theme Tokens */
+.session-lecture {
+  color: #a5b4fc;
+  background-color: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.session-lab {
+  color: #7dd3fc;
+  background-color: rgba(14, 165, 233, 0.12);
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+.session-section {
+  color: #fcd34d;
+  background-color: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.session-seminar {
+  color: #d8b4fe;
+  background-color: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+/* Study Activity Heatmap Theme Tokens */
+.heatmap-cell-0 {
+  background-color: rgba(37, 42, 48, 0.45);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.heatmap-cell-1 {
+  background-color: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fde68a;
+}
+
+.heatmap-cell-2 {
+  background-color: rgba(245, 158, 11, 0.4);
+  border-color: rgba(245, 158, 11, 0.55);
+  color: #fef3c7;
+}
+
+.heatmap-cell-3 {
+  background-color: rgba(245, 158, 11, 0.7);
+  border-color: #fbbf24;
+  color: #0f1419;
+}
+
+.heatmap-cell-4 {
+  background-color: #fbbf24;
+  border-color: #fde68a;
+  color: #0f1419;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}

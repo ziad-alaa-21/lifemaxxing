@@ -9,6 +9,8 @@ import {
   DeadlineItem,
   MistakeItem,
   AcademicTopicItem,
+  ScheduleItem,
+  FocusSessionTelemetry,
   MistakeCause,
   RedoResult,
   calculateSubjectGradeAverage,
@@ -22,6 +24,8 @@ import {
   calculateMistakeStats,
   calculateTopicStats,
   filterOverdueTopicQueue,
+  generate12WeekStudyHeatmap,
+  generateAcademicInsights,
   PROHIBITED_COLOR,
 } from "@/lib/school";
 import { SubjectModal } from "@/components/school/SubjectModal";
@@ -35,6 +39,8 @@ import { BulkTopicModal } from "@/components/school/BulkTopicModal";
 import { MistakesTab } from "@/components/school/MistakesTab";
 import { TopicsTab } from "@/components/school/TopicsTab";
 import { GradeTrendChart } from "@/components/school/GradeTrendChart";
+import { TimetableGrid } from "@/components/school/TimetableGrid";
+import { StudyAnalyticsTab } from "@/components/school/StudyAnalyticsTab";
 import { UltradianTimer } from "@/components/mind/UltradianTimer";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
 import {
@@ -48,6 +54,7 @@ import {
   RotateCcw,
   Award,
   CalendarClock,
+  Calendar,
   CheckCircle2,
   Play,
   Filter,
@@ -64,12 +71,12 @@ import {
   Flame,
 } from "lucide-react";
 
-type SchoolTab = "overview" | "grades" | "plan" | "practice" | "stats";
+type SchoolTab = "overview" | "grades" | "plan" | "practice" | "timetable" | "stats";
 type PracticeSubTab = "mistakes" | "topics";
 
 interface DeletedItemSnapshot {
-  type: "grade" | "deadline" | "subject" | "mistake" | "topic";
-  item: GradeItem | DeadlineItem | SubjectItem | MistakeItem | AcademicTopicItem;
+  type: "grade" | "deadline" | "subject" | "mistake" | "topic" | "schedule";
+  item: GradeItem | DeadlineItem | SubjectItem | MistakeItem | AcademicTopicItem | ScheduleItem;
   timeoutId: NodeJS.Timeout;
 }
 
@@ -87,6 +94,7 @@ export function SchoolView() {
   else if (rawTab === "plan" || rawTab === "deadlines") initialTab = "plan";
   else if (rawTab === "practice" || rawTab === "mistakes" || rawTab === "topics")
     initialTab = "practice";
+  else if (rawTab === "timetable" || rawTab === "schedule") initialTab = "timetable";
   else if (rawTab === "stats" || rawTab === "analytics") initialTab = "stats";
 
   const [activeTab, setActiveTab] = useState<SchoolTab>(initialTab);
@@ -109,6 +117,12 @@ export function SchoolView() {
   const [deadlines, setDeadlines] = useState<DeadlineItem[]>([]);
   const [mistakes, setMistakes] = useState<MistakeItem[]>([]);
   const [topics, setTopics] = useState<AcademicTopicItem[]>([]);
+  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [focusSessions, setFocusSessions] = useState<FocusSessionTelemetry[]>([]);
+  const [userSettings, setUserSettings] = useState<{
+    weekly_study_target_minutes?: number | null;
+    first_day_of_week?: number | null;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -156,7 +170,7 @@ export function SchoolView() {
       setLoading(true);
       setError(null);
 
-      const [subRes, grRes, dlRes, misRes, topRes] = await Promise.all([
+      const [subRes, grRes, dlRes, misRes, topRes, schRes, focRes, setRes] = await Promise.all([
         supabase
           .from("subjects")
           .select("*")
@@ -182,6 +196,20 @@ export function SchoolView() {
           .select("*")
           .is("deleted_at", null)
           .order("created_at", { ascending: false }),
+        supabase
+          .from("academic_schedule")
+          .select("*")
+          .is("deleted_at", null)
+          .order("start_time", { ascending: true }),
+        supabase
+          .from("focus_sessions")
+          .select("*")
+          .is("deleted_at", null)
+          .order("started_at", { ascending: false }),
+        supabase
+          .from("user_settings")
+          .select("weekly_study_target_minutes, first_day_of_week")
+          .limit(1),
       ]);
 
       if (subRes.error) throw subRes.error;
@@ -195,6 +223,9 @@ export function SchoolView() {
       setDeadlines(dlRes.data || []);
       setMistakes(misRes.data || []);
       setTopics(topRes.data || []);
+      if (schRes?.data) setSchedule(schRes.data);
+      if (focRes?.data) setFocusSessions(focRes.data as any);
+      if (setRes?.data && setRes.data[0]) setUserSettings(setRes.data[0]);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Failed to load school data";
       setError(msg);
@@ -790,14 +821,96 @@ export function SchoolView() {
       setMistakes((prev) => [undoSnapshot.item as MistakeItem, ...prev]);
     } else if (undoSnapshot.type === "topic") {
       setTopics((prev) => [undoSnapshot.item as AcademicTopicItem, ...prev]);
+    } else if (undoSnapshot.type === "schedule") {
+      setSchedule((prev) => [undoSnapshot.item as ScheduleItem, ...prev]);
     }
 
     setUndoSnapshot(null);
   }
 
+  // Schedule & Analytics Handlers
+  async function handleAddScheduleSession(payload: any) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new Error("Please log in to manage timetable.");
+    const { data, error } = await supabase
+      .from("academic_schedule")
+      .insert({
+        ...payload,
+        user_id: user.id,
+      })
+      .select();
+    if (error) throw error;
+    if (data && data[0]) {
+      setSchedule((prev) => [...prev, data[0]]);
+    }
+  }
+
+  async function handleEditScheduleSession(id: string, payload: any) {
+    const { data, error } = await supabase
+      .from("academic_schedule")
+      .update(payload)
+      .eq("id", id)
+      .select();
+    if (error) throw error;
+    if (data && data[0]) {
+      setSchedule((prev) => prev.map((s) => (s.id === id ? data[0] : s)));
+    }
+  }
+
+  function handleDeleteScheduleSession(id: string) {
+    const target = schedule.find((s) => s.id === id);
+    if (!target) return;
+    setSchedule((prev) => prev.filter((s) => s.id !== id));
+    const timeoutId = setTimeout(async () => {
+      await supabase
+        .from("academic_schedule")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", id);
+      setUndoSnapshot((curr) => (curr?.item.id === id ? null : curr));
+    }, 8000);
+    setUndoSnapshot({
+      type: "schedule",
+      item: target,
+      timeoutId,
+    });
+  }
+
+  async function handleUpdateWeeklyTarget(minutes: number | null) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new Error("Please log in to update targets.");
+    const { error } = await supabase
+      .from("user_settings")
+      .upsert(
+        { user_id: user.id, weekly_study_target_minutes: minutes },
+        { onConflict: "user_id" }
+      );
+    if (error) throw error;
+    setUserSettings((prev) => ({ ...prev, weekly_study_target_minutes: minutes }));
+  }
+
   // Active vs Archived subjects
   const activeSubjects = subjects.filter((s) => !s.archived);
   const archivedSubjects = subjects.filter((s) => s.archived);
+
+  // Analytics Derivations
+  const heatmapData = generate12WeekStudyHeatmap(
+    focusSessions,
+    userSettings?.weekly_study_target_minutes,
+    new Date(),
+    userSettings?.first_day_of_week ?? 0
+  );
+
+  const academicInsights = generateAcademicInsights({
+    subjects,
+    grades,
+    deadlines,
+    topics,
+    sessions: focusSessions,
+  });
 
   // Overall Academic Stats
   const overallStats = calculateOverallAcademicStats(activeSubjects, grades);
@@ -943,6 +1056,16 @@ export function SchoolView() {
           {duePracticeTotal > 0 && (
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
           )}
+        </button>
+        <button
+          onClick={() => handleTabChange("timetable")}
+          className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
+            activeTab === "timetable"
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold shadow-sm"
+              : "text-text-muted hover:text-on-surface"
+          }`}
+        >
+          Timetable ({schedule.filter((s) => !s.deleted_at).length})
         </button>
         <button
           onClick={() => handleTabChange("stats")}
@@ -1482,24 +1605,32 @@ export function SchoolView() {
       )}
 
       {/* ============================================================== */}
-      {/* TAB 5: STATS (RESERVED FOR STAGE 8B-2)                         */}
+      {/* TAB 5: TIMETABLE                                              */}
+      {/* ============================================================== */}
+      {!loading && activeTab === "timetable" && (
+        <TimetableGrid
+          schedule={schedule}
+          subjects={subjects}
+          onAddSession={handleAddScheduleSession}
+          onEditSession={handleEditScheduleSession}
+          onDeleteSession={handleDeleteScheduleSession}
+        />
+      )}
+
+      {/* ============================================================== */}
+      {/* TAB 6: STATS                                                  */}
       {/* ============================================================== */}
       {!loading && activeTab === "stats" && (
-        <div className="space-y-6">
-          <div className="p-8 rounded-2xl bg-surface-container border border-border-subtle text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto">
-              <BarChart3 className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold font-mono text-on-surface">
-                Academic Analytics & 12-Week Heatmap
-              </h3>
-              <p className="text-xs font-mono text-text-muted max-w-md mx-auto mt-1">
-                Coming in Stage 8b-2: user-defined study pacing, relative 12-week study density calendar, and cross-domain sleep vs focus correlations.
-              </p>
-            </div>
-          </div>
-        </div>
+        <StudyAnalyticsTab
+          subjects={subjects}
+          sessions={focusSessions}
+          weeklyTargetMinutes={userSettings?.weekly_study_target_minutes ?? null}
+          heatmapData={heatmapData}
+          insights={academicInsights}
+          onUpdateTarget={handleUpdateWeeklyTarget}
+          onNavigateTab={(tab) => handleTabChange(tab)}
+          firstDayOfWeek={userSettings?.first_day_of_week ?? 0}
+        />
       )}
 
       {/* ============================================================== */}

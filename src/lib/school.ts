@@ -997,245 +997,608 @@ export interface SubjectStudyBreakdown {
   subjectId: string;
   subjectName: string;
   subjectColor: string;
+  archived: boolean;
+  actualMinutes: number;
   totalMinutes: number;
+  hoursFormatted: string;
   totalHours: number;
+  percentageOfTotal: number;
   sessionCount: number;
 }
 
-/**
- * Aggregates deep work study hours per subject from focus_sessions
- */
-export function calculateStudyHoursBreakdown(
-  focusSessions: Array<{
-    subject_id?: string | null;
-    actual_minutes?: number;
-    deleted_at?: string | null;
-  }>,
-  subjects: SubjectItem[]
-): {
-  bySubject: SubjectStudyBreakdown[];
-  totalStudyMinutes: number;
-  totalStudyHours: number;
-  totalSessions: number;
-} {
-  const subjectMap = new Map<string, SubjectStudyBreakdown>();
-  subjects.forEach((s) => {
-    subjectMap.set(s.id, {
-      subjectId: s.id,
-      subjectName: s.name,
-      subjectColor: s.color || "#F59E0B",
-      totalMinutes: 0,
-      totalHours: 0,
-      sessionCount: 0,
-    });
-  });
-
-  let totalMinutes = 0;
-  let totalSessions = 0;
-
-  focusSessions.forEach((sess) => {
-    if (sess.deleted_at || !sess.subject_id) return;
-    const mins = Number(sess.actual_minutes) || 0;
-    if (mins <= 0) return;
-
-    totalMinutes += mins;
-    totalSessions++;
-
-    const item = subjectMap.get(sess.subject_id);
-    if (item) {
-      item.totalMinutes += mins;
-      item.totalHours = round1(item.totalMinutes / 60);
-      item.sessionCount += 1;
-    }
-  });
-
-  const bySubject = Array.from(subjectMap.values()).filter(
-    (item) => item.totalMinutes > 0
-  );
-  bySubject.sort((a, b) => b.totalMinutes - a.totalMinutes);
-
-  return {
-    bySubject,
-    totalStudyMinutes: totalMinutes,
-    totalStudyHours: round1(totalMinutes / 60),
-    totalSessions,
-  };
+export interface FocusSessionTelemetry {
+  id: string;
+  user_id?: string;
+  subject_id?: string | null;
+  task_name?: string;
+  actual_minutes: number;
+  status: "completed" | "ended_early" | "abandoned" | "cancelled";
+  started_at: string;
+  ended_at?: string | null;
+  logged_date?: string;
+  deleted_at?: string | null;
 }
 
 /**
- * Weekly study target progress - strictly user-defined, nullable by default
+ * Calculates study hours breakdown across subjects.
+ * Counts status completed and ended_early, summing actual_minutes. Excludes abandoned.
+ * Separates active vs archived subjects.
  */
-export function calculateWeeklyTargetProgress(
-  weeklyMinutesLogged: number,
-  weeklyTargetHours: number | null = null
+export function calculateStudyHoursBreakdown(
+  subjects: SubjectItem[],
+  sessions: FocusSessionTelemetry[],
+  windowStart?: Date,
+  windowEnd?: Date
 ): {
-  loggedHours: number;
-  targetHours: number | null;
-  adherencePct: number | null;
-  remainingHours: number | null;
-  status: "ahead" | "on_track" | "behind" | "not_set";
-  label: string;
+  totalMinutes: number;
+  totalStudyMinutes: number;
+  totalHoursFormatted: string;
+  totalStudyHours: number;
+  totalSessions: number;
+  bySubject: SubjectStudyBreakdown[];
+  activeBreakdown: SubjectStudyBreakdown[];
+  archivedBreakdown: SubjectStudyBreakdown[];
 } {
-  const loggedHours = round1(weeklyMinutesLogged / 60);
+  const eligibleSessions = sessions.filter((s) => {
+    if (s.deleted_at) return false;
+    if (s.status !== "completed" && s.status !== "ended_early") return false;
+    if (!s.started_at && !s.logged_date) return false;
+    if (windowStart || windowEnd) {
+      const started = new Date(s.started_at || s.logged_date!).getTime();
+      if (windowStart && started < windowStart.getTime()) return false;
+      if (windowEnd && started > windowEnd.getTime()) return false;
+    }
+    return true;
+  });
 
-  if (weeklyTargetHours === null || weeklyTargetHours <= 0) {
+  const subjectMap = new Map<string, SubjectItem>();
+  subjects.forEach((sub) => subjectMap.set(sub.id, sub));
+
+  const statsBySubject = new Map<string, { minutes: number; count: number }>();
+  let totalMinutes = 0;
+  let totalSessions = 0;
+
+  for (const session of eligibleSessions) {
+    const mins = Number(session.actual_minutes) || 0;
+    if (mins <= 0) continue;
+
+    totalMinutes += mins;
+    totalSessions += 1;
+
+    if (session.subject_id) {
+      const current = statsBySubject.get(session.subject_id) || { minutes: 0, count: 0 };
+      current.minutes += mins;
+      current.count += 1;
+      statsBySubject.set(session.subject_id, current);
+    }
+  }
+
+  const activeBreakdown: SubjectStudyBreakdown[] = [];
+  const archivedBreakdown: SubjectStudyBreakdown[] = [];
+
+  for (const [subId, stats] of statsBySubject.entries()) {
+    const sub = subjectMap.get(subId);
+    if (!sub || sub.deleted_at) continue;
+
+    const percentage = totalMinutes > 0 ? Math.round((stats.minutes / totalMinutes) * 1000) / 10 : 0;
+    const hoursNum = round1(stats.minutes / 60);
+
+    const item: SubjectStudyBreakdown = {
+      subjectId: sub.id,
+      subjectName: sub.name,
+      subjectColor: sub.color || "#F59E0B",
+      archived: !!sub.archived,
+      actualMinutes: stats.minutes,
+      totalMinutes: stats.minutes,
+      hoursFormatted: `${hoursNum}h`,
+      totalHours: hoursNum,
+      percentageOfTotal: percentage,
+      sessionCount: stats.count,
+    };
+
+    if (sub.archived) {
+      archivedBreakdown.push(item);
+    } else {
+      activeBreakdown.push(item);
+    }
+  }
+
+  activeBreakdown.sort((a, b) => b.actualMinutes - a.actualMinutes);
+  archivedBreakdown.sort((a, b) => b.actualMinutes - a.actualMinutes);
+  const bySubject = [...activeBreakdown, ...archivedBreakdown];
+  const totalHoursNum = round1(totalMinutes / 60);
+
+  return {
+    totalMinutes,
+    totalStudyMinutes: totalMinutes,
+    totalHoursFormatted: `${totalHoursNum}h`,
+    totalStudyHours: totalHoursNum,
+    totalSessions,
+    bySubject,
+    activeBreakdown,
+    archivedBreakdown,
+  };
+}
+
+export interface WeeklyStudyProgress {
+  targetMinutes: number | null;
+  targetHoursFormatted: string | null;
+  completedMinutes: number;
+  completedHoursFormatted: string;
+  progressPct: number;
+  remainingMinutes: number | null;
+  remainingHoursFormatted: string | null;
+  isCompleted: boolean;
+  isOverTarget: boolean;
+}
+
+/**
+ * Normalizes time string to standard HH:MM (e.g. "9:00" -> "09:00", "09:00:00" -> "09:00")
+ */
+export function normalizeTimeString(timeStr: string): string {
+  if (!timeStr) return "00:00";
+  const parts = timeStr.trim().split(":");
+  const h = parts[0] ? parts[0].padStart(2, "0") : "00";
+  const m = parts[1] ? parts[1].padStart(2, "0") : "00";
+  return `${h}:${m}`;
+}
+
+/**
+ * Parses time string into minutes from midnight (0..1439).
+ */
+export function parseTimeToMinutes(timeStr: string): number {
+  const normalized = normalizeTimeString(timeStr);
+  const [h, m] = normalized.split(":").map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+/**
+ * Formats minutes from midnight into 24h HH:MM string.
+ */
+export function formatMinutesToTime(minutes: number): string {
+  const clamped = Math.max(0, Math.min(1439, Math.round(minutes)));
+  const h = Math.floor(clamped / 60).toString().padStart(2, "0");
+  const m = (clamped % 60).toString().padStart(2, "0");
+  return `${h}:${m}`;
+}
+
+/**
+ * Pure advisory overlap check comparing parsed minutes.
+ * Boundary check: adjacent sessions (e.g. 08:59-09:00 and 09:00-10:00) return false (no clash).
+ */
+export function checkSessionOverlap(
+  a: { day_of_week: number; start_time: string; end_time: string },
+  b: { day_of_week: number; start_time: string; end_time: string }
+): boolean {
+  if (a.day_of_week !== b.day_of_week) return false;
+  const aStart = parseTimeToMinutes(a.start_time);
+  const aEnd = parseTimeToMinutes(a.end_time);
+  const bStart = parseTimeToMinutes(b.start_time);
+  const bEnd = parseTimeToMinutes(b.end_time);
+
+  return aStart < bEnd && aEnd > bStart;
+}
+
+/**
+ * Computes dynamic week boundaries from user's first_day_of_week setting.
+ * firstDayOfWeek: 0=Sun, 1=Mon, 6=Sat (defaults to 0 Sunday if unset)
+ */
+export function getWeekStartEnd(
+  referenceDate: Date = new Date(),
+  firstDayOfWeek: number = 0
+): { weekStart: Date; weekEnd: Date } {
+  const d = new Date(referenceDate);
+  const currentDay = d.getDay(); // 0=Sun .. 6=Sat
+  const normalizedSetting = (firstDayOfWeek >= 0 && firstDayOfWeek <= 6) ? firstDayOfWeek : 0;
+  const diff = (currentDay - normalizedSetting + 7) % 7;
+  
+  const start = new Date(d);
+  start.setDate(d.getDate() - diff);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+
+  return { weekStart: start, weekEnd: end };
+}
+
+/**
+ * Calculates current week's study progress against weekly_study_target_minutes.
+ */
+export function calculateWeeklyStudyProgress(
+  weeklyTargetMinutes: number | null | undefined,
+  sessions: FocusSessionTelemetry[],
+  referenceDate: Date = new Date(),
+  firstDayOfWeek: number = 0
+): WeeklyStudyProgress {
+  const { weekStart, weekEnd } = getWeekStartEnd(referenceDate, firstDayOfWeek);
+  const { totalMinutes } = calculateStudyHoursBreakdown([], sessions, weekStart, weekEnd);
+
+  if (weeklyTargetMinutes === null || weeklyTargetMinutes === undefined || weeklyTargetMinutes <= 0) {
     return {
-      loggedHours,
-      targetHours: null,
-      adherencePct: null,
-      remainingHours: null,
-      status: "not_set",
-      label: "No weekly target set. Tap to define your study goal.",
+      targetMinutes: null,
+      targetHoursFormatted: null,
+      completedMinutes: totalMinutes,
+      completedHoursFormatted: `${(totalMinutes / 60).toFixed(1)}h`,
+      progressPct: 0,
+      remainingMinutes: null,
+      remainingHoursFormatted: null,
+      isCompleted: false,
+      isOverTarget: false,
     };
   }
 
-  const adherencePct = Math.min(100, Math.round((loggedHours / weeklyTargetHours) * 100));
-  const remainingHours = Math.max(0, round1(weeklyTargetHours - loggedHours));
-
-  let status: "ahead" | "on_track" | "behind" = "on_track";
-  if (adherencePct >= 100) {
-    status = "ahead";
-  } else if (adherencePct < 50) {
-    status = "behind";
-  }
+  const target = weeklyTargetMinutes;
+  const progressPct = Math.min(100, Math.round((totalMinutes / target) * 100));
+  const remaining = Math.max(0, target - totalMinutes);
 
   return {
-    loggedHours,
-    targetHours: weeklyTargetHours,
-    adherencePct,
-    remainingHours,
-    status,
-    label: `${loggedHours}h of ${weeklyTargetHours}h completed (${adherencePct}%)`,
+    targetMinutes: target,
+    targetHoursFormatted: `${(target / 60).toFixed(1)}h`,
+    completedMinutes: totalMinutes,
+    completedHoursFormatted: `${(totalMinutes / 60).toFixed(1)}h`,
+    progressPct,
+    remainingMinutes: remaining,
+    remainingHoursFormatted: remaining > 0 ? `${(remaining / 60).toFixed(1)}h` : "0h",
+    isCompleted: totalMinutes >= target,
+    isOverTarget: totalMinutes > target,
   };
 }
 
 export interface HeatmapDayCell {
   date: string; // YYYY-MM-DD
+  dateStr: string;
+  dayOfWeek: number; // 0..6
+  actualMinutes: number;
   minutes: number;
-  gradeCount: number;
-  level: 0 | 1 | 2 | 3 | 4; // 0=None, 1=1-45m, 2=46-90m, 3=91-180m, 4=>180m or exam
+  sessionCount: number;
+  gradeCount?: number;
+  tier: 0 | 1 | 2 | 3 | 4;
+  level: 0 | 1 | 2 | 3 | 4;
+}
+
+export interface HeatmapResult {
+  days: HeatmapDayCell[];
+  weeksCount: number;
+  activeDaysLast7: number;
+  consistencySummary: string; // "X of the last 7 days studied"
+  baselineDailyMinutes: number;
+  hasHistory: boolean;
 }
 
 /**
- * Generates 12-week GitHub-style heatmap data
+ * Generates 12-week study density heatmap with relative tiers based on user baseline.
+ * If zero study history: returns empty grid with all tier 0 (no fallback 60m).
  */
-export function generateAcademicHeatmap(
-  focusSessions: Array<{
-    logged_date?: string;
-    started_at?: string;
-    actual_minutes?: number;
-    subject_id?: string | null;
-    deleted_at?: string | null;
-  }>,
-  grades: GradeItem[],
-  daysCount = 84
-): HeatmapDayCell[] {
-  const cellMap = new Map<string, { minutes: number; gradeCount: number }>();
+export function generate12WeekStudyHeatmap(
+  sessions: FocusSessionTelemetry[],
+  weeklyTargetMinutes: number | null | undefined,
+  referenceDate: Date = new Date(),
+  firstDayOfWeek: number = 0,
+  userTimeZone: string = "Africa/Cairo"
+): HeatmapResult {
+  const eligibleSessions = sessions.filter(
+    (s) => !s.deleted_at && (s.status === "completed" || s.status === "ended_early") && (s.started_at || s.logged_date)
+  );
 
-  // Initialize days
-  const now = new Date();
-  for (let i = daysCount - 1; i >= 0; i--) {
-    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-    const dateStr = d.toISOString().split("T")[0];
-    cellMap.set(dateStr, { minutes: 0, gradeCount: 0 });
+  const minutesByDateStr = new Map<string, { minutes: number; count: number }>();
+  for (const session of eligibleSessions) {
+    const rawDate = session.started_at ? new Date(session.started_at) : new Date(session.logged_date!);
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: userTimeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const dateStr = formatter.format(rawDate);
+    const cur = minutesByDateStr.get(dateStr) || { minutes: 0, count: 0 };
+    cur.minutes += session.actual_minutes || 0;
+    cur.count += 1;
+    minutesByDateStr.set(dateStr, cur);
   }
 
-  // Aggregate focus sessions
-  focusSessions.forEach((sess) => {
-    if (sess.deleted_at || !sess.subject_id) return;
-    const dateStr = sess.logged_date || sess.started_at?.split("T")[0];
-    if (dateStr && cellMap.has(dateStr)) {
-      const entry = cellMap.get(dateStr)!;
-      entry.minutes += Number(sess.actual_minutes) || 0;
+  const { weekEnd } = getWeekStartEnd(referenceDate, firstDayOfWeek);
+  const totalDays = 84;
+  const startDate = new Date(weekEnd);
+  startDate.setDate(weekEnd.getDate() - (totalDays - 1));
+  startDate.setHours(0, 0, 0, 0);
+
+  let baseline = 0;
+  let hasHistory = false;
+
+  if (weeklyTargetMinutes && weeklyTargetMinutes > 0) {
+    baseline = weeklyTargetMinutes / 7;
+    hasHistory = true;
+  } else {
+    const nonZeroMinutes: number[] = [];
+    for (let i = 0; i < totalDays; i++) {
+      const cur = new Date(startDate);
+      cur.setDate(startDate.getDate() + i);
+      const formatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: userTimeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      const dStr = formatter.format(cur);
+      const dayData = minutesByDateStr.get(dStr);
+      if (dayData && dayData.minutes > 0) {
+        nonZeroMinutes.push(dayData.minutes);
+      }
     }
-  });
 
-  // Aggregate grades
-  grades.forEach((g) => {
-    if (g.deleted_at) return;
-    const dateStr = g.entry_date;
-    if (dateStr && cellMap.has(dateStr)) {
-      const entry = cellMap.get(dateStr)!;
-      entry.gradeCount++;
+    if (nonZeroMinutes.length > 0) {
+      hasHistory = true;
+      nonZeroMinutes.sort((a, b) => a - b);
+      const mid = Math.floor(nonZeroMinutes.length / 2);
+      baseline = nonZeroMinutes.length % 2 !== 0 ? nonZeroMinutes[mid] : (nonZeroMinutes[mid - 1] + nonZeroMinutes[mid]) / 2;
+    } else {
+      baseline = 0; // ZERO history -> no invented fallback
     }
-  });
+  }
 
-  return Array.from(cellMap.entries()).map(([date, data]) => {
-    let level: 0 | 1 | 2 | 3 | 4 = 0;
-    if (data.minutes > 180 || data.gradeCount >= 2) level = 4;
-    else if (data.minutes > 90 || data.gradeCount >= 1) level = 3;
-    else if (data.minutes > 45) level = 2;
-    else if (data.minutes > 0) level = 1;
+  const cells: HeatmapDayCell[] = [];
+  let activeDaysLast7 = 0;
 
-    return {
-      date,
-      minutes: data.minutes,
-      gradeCount: data.gradeCount,
-      level,
-    };
-  });
+  const last7Cutoff = new Date(referenceDate);
+  last7Cutoff.setDate(referenceDate.getDate() - 6);
+  last7Cutoff.setHours(0, 0, 0, 0);
+
+  for (let i = 0; i < totalDays; i++) {
+    const cur = new Date(startDate);
+    cur.setDate(startDate.getDate() + i);
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: userTimeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const dStr = formatter.format(cur);
+    const dayData = minutesByDateStr.get(dStr) || { minutes: 0, count: 0 };
+    const dayOfWeek = cur.getDay();
+
+    let tier: 0 | 1 | 2 | 3 | 4 = 0;
+    if (dayData.minutes > 0 && baseline > 0) {
+      if (dayData.minutes < 0.5 * baseline) tier = 1;
+      else if (dayData.minutes < 1.0 * baseline) tier = 2;
+      else if (dayData.minutes < 1.5 * baseline) tier = 3;
+      else tier = 4;
+    }
+
+    if (cur >= last7Cutoff && cur <= referenceDate && dayData.minutes > 0) {
+      activeDaysLast7++;
+    }
+
+    cells.push({
+      date: dStr,
+      dateStr: dStr,
+      dayOfWeek,
+      actualMinutes: dayData.minutes,
+      minutes: dayData.minutes,
+      sessionCount: dayData.count,
+      tier,
+      level: tier,
+    });
+  }
+
+  return {
+    days: cells,
+    weeksCount: 12,
+    activeDaysLast7,
+    consistencySummary: `${activeDaysLast7} of the last 7 days studied`,
+    baselineDailyMinutes: Math.round(baseline),
+    hasHistory,
+  };
 }
 
-export interface AcademicCrossInsight {
+export interface AcademicInsightItem {
   id: string;
+  ruleKey: "exam_readiness" | "target_grade_drift" | "study_imbalance";
   title: string;
-  description: string;
-  type: "synergy" | "warning" | "positive" | "info";
+  explanation: string;
+  whySeeingThis: string;
+  actionText: string;
+  actionTab: "practice" | "grades" | "timetable" | "stats";
 }
 
 /**
- * Cross-domain synthesis: correlates School marks with sleep and focus sessions
+ * Generates respectful academic insights with softened tone ("Worth a look", "Observation").
+ * Exam readiness requires >= 3 topics tracked.
+ * Study imbalance requires >= 7 full days of focus session history.
+ * Strictly no cross-domain sleep claims.
  */
-export function generateSchoolCrossDomainInsights(data: {
+export function generateAcademicInsights(data: {
   subjects: SubjectItem[];
   grades: GradeItem[];
-  mistakes: MistakeItem[];
-  studyHours: number;
-}): AcademicCrossInsight[] {
-  const insights: AcademicCrossInsight[] = [];
+  deadlines: DeadlineItem[];
+  topics: AcademicTopicItem[];
+  sessions: FocusSessionTelemetry[];
+  referenceDate?: Date;
+  userTimeZone?: string;
+}): AcademicInsightItem[] {
+  const {
+    subjects,
+    grades,
+    deadlines,
+    topics,
+    sessions,
+    referenceDate = new Date(),
+    userTimeZone = "Africa/Cairo",
+  } = data;
 
-  const { subjects, grades, mistakes, studyHours } = data;
-  const activeGrades = grades.filter((g) => !g.deleted_at);
+  const insights: AcademicInsightItem[] = [];
+  const activeSubjects = subjects.filter((s) => !s.deleted_at && !s.archived);
+  const nowMs = referenceDate.getTime();
 
-  if (activeGrades.length === 0 && studyHours === 0) {
-    insights.push({
-      id: "zero_school_telemetry",
-      title: "Academic Telemetry Initializing",
-      description: "Log your first quiz or complete a study sprint to unlock cross-domain habit correlations.",
-      type: "info",
+  // 1. Exam Readiness Check
+  for (const sub of activeSubjects) {
+    const subTopics = topics.filter((t) => !t.deleted_at && t.subject_id === sub.id);
+    if (subTopics.length < 3) continue; // Threshold: requires >= 3 topics tracked
+
+    const lowConfidenceTopics = subTopics.filter((t) => t.confidence <= 2);
+    const overdueTopics = subTopics.filter((t) => t.next_review_at && new Date(t.next_review_at).getTime() <= nowMs);
+    const needsReviewCount = new Set([...lowConfidenceTopics.map((t) => t.id), ...overdueTopics.map((t) => t.id)]).size;
+
+    if (needsReviewCount === 0) continue;
+
+    const upcomingAssessment = deadlines.find((d) => {
+      if (d.deleted_at || d.completed || d.subject_id !== sub.id) return false;
+      if (d.type !== "exam" && d.type !== "quiz") return false;
+      const dueMs = new Date(d.due_date).getTime();
+      const diffDays = (dueMs - nowMs) / (1000 * 60 * 60 * 24);
+      return diffDays >= 0 && diffDays <= 7;
     });
-    return insights;
-  }
 
-  if (studyHours >= 10 && activeGrades.length >= 3) {
-    const avgStats = calculateOverallAcademicStats(subjects, activeGrades);
-    if (avgStats.overallAveragePct && avgStats.overallAveragePct >= 80) {
+    if (upcomingAssessment) {
+      const diffDays = Math.max(1, Math.round((new Date(upcomingAssessment.due_date).getTime() - nowMs) / (1000 * 60 * 60 * 24)));
       insights.push({
-        id: "deep_work_synergy",
-        title: "Deep Work & Grade Synergy",
-        description: `Your ${studyHours}h of logged study sessions correlate with a strong ${avgStats.overallAveragePct}% academic average. Focused sprints directly bolster exam recall.`,
-        type: "synergy",
+        id: `exam_readiness_${sub.id}`,
+        ruleKey: "exam_readiness",
+        title: `Worth a look: ${sub.name} Assessment Preparation`,
+        explanation: `You have an upcoming ${upcomingAssessment.type} in ${sub.name} in ${diffDays} day${diffDays === 1 ? "" : "s"}, and ${needsReviewCount} tracked topic${needsReviewCount === 1 ? "" : "s"} currently have low confidence or overdue review.`,
+        whySeeingThis: `Triggered because ${sub.name} has ${subTopics.length} tracked topics and an assessment due in ${diffDays} days.`,
+        actionText: "Review Topics",
+        actionTab: "practice",
       });
     }
   }
 
-  const openMistakes = mistakes.filter((m) => !m.deleted_at && !m.resolved);
-  if (openMistakes.length >= 3) {
-    insights.push({
-      id: "mistake_review_alert",
-      title: "Mistake Log Review Due",
-      description: `You have ${openMistakes.length} unresolved errors in your mistake notebook. Practicing redos before your next quiz improves retention by up to 40%.`,
-      type: "warning",
-    });
-  } else if (mistakes.filter((m) => !m.deleted_at && m.resolved).length >= 2) {
-    insights.push({
-      id: "error_correction_momentum",
-      title: "Error Correction Momentum",
-      description: "Multiple error redos successfully mastered. Converting mistakes into solved solutions is the fastest path to mastery.",
-      type: "positive",
-    });
+  // 2. Target Grade Drift
+  for (const sub of activeSubjects) {
+    if (sub.target_grade === null || sub.target_grade === undefined) continue;
+    const subGrades = grades.filter((g) => !g.deleted_at && g.subject_id === sub.id);
+    if (subGrades.length < 2) continue;
+
+    const stats = calculateSubjectGradeAverage(subGrades);
+    if (stats.averagePct === null) continue;
+
+    const drift = sub.target_grade - stats.averagePct;
+    if (drift >= 5.0) {
+      insights.push({
+        id: `target_drift_${sub.id}`,
+        ruleKey: "target_grade_drift",
+        title: `Observation: ${sub.name} Grade Variance`,
+        explanation: `Based on ${subGrades.length} recorded assessments, ${sub.name} is currently at ${stats.averagePct.toFixed(1)}%, which is ${drift.toFixed(1)}% below your ${sub.target_grade.toFixed(1)}% target.`,
+        whySeeingThis: `Triggered because ${sub.name} has ${subGrades.length} graded entries and the average is ${drift.toFixed(1)}% below target.`,
+        actionText: "View Grades",
+        actionTab: "grades",
+      });
+    }
+  }
+
+  // 3. Study Imbalance (requires >= 7 full days of history)
+  const eligibleSessions = sessions.filter(
+    (s) => !s.deleted_at && (s.status === "completed" || s.status === "ended_early") && (s.started_at || s.logged_date)
+  );
+
+  const sessionDates = new Set(
+    eligibleSessions.map((s) => {
+      const d = s.started_at ? new Date(s.started_at) : new Date(s.logged_date!);
+      const fmt = new Intl.DateTimeFormat("en-CA", {
+        timeZone: userTimeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      return fmt.format(d);
+    })
+  );
+
+  if (sessionDates.size >= 7) {
+    const sevenDaysAgo = new Date(referenceDate);
+    sevenDaysAgo.setDate(referenceDate.getDate() - 7);
+    const { totalMinutes, activeBreakdown } = calculateStudyHoursBreakdown(
+      activeSubjects,
+      eligibleSessions,
+      sevenDaysAgo,
+      referenceDate
+    );
+
+    if (totalMinutes >= 60) {
+      for (const sub of activeSubjects) {
+        const soonDeadline = deadlines.find((d) => {
+          if (d.deleted_at || d.completed || d.subject_id !== sub.id) return false;
+          const dueMs = new Date(d.due_date).getTime();
+          const diffDays = (dueMs - nowMs) / (1000 * 60 * 60 * 24);
+          return diffDays >= 0 && diffDays <= 5;
+        });
+
+        if (soonDeadline) {
+          const subBreakdown = activeBreakdown.find((b) => b.subjectId === sub.id);
+          const subMinutes = subBreakdown?.actualMinutes || 0;
+          const pct = Math.round((subMinutes / totalMinutes) * 100);
+
+          if (pct < 10) {
+            const daysLeft = Math.max(1, Math.round((new Date(soonDeadline.due_date).getTime() - nowMs) / (1000 * 60 * 60 * 24)));
+            insights.push({
+              id: `study_imbalance_${sub.id}`,
+              ruleKey: "study_imbalance",
+              title: `Worth a look: ${sub.name} Study Allocation`,
+              explanation: `Based on logged focus sessions over the past 7 days, ${sub.name} has a deadline in ${daysLeft} day${daysLeft === 1 ? "" : "s"} (${soonDeadline.title}), but accounted for only ${pct}% of your recorded study time (${subMinutes}m of ${Math.round(totalMinutes)}m).`,
+              whySeeingThis: `Triggered based on ${sessionDates.size} days of study history, an upcoming deadline in ${daysLeft} days, and under 10% study allocation.`,
+              actionText: "Start Focus Session",
+              actionTab: "timetable",
+            });
+          }
+        }
+      }
+    }
   }
 
   return insights;
+}
+
+/**
+ * Finds upcoming class today across IANA timezone boundaries (Africa/Cairo DST-safe).
+ */
+export function getNextClassToday(
+  schedule: ScheduleItem[],
+  subjects: SubjectItem[],
+  now: Date = new Date(),
+  timeZone: string = "Africa/Cairo"
+): { nextClass: ScheduleItem; subject: SubjectItem; startsInMinutes: number } | null {
+  const activeSubjects = new Map(subjects.filter((s) => !s.deleted_at && !s.archived).map((s) => [s.id, s]));
+
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "short",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  }).formatToParts(now);
+
+  const weekdayStr = parts.find((p) => p.type === "weekday")?.value || "";
+  const hour = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
+  const minute = parseInt(parts.find((p) => p.type === "minute")?.value || "0", 10);
+  const currentMinutesFromMidnight = hour * 60 + minute;
+
+  const dayMap: Record<string, number> = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
+  };
+  const currentDayOfWeek = dayMap[weekdayStr] ?? now.getDay();
+
+  const todayClasses = schedule.filter((item) => {
+    if (item.deleted_at) return false;
+    if (item.day_of_week !== currentDayOfWeek) return false;
+    if (!activeSubjects.has(item.subject_id)) return false;
+    const startMin = parseTimeToMinutes(item.start_time);
+    return startMin > currentMinutesFromMidnight;
+  });
+
+  if (todayClasses.length === 0) return null;
+
+  todayClasses.sort((a, b) => parseTimeToMinutes(a.start_time) - parseTimeToMinutes(b.start_time));
+  const nextClass = todayClasses[0];
+  const subject = activeSubjects.get(nextClass.subject_id)!;
+  const startsInMinutes = parseTimeToMinutes(nextClass.start_time) - currentMinutesFromMidnight;
+
+  return { nextClass, subject, startsInMinutes };
 }
 
