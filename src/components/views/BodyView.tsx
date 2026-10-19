@@ -21,6 +21,9 @@ import { WorkoutHistory } from "@/components/strength/WorkoutHistory";
 import { WeightDashboard } from "@/components/weight/WeightDashboard";
 import { SleepDashboard } from "@/components/sleep/SleepDashboard";
 import { NutritionDashboard } from "@/components/nutrition/NutritionDashboard";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { useUserModules } from "@/lib/modules/UserModulesContext";
+import { DisabledModuleFallback } from "@/components/modules/DisabledModuleFallback";
 
 interface Exercise {
   id: string;
@@ -37,9 +40,12 @@ type TabKey = "logger" | "weight" | "sleep" | "nutrition" | "standards" | "histo
 function BodyViewContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { dict, locale } = useI18n();
+  const { isModuleActive } = useUserModules();
 
   const tabParam = (searchParams.get("tab") as TabKey) || "logger";
   const [activeTab, setActiveTab] = useState<TabKey>(tabParam);
+  const tabsContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Catalog State
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -54,6 +60,13 @@ function BodyViewContent() {
       setActiveTab(t);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    const activeEl = tabsContainerRef.current?.querySelector(`[data-tab="${activeTab}"]`);
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [activeTab]);
 
   const switchTab = (tab: TabKey) => {
     setActiveTab(tab);
@@ -101,168 +114,249 @@ function BodyViewContent() {
   return (
     <div className="space-y-6">
       {/* Top Navigation Tabs */}
-      <div className="flex items-center gap-1.5 p-1.5 bg-surface-container rounded-2xl border border-border-subtle overflow-x-auto">
-        <button
-          onClick={() => switchTab("logger")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === "logger"
-              ? "bg-primary-lime text-charcoal-dark shadow-[0_0_15px_rgba(198,255,61,0.25)] font-bold"
-              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-          }`}
-        >
-          <Dumbbell className="w-4 h-4" />
-          <span>Active Session</span>
-        </button>
+      <div className="relative">
+        <div ref={tabsContainerRef} className="flex items-center gap-1.5 p-1.5 bg-surface-container rounded-2xl border border-border-subtle overflow-x-auto no-scrollbar scroll-smooth">
+          <button
+            data-tab="logger"
+            onClick={() => switchTab("logger")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "logger"
+                ? "bg-primary-lime text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <Dumbbell className="w-4 h-4 shrink-0" />
+            <span>{dict.body.activeSession}</span>
+          </button>
 
-        <button
-          onClick={() => switchTab("weight")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === "weight"
-              ? "bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] font-bold"
-              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-          }`}
-        >
-          <Weight className="w-4 h-4" />
-          <span>Body Weight</span>
-        </button>
+          <button
+            data-tab="weight"
+            onClick={() => switchTab("weight")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "weight"
+                ? "bg-secondary-cyan text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <Weight className="w-4 h-4 shrink-0" />
+            <span>{dict.body.bodyWeight}</span>
+          </button>
 
-        <button
-          onClick={() => switchTab("sleep")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === "sleep"
-              ? "bg-[#7DD3FC] text-charcoal-dark shadow-[0_0_15px_rgba(125,211,252,0.3)] font-bold"
-              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-          }`}
-        >
-          <Moon className="w-4 h-4" />
-          <span>Sleep & Rest</span>
-        </button>
+          <button
+            data-tab="sleep"
+            onClick={() => switchTab("sleep")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "sleep"
+                ? "bg-[#7DD3FC] text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <Moon className="w-4 h-4 shrink-0" />
+            <span>{dict.body.sleep}</span>
+          </button>
 
-        <button
-          onClick={() => switchTab("nutrition")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === "nutrition"
-              ? "bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] font-bold"
-              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-          }`}
-        >
-          <Utensils className="w-4 h-4" />
-          <span>Nutrition & Macros</span>
-        </button>
+          <button
+            data-tab="nutrition"
+            onClick={() => switchTab("nutrition")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "nutrition"
+                ? "bg-secondary-cyan text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <Utensils className="w-4 h-4 shrink-0" />
+            <span>{dict.body.nutrition}</span>
+          </button>
 
-        <button
-          onClick={() => switchTab("standards")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === "standards"
-              ? "bg-rank-gold text-charcoal-dark shadow-[0_0_15px_rgba(255,215,0,0.25)] font-bold"
-              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-          }`}
-        >
-          <Award className="w-4 h-4" />
-          <span>Rank Standards</span>
-        </button>
+          <button
+            data-tab="standards"
+            onClick={() => switchTab("standards")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "standards"
+                ? "bg-rank-gold text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <Award className="w-4 h-4 shrink-0" />
+            <span>{dict.body.standards}</span>
+          </button>
 
-        <button
-          onClick={() => switchTab("history")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === "history"
-              ? "bg-primary-lime text-charcoal-dark shadow-[0_0_15px_rgba(198,255,61,0.25)] font-bold"
-              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-          }`}
-        >
-          <History className="w-4 h-4" />
-          <span>Session History</span>
-        </button>
+          <button
+            data-tab="history"
+            onClick={() => switchTab("history")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "history"
+                ? "bg-primary-lime text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <History className="w-4 h-4 shrink-0" />
+            <span>{dict.body.history}</span>
+          </button>
 
-        <button
-          onClick={() => switchTab("catalog")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === "catalog"
-              ? "bg-surface-container-highest text-on-surface border border-border-subtle font-bold"
-              : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-          }`}
-        >
-          <BookOpen className="w-4 h-4" />
-          <span>Exercise Catalog</span>
-        </button>
+          <button
+            data-tab="catalog"
+            onClick={() => switchTab("catalog")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "catalog"
+                ? "bg-surface-container-highest text-on-surface border border-border-subtle font-bold"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <BookOpen className="w-4 h-4 shrink-0" />
+            <span>{locale === "ar" ? "دليل التمارين" : "Exercise Catalog"}</span>
+          </button>
+        </div>
+        {/* Subtle right gradient fade for horizontal scroll affordance */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface-container to-transparent rounded-r-2xl" />
       </div>
 
       {/* Tab 1: Active Workout Session */}
       {activeTab === "logger" && (
-        <ActiveWorkoutSession
-          onWorkoutSaved={() => {
-            switchTab("history");
-          }}
-        />
+        isModuleActive("module_workouts") ? (
+          <ActiveWorkoutSession
+            onWorkoutSaved={() => {
+              switchTab("history");
+            }}
+          />
+        ) : (
+          <DisabledModuleFallback
+            moduleKey="module_workouts"
+            onEnabled={() => switchTab("logger")}
+          />
+        )
       )}
 
       {/* Tab 2: Body Weight Dashboard & Composition */}
-      {activeTab === "weight" && <WeightDashboard />}
-
-      {/* Tab 3: Sleep & Circadian Telemetry */}
-      {activeTab === "sleep" && <SleepDashboard />}
-
-      {/* Tab 4: Nutrition & Macro Telemetry Engine */}
-      {activeTab === "nutrition" && <NutritionDashboard />}
-
-      {/* Tab 5: Strength Standards & Radar Matrix */}
-      {activeTab === "standards" && <RankStandardsMatrix />}
-
-      {/* Tab 5: Workout History & Volume Tracking */}
-      {activeTab === "history" && (
-        <WorkoutHistory
-          onStartWorkoutClick={() => {
-            switchTab("logger");
-          }}
-        />
+      {activeTab === "weight" && (
+        isModuleActive("module_weight") ? (
+          <WeightDashboard />
+        ) : (
+          <DisabledModuleFallback
+            moduleKey="module_weight"
+            onEnabled={() => switchTab("weight")}
+          />
+        )
       )}
 
-      {/* Tab 5: Exercise Catalog */}
+      {/* Tab 3: Sleep & Circadian Telemetry */}
+      {activeTab === "sleep" && (
+        isModuleActive("module_sleep") ? (
+          <SleepDashboard />
+        ) : (
+          <DisabledModuleFallback
+            moduleKey="module_sleep"
+            onEnabled={() => switchTab("sleep")}
+          />
+        )
+      )}
+
+      {/* Tab 4: Nutrition & Macro Telemetry Engine */}
+      {activeTab === "nutrition" && (
+        isModuleActive("module_nutrition") ? (
+          <NutritionDashboard />
+        ) : (
+          <DisabledModuleFallback
+            moduleKey="module_nutrition"
+            onEnabled={() => switchTab("nutrition")}
+          />
+        )
+      )}
+
+      {/* Tab 5: Strength Standards & Radar Matrix */}
+      {activeTab === "standards" && (
+        isModuleActive("module_workouts") ? (
+          <RankStandardsMatrix />
+        ) : (
+          <DisabledModuleFallback
+            moduleKey="module_workouts"
+            onEnabled={() => switchTab("standards")}
+          />
+        )
+      )}
+
+      {/* Tab 6: Workout History & Volume Tracking */}
+      {activeTab === "history" && (
+        isModuleActive("module_workouts") ? (
+          <WorkoutHistory
+            onStartWorkoutClick={() => {
+              switchTab("logger");
+            }}
+          />
+        ) : (
+          <DisabledModuleFallback
+            moduleKey="module_workouts"
+            onEnabled={() => switchTab("history")}
+          />
+        )
+      )}
+
+      {/* Tab 7: Exercise Catalog */}
       {activeTab === "catalog" && (
+        !isModuleActive("module_workouts") ? (
+          <DisabledModuleFallback
+            moduleKey="module_workouts"
+            onEnabled={() => switchTab("catalog")}
+          />
+        ) : (
         <div className="space-y-5">
           {/* Catalog Top Filter */}
           <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
+              <div className="text-start">
                 <h3 className="text-base font-bold font-mono text-on-surface">
-                  Lifting & Exercise Library
+                  {locale === "ar" ? "دليل التمارين والحركات" : "Lifting & Exercise Library"}
                 </h3>
                 <p className="text-xs text-on-surface-variant">
-                  Canonical rated benchmarks and custom movements
+                  {locale === "ar"
+                    ? "المعايير القياسية المعتمدة والتمارين المخصصة"
+                    : "Canonical rated benchmarks and custom movements"}
                 </p>
               </div>
               <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-on-surface self-start sm:self-auto">
-                {filteredExercises.length} Exercises Listed
+                {locale === "ar" ? `${filteredExercises.length} تمرين مسجل` : `${filteredExercises.length} Exercises Listed`}
               </span>
             </div>
 
             {/* Search & Muscle Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="w-4 h-4 text-text-muted absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-text-muted absolute left-3 rtl:left-auto rtl:right-3 top-3" />
                 <input
                   type="text"
-                  placeholder="Filter by name or equipment..."
+                  placeholder={locale === "ar" ? "ابحث بالاسم أو الجهاز..." : "Filter by name or equipment..."}
                   value={catalogSearch}
                   onChange={(e) => setCatalogSearch(e.target.value)}
-                  className="w-full bg-surface-container-low border border-border-subtle rounded-xl pl-9 pr-4 py-2 text-xs font-mono text-on-surface focus:border-secondary-cyan focus:outline-none"
+                  className="w-full bg-surface-container-low border border-border-subtle rounded-xl pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2 text-xs font-mono text-on-surface focus:border-secondary-cyan focus:outline-none text-start"
                 />
               </div>
 
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                {muscleGroups.map((muscle) => (
-                  <button
-                    key={muscle}
-                    onClick={() => setSelectedMuscle(muscle)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono capitalize transition-all cursor-pointer whitespace-nowrap ${
-                      selectedMuscle === muscle
-                        ? "bg-secondary-cyan/15 text-secondary-cyan border border-secondary-cyan/40 font-bold"
-                        : "bg-surface-container-low text-text-muted border border-border-subtle hover:text-on-surface"
-                    }`}
-                  >
-                    {muscle}
-                  </button>
-                ))}
+                {muscleGroups.map((muscle) => {
+                  const muscleNames: Record<string, string> = {
+                    all: "الكل",
+                    chest: "صدر",
+                    back: "ظهر",
+                    legs: "رجلين",
+                    shoulders: "أكتاف",
+                    arms: "دراع",
+                    core: "بطن",
+                    "full body": "جسم كامل",
+                  };
+                  return (
+                    <button
+                      key={muscle}
+                      onClick={() => setSelectedMuscle(muscle)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono capitalize transition-all cursor-pointer whitespace-nowrap ${
+                        selectedMuscle === muscle
+                          ? "bg-secondary-cyan/15 text-secondary-cyan border border-secondary-cyan/40 font-bold"
+                          : "bg-surface-container-low text-text-muted border border-border-subtle hover:text-on-surface"
+                      }`}
+                    >
+                      {locale === "ar" ? (muscleNames[muscle.toLowerCase()] || muscle) : muscle}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -271,7 +365,7 @@ function BodyViewContent() {
           {catalogError && (
             <div className="p-4 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-3 text-crimson-alert text-xs font-mono">
               <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>Error loading catalog: {catalogError}</span>
+              <span>{locale === "ar" ? `خطأ في تحميل الدليل: ${catalogError}` : `Error loading catalog: ${catalogError}`}</span>
             </div>
           )}
 
@@ -279,7 +373,7 @@ function BodyViewContent() {
           {loadingCatalog && (
             <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
               <Loader2 className="w-6 h-6 animate-spin text-secondary-cyan" />
-              <span className="text-xs font-mono">Loading library...</span>
+              <span className="text-xs font-mono">{locale === "ar" ? "جاري تحميل التمارين..." : "Loading library..."}</span>
             </div>
           )}
 
@@ -292,7 +386,7 @@ function BodyViewContent() {
                   className="bg-surface-container border border-border-subtle hover:border-secondary-cyan/30 rounded-xl p-4 transition-all space-y-3"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div>
+                    <div className="text-start">
                       <h4 className="text-sm font-semibold text-on-surface tracking-tight">
                         {ex.name}
                       </h4>
@@ -308,13 +402,13 @@ function BodyViewContent() {
                     </div>
                     {ex.is_ranked && (
                       <span className="px-2 py-0.5 rounded-md bg-primary-lime/10 border border-primary-lime/30 text-[10px] font-mono text-primary-lime font-bold uppercase shrink-0">
-                        Ranked
+                        {locale === "ar" ? "معتمد" : "Ranked"}
                       </span>
                     )}
                   </div>
 
                   <div className="pt-2 border-t border-border-subtle/50 flex items-center justify-between text-[10px] font-mono text-text-muted">
-                    <span>Key: {ex.ranked_key || "custom"}</span>
+                    <span>{locale === "ar" ? "المفتاح:" : "Key:"} {ex.ranked_key || (locale === "ar" ? "مخصص" : "custom")}</span>
                     <span className="truncate max-w-[120px]">
                       ID: {ex.id.slice(0, 8)}...
                     </span>
@@ -324,18 +418,20 @@ function BodyViewContent() {
             </div>
           )}
         </div>
+        )
       )}
     </div>
   );
 }
 
 export function BodyView() {
+  const { locale } = useI18n();
   return (
     <Suspense
       fallback={
         <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
-          <span className="text-xs font-mono">Loading strength module...</span>
+          <span className="text-xs font-mono">{locale === "ar" ? "جاري تحميل محرك اللياقة..." : "Loading strength module..."}</span>
         </div>
       }
     >

@@ -36,8 +36,12 @@ import {
   FinishSetupCard,
   EndOfDayRecapCard,
 } from "@/components/today/TodayPillarCards";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { useUserModules } from "@/lib/modules/UserModulesContext";
 
 export function TodayView() {
+  const { dict, locale } = useI18n();
+  const { isModuleActive, isPillarActive } = useUserModules();
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [userTimezone, setUserTimezone] = useState<string>("UTC");
@@ -101,6 +105,10 @@ export function TodayView() {
     title: string;
     daysRemaining: number;
   } | null>(null);
+  const [deadlinesToday, setDeadlinesToday] = useState<{
+    total: number;
+    completed: number;
+  }>({ total: 0, completed: 0 });
 
   // Missing setup items
   const [missingTargets, setMissingTargets] = useState<string[]>([]);
@@ -153,7 +161,7 @@ export function TodayView() {
 
       const dNow = new Date();
       setFormattedHeaderDate(
-        new Intl.DateTimeFormat("en-US", {
+        new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
           timeZone: tz,
           weekday: "long",
           month: "short",
@@ -359,11 +367,19 @@ export function TodayView() {
 
       // Process [7]: Deadlines
       const completedDeadlineIds: string[] = [];
+      let todayDeadlinesTtl = 0;
+      let todayDeadlinesCmpl = 0;
       if (results[7].status === "fulfilled" && results[7].value.data) {
         const dls = results[7].value.data as any[];
         dls.forEach((d) => {
           if (d.completed) completedDeadlineIds.push(d.id);
+          const dueDay = d.due_date ? d.due_date.split("T")[0] : "";
+          if (dueDay === todayStr) {
+            todayDeadlinesTtl += 1;
+            if (d.completed) todayDeadlinesCmpl += 1;
+          }
         });
+        setDeadlinesToday({ total: todayDeadlinesTtl, completed: todayDeadlinesCmpl });
 
         const pending = dls.filter((d) => !d.completed);
         if (pending.length > 0) {
@@ -477,6 +493,12 @@ export function TodayView() {
           mealCount: todayNutrition.mealCount,
         }
       : null,
+    activeModules: {
+      workouts: isModuleActive("module_workouts"),
+      nutrition: isModuleActive("module_nutrition"),
+      sleep: isModuleActive("module_sleep"),
+      weight: isModuleActive("module_weight"),
+    },
   });
 
   // Ring 2: Mind
@@ -485,20 +507,31 @@ export function TodayView() {
     dailyGoalMinutes: dailyFocusGoalMinutes,
     discipline: null, // Graceful if discipline table not yet run
     hasCurrentPeriodCheckin: checkins.morning || checkins.midday || checkins.evening,
+    activeModules: {
+      focus: isModuleActive("module_mind_focus"),
+      discipline: isModuleActive("module_mind_discipline"),
+      reading: isModuleActive("module_mind_reading"),
+      screentime: isModuleActive("module_mind_screentime"),
+    },
   });
 
   // Ring 3: School
   const schoolRing: RingResult = calculateSchoolRing({
-    hasSubjectsConfigured: subjectCount !== null && subjectCount > 0,
-    deadlinesDueWithin48h: nearestDeadline
-      ? { total: 1, completed: 0 }
-      : { total: 0, completed: 0 },
-    subjectStudyMinutes: 0,
+    deadlinesDueTodayTotal: deadlinesToday.total,
+    deadlinesDueTodayCompleted: deadlinesToday.completed,
+    targetStudyMinutes: null,
+    actualStudyMinutes: todayFocusMinutes,
+    activeModules: {
+      timetable: isModuleActive("module_school_timetable"),
+      topics: isModuleActive("module_school_topics"),
+      mistakes: isModuleActive("module_school_mistakes"),
+    },
   });
 
   // Recommendation Engine Output
+  const isWorkoutsActive = isModuleActive("module_workouts");
   const recommendation: RecommendationOutput = generateTodayRecommendation({
-    plannedWorkoutSession: plannedSplitSession || "Push Day",
+    plannedWorkoutSession: isWorkoutsActive ? (plannedSplitSession || "Push Day") : null,
     lastNightSleep: latestSleep
       ? {
           durationMinutes: latestSleep.durationMinutes,
@@ -508,6 +541,14 @@ export function TodayView() {
     sevenDayAvgSleepHours,
     lastWorkout: latestWorkout,
     nearestExam,
+    activeModules: {
+      workouts: isWorkoutsActive,
+      nutrition: isModuleActive("module_nutrition"),
+      sleep: isModuleActive("module_sleep"),
+      focus: isModuleActive("module_mind_focus"),
+      discipline: isModuleActive("module_mind_discipline"),
+      timetable: isModuleActive("module_school_timetable"),
+    },
   });
 
   // Circadian Timeline
@@ -515,13 +556,13 @@ export function TodayView() {
   const circadianPhases: CircadianPhase[] = generateCircadianTimeline({
     targetWakeTime: "07:00",
     targetBedtime: "23:00",
-    plannedWorkout: plannedSplitSession
+    plannedWorkout: (isWorkoutsActive && plannedSplitSession)
       ? {
           name: `${plannedSplitSession} Session`,
           isLogged: !!latestWorkout && latestWorkout.elapsedHours < 16,
         }
       : null,
-    dailyFocusGoalMinutes: dailyFocusGoalMinutes || 180,
+    dailyFocusGoalMinutes: isModuleActive("module_mind_focus") ? (dailyFocusGoalMinutes || 180) : 0,
     todayDeadlines: nearestDeadline
       ? [{ title: nearestDeadline.title, dueTime: "23:59", completed: false }]
       : [],
@@ -537,7 +578,7 @@ export function TodayView() {
         <div className="flex items-center gap-2.5">
           <Calendar className="w-4 h-4 text-primary-lime" />
           <span className="text-xs font-mono font-bold uppercase tracking-wider text-on-surface">
-            {formattedHeaderDate || "Today"}
+            {formattedHeaderDate || (locale === "ar" ? "النهاردة" : "Today")}
           </span>
         </div>
 
@@ -548,14 +589,14 @@ export function TodayView() {
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-high border border-border-subtle text-[11px] font-mono text-secondary-cyan hover:border-secondary-cyan/40 transition-colors"
             >
               <Weight className="w-3.5 h-3.5" />
-              <span>{currentWeightKg} kg</span>
+              <span>{currentWeightKg} {locale === "ar" ? "كيلو" : "kg"}</span>
             </Link>
           )}
 
           <button
             onClick={() => loadDashboardData()}
             className="p-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-text-muted hover:text-on-surface transition-colors cursor-pointer"
-            title="Refresh dashboard"
+            title={locale === "ar" ? "تحديث البيانات" : "Refresh dashboard"}
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
           </button>
@@ -567,6 +608,9 @@ export function TodayView() {
         bodyRing={bodyRing}
         mindRing={mindRing}
         schoolRing={schoolRing}
+        isBodyActive={isPillarActive("body")}
+        isMindActive={isPillarActive("mind")}
+        isSchoolActive={isPillarActive("school")}
       />
 
       {/* 3. Recommendation Card with Lime-Free Accent & Reasoning */}
@@ -587,31 +631,35 @@ export function TodayView() {
       {/* 6. Modular Pillar Cards Grid (Error Isolated) */}
       <div className="space-y-4">
         <div className="text-xs font-mono uppercase tracking-wider text-text-muted font-semibold px-1">
-          Pillar Telemetry Overview
+          {locale === "ar" ? "نظرة عامة على محاور اليوم" : "Pillar Telemetry Overview"}
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          <TodayBodyCard
-            latestWorkoutName={latestWorkout?.name || null}
-            highestRankTier={highestRankTier}
-            currentWeightKg={currentWeightKg}
-            todayNutrition={todayNutrition}
-            latestSleep={latestSleep}
-            error={bodyError}
-          />
+          {isPillarActive("body") && (
+            <TodayBodyCard
+              latestWorkoutName={latestWorkout?.name || null}
+              highestRankTier={highestRankTier}
+              currentWeightKg={currentWeightKg}
+              todayNutrition={todayNutrition}
+              latestSleep={latestSleep}
+              error={bodyError}
+            />
+          )}
 
-          <TodayMindCard
-            todayFocusMinutes={todayFocusMinutes}
-            completedSprintCount={completedSprintCount}
-            focusScore={todayFocusMinutes > 0 ? 80 : null}
-            disciplineDisplay={disciplineDisplay}
-            morningCheckinDone={checkins.morning}
-            middayCheckinDone={checkins.midday}
-            eveningCheckinDone={checkins.evening}
-            error={mindError}
-          />
+          {isPillarActive("mind") && (
+            <TodayMindCard
+              todayFocusMinutes={todayFocusMinutes}
+              completedSprintCount={completedSprintCount}
+              focusScore={todayFocusMinutes > 0 ? 80 : null}
+              disciplineDisplay={disciplineDisplay}
+              morningCheckinDone={checkins.morning}
+              middayCheckinDone={checkins.midday}
+              eveningCheckinDone={checkins.evening}
+              error={mindError}
+            />
+          )}
 
-          {subjectCount !== null && subjectCount > 0 && (
+          {isPillarActive("school") && subjectCount !== null && subjectCount > 0 && (
             <TodaySchoolCard
               subjectCount={subjectCount}
               nearestDeadline={nearestDeadline}
@@ -634,7 +682,11 @@ export function TodayView() {
         onCarryOver={() => {
           const incomplete = priorities.filter((p) => !p.completed);
           if (incomplete.length > 0) {
-            alert(`Carried over ${incomplete.length} task(s) to tomorrow.`);
+            alert(
+              locale === "ar"
+                ? `تم ترحيل ${incomplete.length} مهمة لبكرة بنجاح.`
+                : `Carried over ${incomplete.length} task(s) to tomorrow.`
+            );
           }
         }}
       />

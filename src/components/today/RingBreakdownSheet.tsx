@@ -36,14 +36,15 @@ export function RingBreakdownSheet({ ring, isOpen, onClose }: RingBreakdownSheet
 
   const formatComponentName = (name: string) => {
     if (locale !== "ar") return name;
-    if (name.toLowerCase().includes("workout")) return "التمرين";
-    if (name.toLowerCase().includes("sleep")) return "النوم";
-    if (name.toLowerCase().includes("nutrition") || name.toLowerCase().includes("calories")) return "التغذية";
-    if (name.toLowerCase().includes("focus")) return "التركيز";
-    if (name.toLowerCase().includes("discipline") || name.toLowerCase().includes("habits")) return "الالتزام";
-    if (name.toLowerCase().includes("grade")) return "الدرجات";
-    if (name.toLowerCase().includes("deadline")) return "المواعيد";
-    if (name.toLowerCase().includes("practice") || name.toLowerCase().includes("review")) return "المراجعة";
+    if (name.includes("Log last night's sleep") || name.toLowerCase().includes("sleep")) return "تسجيل نوم امبارح";
+    if (name.includes("Food logged today") || name.toLowerCase().includes("food") || name.toLowerCase().includes("meal")) return "سجلت أكلك النهاردة";
+    if (name.includes("Water target reached") || name.toLowerCase().includes("water")) return "وصلت لهدف المية";
+    if (name.includes("Workout planned") || name.toLowerCase().includes("workout")) return "التمرين المتخطط له";
+    if (name.includes("Daily check-in") || name.toLowerCase().includes("check-in")) return "تسجيل الحالة اليومية";
+    if (name.includes("Hit focus time goal") || name.toLowerCase().includes("focus")) return "حققت وقت التركيز";
+    if (name.includes("Complete daily habits") || name.toLowerCase().includes("habits") || name.toLowerCase().includes("discipline")) return "العادات اليومية";
+    if (name.includes("Deadlines due today") || name.toLowerCase().includes("deadline")) return "تسليمات النهاردة";
+    if (name.includes("Daily study target") || name.toLowerCase().includes("study")) return "هدف المذاكرة اليومي";
     return name;
   };
 
@@ -60,14 +61,19 @@ export function RingBreakdownSheet({ ring, isOpen, onClose }: RingBreakdownSheet
         <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-5">
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center border font-mono font-bold text-sm"
+              className="px-3 py-1.5 rounded-xl flex flex-col items-center justify-center border font-mono font-bold text-xs"
               style={{
                 borderColor: `${ring.colorHex}40`,
                 backgroundColor: `${ring.colorHex}15`,
                 color: ring.colorHex,
               }}
             >
-              {ring.ringPercent !== null ? `${ring.ringPercent}%` : "--"}
+              <span>{ring.displayText}</span>
+              {ring.ringPercent !== null && (
+                <span className="text-[10px] opacity-75 font-normal">
+                  {ring.ringPercent}%
+                </span>
+              )}
             </div>
             <div>
               <h3 className="text-base font-bold font-mono text-on-surface">

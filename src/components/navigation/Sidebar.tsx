@@ -15,24 +15,28 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { clearPWACaches } from "@/components/pwa/PWAProvider";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { useUserModules } from "@/lib/modules/UserModulesContext";
 
 interface SidebarProps {
   userEmail: string | null;
   userId: string | null;
 }
 
-const navItems = [
-  { href: "/today", label: "Today", icon: Flame },
-  { href: "/body", label: "Body", icon: Dumbbell },
-  { href: "/mind", label: "Mind", icon: Brain },
-  { href: "/school", label: "School", icon: GraduationCap },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
-
 export function Sidebar({ userEmail, userId }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const { dict } = useI18n();
+  const { isPillarActive } = useUserModules();
+
+  const navItems = [
+    { href: "/today", label: dict.nav.today, icon: Flame, visible: true },
+    { href: "/body", label: dict.nav.body, icon: Dumbbell, visible: isPillarActive("body") },
+    { href: "/mind", label: dict.nav.mind, icon: Brain, visible: isPillarActive("mind") },
+    { href: "/school", label: dict.nav.school, icon: GraduationCap, visible: isPillarActive("school") },
+    { href: "/settings", label: dict.nav.settings, icon: Settings, visible: true },
+  ].filter((item) => item.visible);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -43,7 +47,7 @@ export function Sidebar({ userEmail, userId }: SidebarProps) {
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 bg-surface border-r border-border-subtle z-30 select-none">
+    <aside className="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 bg-surface border-e border-border-subtle z-30 select-none">
       {/* Brand Header */}
       <div className="h-16 px-6 flex items-center justify-between border-b border-border-subtle">
         <div className="flex items-center gap-3">
@@ -55,7 +59,7 @@ export function Sidebar({ userEmail, userId }: SidebarProps) {
               LIFE
             </span>
             <div className="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
-              Obsidian Kinetic
+              {dict.nav.brandTag}
             </div>
           </div>
         </div>
@@ -72,7 +76,7 @@ export function Sidebar({ userEmail, userId }: SidebarProps) {
               href={item.href}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-xs transition-all ${
                 isActive
-                  ? "bg-surface-container-high text-primary-lime shadow-sm border-l-2 border-primary-lime pl-3"
+                  ? "bg-surface-container-high text-primary-lime shadow-sm border-s-2 border-primary-lime ps-3"
                   : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60"
               }`}
             >
@@ -119,7 +123,7 @@ export function Sidebar({ userEmail, userId }: SidebarProps) {
           ) : (
             <LogOut className="w-3.5 h-3.5" />
           )}
-          <span>Sign Out</span>
+          <span>{dict.nav.signOut}</span>
         </button>
       </div>
     </aside>

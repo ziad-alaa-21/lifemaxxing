@@ -21,6 +21,7 @@ export interface RingComponentDetail {
   percent: number | null;
   status: RingState;
   weight: number;
+  isCompleted?: boolean;
 }
 
 export interface RingResult {
@@ -29,7 +30,9 @@ export interface RingResult {
   colorHex: string;
   ringPercent: number | null; // null when no_data or not_set_up
   status: RingState;
-  displayText: string;
+  displayText: string; // "X of Y"
+  completedCount: number;
+  totalPlannedCount: number;
   deltaVsYesterday: number | null; // ONLY shown if both days have data
   components: RingComponentDetail[];
 }
@@ -39,6 +42,7 @@ export interface BodyRingInput {
   isRestDayToday?: boolean; // is today designated rest day in split
   hasWorkoutSplit?: boolean; // has user configured a split
   hasLoggedWorkoutToday?: boolean;
+  hasLastNightSleep?: boolean;
   lastNightSleep?: {
     durationMinutes: number;
     targetHours?: number;
@@ -55,163 +59,136 @@ export interface BodyRingInput {
     mealCount: number;
   } | null;
   yesterdayScore?: number | null;
+  activeModules?: {
+    workouts?: boolean;
+    nutrition?: boolean;
+    sleep?: boolean;
+    weight?: boolean;
+  };
 }
 
 export function calculateBodyRing(input: BodyRingInput): RingResult {
   const components: RingComponentDetail[] = [];
-  let totalWeightedScore = 0;
-  let totalActiveWeight = 0;
+  let totalPlanned = 0;
+  let completed = 0;
 
-  // 1. Workout Component (Weight: 0.40)
-  const wWorkout = 0.40;
-  if (!input.hasWorkoutSplit && !input.hasLoggedWorkoutToday) {
-    components.push({
-      name: "Workout",
-      plannedText: "No split configured",
-      doneText: input.hasLoggedWorkoutToday ? "Session logged" : "Unlogged",
-      percent: null,
-      status: "not_set_up",
-      weight: wWorkout,
-    });
-  } else if (input.isRestDayToday) {
-    components.push({
-      name: "Workout",
-      plannedText: "Scheduled Rest Day",
-      doneText: "Active Recovery",
-      percent: 100,
-      status: "active",
-      weight: wWorkout,
-    });
-    totalWeightedScore += 100 * wWorkout;
-    totalActiveWeight += wWorkout;
-  } else {
-    const workoutPct = input.hasLoggedWorkoutToday ? 100 : 0;
-    components.push({
-      name: "Workout",
-      plannedText: "Planned session",
-      doneText: input.hasLoggedWorkoutToday ? "Session completed" : "Pending",
-      percent: workoutPct,
-      status: "active",
-      weight: wWorkout,
-    });
-    totalWeightedScore += workoutPct * wWorkout;
-    totalActiveWeight += wWorkout;
-  }
+  const workoutsActive = input.activeModules?.workouts !== false;
+  const nutritionActive = input.activeModules?.nutrition !== false;
+  const sleepActive = input.activeModules?.sleep !== false;
 
-  // 2. Sleep Component (Weight: 0.35)
-  const wSleep = 0.35;
-  if (!input.lastNightSleep) {
-    components.push({
-      name: "Sleep",
-      plannedText: "Target sleep",
-      doneText: "No log last night",
-      percent: null,
-      status: "no_data",
-      weight: wSleep,
-    });
-  } else {
-    const sleepResult = calculateSleepScore(
-      input.lastNightSleep.durationMinutes,
-      input.lastNightSleep.targetHours || 8.0,
-      input.lastNightSleep.qualityRating,
-      input.lastNightSleep.awakeningsCount
+  // 1. Sleep: "Sleep logged" is labeled "Log last night's sleep" and is done when last night's entry exists
+  if (sleepActive) {
+    totalPlanned += 1;
+    const isSleepDone = Boolean(
+      input.hasLastNightSleep ||
+      (input.lastNightSleep && input.lastNightSleep.durationMinutes > 0)
     );
-    const score = Math.max(0, Math.min(100, sleepResult.score));
-    const h = (input.lastNightSleep.durationMinutes / 60).toFixed(1);
+    if (isSleepDone) completed += 1;
     components.push({
-      name: "Sleep",
-      plannedText: `${input.lastNightSleep.targetHours || 8.0}h target`,
-      doneText: `${h}h logged (${score}/100)`,
-      percent: score,
-      status: "active",
-      weight: wSleep,
+      name: "Log last night's sleep",
+      plannedText: "1 entry",
+      doneText: isSleepDone ? "Logged" : "Pending",
+      percent: isSleepDone ? 100 : 0,
+      status: isSleepDone ? "active" : "no_data",
+      weight: 1,
+      isCompleted: isSleepDone,
     });
-    totalWeightedScore += score * wSleep;
-    totalActiveWeight += wSleep;
   }
 
-  // 3. Nutrition Component (Weight: 0.25)
-  const wNutrition = 0.25;
-  const nutr = input.nutrition;
-  if (!nutr || (!nutr.targetCalories && nutr.mealCount === 0)) {
+  // 2. Nutrition: "food logged today" = at least one meal logged; no calorie-hit item.
+  if (nutritionActive) {
+    totalPlanned += 1;
+    const hasFood = Boolean(input.nutrition && input.nutrition.mealCount >= 1);
+    if (hasFood) completed += 1;
     components.push({
-      name: "Nutrition",
-      plannedText: "Daily target",
-      doneText: "Not set up",
-      percent: null,
-      status: "not_set_up",
-      weight: wNutrition,
+      name: "Food logged today",
+      plannedText: "At least 1 meal",
+      doneText: hasFood ? `${input.nutrition?.mealCount} meals logged` : "No meals logged",
+      percent: hasFood ? 100 : 0,
+      status: hasFood ? "active" : "no_data",
+      weight: 1,
+      isCompleted: hasFood,
     });
-  } else {
-    // Calorie score rule: "No overeating = 100%"
-    let calPct = 100;
-    if (nutr.targetCalories && nutr.targetCalories > 0) {
-      if (nutr.mealCount === 0) {
-        calPct = 0;
-      } else if (nutr.caloriesConsumed <= nutr.targetCalories) {
-        calPct = 100; // No overeating = 100%
-      } else {
-        // Proportionally penalize surplus
-        const surplus = nutr.caloriesConsumed - nutr.targetCalories;
-        calPct = Math.max(0, Math.round(100 - (surplus / nutr.targetCalories) * 100));
+
+    // "water target reached" ONLY when a water target is set
+    const waterTarget = input.nutrition?.targetWaterMl;
+    if (waterTarget && waterTarget > 0) {
+      totalPlanned += 1;
+      const waterConsumed = input.nutrition?.waterConsumedMl || 0;
+      const isWaterReached = waterConsumed >= waterTarget;
+      if (isWaterReached) completed += 1;
+      const waterPct = Math.min(100, Math.round((waterConsumed / waterTarget) * 100));
+      components.push({
+        name: "Water target reached",
+        plannedText: `${waterTarget} ml`,
+        doneText: `${waterConsumed} ml (${waterPct}%)`,
+        percent: waterPct,
+        status: "active",
+        weight: 1,
+        isCompleted: isWaterReached,
+      });
+    }
+  }
+
+  // 3. Workouts: "Workout planned" comes from the user's split (profiles.workout_split); no split = 0 planned (not a rest day).
+  if (workoutsActive) {
+    if (!input.hasWorkoutSplit) {
+      // No split = 0 planned (not a rest day)
+      components.push({
+        name: "Workout planned",
+        plannedText: "No split configured",
+        doneText: input.hasLoggedWorkoutToday ? "Session logged" : "None planned",
+        percent: input.hasLoggedWorkoutToday ? 100 : null,
+        status: "not_set_up",
+        weight: 1,
+        isCompleted: Boolean(input.hasLoggedWorkoutToday),
+      });
+      if (input.hasLoggedWorkoutToday) {
+        totalPlanned += 1;
+        completed += 1;
       }
+    } else if (input.isRestDayToday) {
+      // Rest day: 0 planned (not an item to fail)
+      components.push({
+        name: "Workout planned",
+        plannedText: "Rest Day",
+        doneText: input.hasLoggedWorkoutToday ? "Active session logged" : "Scheduled rest",
+        percent: 100,
+        status: "active",
+        weight: 1,
+        isCompleted: true,
+      });
+    } else {
+      // Planned workout today
+      totalPlanned += 1;
+      const isWorkoutDone = Boolean(input.hasLoggedWorkoutToday);
+      if (isWorkoutDone) completed += 1;
+      components.push({
+        name: "Workout planned",
+        plannedText: "1 planned session",
+        doneText: isWorkoutDone ? "Session completed" : "Pending",
+        percent: isWorkoutDone ? 100 : 0,
+        status: "active",
+        weight: 1,
+        isCompleted: isWorkoutDone,
+      });
     }
-
-    let subScoresCount = 1;
-    let subScoresSum = calPct;
-
-    if (nutr.targetProteinG && nutr.targetProteinG > 0) {
-      const protPct = Math.min(100, Math.round((nutr.proteinConsumedG / nutr.targetProteinG) * 100));
-      subScoresSum += protPct;
-      subScoresCount++;
-    }
-
-    if (nutr.targetWaterMl && nutr.targetWaterMl > 0) {
-      const waterPct = Math.min(100, Math.round((nutr.waterConsumedMl / nutr.targetWaterMl) * 100));
-      subScoresSum += waterPct;
-      subScoresCount++;
-    }
-
-    const nutrPct = Math.round(subScoresSum / subScoresCount);
-    components.push({
-      name: "Nutrition",
-      plannedText: nutr.targetCalories ? `${nutr.targetCalories} kcal budget` : "Macros",
-      doneText: `${nutr.caloriesConsumed} kcal logged`,
-      percent: nutrPct,
-      status: "active",
-      weight: wNutrition,
-    });
-    totalWeightedScore += nutrPct * wNutrition;
-    totalActiveWeight += wNutrition;
   }
 
-  // Aggregate Ring Percent
-  let ringPercent: number | null = null;
-  let status: RingState = "active";
-  let displayText = "0%";
-
-  if (totalActiveWeight === 0) {
-    status = "not_set_up";
-    displayText = "Not set up";
-  } else {
-    ringPercent = Math.round(totalWeightedScore / totalActiveWeight);
-    displayText = `${ringPercent}%`;
-  }
-
-  // Delta vs yesterday: ONLY when both days have data
-  let deltaVsYesterday: number | null = null;
-  if (ringPercent !== null && input.yesterdayScore !== null && input.yesterdayScore !== undefined) {
-    deltaVsYesterday = ringPercent - input.yesterdayScore;
-  }
+  const ringPercent = totalPlanned > 0 ? Math.min(100, Math.round((completed / totalPlanned) * 100)) : null;
+  const status: RingState = totalPlanned > 0 ? "active" : "no_data";
+  const displayText = totalPlanned > 0 ? `${completed} of ${totalPlanned}` : (input.isRestDayToday ? "Rest day" : "All clear today");
 
   return {
     domain: "body",
     label: "Body",
-    colorHex: "#06B6D4", // Cyan
+    colorHex: "#06B6D4",
     ringPercent,
     status,
     displayText,
-    deltaVsYesterday,
+    completedCount: completed,
+    totalPlannedCount: totalPlanned,
+    deltaVsYesterday: null,
     components,
   };
 }
@@ -224,197 +201,188 @@ export interface MindRingInput {
     completedCommitments: number;
   } | null;
   hasCurrentPeriodCheckin?: boolean;
+  hasCheckinToday?: boolean;
   yesterdayScore?: number | null;
+  activeModules?: {
+    focus?: boolean;
+    discipline?: boolean;
+    reading?: boolean;
+    screentime?: boolean;
+  };
 }
 
 export function calculateMindRing(input: MindRingInput): RingResult {
   const components: RingComponentDetail[] = [];
-  let totalWeightedScore = 0;
-  let totalActiveWeight = 0;
+  let totalPlanned = 0;
+  let completed = 0;
 
-  // 1. Focus Component (Weight: 0.50)
-  const wFocus = 0.50;
-  const goalMin = input.dailyGoalMinutes || 180;
-  const focusPct = Math.min(100, Math.round((input.actualFocusMinutes / goalMin) * 100));
-  components.push({
-    name: "Focus Sessions",
-    plannedText: `${goalMin}m goal`,
-    doneText: `${input.actualFocusMinutes}m completed`,
-    percent: focusPct,
-    status: "active",
-    weight: wFocus,
-  });
-  totalWeightedScore += focusPct * wFocus;
-  totalActiveWeight += wFocus;
+  const focusActive = input.activeModules?.focus !== false;
+  const disciplineActive = input.activeModules?.discipline !== false;
 
-  // 2. Discipline Commitments (Weight: 0.35)
-  const wDisc = 0.35;
-  if (!input.discipline || input.discipline.totalCommitments === 0) {
+  // 1. Check-in: "one check-in per day satisfies the check-in item (I want one per day for the ring)"
+  if (disciplineActive) {
+    totalPlanned += 1;
+    const isCheckinDone = Boolean(input.hasCheckinToday || input.hasCurrentPeriodCheckin);
+    if (isCheckinDone) completed += 1;
     components.push({
-      name: "Discipline",
-      plannedText: "Commitments",
-      doneText: "Not set up",
-      percent: null,
-      status: "not_set_up",
-      weight: wDisc,
+      name: "Daily check-in",
+      plannedText: "1 check-in",
+      doneText: isCheckinDone ? "Completed" : "Pending",
+      percent: isCheckinDone ? 100 : 0,
+      status: isCheckinDone ? "active" : "no_data",
+      weight: 1,
+      isCompleted: isCheckinDone,
     });
-  } else {
-    const discPct = Math.round(
-      (input.discipline.completedCommitments / input.discipline.totalCommitments) * 100
-    );
-    components.push({
-      name: "Discipline",
-      plannedText: `${input.discipline.totalCommitments} active commitments`,
-      doneText: `${input.discipline.completedCommitments} completed`,
-      percent: discPct,
-      status: "active",
-      weight: wDisc,
-    });
-    totalWeightedScore += discPct * wDisc;
-    totalActiveWeight += wDisc;
+
+    // 2. Discipline habits
+    if (input.discipline && input.discipline.totalCommitments > 0) {
+      const habitsCount = input.discipline.totalCommitments;
+      const habitsDone = input.discipline.completedCommitments;
+      totalPlanned += habitsCount;
+      completed += Math.min(habitsCount, habitsDone);
+      components.push({
+        name: "Complete daily habits",
+        plannedText: `${habitsCount} habits`,
+        doneText: `${habitsDone} completed`,
+        percent: Math.round((habitsDone / habitsCount) * 100),
+        status: "active",
+        weight: 1,
+        isCompleted: habitsDone >= habitsCount,
+      });
+    }
   }
 
-  // 3. State Check-in (Weight: 0.15)
-  const wCheck = 0.15;
-  const checkinPct = input.hasCurrentPeriodCheckin ? 100 : 0;
-  components.push({
-    name: "State Check-in",
-    plannedText: "Current phase check-in",
-    doneText: input.hasCurrentPeriodCheckin ? "Recorded" : "Pending",
-    percent: checkinPct,
-    status: "active",
-    weight: wCheck,
-  });
-  totalWeightedScore += checkinPct * wCheck;
-  totalActiveWeight += wCheck;
-
-  let ringPercent: number | null = null;
-  let status: RingState = "active";
-  let displayText = "0%";
-
-  if (totalActiveWeight === 0) {
-    status = "not_set_up";
-    displayText = "Not set up";
-  } else {
-    ringPercent = Math.round(totalWeightedScore / totalActiveWeight);
-    displayText = `${ringPercent}%`;
+  // 3. Focus: "Focus counts only when a focus goal is set."
+  if (focusActive) {
+    if (input.dailyGoalMinutes && input.dailyGoalMinutes > 0) {
+      totalPlanned += 1;
+      const goalMin = input.dailyGoalMinutes;
+      const isFocusReached = input.actualFocusMinutes >= goalMin;
+      if (isFocusReached) completed += 1;
+      const focusPct = Math.min(100, Math.round((input.actualFocusMinutes / goalMin) * 100));
+      components.push({
+        name: "Hit focus time goal",
+        plannedText: `${goalMin}m goal`,
+        doneText: `${input.actualFocusMinutes}m completed (${focusPct}%)`,
+        percent: focusPct,
+        status: "active",
+        weight: 1,
+        isCompleted: isFocusReached,
+      });
+    } else {
+      components.push({
+        name: "Hit focus time goal",
+        plannedText: "No goal set",
+        doneText: `${input.actualFocusMinutes}m logged`,
+        percent: null,
+        status: "not_set_up",
+        weight: 1,
+        isCompleted: false,
+      });
+    }
   }
 
-  let deltaVsYesterday: number | null = null;
-  if (ringPercent !== null && input.yesterdayScore !== null && input.yesterdayScore !== undefined) {
-    deltaVsYesterday = ringPercent - input.yesterdayScore;
-  }
+  const ringPercent = totalPlanned > 0 ? Math.min(100, Math.round((completed / totalPlanned) * 100)) : null;
+  const status: RingState = totalPlanned > 0 ? "active" : "no_data";
+  const displayText = totalPlanned > 0 ? `${completed} of ${totalPlanned}` : "All clear today";
 
   return {
     domain: "mind",
     label: "Mind",
-    colorHex: "#8B5CF6", // Violet
+    colorHex: "#8B5CF6",
     ringPercent,
     status,
     displayText,
-    deltaVsYesterday,
+    completedCount: completed,
+    totalPlannedCount: totalPlanned,
+    deltaVsYesterday: null,
     components,
   };
 }
 
 export interface SchoolRingInput {
-  hasSubjectsConfigured?: boolean;
+  deadlinesDueTodayTotal?: number; // Y counts only deadlines due TODAY in the user's timezone
+  deadlinesDueTodayCompleted?: number;
   deadlinesDueWithin48h?: {
     total: number;
     completed: number;
   } | null;
-  subjectStudyMinutes?: number;
-  targetStudyMinutes?: number;
+  targetStudyMinutes?: number | null; // plus a study target if user set one
+  actualStudyMinutes?: number;
   yesterdayScore?: number | null;
+  activeModules?: {
+    timetable?: boolean;
+    topics?: boolean;
+    mistakes?: boolean;
+  };
 }
 
 export function calculateSchoolRing(input: SchoolRingInput): RingResult {
   const components: RingComponentDetail[] = [];
-  let totalWeightedScore = 0;
-  let totalActiveWeight = 0;
+  let totalPlanned = 0;
+  let completed = 0;
 
-  if (!input.hasSubjectsConfigured) {
-    return {
-      domain: "school",
-      label: "School",
-      colorHex: "#F59E0B", // Amber
-      ringPercent: null,
-      status: "not_set_up",
-      displayText: "Not set up",
-      deltaVsYesterday: null,
-      components: [
-        {
-          name: "Academic Setup",
-          plannedText: "Subjects & coursework",
-          doneText: "Not set up",
-          percent: null,
-          status: "not_set_up",
-          weight: 1.0,
-        },
-      ],
-    };
-  }
+  // 1. Deadlines due TODAY in user's timezone
+  const todayDeadlines = input.deadlinesDueTodayTotal ?? 0;
+  const todayCompleted = input.deadlinesDueTodayCompleted ?? 0;
 
-  // 1. Deadlines due within 48h (Weight: 0.60)
-  const wDl = 0.60;
-  if (!input.deadlinesDueWithin48h || input.deadlinesDueWithin48h.total === 0) {
-    // 0 deadlines due in next 48h = 100% on track
+  if (todayDeadlines > 0) {
+    totalPlanned += todayDeadlines;
+    completed += Math.min(todayDeadlines, todayCompleted);
     components.push({
-      name: "Deadlines (48h)",
-      plannedText: "Assessments due ≤48h",
-      doneText: "All clear (0 pending)",
+      name: "Deadlines due today",
+      plannedText: `${todayDeadlines} due today`,
+      doneText: `${todayCompleted} completed`,
+      percent: Math.round((todayCompleted / todayDeadlines) * 100),
+      status: "active",
+      weight: 1,
+      isCompleted: todayCompleted >= todayDeadlines,
+    });
+  } else {
+    components.push({
+      name: "Deadlines due today",
+      plannedText: "0 due today",
+      doneText: "All clear",
       percent: 100,
       status: "active",
-      weight: wDl,
+      weight: 1,
+      isCompleted: true,
     });
-    totalWeightedScore += 100 * wDl;
-    totalActiveWeight += wDl;
-  } else {
-    const dlPct = Math.round(
-      (input.deadlinesDueWithin48h.completed / input.deadlinesDueWithin48h.total) * 100
-    );
+  }
+
+  // 2. Study target if user set one
+  if (input.targetStudyMinutes && input.targetStudyMinutes > 0) {
+    totalPlanned += 1;
+    const targetMin = input.targetStudyMinutes;
+    const actualMin = input.actualStudyMinutes || 0;
+    const isStudyDone = actualMin >= targetMin;
+    if (isStudyDone) completed += 1;
+    const studyPct = Math.min(100, Math.round((actualMin / targetMin) * 100));
     components.push({
-      name: "Deadlines (48h)",
-      plannedText: `${input.deadlinesDueWithin48h.total} due within 48h`,
-      doneText: `${input.deadlinesDueWithin48h.completed} completed`,
-      percent: dlPct,
+      name: "Daily study target",
+      plannedText: `${targetMin}m goal`,
+      doneText: `${actualMin}m (${studyPct}%)`,
+      percent: studyPct,
       status: "active",
-      weight: wDl,
+      weight: 1,
+      isCompleted: isStudyDone,
     });
-    totalWeightedScore += dlPct * wDl;
-    totalActiveWeight += wDl;
   }
 
-  // 2. Study Session Minutes (Weight: 0.40)
-  const wStudy = 0.40;
-  const targetStudy = input.targetStudyMinutes || 60;
-  const studyMins = input.subjectStudyMinutes || 0;
-  const studyPct = Math.min(100, Math.round((studyMins / targetStudy) * 100));
-  components.push({
-    name: "Subject Study",
-    plannedText: `${targetStudy}m target`,
-    doneText: `${studyMins}m logged`,
-    percent: studyPct,
-    status: "active",
-    weight: wStudy,
-  });
-  totalWeightedScore += studyPct * wStudy;
-  totalActiveWeight += wStudy;
-
-  const ringPercent = Math.round(totalWeightedScore / totalActiveWeight);
-  let deltaVsYesterday: number | null = null;
-  if (input.yesterdayScore !== null && input.yesterdayScore !== undefined) {
-    deltaVsYesterday = ringPercent - input.yesterdayScore;
-  }
+  const ringPercent = totalPlanned > 0 ? Math.min(100, Math.round((completed / totalPlanned) * 100)) : null;
+  const status: RingState = totalPlanned > 0 ? "active" : "no_data";
+  const displayText = totalPlanned > 0 ? `${completed} of ${totalPlanned}` : "All clear today";
 
   return {
     domain: "school",
     label: "School",
-    colorHex: "#F59E0B", // Amber
+    colorHex: "#F59E0B",
     ringPercent,
-    status: "active",
-    displayText: `${ringPercent}%`,
-    deltaVsYesterday,
+    status,
+    displayText,
+    completedCount: completed,
+    totalPlannedCount: totalPlanned,
+    deltaVsYesterday: null,
     components,
   };
 }
@@ -445,6 +413,14 @@ export interface RecommendationInput {
     subjectName?: string;
     daysRemaining: number;
   } | null;
+  activeModules?: {
+    workouts?: boolean;
+    nutrition?: boolean;
+    sleep?: boolean;
+    focus?: boolean;
+    discipline?: boolean;
+    timetable?: boolean;
+  };
 }
 
 export interface RecommendationReasoning {
@@ -495,7 +471,8 @@ export function generateTodayRecommendation(
       : "No upcoming exams scheduled",
   };
 
-  const planned = (input.plannedWorkoutSession || "").trim().toLowerCase();
+  const workoutsActive = input.activeModules?.workouts !== false;
+  const planned = workoutsActive ? (input.plannedWorkoutSession || "").trim().toLowerCase() : "";
   const sleepHours = input.lastNightSleep
     ? input.lastNightSleep.durationMinutes / 60
     : null;
@@ -519,6 +496,16 @@ export function generateTodayRecommendation(
     headline = planned
       ? `No sleep logged last night. Planned session: ${input.plannedWorkoutSession}. Log sleep to calibrate training volume.`
       : "No sleep logged last night. Log your sleep in Body to unlock recovery insights.";
+    return { headline, categoryBadge, accentColor, reasoning };
+  }
+
+  // 3. If Workouts module is OFF, tailor recommendation to cognitive & recovery priorities
+  if (!workoutsActive) {
+    categoryBadge = "Cognitive Focus";
+    accentColor = "#8B5CF6"; // Violet
+    headline = isSleepDeficit
+      ? "Sleep is below baseline. Protect your mental energy and cap cognitive sprints at 45 minutes today."
+      : "Optimal readiness. Dedicate your primary focus interval to your highest-leverage deep work today.";
     return { headline, categoryBadge, accentColor, reasoning };
   }
 

@@ -10,9 +10,19 @@ interface LifePulseRingsProps {
   bodyRing: RingResult;
   mindRing: RingResult;
   schoolRing: RingResult;
+  isBodyActive?: boolean;
+  isMindActive?: boolean;
+  isSchoolActive?: boolean;
 }
 
-export function LifePulseRings({ bodyRing, mindRing, schoolRing }: LifePulseRingsProps) {
+export function LifePulseRings({
+  bodyRing,
+  mindRing,
+  schoolRing,
+  isBodyActive = true,
+  isMindActive = true,
+  isSchoolActive = true,
+}: LifePulseRingsProps) {
   const { locale } = useI18n();
   const [selectedRing, setSelectedRing] = useState<RingResult | null>(null);
 
@@ -71,10 +81,12 @@ export function LifePulseRings({ bodyRing, mindRing, schoolRing }: LifePulseRing
   };
 
   const ringsList = [
-    { ring: bodyRing, key: "body" },
-    { ring: mindRing, key: "mind" },
-    { ring: schoolRing, key: "school" },
-  ];
+    { ring: bodyRing, key: "body", active: isBodyActive },
+    { ring: mindRing, key: "mind", active: isMindActive },
+    { ring: schoolRing, key: "school", active: isSchoolActive },
+  ].filter((item) => item.active);
+
+  const activeRingsCount = ringsList.length;
 
   const getDomainLabel = (domain: string, fallback: string) => {
     if (locale !== "ar") return fallback;
@@ -116,15 +128,18 @@ export function LifePulseRings({ bodyRing, mindRing, schoolRing }: LifePulseRing
         {/* Left: Interactive Concentric SVG */}
         <div className="relative shrink-0 flex items-center justify-center">
           <svg width={size} height={size} className="overflow-visible">
-            {renderRingCircle(rBody, bodyRing.colorHex, bodyRing.ringPercent, () =>
-              setSelectedRing(bodyRing)
-            )}
-            {renderRingCircle(rMind, mindRing.colorHex, mindRing.ringPercent, () =>
-              setSelectedRing(mindRing)
-            )}
-            {renderRingCircle(rSchool, schoolRing.colorHex, schoolRing.ringPercent, () =>
-              setSelectedRing(schoolRing)
-            )}
+            {isBodyActive &&
+              renderRingCircle(rBody, bodyRing.colorHex, bodyRing.ringPercent, () =>
+                setSelectedRing(bodyRing)
+              )}
+            {isMindActive &&
+              renderRingCircle(rMind, mindRing.colorHex, mindRing.ringPercent, () =>
+                setSelectedRing(mindRing)
+              )}
+            {isSchoolActive &&
+              renderRingCircle(rSchool, schoolRing.colorHex, schoolRing.ringPercent, () =>
+                setSelectedRing(schoolRing)
+              )}
           </svg>
 
           {/* Center Label */}
@@ -133,7 +148,9 @@ export function LifePulseRings({ bodyRing, mindRing, schoolRing }: LifePulseRing
               {locale === "ar" ? "نبض الإنجاز" : "Life Pulse"}
             </span>
             <span className="text-sm font-mono font-bold text-on-surface">
-              {locale === "ar" ? "٣ حلقات" : "3 Rings"}
+              {locale === "ar"
+                ? `${activeRingsCount} ${activeRingsCount === 1 ? "حلقة" : activeRingsCount === 2 ? "حلقتين" : "حلقات"}`
+                : `${activeRingsCount} ${activeRingsCount === 1 ? "Ring" : "Rings"}`}
             </span>
           </div>
         </div>

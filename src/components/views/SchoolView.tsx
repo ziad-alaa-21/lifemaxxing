@@ -71,6 +71,10 @@ import {
   Flame,
 } from "lucide-react";
 
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { useUserModules } from "@/lib/modules/UserModulesContext";
+import { DisabledModuleFallback } from "@/components/modules/DisabledModuleFallback";
+
 type SchoolTab = "overview" | "grades" | "plan" | "practice" | "timetable" | "stats";
 type PracticeSubTab = "mistakes" | "topics";
 
@@ -84,6 +88,8 @@ export function SchoolView() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
+  const { dict, locale } = useI18n();
+  const { isModuleActive } = useUserModules();
 
   const { isOnline, isBlocked } = useOnlineGuard();
 
@@ -945,7 +951,11 @@ export function SchoolView() {
         <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-xl flex items-center justify-between gap-3 text-amber-300 text-xs font-mono">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>Offline: saving disabled to protect sync integrity.</span>
+            <span>
+              {locale === "ar"
+                ? "غير متصل بالإنترنت: تم إيقاف الحفظ لمنع تعارض البيانات."
+                : "Offline: saving disabled to protect sync integrity."}
+            </span>
           </div>
         </div>
       )}
@@ -955,21 +965,21 @@ export function SchoolView() {
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-surface-container-high border border-amber-400/40 shadow-2xl text-xs font-mono animate-in fade-in slide-in-from-bottom-2 duration-200">
           <span className="text-on-surface">
             {undoSnapshot.type === "grade"
-              ? "Assessment deleted"
+              ? locale === "ar" ? "تم حذف التقييم" : "Assessment deleted"
               : undoSnapshot.type === "deadline"
-              ? "Deadline deleted"
+              ? locale === "ar" ? "تم حذف موعد التسليم" : "Deadline deleted"
               : undoSnapshot.type === "mistake"
-              ? "Mistake deleted"
+              ? locale === "ar" ? "تم حذف الخطأ" : "Mistake deleted"
               : undoSnapshot.type === "topic"
-              ? "Topic deleted"
-              : "Item deleted"}
+              ? locale === "ar" ? "تم حذف المفهوم" : "Topic deleted"
+              : locale === "ar" ? "تم الحذف" : "Item deleted"}
           </span>
           <button
             onClick={handleUndo}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500 text-surface font-bold hover:bg-amber-400 transition-colors uppercase tracking-wider text-[11px] cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500 text-on-primary font-bold hover:bg-amber-400 transition-colors uppercase tracking-wider text-[11px] cursor-pointer"
           >
             <RotateCcw className="w-3 h-3 stroke-[3]" />
-            <span>Undo (8s)</span>
+            <span>{locale === "ar" ? "تراجع (8 ث)" : "Undo (8s)"}</span>
           </button>
         </div>
       )}
@@ -985,14 +995,16 @@ export function SchoolView() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold font-mono text-on-surface">
-                  School Engine
+                  {locale === "ar" ? "محرك الدراسة والتحصيل" : "School Engine"}
                 </h1>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high text-amber-300 border border-amber-500/20">
-                  Stage 8
+                  {locale === "ar" ? "المرحلة 8" : "Stage 8"}
                 </span>
               </div>
               <p className="text-xs text-on-surface-variant font-mono mt-0.5">
-                Pure percentages, active-recall mistakes & spaced repetition topics
+                {locale === "ar"
+                  ? "حساب النسب، استرجاع الأخطاء، والتكرار المتباعد للمفاهيم"
+                  : "Pure percentages, active-recall mistakes & spaced repetition topics"}
               </p>
             </div>
           </div>
@@ -1003,10 +1015,10 @@ export function SchoolView() {
                 setEditingSubject(null);
                 setIsSubjectModalOpen(true);
               }}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500 text-surface text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>Add Subject</span>
+              <span>{dict.school.addSubject}</span>
             </button>
           </div>
         </div>
@@ -1022,7 +1034,7 @@ export function SchoolView() {
               : "text-text-muted hover:text-on-surface"
           }`}
         >
-          Overview
+          {dict.school.overview}
         </button>
         <button
           onClick={() => handleTabChange("grades")}
@@ -1032,7 +1044,7 @@ export function SchoolView() {
               : "text-text-muted hover:text-on-surface"
           }`}
         >
-          Grades ({grades.length})
+          {dict.school.grades} ({grades.length})
         </button>
         <button
           onClick={() => handleTabChange("plan")}
@@ -1042,7 +1054,7 @@ export function SchoolView() {
               : "text-text-muted hover:text-on-surface"
           }`}
         >
-          Plan ({deadlines.filter((d) => !d.completed).length})
+          {dict.school.plan} ({deadlines.filter((d) => !d.completed).length})
         </button>
         <button
           onClick={() => handleTabChange("practice")}
@@ -1052,7 +1064,7 @@ export function SchoolView() {
               : "text-text-muted hover:text-on-surface"
           }`}
         >
-          <span>Practice</span>
+          <span>{dict.school.practice}</span>
           {duePracticeTotal > 0 && (
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
           )}
@@ -1065,7 +1077,7 @@ export function SchoolView() {
               : "text-text-muted hover:text-on-surface"
           }`}
         >
-          Timetable ({schedule.filter((s) => !s.deleted_at).length})
+          {dict.school.timetable} ({schedule.filter((s) => !s.deleted_at).length})
         </button>
         <button
           onClick={() => handleTabChange("stats")}
@@ -1075,7 +1087,7 @@ export function SchoolView() {
               : "text-text-muted hover:text-on-surface"
           }`}
         >
-          Stats
+          {locale === "ar" ? "الإحصائيات" : "Stats"}
         </button>
       </div>
 
@@ -1083,7 +1095,7 @@ export function SchoolView() {
       {error && (
         <div className="p-4 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-3 text-crimson-alert text-xs font-mono">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>Academic sync notice: {error}</span>
+          <span>{locale === "ar" ? "تنبيه المزامنة:" : "Academic sync notice:"} {error}</span>
         </div>
       )}
 
@@ -1091,7 +1103,9 @@ export function SchoolView() {
       {loading && (
         <div className="p-16 flex flex-col items-center justify-center text-on-surface-variant gap-3">
           <Loader2 className="w-7 h-7 animate-spin text-amber-400" />
-          <span className="text-xs font-mono">Loading academic records...</span>
+          <span className="text-xs font-mono">
+            {locale === "ar" ? "جاري تحميل السجلات الدراسية..." : "Loading academic records..."}
+          </span>
         </div>
       )}
 
@@ -1109,10 +1123,14 @@ export function SchoolView() {
                 </div>
                 <div>
                   <div className="text-sm font-bold font-mono text-on-surface">
-                    Action Required Today: {dueMistakesCount} Mistake Redo(s) • {dueTopicsCount} Topic Review(s)
+                    {locale === "ar"
+                      ? `مطلوب تركيزك النهاردة: ${dueMistakesCount} تصحيح أخطاء • ${dueTopicsCount} مراجعة مفاهيم`
+                      : `Action Required Today: ${dueMistakesCount} Mistake Redo(s) • ${dueTopicsCount} Topic Review(s)`}
                   </div>
                   <p className="text-xs font-mono text-on-surface-variant mt-0.5">
-                    Reinforce learning using active-recall and Leitner spaced intervals
+                    {locale === "ar"
+                      ? "ثبّت معلوماتك بالاسترجاع النشط وفترات التكرار المتباعد لايتنر"
+                      : "Reinforce learning using active-recall and Leitner spaced intervals"}
                   </p>
                 </div>
               </div>
@@ -1123,9 +1141,9 @@ export function SchoolView() {
                       setPracticeSubTab("mistakes");
                       handleTabChange("practice");
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-amber-500 text-surface text-xs font-mono font-bold uppercase hover:bg-amber-400 transition-all cursor-pointer shadow-sm"
+                    className="px-3 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 transition-all cursor-pointer shadow-sm"
                   >
-                    Redo Mistakes
+                    {locale === "ar" ? "حل الأخطاء تاني" : "Redo Mistakes"}
                   </button>
                 )}
                 {dueTopicsCount > 0 && (
@@ -1134,9 +1152,9 @@ export function SchoolView() {
                       setPracticeSubTab("topics");
                       handleTabChange("practice");
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-indigo-500 text-surface text-xs font-mono font-bold uppercase hover:bg-indigo-400 transition-all cursor-pointer shadow-sm"
+                    className="px-3 py-1.5 rounded-xl bg-indigo-500 text-white text-xs font-mono font-bold uppercase hover:bg-indigo-400 transition-all cursor-pointer shadow-sm"
                   >
-                    Review Topics
+                    {locale === "ar" ? "راجع المفاهيم" : "Review Topics"}
                   </button>
                 )}
               </div>
@@ -1148,7 +1166,7 @@ export function SchoolView() {
             {/* Average Across Subjects Card */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2">
               <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
-                Average across subjects (unweighted)
+                {locale === "ar" ? "المعدل التراكمي للمواد (غير موزون)" : "Average across subjects (unweighted)"}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-extrabold font-mono text-on-surface">
@@ -1157,18 +1175,20 @@ export function SchoolView() {
                     : "—"}
                 </span>
                 <span className="text-xs font-mono text-amber-400">
-                  {overallStats.gradedSubjectsCount} Graded Subjects
+                  {overallStats.gradedSubjectsCount} {locale === "ar" ? "مادة مقيمة" : "Graded Subjects"}
                 </span>
               </div>
               <p className="text-[11px] text-text-muted font-mono">
-                {overallStats.totalGradesCount} total assessments recorded across active courses
+                {locale === "ar"
+                  ? `إجمالي ${overallStats.totalGradesCount} تقييم متسجل في المواد النشطة`
+                  : `${overallStats.totalGradesCount} total assessments recorded across active courses`}
               </p>
             </div>
 
             {/* Nearest Deadline Card */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2">
               <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
-                Upcoming Deadline
+                {locale === "ar" ? "أقرب موعد تسليم" : "Upcoming Deadline"}
               </span>
               {nearestDl ? (
                 <div className="space-y-1">
@@ -1186,7 +1206,7 @@ export function SchoolView() {
                 </div>
               ) : (
                 <div className="text-xs font-mono text-text-muted pt-2">
-                  No upcoming deadlines pending
+                  {locale === "ar" ? "مفيش مواعيد تسليم قادمة" : "No upcoming deadlines pending"}
                 </div>
               )}
             </div>
@@ -1194,21 +1214,27 @@ export function SchoolView() {
             {/* Practice Retention Quick Card */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2">
               <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
-                Practice Retention Hub
+                {locale === "ar" ? "مركز التكرار والتثبيت" : "Practice Retention Hub"}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-extrabold font-mono text-on-surface">
                   {mistakes.length}
                 </span>
-                <span className="text-xs font-mono text-amber-400">Mistakes</span>
+                <span className="text-xs font-mono text-amber-400">
+                  {locale === "ar" ? "أخطاء" : "Mistakes"}
+                </span>
                 <span className="text-text-muted font-mono">•</span>
                 <span className="text-3xl font-extrabold font-mono text-on-surface">
                   {topics.length}
                 </span>
-                <span className="text-xs font-mono text-indigo-400">Topics</span>
+                <span className="text-xs font-mono text-indigo-400">
+                  {locale === "ar" ? "مفاهيم" : "Topics"}
+                </span>
               </div>
               <p className="text-[11px] text-text-muted font-mono">
-                {duePracticeTotal} item(s) due today for active retrieval practice
+                {locale === "ar"
+                  ? `${duePracticeTotal} عنصر مستحق النهاردة للتثبيت والمراجعة`
+                  : `${duePracticeTotal} item(s) due today for active retrieval practice`}
               </p>
             </div>
           </div>
@@ -1217,7 +1243,9 @@ export function SchoolView() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold font-mono text-on-surface uppercase tracking-wider">
-                Enrolled Subjects ({activeSubjects.length})
+                {locale === "ar"
+                  ? `المواد المسجلة (${activeSubjects.length})`
+                  : `Enrolled Subjects (${activeSubjects.length})`}
               </h2>
               <button
                 onClick={() => {
@@ -1227,7 +1255,7 @@ export function SchoolView() {
                 className="text-xs font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>New Subject</span>
+                <span>{locale === "ar" ? "مادة جديدة" : "New Subject"}</span>
               </button>
             </div>
 
@@ -1263,21 +1291,27 @@ export function SchoolView() {
                         </div>
                       </div>
 
-                      <div className="text-right">
+                      <div className="text-end">
                         <div className="text-base font-extrabold font-mono text-on-surface">
                           {avgResult.averagePct !== null
                             ? `${avgResult.averagePct}%`
                             : "—"}
                         </div>
                         <span className="text-[10px] font-mono text-text-muted">
-                          {avgResult.isWeighted ? "Weighted" : "Unweighted"}
+                          {avgResult.isWeighted
+                            ? locale === "ar" ? "موزون" : "Weighted"
+                            : locale === "ar" ? "غير موزون" : "Unweighted"}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-border-subtle/50 text-text-muted">
-                      <span>{subGrades.length} assessment(s)</span>
-                      <span>{subDeadlines.length} active deadline(s)</span>
+                      <span>
+                        {subGrades.length} {locale === "ar" ? "تقييم" : "assessment(s)"}
+                      </span>
+                      <span>
+                        {subDeadlines.length} {locale === "ar" ? "موعد تسليم" : "active deadline(s)"}
+                      </span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1286,7 +1320,7 @@ export function SchoolView() {
                         className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high text-amber-300 hover:bg-amber-500/20 transition-colors"
                       >
                         <Play className="w-3 h-3 fill-amber-300" />
-                        <span>Study</span>
+                        <span>{locale === "ar" ? "ذاكر" : "Study"}</span>
                       </button>
                     </div>
                   </div>
@@ -1300,10 +1334,12 @@ export function SchoolView() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold font-mono text-on-surface">
-                  Academic Performance Trend
+                  {locale === "ar" ? "مسار الأداء الدراسي" : "Academic Performance Trend"}
                 </h3>
                 <p className="text-xs font-mono text-text-muted mt-0.5">
-                  Quiz (circle) vs Big Exam (diamond) score progression
+                  {locale === "ar"
+                    ? "تطور الدرجات: كويز (دائرة) مقارنة بامتحان رئيسي (معين)"
+                    : "Quiz (circle) vs Big Exam (diamond) score progression"}
                 </p>
               </div>
             </div>
@@ -1324,7 +1360,7 @@ export function SchoolView() {
                 onChange={(e) => setGradeSubjectFilter(e.target.value)}
                 className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
               >
-                <option value="all">All Subjects</option>
+                <option value="all">{locale === "ar" ? "كل المواد" : "All Subjects"}</option>
                 {activeSubjects.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -1337,9 +1373,9 @@ export function SchoolView() {
                 onChange={(e) => setGradeTypeFilter(e.target.value)}
                 className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
               >
-                <option value="all">All Types</option>
-                <option value="quiz">Quizzes Only</option>
-                <option value="big_exam">Big Exams Only</option>
+                <option value="all">{locale === "ar" ? "كل الأنواع" : "All Types"}</option>
+                <option value="quiz">{locale === "ar" ? "كويزات بس" : "Quizzes Only"}</option>
+                <option value="big_exam">{locale === "ar" ? "امتحانات رئيسية بس" : "Big Exams Only"}</option>
               </select>
             </div>
 
@@ -1349,10 +1385,10 @@ export function SchoolView() {
                 setPreselectedGradeSubjectId("");
                 setIsGradeModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-surface text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Record Grade</span>
+              <span>{locale === "ar" ? "سجل درجة" : "Record Grade"}</span>
             </button>
           </div>
 
@@ -1390,7 +1426,9 @@ export function SchoolView() {
                                 : "bg-indigo-400/20 text-indigo-300"
                             }`}
                           >
-                            {g.type === "quiz" ? "Quiz" : "Big Exam"}
+                            {g.type === "quiz"
+                              ? locale === "ar" ? "كويز" : "Quiz"
+                              : locale === "ar" ? "امتحان رئيسي" : "Big Exam"}
                           </span>
                         </div>
                         <div className="text-[10px] text-text-muted flex items-center gap-2 mt-0.5">
@@ -1400,7 +1438,9 @@ export function SchoolView() {
                           {g.weight_pct !== null && (
                             <>
                               <span>•</span>
-                              <span>Weight: {g.weight_pct}%</span>
+                              <span>
+                                {locale === "ar" ? "الوزن النسبي:" : "Weight:"} {g.weight_pct}%
+                              </span>
                             </>
                           )}
                         </div>
@@ -1408,7 +1448,7 @@ export function SchoolView() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className="text-right">
+                      <div className="text-end">
                         <div className="text-sm font-extrabold text-on-surface">
                           {pct}%
                         </div>
@@ -1449,7 +1489,7 @@ export function SchoolView() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold font-mono text-on-surface uppercase tracking-wider">
-              Academic Deadlines & Schedule
+              {locale === "ar" ? "مواعيد التسليم والجدول الأكاديمي" : "Academic Deadlines & Schedule"}
             </h2>
             <button
               onClick={() => {
@@ -1457,10 +1497,10 @@ export function SchoolView() {
                 setPreselectedDeadlineSubjectId("");
                 setIsDeadlineModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-surface text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Add Deadline</span>
+              <span>{locale === "ar" ? "إضافة موعد تسليم" : "Add Deadline"}</span>
             </button>
           </div>
 
@@ -1503,7 +1543,7 @@ export function SchoolView() {
                           {sub?.name}
                         </span>
                         <span>•</span>
-                        <span>Due: {urgency.label}</span>
+                        <span>{locale === "ar" ? "التسليم:" : "Due:"} {urgency.label}</span>
                       </div>
                     </div>
                   </div>
@@ -1548,7 +1588,9 @@ export function SchoolView() {
               }`}
             >
               <BookX className="w-3.5 h-3.5" />
-              <span>Mistakes ({mistakes.length})</span>
+              <span>
+                {locale === "ar" ? "بنك الأخطاء" : "Mistakes"} ({mistakes.length})
+              </span>
             </button>
             <button
               onClick={() => setPracticeSubTab("topics")}
@@ -1559,47 +1601,63 @@ export function SchoolView() {
               }`}
             >
               <BookmarkCheck className="w-3.5 h-3.5" />
-              <span>Topics ({topics.length})</span>
+              <span>
+                {locale === "ar" ? "المفاهيم" : "Topics"} ({topics.length})
+              </span>
             </button>
           </div>
 
           {/* SubTab Content */}
           {practiceSubTab === "mistakes" ? (
-            <MistakesTab
-              mistakes={mistakes}
-              subjects={activeSubjects}
-              onOpenAddModal={() => {
-                setEditingMistake(null);
-                setIsMistakeModalOpen(true);
-              }}
-              onOpenEditModal={(m) => {
-                setEditingMistake(m);
-                setIsMistakeModalOpen(true);
-              }}
-              onOpenRedoModal={(m) => {
-                setActiveRedoMistake(m);
-                setIsRedoModalOpen(true);
-              }}
-              onDeleteMistake={handleDeleteMistake}
-            />
+            !isModuleActive("module_school_mistakes") ? (
+              <DisabledModuleFallback
+                moduleKey="module_school_mistakes"
+                onEnabled={() => setPracticeSubTab("mistakes")}
+              />
+            ) : (
+              <MistakesTab
+                mistakes={mistakes}
+                subjects={activeSubjects}
+                onOpenAddModal={() => {
+                  setEditingMistake(null);
+                  setIsMistakeModalOpen(true);
+                }}
+                onOpenEditModal={(m) => {
+                  setEditingMistake(m);
+                  setIsMistakeModalOpen(true);
+                }}
+                onOpenRedoModal={(m) => {
+                  setActiveRedoMistake(m);
+                  setIsRedoModalOpen(true);
+                }}
+                onDeleteMistake={handleDeleteMistake}
+              />
+            )
           ) : (
-            <TopicsTab
-              topics={topics}
-              subjects={activeSubjects}
-              onOpenAddModal={() => {
-                setEditingTopic(null);
-                setIsTopicModalOpen(true);
-              }}
-              onOpenBulkModal={() => {
-                setIsBulkTopicModalOpen(true);
-              }}
-              onOpenEditModal={(t) => {
-                setEditingTopic(t);
-                setIsTopicModalOpen(true);
-              }}
-              onQuickReview={handleQuickReviewTopic}
-              onDeleteTopic={handleDeleteTopic}
-            />
+            !isModuleActive("module_school_topics") ? (
+              <DisabledModuleFallback
+                moduleKey="module_school_topics"
+                onEnabled={() => setPracticeSubTab("topics")}
+              />
+            ) : (
+              <TopicsTab
+                topics={topics}
+                subjects={activeSubjects}
+                onOpenAddModal={() => {
+                  setEditingTopic(null);
+                  setIsTopicModalOpen(true);
+                }}
+                onOpenBulkModal={() => {
+                  setIsBulkTopicModalOpen(true);
+                }}
+                onOpenEditModal={(t) => {
+                  setEditingTopic(t);
+                  setIsTopicModalOpen(true);
+                }}
+                onQuickReview={handleQuickReviewTopic}
+                onDeleteTopic={handleDeleteTopic}
+              />
+            )
           )}
         </div>
       )}
@@ -1608,13 +1666,20 @@ export function SchoolView() {
       {/* TAB 5: TIMETABLE                                              */}
       {/* ============================================================== */}
       {!loading && activeTab === "timetable" && (
-        <TimetableGrid
-          schedule={schedule}
-          subjects={subjects}
-          onAddSession={handleAddScheduleSession}
-          onEditSession={handleEditScheduleSession}
-          onDeleteSession={handleDeleteScheduleSession}
-        />
+        !isModuleActive("module_school_timetable") ? (
+          <DisabledModuleFallback
+            moduleKey="module_school_timetable"
+            onEnabled={() => handleTabChange("timetable")}
+          />
+        ) : (
+          <TimetableGrid
+            schedule={schedule}
+            subjects={subjects}
+            onAddSession={handleAddScheduleSession}
+            onEditSession={handleEditScheduleSession}
+            onDeleteSession={handleDeleteScheduleSession}
+          />
+        )
       )}
 
       {/* ============================================================== */}
