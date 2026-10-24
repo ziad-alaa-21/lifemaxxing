@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:contrast": "node scripts/check-contrast-regression.js",
+    "test:auth": "node scripts/test-auth-modes.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -14,9 +16,9 @@
     "clsx": "^2.1.1",
     "framer-motion": "^14.1.0",
     "lucide-react": "^1.55.0",
-    "next": "16.4.0",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "next": "16.4.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "recharts": "^3.10.1",
     "tailwind-merge": "^3.7.0"
   },
@@ -26,7 +28,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.1",
     "puppeteer-core": "^25.13.0",
     "tailwindcss": "^4",
     "typescript": "^5"
