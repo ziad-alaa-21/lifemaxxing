@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { SleepEntry, calculateSleepScore } from "@/lib/sleep";
 import { Moon, Calendar } from "lucide-react";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface SleepTrendChartProps {
   entries: SleepEntry[];
@@ -12,6 +13,7 @@ interface SleepTrendChartProps {
 type RangeOption = "7D" | "30D" | "90D" | "ALL";
 
 export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartProps) {
+  const { locale } = useI18n();
   const [range, setRange] = useState<RangeOption>("7D");
 
   const filteredEntries = React.useMemo(() => {
@@ -41,10 +43,12 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
           </div>
           <div>
             <h3 className="text-sm font-bold font-mono text-on-surface">
-              Sleep Duration & Architecture Trend
+              {locale === "ar" ? "مسار مدة وجودة النوم" : "Sleep Duration & Architecture Trend"}
             </h3>
             <p className="text-[11px] text-on-surface-variant font-mono">
-              Daily duration vs {targetHours}h target line
+              {locale === "ar"
+                ? `المدة اليومية مقابل خط الهدف ${targetHours} ساعات`
+                : `Daily duration vs ${targetHours}h target line`}
             </p>
           </div>
         </div>
@@ -57,11 +61,11 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
               onClick={() => setRange(r)}
               className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                 range === r
-                  ? "bg-[#7DD3FC] text-charcoal-dark shadow-[0_0_10px_rgba(125,211,252,0.3)]"
+                  ? "bg-[#7DD3FC] text-on-primary shadow-[0_0_10px_rgba(125,211,252,0.3)]"
                   : "text-text-muted hover:text-on-surface"
               }`}
             >
-              {r}
+              {r === "7D" && locale === "ar" ? "٧ أيام" : r === "30D" && locale === "ar" ? "٣٠ يوم" : r === "90D" && locale === "ar" ? "٩٠ يوم" : r === "ALL" && locale === "ar" ? "الكل" : r}
             </button>
           ))}
         </div>
@@ -71,7 +75,9 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
         <div className="py-12 border border-dashed border-border-subtle rounded-xl flex flex-col items-center justify-center text-center p-4">
           <Calendar className="w-8 h-8 text-text-muted mb-2 stroke-1" />
           <p className="text-xs font-mono text-text-muted">
-            No sleep logs recorded in this {range} window.
+            {locale === "ar"
+              ? `مفيش بيانات نوم مسجلة في فترة ${range === "7D" ? "٧ أيام" : range === "30D" ? "٣٠ يوم" : range === "90D" ? "٩٠ يوم" : "الكل"}.`
+              : `No sleep logs recorded in this ${range} window.`}
           </p>
         </div>
       ) : (
@@ -95,7 +101,7 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
                 >
                   {/* Tooltip */}
                   <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-surface-container-highest border border-border-subtle rounded-lg px-2 py-1 text-[10px] font-mono pointer-events-none whitespace-nowrap z-20 shadow-lg">
-                    {e.sleep_date}: {hours}h | Score {scoreObj.score}
+                    {e.sleep_date}: {hours}{locale === "ar" ? "س" : "h"} | {locale === "ar" ? "التقييم" : "Score"} {scoreObj.score}
                   </div>
 
                   {/* Bar */}
@@ -122,19 +128,21 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
                 <span className="w-2.5 h-2.5 rounded-full bg-primary-lime" />
-                <span>Strong (&ge;85)</span>
+                <span>{locale === "ar" ? "ممتاز (≥85)" : "Strong (\u226585)"}</span>
               </span>
               <span className="flex items-center gap-1">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#7DD3FC]" />
-                <span>Good (50-84)</span>
+                <span>{locale === "ar" ? "جيد (50-84)" : "Good (50-84)"}</span>
               </span>
               <span className="flex items-center gap-1">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#F87171]" />
-                <span>Poor (&lt;50)</span>
+                <span>{locale === "ar" ? "ضعيف (<50)" : "Poor (<50)"}</span>
               </span>
             </div>
             <span className="text-[10px] text-on-surface-variant">
-              Target: {targetHours}h per night
+              {locale === "ar"
+                ? `الهدف: ${targetHours} ساعات لكل ليلة`
+                : `Target: ${targetHours}h per night`}
             </span>
           </div>
         </div>

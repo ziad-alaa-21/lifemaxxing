@@ -17,6 +17,7 @@ import {
   IntakeLogEntry,
   evaluateCaffeineCutoff,
 } from "@/lib/nutrition";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface HydrationCardProps {
   waterToday: number;
@@ -40,6 +41,7 @@ export function HydrationCard({
   onIntakeUpdated,
 }: HydrationCardProps) {
   const { isOnline, guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
 
   const [activeTab, setActiveTab] = useState<"water" | "caffeine">("water");
   const [customAmount, setCustomAmount] = useState("");
@@ -144,14 +146,16 @@ export function HydrationCard({
       {deletedEntry && (
         <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
           <span>
-            Removed {deletedEntry.amount} {deletedEntry.type === "water" ? "ml water" : "mg caffeine"}
+            {locale === "ar"
+              ? `اتمسح ${deletedEntry.amount} ${deletedEntry.type === "water" ? "مل ميه" : "مجم كافيين"}`
+              : `Removed ${deletedEntry.amount} ${deletedEntry.type === "water" ? "ml water" : "mg caffeine"}`}
           </span>
           <button
             onClick={handleUndo}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Undo2 className="w-3.5 h-3.5" />
-            <span>Undo</span>
+            <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
           </button>
         </div>
       )}
@@ -161,32 +165,32 @@ export function HydrationCard({
         <div className="flex items-center gap-2 p-1 bg-surface-container-lowest rounded-xl border border-border-subtle">
           <button
             onClick={() => setActiveTab("water")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
               activeTab === "water"
-                ? "bg-secondary-cyan text-charcoal-dark font-bold shadow-sm"
+                ? "bg-secondary-cyan text-on-primary font-bold shadow-sm"
                 : "text-text-muted hover:text-on-surface"
             }`}
           >
             <Droplet className="w-3.5 h-3.5" />
-            <span>Water Intake</span>
+            <span>{locale === "ar" ? "شرب الميه" : "Water Intake"}</span>
           </button>
           <button
             onClick={() => setActiveTab("caffeine")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
               activeTab === "caffeine"
-                ? "bg-rank-gold text-charcoal-dark font-bold shadow-sm"
+                ? "bg-rank-gold text-on-primary font-bold shadow-sm"
                 : "text-text-muted hover:text-on-surface"
             }`}
           >
             <Coffee className="w-3.5 h-3.5" />
-            <span>Caffeine Telemetry</span>
+            <span>{locale === "ar" ? "متابعة الكافيين" : "Caffeine Telemetry"}</span>
           </button>
         </div>
 
         <button
           onClick={() => setShowCustomInput(!showCustomInput)}
-          className="p-1.5 rounded-xl bg-surface-container-high text-text-muted hover:text-on-surface border border-border-subtle transition-colors"
-          title="Custom Amount"
+          className="p-1.5 rounded-xl bg-surface-container-high text-text-muted hover:text-on-surface border border-border-subtle transition-colors cursor-pointer"
+          title={locale === "ar" ? "كمية مخصصة" : "Custom Amount"}
         >
           <Plus className="w-4 h-4" />
         </button>
@@ -198,10 +202,12 @@ export function HydrationCard({
           <div className="flex items-baseline justify-between font-mono">
             <div>
               <span className="text-2xl font-bold text-secondary-cyan">{waterToday}</span>
-              <span className="text-xs text-text-muted ml-1">ml</span>
+              <span className="text-xs text-text-muted ml-1">{locale === "ar" ? "مل" : "ml"}</span>
             </div>
             <div className="text-xs text-text-muted">
-              {waterTarget ? `Target: ${waterTarget} ml (${waterPercent}%)` : "Target Unset"}
+              {waterTarget
+                ? (locale === "ar" ? `الهدف: ${waterTarget} مل (${waterPercent}%)` : `Target: ${waterTarget} ml (${waterPercent}%)`)
+                : (locale === "ar" ? "الهدف مش محدد" : "Target Unset")}
             </div>
           </div>
 
@@ -218,26 +224,26 @@ export function HydrationCard({
             <button
               onClick={() => handleQuickAdd("water", 250)}
               disabled={logging}
-              className="py-2 px-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all text-center"
+              className="py-2 px-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all text-center cursor-pointer"
             >
-              <div className="font-bold text-secondary-cyan">+250 ml</div>
-              <div className="text-[10px] text-text-muted">Glass</div>
+              <div className="font-bold text-secondary-cyan">+250 {locale === "ar" ? "مل" : "ml"}</div>
+              <div className="text-[10px] text-text-muted">{locale === "ar" ? "كوباية" : "Glass"}</div>
             </button>
             <button
               onClick={() => handleQuickAdd("water", 500)}
               disabled={logging}
-              className="py-2 px-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all text-center"
+              className="py-2 px-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all text-center cursor-pointer"
             >
-              <div className="font-bold text-secondary-cyan">+500 ml</div>
-              <div className="text-[10px] text-text-muted">Bottle</div>
+              <div className="font-bold text-secondary-cyan">+500 {locale === "ar" ? "مل" : "ml"}</div>
+              <div className="text-[10px] text-text-muted">{locale === "ar" ? "إزازة" : "Bottle"}</div>
             </button>
             <button
               onClick={() => handleQuickAdd("water", 750)}
               disabled={logging}
-              className="py-2 px-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all text-center"
+              className="py-2 px-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all text-center cursor-pointer"
             >
-              <div className="font-bold text-secondary-cyan">+750 ml</div>
-              <div className="text-[10px] text-text-muted">Shaker</div>
+              <div className="font-bold text-secondary-cyan">+750 {locale === "ar" ? "مل" : "ml"}</div>
+              <div className="text-[10px] text-text-muted">{locale === "ar" ? "شيكر" : "Shaker"}</div>
             </button>
           </div>
         </div>
@@ -249,10 +255,12 @@ export function HydrationCard({
           <div className="flex items-baseline justify-between font-mono">
             <div>
               <span className="text-2xl font-bold text-rank-gold">{caffeineToday}</span>
-              <span className="text-xs text-text-muted ml-1">mg consumed</span>
+              <span className="text-xs text-text-muted ml-1">
+                {locale === "ar" ? "مجم كافيين" : "mg consumed"}
+              </span>
             </div>
             <div className="text-xs text-text-muted">
-              Cutoff: {cutoffEval.cutoffTimeFormatted}
+              {locale === "ar" ? `الحد الأقصى: ${cutoffEval.cutoffTimeFormatted}` : `Cutoff: ${cutoffEval.cutoffTimeFormatted}`}
             </div>
           </div>
 
@@ -261,7 +269,12 @@ export function HydrationCard({
             <div className="p-3 rounded-2xl bg-rank-gold/10 border border-rank-gold/30 flex items-start gap-2.5 text-xs font-mono text-rank-gold">
               <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
-                <span className="font-bold">Caffeine Cutoff Exceeded:</span> Cutoff was {cutoffEval.cutoffTimeFormatted} ({caffeineCutoffHours}h before {targetBedtime} bedtime). Intake now directly degrades slow-wave sleep!
+                <span className="font-bold">
+                  {locale === "ar" ? "تجاوزت وقت الكافيين: " : "Caffeine Cutoff Exceeded: "}
+                </span>
+                {locale === "ar"
+                  ? `آخر ميعاد كان ${cutoffEval.cutoffTimeFormatted} (${caffeineCutoffHours} ساعات قبل معاد النوم ${targetBedtime}). الشرب دلوقتي هيأثر مباشرة على جودة النوم العميق!`
+                  : `Cutoff was ${cutoffEval.cutoffTimeFormatted} (${caffeineCutoffHours}h before ${targetBedtime} bedtime). Intake now directly degrades slow-wave sleep!`}
               </div>
             </div>
           )}
@@ -271,34 +284,34 @@ export function HydrationCard({
             <button
               onClick={() => handleQuickAdd("caffeine", 65)}
               disabled={logging}
-              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center"
+              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center cursor-pointer"
             >
-              <div className="font-bold text-rank-gold">+65 mg</div>
-              <div className="text-[9px] text-text-muted">Single</div>
+              <div className="font-bold text-rank-gold">+65 {locale === "ar" ? "مجم" : "mg"}</div>
+              <div className="text-[9px] text-text-muted">{locale === "ar" ? "إسبريسو" : "Single"}</div>
             </button>
             <button
               onClick={() => handleQuickAdd("caffeine", 130)}
               disabled={logging}
-              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center"
+              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center cursor-pointer"
             >
-              <div className="font-bold text-rank-gold">+130 mg</div>
-              <div className="text-[9px] text-text-muted">Double</div>
+              <div className="font-bold text-rank-gold">+130 {locale === "ar" ? "مجم" : "mg"}</div>
+              <div className="text-[9px] text-text-muted">{locale === "ar" ? "دبل" : "Double"}</div>
             </button>
             <button
               onClick={() => handleQuickAdd("caffeine", 95)}
               disabled={logging}
-              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center"
+              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center cursor-pointer"
             >
-              <div className="font-bold text-rank-gold">+95 mg</div>
-              <div className="text-[9px] text-text-muted">Filter</div>
+              <div className="font-bold text-rank-gold">+95 {locale === "ar" ? "مجم" : "mg"}</div>
+              <div className="text-[9px] text-text-muted">{locale === "ar" ? "فلتر" : "Filter"}</div>
             </button>
             <button
               onClick={() => handleQuickAdd("caffeine", 40)}
               disabled={logging}
-              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center"
+              className="py-2 px-1 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface hover:border-rank-gold hover:bg-rank-gold/10 active:scale-95 transition-all text-center cursor-pointer"
             >
-              <div className="font-bold text-rank-gold">+40 mg</div>
-              <div className="text-[9px] text-text-muted">Tea/Soda</div>
+              <div className="font-bold text-rank-gold">+40 {locale === "ar" ? "مجم" : "mg"}</div>
+              <div className="text-[9px] text-text-muted">{locale === "ar" ? "شاي" : "Tea/Soda"}</div>
             </button>
           </div>
         </div>
@@ -309,7 +322,15 @@ export function HydrationCard({
         <div className="flex items-center gap-2 pt-2 border-t border-border-subtle font-mono text-xs">
           <input
             type="number"
-            placeholder={activeTab === "water" ? "Amount (ml)" : "Amount (mg)"}
+            placeholder={
+              activeTab === "water"
+                ? locale === "ar"
+                  ? "الكمية (مل)"
+                  : "Amount (ml)"
+                : locale === "ar"
+                ? "الكمية (مجم)"
+                : "Amount (mg)"
+            }
             value={customAmount}
             onChange={(e) => setCustomAmount(e.target.value)}
             className="flex-1 px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface focus:outline-none"
@@ -317,9 +338,9 @@ export function HydrationCard({
           <button
             onClick={handleCustomSubmit}
             disabled={!customAmount || logging}
-            className="px-4 py-2 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+            className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
           >
-            Add
+            {locale === "ar" ? "إضافة" : "Add"}
           </button>
         </div>
       )}
@@ -327,14 +348,17 @@ export function HydrationCard({
       {/* Recent Entries Timeline */}
       {intakeEntries.length > 0 && (
         <div className="pt-2 border-t border-border-subtle space-y-1.5">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
-            Today's Logged Intakes ({intakeEntries.length})
+          <div className="text-[10px] font-mono uppercase tracking-wider text-text-muted text-start">
+            {locale === "ar"
+              ? `سجل النهاردة (${intakeEntries.length})`
+              : `Today's Logged Intakes (${intakeEntries.length})`}
           </div>
           <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
             {intakeEntries.map((e) => {
-              const timeStr = new Date(e.logged_at).toLocaleTimeString([], {
-                hour: "2-digit",
+              const timeStr = new Date(e.logged_at).toLocaleTimeString(locale === "ar" ? "ar-EG" : [], {
+                hour: "numeric",
                 minute: "2-digit",
+                hour12: true,
               });
               return (
                 <div
@@ -348,13 +372,16 @@ export function HydrationCard({
                       <Coffee className="w-3.5 h-3.5 text-rank-gold" />
                     )}
                     <span className="font-bold text-on-surface">
-                      {e.amount} {e.type === "water" ? "ml" : "mg"}
+                      {e.amount} {e.type === "water" ? (locale === "ar" ? "مل" : "ml") : (locale === "ar" ? "مجم" : "mg")}
                     </span>
-                    <span className="text-[10px] text-text-muted">at {timeStr}</span>
+                    <span className="text-[10px] text-text-muted">
+                      {locale === "ar" ? `الساعة ${timeStr}` : `at ${timeStr}`}
+                    </span>
                   </div>
                   <button
                     onClick={() => handleSoftDelete(e)}
-                    className="p-1 rounded text-text-muted hover:text-[#F87171] transition-colors"
+                    className="p-1 rounded text-text-muted hover:text-[#F87171] transition-colors cursor-pointer"
+                    title={locale === "ar" ? "مسح" : "Delete"}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { MistakeItem, SubjectItem, MistakeCause } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 import { X, Loader2, AlertCircle, BookX } from "lucide-react";
 
 interface MistakeModalProps {
@@ -62,6 +63,7 @@ export function MistakeModal({
   initialMistake,
   isBlocked = false,
 }: MistakeModalProps) {
+  const { locale } = useI18n();
   const [subjectId, setSubjectId] = useState("");
   const [topic, setTopic] = useState("");
   const [questionContext, setQuestionContext] = useState("");
@@ -70,6 +72,38 @@ export function MistakeModal({
   const [cause, setCause] = useState<MistakeCause>("concept");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const causeOptions: Array<{
+    value: MistakeCause;
+    label: string;
+    desc: string;
+    color: string;
+  }> = [
+    {
+      value: "concept",
+      label: locale === "ar" ? "سوء فهم نظري" : "Concept",
+      desc: locale === "ar" ? "فهم خاطئ للنظرية أو المبدأ الأساسي" : "Theory or core principle misunderstood",
+      color: "border-indigo-500/40 text-indigo-300 bg-indigo-500/10",
+    },
+    {
+      value: "careless",
+      label: locale === "ar" ? "تسرع وسهو" : "Careless",
+      desc: locale === "ar" ? "غلطة حسابية، عدم قراءة السؤال بدقة، أو إشارة" : "Arithmetic slip, misread question, or sign error",
+      color: "border-amber-500/40 text-amber-300 bg-amber-500/10",
+    },
+    {
+      value: "time",
+      label: locale === "ar" ? "ضيق وقت" : "Time",
+      desc: locale === "ar" ? "ارتباك أو الوقت خلص قبل ما تكمل السؤال" : "Rushed or ran out of time on the question",
+      color: "border-stone-500/40 text-stone-300 bg-stone-500/10",
+    },
+    {
+      value: "memory",
+      label: locale === "ar" ? "نسيان القانون" : "Memory",
+      desc: locale === "ar" ? "نسيت قانون أو تعريف رياضي أساسي" : "Forgot a formula, definition, or identity",
+      color: "border-teal-500/40 text-teal-300 bg-teal-500/10",
+    },
+  ];
 
   useEffect(() => {
     if (initialMistake) {
@@ -97,52 +131,52 @@ export function MistakeModal({
     setError(null);
 
     if (isBlocked) {
-      setError("Offline: saving disabled to protect sync integrity.");
+      setError(locale === "ar" ? "غير متصل بالإنترنت: تم إيقاف الحفظ لمنع تعارض البيانات." : "Offline: saving disabled to protect sync integrity.");
       return;
     }
 
     if (!subjectId) {
-      setError("Please select a subject.");
+      setError(locale === "ar" ? "من فضلك اختر المادة." : "Please select a subject.");
       return;
     }
 
     if (!topic.trim()) {
-      setError("Topic is required.");
+      setError(locale === "ar" ? "عنوان الموضوع مطلوب." : "Topic is required.");
       return;
     }
 
     if (topic.trim().length > 120) {
-      setError("Topic name cannot exceed 120 characters.");
+      setError(locale === "ar" ? "عنوان الموضوع لا يمكن أن يتجاوز 120 حرفاً." : "Topic name cannot exceed 120 characters.");
       return;
     }
 
     if (!questionContext.trim()) {
-      setError("Question context is required.");
+      setError(locale === "ar" ? "سياق ونص السؤال مطلوب." : "Question context is required.");
       return;
     }
 
     if (questionContext.trim().length > 2000) {
-      setError("Question context cannot exceed 2000 characters.");
+      setError(locale === "ar" ? "سياق السؤال لا يمكن أن يتجاوز 2000 حرف." : "Question context cannot exceed 2000 characters.");
       return;
     }
 
     if (!errorMade.trim()) {
-      setError("Please specify the error made.");
+      setError(locale === "ar" ? "من فضلك حدد طبيعة الخطأ الذي وقعت فيه." : "Please specify the error made.");
       return;
     }
 
     if (errorMade.trim().length > 2000) {
-      setError("Error explanation cannot exceed 2000 characters.");
+      setError(locale === "ar" ? "توضيح الخطأ لا يمكن أن يتجاوز 2000 حرف." : "Error explanation cannot exceed 2000 characters.");
       return;
     }
 
     if (!correctSolution.trim()) {
-      setError("Correct solution is required.");
+      setError(locale === "ar" ? "الحل الصحيح والخطوات مطلوب." : "Correct solution is required.");
       return;
     }
 
     if (correctSolution.trim().length > 2000) {
-      setError("Correct solution cannot exceed 2000 characters.");
+      setError(locale === "ar" ? "الحل الصحيح لا يمكن أن يتجاوز 2000 حرف." : "Correct solution cannot exceed 2000 characters.");
       return;
     }
 
@@ -158,7 +192,7 @@ export function MistakeModal({
       });
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to record mistake");
+      setError(err instanceof Error ? err.message : (locale === "ar" ? "فشل تسجيل الخطأ" : "Failed to record mistake"));
     } finally {
       setSaving(false);
     }
@@ -178,10 +212,14 @@ export function MistakeModal({
             </div>
             <div>
               <h2 className="text-base font-bold font-mono text-on-surface">
-                {initialMistake ? "Edit Academic Mistake" : "Log Mistake in Notebook"}
+                {locale === "ar"
+                  ? initialMistake ? "تعديل الخطأ الأكاديمي" : "تسجيل خطأ جديد في الكشكول"
+                  : initialMistake ? "Edit Academic Mistake" : "Log Mistake in Notebook"}
               </h2>
               <p className="text-[11px] text-on-surface-variant font-mono">
-                Catalog error cause and solution for active-recall redo
+                {locale === "ar"
+                  ? "توثيق سبب الخطأ والحل الصحيح لإعادة حله بالاسترجاع النشط"
+                  : "Catalog error cause and solution for active-recall redo"}
               </p>
             </div>
           </div>
@@ -205,7 +243,7 @@ export function MistakeModal({
           {/* Subject Selector */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-              Subject <span className="text-crimson-alert">*</span>
+              {locale === "ar" ? "المادة" : "Subject"} <span className="text-crimson-alert">*</span>
             </label>
             <select
               value={subjectId}
@@ -225,7 +263,7 @@ export function MistakeModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Topic / Problem Area <span className="text-crimson-alert">*</span>
+                {locale === "ar" ? "الموضوع / عنوان المسألة" : "Topic / Problem Area"} <span className="text-crimson-alert">*</span>
               </label>
               <span className="text-[10px] text-text-muted">
                 {topic.length}/120
@@ -237,7 +275,7 @@ export function MistakeModal({
               value={topic}
               maxLength={120}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="e.g. Integration by Parts, Conservation of Momentum"
+              placeholder={locale === "ar" ? "مثال: التكامل بالتجزيء، قانون حفظ كمية الحركة" : "e.g. Integration by Parts, Conservation of Momentum"}
               className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-amber-500/50"
               required
             />
@@ -246,17 +284,17 @@ export function MistakeModal({
           {/* Cause Selector Pills */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-              Root Cause Taxonomy <span className="text-crimson-alert">*</span>
+              {locale === "ar" ? "تصنيف سبب الخطأ" : "Root Cause Taxonomy"} <span className="text-crimson-alert">*</span>
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {CAUSE_OPTIONS.map((opt) => {
+              {causeOptions.map((opt) => {
                 const isSelected = cause === opt.value;
                 return (
                   <button
                     key={opt.value}
                     type="button"
                     onClick={() => setCause(opt.value)}
-                    className={`p-2.5 rounded-xl border text-left transition-all ${
+                    className={`p-2.5 rounded-xl border text-start transition-all ${
                       isSelected
                         ? `${opt.color} ring-1 ring-amber-400/40 shadow-sm font-semibold`
                         : "bg-surface-container-high border-border-subtle text-text-muted hover:border-border-medium"
@@ -276,7 +314,7 @@ export function MistakeModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Problem Statement / Context <span className="text-crimson-alert">*</span>
+                {locale === "ar" ? "سياق ونص المسألة / المعطيات" : "Problem Statement / Context"} <span className="text-crimson-alert">*</span>
               </label>
               <span className="text-[10px] text-text-muted">
                 {questionContext.length}/2000
@@ -288,7 +326,7 @@ export function MistakeModal({
               value={questionContext}
               maxLength={2000}
               onChange={(e) => setQuestionContext(e.target.value)}
-              placeholder="State the prompt, setup, or parameters of the question exactly..."
+              placeholder={locale === "ar" ? "اكتب رأس السؤال والمعطيات بدقة..." : "State the prompt, setup, or parameters of the question exactly..."}
               className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-amber-500/50 resize-y"
               required
             />
@@ -298,7 +336,7 @@ export function MistakeModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Error Made / Misconception <span className="text-crimson-alert">*</span>
+                {locale === "ar" ? "إيه الغلطة اللي وقعت فيها؟" : "Error Made / Misconception"} <span className="text-crimson-alert">*</span>
               </label>
               <span className="text-[10px] text-text-muted">
                 {errorMade.length}/2000
@@ -310,7 +348,7 @@ export function MistakeModal({
               value={errorMade}
               maxLength={2000}
               onChange={(e) => setErrorMade(e.target.value)}
-              placeholder="What went wrong? e.g. Dropped the negative sign in the exponent..."
+              placeholder={locale === "ar" ? "الغلطة كانت فين؟ مثال: نسيت أغير إشارة الأس السالب..." : "What went wrong? e.g. Dropped the negative sign in the exponent..."}
               className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-amber-500/50 resize-y"
               required
             />
@@ -320,7 +358,7 @@ export function MistakeModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Correct Solution & Steps <span className="text-crimson-alert">*</span>
+                {locale === "ar" ? "خطوات الحل الصحيح" : "Correct Solution & Steps"} <span className="text-crimson-alert">*</span>
               </label>
               <span className="text-[10px] text-text-muted">
                 {correctSolution.length}/2000
@@ -332,7 +370,7 @@ export function MistakeModal({
               value={correctSolution}
               maxLength={2000}
               onChange={(e) => setCorrectSolution(e.target.value)}
-              placeholder="Write the full, verified derivation or explanation step by step..."
+              placeholder={locale === "ar" ? "اكتب خطوات الحل السليمة خطوة بخطوة عشان لما ترجع تحلها تاني..." : "Write the full, verified derivation or explanation step by step..."}
               className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-amber-500/50 resize-y"
               required
             />
@@ -346,20 +384,24 @@ export function MistakeModal({
               disabled={saving}
               className="px-4 py-2 rounded-xl text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-surface font-semibold hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary font-semibold hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Saving...</span>
+                  <span>{locale === "ar" ? "جاري الحفظ..." : "Saving..."}</span>
                 </>
               ) : (
-                <span>{initialMistake ? "Update Mistake" : "Log Mistake"}</span>
+                <span>
+                  {locale === "ar"
+                    ? initialMistake ? "تحديث الخطأ" : "تسجيل الخطأ"
+                    : initialMistake ? "Update Mistake" : "Log Mistake"}
+                </span>
               )}
             </button>
           </div>

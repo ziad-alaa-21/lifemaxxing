@@ -80,6 +80,7 @@ export function TodayView() {
     hexColor: string;
   } | null>(null);
   const [sevenDayAvgSleepHours, setSevenDayAvgSleepHours] = useState<number | null>(null);
+  const [sleepHistoryCount, setSleepHistoryCount] = useState<number>(0);
 
   const [todayFocusMinutes, setTodayFocusMinutes] = useState(0);
   const [completedSprintCount, setCompletedSprintCount] = useState(0);
@@ -344,9 +345,15 @@ export function TodayView() {
         };
         setLatestSleep(latestSleepObj);
 
-        // 7-day average
-        const totalDuration = sleepLogs.reduce((acc, row) => acc + row.duration_minutes, 0);
-        setSevenDayAvgSleepHours(Number((totalDuration / sleepLogs.length / 60).toFixed(1)));
+        // 7-day average: Requires >= 3 logged nights for a valid baseline
+        const count = sleepLogs.length;
+        setSleepHistoryCount(count);
+        if (count >= 3) {
+          const totalDuration = sleepLogs.reduce((acc, row) => acc + row.duration_minutes, 0);
+          setSevenDayAvgSleepHours(Number((totalDuration / count / 60).toFixed(1)));
+        } else {
+          setSevenDayAvgSleepHours(null);
+        }
       }
 
       // Process [5]: Focus Sessions
@@ -508,10 +515,10 @@ export function TodayView() {
     discipline: null, // Graceful if discipline table not yet run
     hasCurrentPeriodCheckin: checkins.morning || checkins.midday || checkins.evening,
     activeModules: {
-      focus: isModuleActive("module_mind_focus"),
-      discipline: isModuleActive("module_mind_discipline"),
-      reading: isModuleActive("module_mind_reading"),
-      screentime: isModuleActive("module_mind_screentime"),
+      focus: isModuleActive("module_focus"),
+      discipline: isModuleActive("module_discipline"),
+      reading: isModuleActive("module_reading"),
+      screentime: isModuleActive("module_screentime"),
     },
   });
 
@@ -522,14 +529,14 @@ export function TodayView() {
     targetStudyMinutes: null,
     actualStudyMinutes: todayFocusMinutes,
     activeModules: {
-      timetable: isModuleActive("module_school_timetable"),
-      topics: isModuleActive("module_school_topics"),
-      mistakes: isModuleActive("module_school_mistakes"),
+      timetable: isModuleActive("module_school"),
+      topics: isModuleActive("module_school"),
+      mistakes: isModuleActive("module_school"),
     },
   });
 
   // Recommendation Engine Output
-  const isWorkoutsActive = isModuleActive("module_workouts");
+  const isWorkoutsActive = true;
   const recommendation: RecommendationOutput = generateTodayRecommendation({
     plannedWorkoutSession: isWorkoutsActive ? (plannedSplitSession || "Push Day") : null,
     lastNightSleep: latestSleep
@@ -539,15 +546,16 @@ export function TodayView() {
         }
       : null,
     sevenDayAvgSleepHours,
+    sleepHistoryCount,
     lastWorkout: latestWorkout,
     nearestExam,
     activeModules: {
       workouts: isWorkoutsActive,
-      nutrition: isModuleActive("module_nutrition"),
-      sleep: isModuleActive("module_sleep"),
-      focus: isModuleActive("module_mind_focus"),
-      discipline: isModuleActive("module_mind_discipline"),
-      timetable: isModuleActive("module_school_timetable"),
+      nutrition: true,
+      sleep: true,
+      focus: isModuleActive("module_focus"),
+      discipline: isModuleActive("module_discipline"),
+      timetable: isModuleActive("module_school"),
     },
   });
 
@@ -562,7 +570,7 @@ export function TodayView() {
           isLogged: !!latestWorkout && latestWorkout.elapsedHours < 16,
         }
       : null,
-    dailyFocusGoalMinutes: isModuleActive("module_mind_focus") ? (dailyFocusGoalMinutes || 180) : 0,
+    dailyFocusGoalMinutes: isModuleActive("module_focus") ? (dailyFocusGoalMinutes || 180) : 0,
     todayDeadlines: nearestDeadline
       ? [{ title: nearestDeadline.title, dueTime: "23:59", completed: false }]
       : [],

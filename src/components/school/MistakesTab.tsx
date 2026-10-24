@@ -7,6 +7,7 @@ import {
   MistakeCause,
   calculateMistakeStats,
 } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 import {
   BookX,
   Plus,
@@ -42,6 +43,7 @@ export function MistakesTab({
   onOpenRedoModal,
   onDeleteMistake,
 }: MistakesTabProps) {
+  const { locale } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubjectId, setSelectedSubjectId] = useState("all");
   const [selectedCause, setSelectedCause] = useState<string>("all");
@@ -121,6 +123,17 @@ export function MistakesTab({
     },
   };
 
+  const getCauseLabel = (cause: string) => {
+    if (locale !== "ar") return cause;
+    const labels: Record<string, string> = {
+      concept: "سوء فهم نظري",
+      careless: "تسرع وسهو",
+      time: "ضيق وقت",
+      memory: "نسيان القانون",
+    };
+    return labels[cause] || cause;
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Banner / Due Today Alert */}
@@ -132,18 +145,22 @@ export function MistakesTab({
             </div>
             <div>
               <div className="text-sm font-bold font-mono text-on-surface">
-                {dueTodayCount} Mistake{dueTodayCount > 1 ? "s" : ""} Due for Redo Today
+                {locale === "ar"
+                  ? `${dueTodayCount} أخطاء مستحقة للحل والتصحيح النهاردة`
+                  : `${dueTodayCount} Mistake${dueTodayCount > 1 ? "s" : ""} Due for Redo Today`}
               </div>
               <p className="text-xs font-mono text-on-surface-variant mt-0.5">
-                Active-recall re-solving locks in comprehension before exam day
+                {locale === "ar"
+                  ? "حل الأخطاء بإيدك بيثبت الفكرة في دماغك ويمنع تكرارها في الامتحان"
+                  : "Active-recall re-solving locks in comprehension before exam day"}
               </p>
             </div>
           </div>
           <button
             onClick={() => setSelectedStatus("due_today")}
-            className="px-4 py-2 rounded-xl bg-amber-500 text-surface text-xs font-mono font-bold uppercase hover:bg-amber-400 transition-all cursor-pointer shadow-sm self-start sm:self-auto"
+            className="px-4 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 transition-all cursor-pointer shadow-sm self-start sm:self-auto"
           >
-            Practice Redos
+            {locale === "ar" ? "ابدأ الحل دلوقتي" : "Practice Redos"}
           </button>
         </div>
       )}
@@ -152,25 +169,25 @@ export function MistakesTab({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block">
-            Total Cataloged
+            {locale === "ar" ? "إجمالي الأخطاء" : "Total Cataloged"}
           </span>
           <div className="text-2xl font-extrabold text-on-surface">{stats.totalCount}</div>
         </div>
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-amber-300 uppercase tracking-wider block">
-            Needs Redo
+            {locale === "ar" ? "محتاج إعادة حل" : "Needs Redo"}
           </span>
           <div className="text-2xl font-extrabold text-amber-400">{stats.openCount}</div>
         </div>
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-emerald-400 uppercase tracking-wider block">
-            Redone & Resolved
+            {locale === "ar" ? "تم الحل والإتقان" : "Redone & Resolved"}
           </span>
           <div className="text-2xl font-extrabold text-emerald-400">{stats.resolvedCount}</div>
         </div>
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-indigo-400 uppercase tracking-wider block">
-            Resolution Rate
+            {locale === "ar" ? "نسبة التغلب ع الأخطاء" : "Resolution Rate"}
           </span>
           <div className="text-2xl font-extrabold text-indigo-300">
             {stats.resolutionRatePct}%
@@ -182,10 +199,10 @@ export function MistakesTab({
       <div className="p-4 rounded-xl bg-surface-container border border-border-subtle space-y-2">
         <div className="flex items-center justify-between text-xs font-mono text-on-surface-variant">
           <span className="uppercase tracking-wider font-semibold">
-            Root Cause Distribution
+            {locale === "ar" ? "توزيع أسباب الأخطاء" : "Root Cause Distribution"}
           </span>
           <span className="text-[11px] text-text-muted">
-            {stats.totalCount} total logged
+            {locale === "ar" ? `إجمالي ${stats.totalCount} خطأ متسجل` : `${stats.totalCount} total logged`}
           </span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono">
@@ -199,7 +216,7 @@ export function MistakesTab({
               <button
                 key={c}
                 onClick={() => setSelectedCause(selectedCause === c ? "all" : c)}
-                className={`p-2 rounded-lg border text-left transition-all cursor-pointer ${
+                className={`p-2 rounded-lg border text-start transition-all cursor-pointer ${
                   isSelected
                     ? "bg-surface-container-high border-amber-400/50 shadow-sm"
                     : "bg-surface-container-high/40 border-border-subtle hover:border-border-medium"
@@ -209,12 +226,14 @@ export function MistakesTab({
                   <div className="flex items-center gap-1.5">
                     <span className={`w-2 h-2 rounded-full ${cfg.dot}`} />
                     <span className="text-[11px] capitalize font-bold text-on-surface">
-                      {c}
+                      {getCauseLabel(c)}
                     </span>
                   </div>
                   <span className="text-[11px] font-bold text-on-surface">{count}</span>
                 </div>
-                <div className="text-[10px] text-text-muted mt-0.5">{pct}% of errors</div>
+                <div className="text-[10px] text-text-muted mt-0.5">
+                  {pct}% {locale === "ar" ? "من الأخطاء" : "of errors"}
+                </div>
               </button>
             );
           })}
@@ -228,10 +247,10 @@ export function MistakesTab({
           <div className="flex items-center bg-surface-container p-1 rounded-xl border border-border-subtle font-mono text-xs">
             {(
               [
-                { id: "all", label: "All" },
-                { id: "due_today", label: `Due (${dueTodayCount})` },
-                { id: "open", label: "Open" },
-                { id: "resolved", label: "Resolved" },
+                { id: "all", label: locale === "ar" ? "الكل" : "All" },
+                { id: "due_today", label: locale === "ar" ? `مستحق (${dueTodayCount})` : `Due (${dueTodayCount})` },
+                { id: "open", label: locale === "ar" ? "مفتوح" : "Open" },
+                { id: "resolved", label: locale === "ar" ? "متقن" : "Resolved" },
               ] as Array<{ id: StatusFilter; label: string }>
             ).map((t) => (
               <button
@@ -254,7 +273,7 @@ export function MistakesTab({
             onChange={(e) => setSelectedSubjectId(e.target.value)}
             className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
           >
-            <option value="all">All Subjects</option>
+            <option value="all">{locale === "ar" ? "كل المواد" : "All Subjects"}</option>
             {subjects.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -266,22 +285,22 @@ export function MistakesTab({
         {/* Search & Add Mistake CTA */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1 sm:w-56">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Search className={`w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 text-text-muted ${locale === "ar" ? "right-3" : "left-3"}`} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search mistakes..."
-              className="w-full pl-8 pr-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface placeholder:text-text-muted focus:outline-none"
+              placeholder={locale === "ar" ? "ابحث في الأخطاء..." : "Search mistakes..."}
+              className={`w-full py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface placeholder:text-text-muted focus:outline-none ${locale === "ar" ? "pr-8 pl-3" : "pl-8 pr-3"}`}
             />
           </div>
 
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-surface text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer shrink-0"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer shrink-0"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Log Mistake</span>
+            <span>{locale === "ar" ? "سجل خطأ" : "Log Mistake"}</span>
           </button>
         </div>
       </div>
@@ -291,12 +310,12 @@ export function MistakesTab({
         <div className="p-12 rounded-2xl bg-surface-container/50 border border-border-subtle text-center space-y-2">
           <BookX className="w-8 h-8 text-text-muted mx-auto" />
           <div className="text-sm font-mono font-bold text-on-surface">
-            No mistakes found
+            {locale === "ar" ? "مفيش أخطاء متسجلة هنا" : "No mistakes found"}
           </div>
           <p className="text-xs font-mono text-text-muted max-w-sm mx-auto">
             {searchQuery || selectedCause !== "all" || selectedStatus !== "all"
-              ? "No items match your active filters. Reset filters to see all entries."
-              : "Whenever you make an error on a homework, quiz, or practice problem, log it here to build your active-recall notebook."}
+              ? locale === "ar" ? "مفيش عناصر مطابقة للفلاتر دي. اعد ضبط الفلتر عشان تشوف كل الأخطاء." : "No items match your active filters. Reset filters to see all entries."
+              : locale === "ar" ? "أول ما تغلط في واجب أو كويز أو تدريب، سجله هنا عشان تراجعه وتضمن إنك مش هتكرره تاني." : "Whenever you make an error on a homework, quiz, or practice problem, log it here to build your active-recall notebook."}
           </p>
         </div>
       ) : (
@@ -321,7 +340,7 @@ export function MistakesTab({
                       style={{ backgroundColor: subject?.color || "#F59E0B" }}
                     />
                     <span className="text-xs font-mono font-bold text-on-surface">
-                      {subject?.name || "Academic Subject"}
+                      {subject?.name || (locale === "ar" ? "المادة" : "Academic Subject")}
                     </span>
                     <span className="text-text-muted font-mono text-xs">•</span>
                     <h3 dir="auto" className="text-xs font-mono font-bold text-on-surface">
@@ -333,12 +352,12 @@ export function MistakesTab({
                     <span
                       className={`text-[9px] font-mono px-2 py-0.5 rounded border uppercase font-bold ${cfg.badge}`}
                     >
-                      {m.cause}
+                      {getCauseLabel(m.cause)}
                     </span>
                     {isResolved ? (
                       <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 uppercase font-bold flex items-center gap-1">
                         <Check className="w-2.5 h-2.5 stroke-[3]" />
-                        Resolved
+                        {locale === "ar" ? "تم الإتقان" : "Resolved"}
                       </span>
                     ) : (
                       <span
@@ -348,7 +367,9 @@ export function MistakesTab({
                             : "bg-surface-container-high border-border-subtle text-text-muted"
                         }`}
                       >
-                        {isDueToday ? "Due Today" : "Pending Redo"}
+                        {isDueToday
+                          ? locale === "ar" ? "مستحق النهاردة" : "Due Today"
+                          : locale === "ar" ? "في انتظار الإعادة" : "Pending Redo"}
                       </span>
                     )}
                   </div>
@@ -358,7 +379,7 @@ export function MistakesTab({
                 <div className="space-y-1">
                   <div className="text-[10px] font-mono text-text-muted uppercase tracking-wider flex items-center gap-1">
                     <HelpCircle className="w-3 h-3" />
-                    <span>Problem Context:</span>
+                    <span>{locale === "ar" ? "سياق المسألة / السؤال:" : "Problem Context:"}</span>
                   </div>
                   <p
                     dir="auto"
@@ -372,9 +393,11 @@ export function MistakesTab({
                 <div className="flex items-center justify-between pt-1 text-xs font-mono">
                   <div className="text-[11px] text-text-muted flex items-center gap-2">
                     {m.redo_history && m.redo_history.length > 0 ? (
-                      <span>{m.redo_history.length} redo attempt(s)</span>
+                      <span>
+                        {m.redo_history.length} {locale === "ar" ? "محاولة إعادة حل" : "redo attempt(s)"}
+                      </span>
                     ) : (
-                      <span>No redos yet</span>
+                      <span>{locale === "ar" ? "مفيش محاولات سابقة" : "No redos yet"}</span>
                     )}
                   </div>
 
@@ -384,19 +407,19 @@ export function MistakesTab({
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold hover:bg-amber-500/25 transition-all cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Practice Redo</span>
+                      <span>{locale === "ar" ? "حل تاني" : "Practice Redo"}</span>
                     </button>
                     <button
                       onClick={() => onOpenEditModal(m)}
                       className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
-                      title="Edit Mistake"
+                      title={locale === "ar" ? "تعديل الخطأ" : "Edit Mistake"}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => onDeleteMistake(m.id)}
                       className="p-1.5 rounded-lg text-text-muted hover:text-crimson-alert hover:bg-crimson-alert/10 transition-colors"
-                      title="Delete (8s Undo)"
+                      title={locale === "ar" ? "حذف (تراجع 8 ث)" : "Delete (8s Undo)"}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

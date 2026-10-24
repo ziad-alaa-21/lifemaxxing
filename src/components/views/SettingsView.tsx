@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   User as UserIcon,
@@ -22,27 +22,36 @@ import { DeviceTab } from "@/components/settings/DeviceTab";
 import { DataTab } from "@/components/settings/DataTab";
 import { PrivacyTab } from "@/components/settings/PrivacyTab";
 import { useI18n } from "@/lib/i18n/I18nContext";
+import { ReauthMethod } from "@/lib/authConfig";
 
 interface SettingsViewProps {
   userEmail: string | null;
   userId: string | null;
+  isGoogleOnly?: boolean;
+  reauthMethod?: ReauthMethod;
 }
 
 type TabType = "account" | "modules" | "protocol" | "preferences" | "device" | "data" | "privacy";
 
-export function SettingsView({ userEmail, userId }: SettingsViewProps) {
+export function SettingsView({
+  userEmail,
+  userId,
+  isGoogleOnly,
+  reauthMethod,
+}: SettingsViewProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { dict, locale } = useI18n();
 
-  const tabParam = (searchParams.get("tab") as TabType) || "account";
-  const [activeTab, setActiveTab] = useState<TabType>(tabParam);
+  const tabParam = (searchParams.get("tab") as TabType) || null;
+  const [selectedTab, setSelectedTab] = useState<TabType>("account");
+  const activeTab: TabType = tabParam || selectedTab;
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!userId) return;
     try {
       setLoading(true);
@@ -54,22 +63,30 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    loadData();
   }, [userId]);
 
-  // Sync tab with URL
   useEffect(() => {
-    const t = (searchParams.get("tab") as TabType) || "account";
-    if (t !== activeTab) {
-      setActiveTab(t);
-    }
-  }, [searchParams]);
+    if (!userId) return;
+    let active = true;
+    loadFullUserSettings(supabase, userId)
+      .then(({ profile: p, settings: s }) => {
+        if (!active) return;
+        setProfile(p);
+        setSettings(s);
+      })
+      .catch((err) => {
+        console.error("Error loading user settings:", err);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [userId]);
 
   const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab);
+    setSelectedTab(tab);
     router.replace(`/settings?tab=${tab}`, { scroll: false });
   };
 
@@ -145,7 +162,11 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
       ) : (
         <div>
           {activeTab === "account" && (
-            <AccountTab userEmail={userEmail} userId={userId} />
+            <AccountTab
+              userEmail={userEmail}
+              userId={userId}
+              isGoogleOnly={isGoogleOnly}
+            />
           )}
           {activeTab === "modules" && <ModulesTab />}
           {activeTab === "protocol" && (
@@ -163,7 +184,9 @@ export function SettingsView({ userEmail, userId }: SettingsViewProps) {
             />
           )}
           {activeTab === "device" && <DeviceTab />}
-          {activeTab === "data" && <DataTab userEmail={userEmail} />}
+          {activeTab === "data" && (
+            <DataTab userEmail={userEmail} reauthMethod={reauthMethod} />
+          )}
           {activeTab === "privacy" && <PrivacyTab />}
         </div>
       )}

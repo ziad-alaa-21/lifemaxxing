@@ -1,17 +1,20 @@
-"use client";
-
 import React, { useState } from "react";
 import { HeatmapResult, HeatmapDayCell } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface StudyHeatmapProps {
   heatmapData: HeatmapResult;
   firstDayOfWeek?: number;
 }
 
-const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAY_LABELS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAY_LABELS_AR = ["أحد", "إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"];
 
 export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapProps) {
+  const { locale } = useI18n();
   const [activeCell, setActiveCell] = useState<HeatmapDayCell | null>(null);
+
+  const dayLabels = locale === "ar" ? DAY_LABELS_AR : DAY_LABELS_EN;
 
   // Group 84 days into columns (12 weeks)
   const columns: HeatmapDayCell[][] = [];
@@ -22,7 +25,7 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
   // Ordered day labels based on firstDayOfWeek
   const orderedDayLabels = Array.from({ length: 7 }, (_, i) => {
     const dayIdx = (firstDayOfWeek + i) % 7;
-    return DAY_LABELS[dayIdx];
+    return dayLabels[dayIdx];
   });
 
   return (
@@ -30,9 +33,13 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
         <div>
-          <h3 className="text-sm font-bold text-on-surface">Study Activity</h3>
+          <h3 className="text-sm font-bold text-on-surface">
+            {locale === "ar" ? "نشاط المذاكرة المستمر" : "Study Activity"}
+          </h3>
           <p className="text-xs text-text-muted">
-            Built from logged deep work focus sessions
+            {locale === "ar"
+              ? "مبني على جلسات التركيز العميق المسجلة"
+              : "Built from logged deep work focus sessions"}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -46,7 +53,7 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
       <div className="overflow-x-auto pb-2 scrollbar-none">
         <div className="inline-flex gap-1.5 min-w-full">
           {/* Day-of-week labels */}
-          <div className="flex flex-col gap-1.5 pr-1 text-[10px] text-text-muted select-none">
+          <div className="flex flex-col gap-1.5 pr-1 rtl:pr-0 rtl:pl-1 text-[10px] text-text-muted select-none">
             {orderedDayLabels.map((lbl, idx) => (
               <div key={idx} className="h-3.5 flex items-center">
                 {idx % 2 === 1 ? lbl : ""}
@@ -66,7 +73,7 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
                       type="button"
                       onClick={() => setActiveCell(isSelected ? null : cell)}
                       onMouseEnter={() => setActiveCell(cell)}
-                      className={`h-3.5 w-full rounded-[3px] border transition-all heatmap-cell-${cell.tier} ${
+                      className={`h-3.5 w-full rounded-[3px] border transition-all heatmap-cell-${cell.tier} cursor-pointer ${
                         isSelected ? "ring-2 ring-amber-400 scale-110 z-10" : ""
                       }`}
                       aria-label={`${cell.dateStr}: ${cell.actualMinutes} mins`}
@@ -88,17 +95,25 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
               <span className="text-text-muted">•</span>
               <span className="text-amber-300 font-bold">
                 {activeCell.actualMinutes > 0
-                  ? `${activeCell.actualMinutes} minutes studied`
+                  ? locale === "ar"
+                    ? `${activeCell.actualMinutes} دقيقة مذاكرة`
+                    : `${activeCell.actualMinutes} minutes studied`
+                  : locale === "ar"
+                  ? "مفيش مذاكرة مسجلة"
                   : "No study logged"}
               </span>
             </div>
             <span className="text-[11px] text-text-muted">
-              {activeCell.sessionCount} session{activeCell.sessionCount === 1 ? "" : "s"}
+              {locale === "ar"
+                ? `${activeCell.sessionCount} جلسة`
+                : `${activeCell.sessionCount} session${activeCell.sessionCount === 1 ? "" : "s"}`}
             </span>
           </>
         ) : (
           <span className="text-text-muted italic text-[11px]">
-            Tap any square to view daily focus telemetry
+            {locale === "ar"
+              ? "اضغط على أي مربع لعرض تفاصيل تركيز اليوم ده"
+              : "Tap any square to view daily focus telemetry"}
           </span>
         )}
       </div>
@@ -108,20 +123,23 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
         <div>
           {heatmapData.hasHistory ? (
             <span>
-              Baseline: <span className="text-on-surface font-medium">{heatmapData.baselineDailyMinutes}m/day</span>
+              {locale === "ar" ? "المعدل اليومي: " : "Baseline: "}
+              <span className="text-on-surface font-medium">
+                {heatmapData.baselineDailyMinutes} {locale === "ar" ? "د/يوم" : "m/day"}
+              </span>
             </span>
           ) : (
-            <span>Zero history logged</span>
+            <span>{locale === "ar" ? "لسه مفيش بيانات سابقة" : "Zero history logged"}</span>
           )}
         </div>
         <div className="flex items-center gap-1.5">
-          <span>Less</span>
+          <span>{locale === "ar" ? "أقل" : "Less"}</span>
           <div className="w-2.5 h-2.5 rounded-[2px] heatmap-cell-0 border" />
           <div className="w-2.5 h-2.5 rounded-[2px] heatmap-cell-1 border" />
           <div className="w-2.5 h-2.5 rounded-[2px] heatmap-cell-2 border" />
           <div className="w-2.5 h-2.5 rounded-[2px] heatmap-cell-3 border" />
           <div className="w-2.5 h-2.5 rounded-[2px] heatmap-cell-4 border" />
-          <span>More</span>
+          <span>{locale === "ar" ? "أكتر" : "More"}</span>
         </div>
       </div>
     </div>

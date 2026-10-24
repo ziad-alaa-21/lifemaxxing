@@ -2,22 +2,21 @@
 
 import React, { useState } from "react";
 import {
-  Dumbbell,
-  Utensils,
-  Moon,
-  Scale,
   Timer,
+  Zap,
+  Activity,
   CheckCircle2,
   BookOpen,
   Smartphone,
-  Calendar,
-  ListChecks,
-  BookX,
+  GraduationCap,
   Sparkles,
   Check,
   Loader2,
   AlertCircle,
-  HelpCircle,
+  Dumbbell,
+  Utensils,
+  Moon,
+  Scale,
 } from "lucide-react";
 import {
   ModuleKey,
@@ -34,12 +33,12 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Moon,
   Scale,
   Timer,
+  Zap,
+  Activity,
   CheckCircle2,
   BookOpen,
   Smartphone,
-  Calendar,
-  ListChecks,
-  BookX,
+  GraduationCap,
 };
 
 export function ModuleOnboardingModal() {
@@ -61,7 +60,7 @@ export function ModuleOnboardingModal() {
     );
   };
 
-  // Starter pack button ONLY selects toggles; it does NOT submit (Correction 10)
+  // Starter pack button ONLY selects toggles; it does NOT submit
   const handleSelectStarter = () => {
     setErrorMsg(null);
     setSelected([...STARTER_PACK_MODULES]);
@@ -104,16 +103,16 @@ export function ModuleOnboardingModal() {
   ];
 
   const mindModules: ModuleKey[] = [
-    "module_mind_focus",
-    "module_mind_discipline",
-    "module_mind_reading",
-    "module_mind_screentime",
+    "module_focus",
+    "module_math",
+    "module_checkins",
+    "module_discipline",
+    "module_reading",
+    "module_screentime",
   ];
 
   const schoolModules: ModuleKey[] = [
-    "module_school_timetable",
-    "module_school_topics",
-    "module_school_mistakes",
+    "module_school",
   ];
 
   const renderModuleCard = (key: ModuleKey) => {
@@ -260,7 +259,7 @@ export function ModuleOnboardingModal() {
           {/* School Pillar */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase">
-              <BookOpen className="w-3.5 h-3.5 text-primary-lime" />
+              <GraduationCap className="w-3.5 h-3.5 text-primary-lime" />
               <span>{isAr ? "الدراسة والمذاكرة" : "School & Academics"}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
@@ -283,7 +282,7 @@ export function ModuleOnboardingModal() {
             onClick={handleSubmit}
             className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold tracking-wide transition-all flex items-center gap-2 ${
               selected.length > 0 && !isSubmitting
-                ? "bg-primary-lime text-surface hover:brightness-110 shadow-md active:scale-95"
+                ? "bg-primary-lime text-surface hover:brightness-110 shadow-md active:scale-95 cursor-pointer"
                 : "bg-surface-container-highest text-text-muted cursor-not-allowed border border-border-subtle"
             }`}
           >

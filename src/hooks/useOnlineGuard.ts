@@ -14,6 +14,23 @@ export function useOnlineGuard() {
     <T extends (...args: unknown[]) => unknown>(
       action: T,
       options?: OnlineGuardOptions
+    ): ReturnType<T> | void => {
+      if (!isOnline) {
+        const msg =
+          options?.blockedMessage ||
+          "You are currently offline. Saving and modifications are disabled to protect data integrity.";
+        alert(msg);
+        return;
+      }
+      return action() as ReturnType<T>;
+    },
+    [isOnline]
+  );
+
+  const createGuardedHandler = useCallback(
+    <T extends (...args: unknown[]) => unknown>(
+      action: T,
+      options?: OnlineGuardOptions
     ) => {
       return (...args: Parameters<T>): ReturnType<T> | void => {
         if (!isOnline) {

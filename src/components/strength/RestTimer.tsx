@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Timer, Play, Pause, RotateCcw, X } from "lucide-react";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface RestTimerProps {
   initialSeconds?: number;
@@ -16,6 +17,7 @@ export function RestTimer({
   isOpen,
   onClose,
 }: RestTimerProps) {
+  const { locale } = useI18n();
   const [totalSeconds, setTotalSeconds] = useState(initialSeconds);
   const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
   const [isRunning, setIsRunning] = useState(true);
@@ -154,12 +156,12 @@ export function RestTimer({
   };
 
   return (
-    <div className="fixed bottom-24 lg:bottom-6 right-4 z-50 w-80 bg-surface-container border border-ice-blue/40 rounded-2xl p-4 shadow-2xl animate-slide-up backdrop-blur-xl">
+    <div className={`fixed bottom-24 lg:bottom-6 z-50 w-80 bg-surface-container border border-ice-blue/40 rounded-2xl p-4 shadow-2xl animate-slide-up backdrop-blur-xl ${locale === "ar" ? "left-4" : "right-4"}`}>
       <div className="flex items-center justify-between pb-2 border-b border-border-subtle mb-3">
         <div className="flex items-center gap-2">
           <Timer className="w-4 h-4 text-ice-blue" />
           <span className="text-xs font-mono font-bold uppercase tracking-wider text-on-surface">
-            Rest Interval
+            {locale === "ar" ? "فترة الراحة" : "Rest Interval"}
           </span>
         </div>
         <button
@@ -171,7 +173,7 @@ export function RestTimer({
       </div>
 
       {/* Timer Display */}
-      <div className="flex items-center justify-between my-2 px-2">
+      <div className="flex items-center justify-between my-2 px-2" dir="ltr">
         <div className="text-3xl font-bold font-mono text-ice-blue tracking-tight">
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </div>
@@ -179,14 +181,14 @@ export function RestTimer({
           <button
             onClick={togglePause}
             className="w-8 h-8 rounded-lg bg-ice-blue/15 hover:bg-ice-blue/25 text-ice-blue flex items-center justify-center transition-colors cursor-pointer"
-            title={isRunning ? "Pause" : "Resume"}
+            title={isRunning ? (locale === "ar" ? "إيقاف مؤقت" : "Pause") : (locale === "ar" ? "استئناف" : "Resume")}
           >
             {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </button>
           <button
             onClick={handleReset}
             className="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant flex items-center justify-center transition-colors cursor-pointer"
-            title="Reset"
+            title={locale === "ar" ? "إعادة تعيين" : "Reset"}
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -213,7 +215,7 @@ export function RestTimer({
                 : "bg-surface-container-low text-text-muted border-border-subtle hover:text-on-surface"
             }`}
           >
-            {s}s
+            {s}{locale === "ar" ? "ث" : "s"}
           </button>
         ))}
       </div>

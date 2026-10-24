@@ -177,7 +177,14 @@ export function calculateBodyRing(input: BodyRingInput): RingResult {
 
   const ringPercent = totalPlanned > 0 ? Math.min(100, Math.round((completed / totalPlanned) * 100)) : null;
   const status: RingState = totalPlanned > 0 ? "active" : "no_data";
-  const displayText = totalPlanned > 0 ? `${completed} of ${totalPlanned}` : (input.isRestDayToday ? "Rest day" : "All clear today");
+  const displayText =
+    totalPlanned > 0
+      ? completed === 0
+        ? `${totalPlanned} to do`
+        : `${completed} of ${totalPlanned}`
+      : input.isRestDayToday
+      ? "Rest day"
+      : "All clear today";
 
   return {
     domain: "body",
@@ -284,7 +291,12 @@ export function calculateMindRing(input: MindRingInput): RingResult {
 
   const ringPercent = totalPlanned > 0 ? Math.min(100, Math.round((completed / totalPlanned) * 100)) : null;
   const status: RingState = totalPlanned > 0 ? "active" : "no_data";
-  const displayText = totalPlanned > 0 ? `${completed} of ${totalPlanned}` : "All clear today";
+  const displayText =
+    totalPlanned > 0
+      ? completed === 0
+        ? `${totalPlanned} to do`
+        : `${completed} of ${totalPlanned}`
+      : "All clear today";
 
   return {
     domain: "mind",
@@ -371,7 +383,12 @@ export function calculateSchoolRing(input: SchoolRingInput): RingResult {
 
   const ringPercent = totalPlanned > 0 ? Math.min(100, Math.round((completed / totalPlanned) * 100)) : null;
   const status: RingState = totalPlanned > 0 ? "active" : "no_data";
-  const displayText = totalPlanned > 0 ? `${completed} of ${totalPlanned}` : "All clear today";
+  const displayText =
+    totalPlanned > 0
+      ? completed === 0
+        ? `${totalPlanned} to do`
+        : `${completed} of ${totalPlanned}`
+      : "All clear today";
 
   return {
     domain: "school",
@@ -398,6 +415,7 @@ export interface RecommendationInput {
     score: number;
   } | null;
   sevenDayAvgSleepHours: number | null;
+  sleepHistoryCount?: number; // Total nights logged in history (requires >= 3 nights for baseline)
   lastWorkout: {
     name: string;
     completedAt: string;
@@ -445,13 +463,36 @@ export function generateTodayRecommendation(
   let categoryBadge = "Daily Calibration";
   let headline = "";
 
+  const sleepHours = input.lastNightSleep
+    ? input.lastNightSleep.durationMinutes / 60
+    : null;
+
+  // Baseline Definition: Rolling average sleep duration over up to 7 nights.
+  // Rule: A minimum of 3 logged nights is required to establish a valid personal baseline.
+  const historyCount =
+    typeof input.sleepHistoryCount === "number"
+      ? input.sleepHistoryCount
+      : input.sevenDayAvgSleepHours !== null
+      ? 7
+      : input.lastNightSleep
+      ? 1
+      : 0;
+  const hasValidBaseline = historyCount >= 3 && input.sevenDayAvgSleepHours !== null;
+  const avgSleep = hasValidBaseline ? input.sevenDayAvgSleepHours : null;
+
+  // STRICT ANTI-HALLUCINATION RULE: With fewer than 3 nights, NEVER claim a deficit
+  const isSleepDeficit =
+    hasValidBaseline && sleepHours !== null && avgSleep !== null && sleepHours < avgSleep - 0.75;
+  const isSleepSurplus =
+    hasValidBaseline && sleepHours !== null && avgSleep !== null && sleepHours >= avgSleep + 0.5;
+
   // Reasoning extraction (Honest, never hallucinates)
   const reasoning: RecommendationReasoning = {
     sleepText: input.lastNightSleep
-      ? `${(input.lastNightSleep.durationMinutes / 60).toFixed(1)}h logged (Score ${input.lastNightSleep.score}/100)${
-          input.sevenDayAvgSleepHours !== null
-            ? ` vs ${input.sevenDayAvgSleepHours.toFixed(1)}h 7-day average`
-            : " (Insufficient 7d baseline)"
+      ? `${(input.lastNightSleep.durationMinutes / 60).toFixed(1)}h logged${
+          hasValidBaseline && avgSleep !== null
+            ? ` vs ${avgSleep.toFixed(1)}h baseline avg (${historyCount} nights)`
+            : ` (insufficient baseline: ${historyCount} night${historyCount === 1 ? "" : "s"} logged, need 3+)`
         }`
       : "No sleep logged last night",
     loadText: input.lastWorkout
@@ -473,14 +514,6 @@ export function generateTodayRecommendation(
 
   const workoutsActive = input.activeModules?.workouts !== false;
   const planned = workoutsActive ? (input.plannedWorkoutSession || "").trim().toLowerCase() : "";
-  const sleepHours = input.lastNightSleep
-    ? input.lastNightSleep.durationMinutes / 60
-    : null;
-  const avgSleep = input.sevenDayAvgSleepHours;
-  const isSleepDeficit =
-    sleepHours !== null && avgSleep !== null && sleepHours < avgSleep - 0.75;
-  const isSleepSurplus =
-    sleepHours !== null && avgSleep !== null && sleepHours >= avgSleep + 0.5;
 
   // 1. High Exam Urgency Guard (Exam in <= 3 days)
   if (input.nearestExam && input.nearestExam.daysRemaining <= 3) {
@@ -490,63 +523,75 @@ export function generateTodayRecommendation(
     return { headline, categoryBadge, accentColor, reasoning };
   }
 
-  // 2. Missing Sleep Telemetry Guard
+  // 2. STATE: NO SLEEP (0 nights logged)
+  // "Optimal readiness" MUST NEVER appear when sleep telemetry is missing.
   if (!input.lastNightSleep) {
     categoryBadge = "Missing Telemetry";
     headline = planned
       ? `No sleep logged last night. Planned session: ${input.plannedWorkoutSession}. Log sleep to calibrate training volume.`
-      : "No sleep logged last night. Log your sleep in Body to unlock recovery insights.";
+      : "No sleep logged last night. Log your sleep in Body to unlock recovery insights and readiness calibration.";
     return { headline, categoryBadge, accentColor, reasoning };
   }
 
-  // 3. If Workouts module is OFF, tailor recommendation to cognitive & recovery priorities
+  // 3. STATE: FEWER THAN 3 NIGHTS LOGGED (Calibrating Baseline - Never claim a deficit)
+  if (!hasValidBaseline && sleepHours !== null && sleepHours < 7.0) {
+    categoryBadge = "Baseline Calibrating";
+    headline = planned
+      ? `Sleep duration recorded (${sleepHours.toFixed(1)}h logged). Planned session: ${input.plannedWorkoutSession}. Log at least 3 nights to establish your recovery baseline.`
+      : `Sleep duration recorded (${sleepHours.toFixed(1)}h logged). Log at least 3 nights to calibrate your personal baseline.`;
+    return { headline, categoryBadge, accentColor, reasoning };
+  }
+
+  // 4. If Workouts module is OFF, tailor recommendation to cognitive & recovery priorities
   if (!workoutsActive) {
     categoryBadge = "Cognitive Focus";
     accentColor = "#8B5CF6"; // Violet
+    // STATE: SLEEP DEFICIT vs SLEEP GOOD
     headline = isSleepDeficit
-      ? "Sleep is below baseline. Protect your mental energy and cap cognitive sprints at 45 minutes today."
-      : "Optimal readiness. Dedicate your primary focus interval to your highest-leverage deep work today.";
+      ? `Sleep deficit detected (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h baseline avg). Protect cognitive pacing and cap deep work sprints at 45 minutes.`
+      : `Optimal readiness (${sleepHours?.toFixed(1)}h logged). Dedicate your primary focus interval to your highest-leverage deep work today.`;
     return { headline, categoryBadge, accentColor, reasoning };
   }
 
-  // 3. Planned Session Matching (STRICT ANTI-BUG RULE: NEVER RECOMMEND SQUATS ON PUSH DAY)
+  // 5. Workouts Active - Planned Session Matching
   if (planned.includes("push")) {
     categoryBadge = "Strength & Load";
     if (isSleepDeficit) {
-      headline = `Sleep deficit detected (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h avg). On Push Day, cap Bench Press volume at RPE 7–8 rather than maxing out.`;
-    } else if (isSleepSurplus) {
-      headline = `Optimal recovery (${sleepHours?.toFixed(1)}h logged). Target top-set progression on Bench Press and Overhead Press today.`;
+      headline = `Sleep deficit detected (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h baseline avg). On Push Day, cap Bench Press volume at RPE 7–8 rather than maxing out.`;
     } else {
-      headline = `Ready for Push Day. Focus on clean bar path and controlled eccentrics on your compound presses.`;
+      headline = `Optimal readiness (${sleepHours?.toFixed(1)}h logged). Ready for Push Day. Target clean bar path and controlled eccentrics on compound presses.`;
     }
   } else if (planned.includes("pull")) {
     categoryBadge = "Strength & Load";
     if (isSleepDeficit) {
-      headline = `Lower recovery baseline today. Maintain Deadlift sets at submaximal intensity to protect posterior chain pacing.`;
+      headline = `Sleep deficit detected (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h baseline avg). Lower recovery baseline; maintain Deadlift sets at submaximal intensity.`;
     } else {
-      headline = `Planned session: Pull Day. Prime your lats and grip strength before heavy compound pulling.`;
+      headline = `Optimal readiness (${sleepHours?.toFixed(1)}h logged). Ready for Pull Day. Prime lats and grip strength before heavy compound pulling.`;
     }
   } else if (planned.includes("leg") || planned.includes("lower")) {
     categoryBadge = "Strength & Load";
     if (isSleepDeficit) {
-      headline = `Sleep deficit detected. On Leg Day, prioritize squat depth and form stability over aggressive load increases.`;
+      headline = `Sleep deficit detected (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h baseline avg). On Leg Day, prioritize squat depth and form stability over aggressive load increases.`;
     } else {
-      headline = `Recovery primed. Drive full depth and explosive ascent on your Squat working sets today.`;
+      headline = `Optimal readiness (${sleepHours?.toFixed(1)}h logged). Recovery primed. Drive full depth and explosive ascent on your Squat working sets today.`;
     }
   } else if (planned.includes("rest")) {
     categoryBadge = "Recovery Anchor";
     accentColor = "#8B5CF6"; // Violet
-    headline = `Designated Rest Day. Focus on hydration, low-friction mobility, and adhering to your wind-down schedule.`;
+    headline = isSleepDeficit
+      ? `Designated Rest Day with sleep deficit (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h baseline avg). Prioritize hydration, low-friction mobility, and early sleep tonight.`
+      : `Optimal readiness (${sleepHours?.toFixed(1)}h logged) on a designated Rest Day. Focus on active recovery and adhering to your wind-down schedule.`;
   } else if (input.plannedWorkoutSession) {
-    // Custom session name
     categoryBadge = "Training Calibration";
     headline = isSleepDeficit
-      ? `Sleep is below baseline for ${input.plannedWorkoutSession}. Regulate volume and avoid training to failure.`
-      : `High readiness for ${input.plannedWorkoutSession}. Execute with solid intent.`;
+      ? `Sleep deficit detected (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h baseline avg) for ${input.plannedWorkoutSession}. Regulate volume and avoid training to failure.`
+      : `Optimal readiness (${sleepHours?.toFixed(1)}h logged) for ${input.plannedWorkoutSession}. Execute with solid intent.`;
   } else {
     // No split configured
     categoryBadge = "Protocol Setup";
-    headline = "No workout split configured for today. Set your training split in settings to enable tailored load pacing.";
+    headline = isSleepDeficit
+      ? `Sleep deficit detected (${sleepHours?.toFixed(1)}h vs ${avgSleep?.toFixed(1)}h baseline avg). Prioritize low-stress mobility or configure your split to pace volume.`
+      : `Optimal readiness (${sleepHours?.toFixed(1)}h logged). Configure your training split or log a session to pace volume.`;
   }
 
   return {

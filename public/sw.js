@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'life-v2.0.0';
+const CACHE_VERSION = 'life-v2.0.1';
 const STATIC_CACHE_NAME = `life-static-${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
@@ -58,6 +58,11 @@ self.addEventListener('message', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  // 0. Never intercept requests during local development
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+    return;
+  }
 
   // 1. Never intercept or cache non-GET requests or Supabase API calls
   if (

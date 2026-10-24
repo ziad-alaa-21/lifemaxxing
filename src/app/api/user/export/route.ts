@@ -7,6 +7,7 @@ import { createClient as createDirectClient } from "@supabase/supabase-js";
 const USER_OWNED_TABLES = [
   "profiles",
   "user_settings",
+  "user_modules",
   "weight_logs",
   "sleep_logs",
   "meal_logs",
@@ -24,6 +25,10 @@ const USER_OWNED_TABLES = [
   "grades",
   "mistakes",
   "deadlines",
+  "academic_schedule",
+  "academic_topics",
+  "priorities",
+  "tip_deliveries",
   "math_sessions",
   "math_attempts",
   "discipline_commitments",
@@ -110,29 +115,48 @@ export async function GET(request: NextRequest) {
     const exportData: Record<string, any[]> = {};
     const tableManifest: { table: string; count: number }[] = [];
 
-    // 2. Fetch every user-owned table via user's own authenticated session (RLS applies)
-    for (const table of USER_OWNED_TABLES) {
-      try {
-        let query;
-        if (table === "profiles") {
-          query = supabase.from("profiles").select("*").eq("id", userId);
-        } else if (table === "workout_exercises" || table === "workout_sets") {
-          // Child tables: RLS will return only records visible to user
-          query = supabase.from(table).select("*");
-        } else {
-          query = supabase.from(table).select("*").eq("user_id", userId);
-        }
+    const tablesSkipped: { table: string; reason: string }[] = [];
 
-        const { data, error } = await query;
-        if (!error && Array.isArray(data)) {
-          const sanitized = data.map(sanitizeRow);
-          exportData[table] = sanitized;
-          tableManifest.push({ table, count: sanitized.length });
-        } else {
-          exportData[table] = [];
+    // 2. Fetch every user-owned table via user's own authenticated session (RLS applies)
+    const results = await Promise.all(
+      USER_OWNED_TABLES.map(async (table) => {
+        try {
+          let query;
+          if (table === "profiles") {
+            query = supabase.from("profiles").select("*").eq("id", userId);
+          } else if (table === "workout_exercises" || table === "workout_sets") {
+            query = supabase.from(table).select("*");
+          } else {
+            query = supabase.from(table).select("*").eq("user_id", userId);
+          }
+
+          const { data, error } = await query;
+          if (
+            error &&
+            (error.code === "PGRST205" ||
+              error.message.includes("schema cache") ||
+              error.message.includes("does not exist"))
+          ) {
+            return { table, skipped: true, reason: "Table does not exist in live schema" };
+          }
+
+          if (!error && Array.isArray(data)) {
+            const sanitized = data.map(sanitizeRow);
+            return { table, rows: sanitized, skipped: false };
+          }
+          return { table, rows: [], skipped: false };
+        } catch (e: any) {
+          return { table, skipped: true, reason: e?.message || "Query failed" };
         }
-      } catch {
-        exportData[table] = [];
+      })
+    );
+
+    for (const res of results) {
+      if (res.skipped) {
+        tablesSkipped.push({ table: res.table, reason: res.reason || "Not present live" });
+      } else {
+        exportData[res.table] = res.rows || [];
+        tableManifest.push({ table: res.table, count: (res.rows || []).length });
       }
     }
 
@@ -145,7 +169,11 @@ export async function GET(request: NextRequest) {
       csvContent += `# Exported: ${now}\n`;
       csvContent += `# User ID: ${userId}\n`;
       csvContent += `# User Email: ${authUser.email || "N/A"}\n`;
-      csvContent += `# Includes Soft-Deleted Rows: YES (identified by non-null deleted_at)\n\n`;
+      csvContent += `# Includes Soft-Deleted Rows: YES (identified by non-null deleted_at)\n`;
+      if (tablesSkipped.length > 0) {
+        csvContent += `# Skipped Tables (Not Present Live): ${tablesSkipped.map((s) => s.table).join(", ")}\n`;
+      }
+      csvContent += `\n`;
 
       for (const [table, rows] of Object.entries(exportData)) {
         csvContent += convertToCSV(table, rows);
@@ -171,6 +199,7 @@ export async function GET(request: NextRequest) {
         email: authUser.email,
         includes_soft_deleted_records: true,
         tables_exported: tableManifest,
+        tables_skipped: tablesSkipped,
       },
       data: exportData,
     };

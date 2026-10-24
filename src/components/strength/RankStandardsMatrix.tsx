@@ -34,6 +34,8 @@ import {
   TierName,
 } from "@/lib/strength";
 
+import { useI18n } from "@/lib/i18n/I18nContext";
+
 interface UserPR {
   exercise_id: string;
   e1rm_kg: number;
@@ -61,6 +63,7 @@ interface CanonicalLiftSummary {
 }
 
 export function RankStandardsMatrix() {
+  const { locale } = useI18n();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -76,6 +79,46 @@ export function RankStandardsMatrix() {
     liftsCount: number;
     maxLifts: number;
   } | null>(null);
+
+  const getExerciseName = (key: string, defaultName: string) => {
+    if (locale !== "ar") return defaultName;
+    const names: Record<string, string> = {
+      bench_press: "بنش برس بالبار",
+      squat: "سكوات باربل",
+      deadlift: "ديدليفت بالبار",
+      overhead_press: "ضغط كتف بالبار",
+      pull_up: "عقلة بأوزان",
+      barbell_row: "سحب باربل",
+    };
+    return names[key] || defaultName;
+  };
+
+  const getTierTranslation = (tier: string) => {
+    if (locale !== "ar") return tier;
+    const tiers: Record<string, string> = {
+      Bronze: "برونزي",
+      Silver: "فضي",
+      Gold: "ذهبي",
+      Platinum: "بلاتيني",
+      Diamond: "ماسي",
+      Master: "ماستر",
+      Grandmaster: "جراند ماستر",
+      Unranked: "غير مصنف",
+    };
+    return tiers[tier] || tier;
+  };
+
+  const getMuscleTranslation = (muscle: string) => {
+    if (locale !== "ar") return muscle;
+    const muscles: Record<string, string> = {
+      chest: "الصدر",
+      legs: "الرجلين",
+      back: "الضهر",
+      shoulders: "الأكتاف",
+      lats: "المجنص والظهر",
+    };
+    return muscles[muscle.toLowerCase()] || muscle;
+  };
 
   const loadData = useCallback(async () => {
     try {
@@ -206,7 +249,7 @@ export function RankStandardsMatrix() {
 
   // Prepare radar chart data
   const radarData = liftSummaries.map((item) => {
-    const shortNames: Record<string, string> = {
+    const shortNamesEn: Record<string, string> = {
       bench_press: "Bench",
       squat: "Squat",
       deadlift: "Deadlift",
@@ -214,7 +257,16 @@ export function RankStandardsMatrix() {
       pull_up: "Pull-up",
       barbell_row: "Row",
     };
+    const shortNamesAr: Record<string, string> = {
+      bench_press: "بنش",
+      squat: "سكوات",
+      deadlift: "ديدليفت",
+      overhead_press: "كتف",
+      pull_up: "عقلة",
+      barbell_row: "سحب بار",
+    };
 
+    const shortNames = locale === "ar" ? shortNamesAr : shortNamesEn;
     const silverStd = item.standards.find((s) => s.tier === "Silver")?.multiplier || 1.0;
     const goldStd = item.standards.find((s) => s.tier === "Gold")?.multiplier || 1.3;
 
@@ -237,7 +289,10 @@ export function RankStandardsMatrix() {
           <div className="flex items-center gap-2 text-amber-core">
             <HelpCircle className="w-4 h-4 shrink-0" />
             <span>
-              <strong>Gender Unset:</strong> Rank standards are currently using neutral averages. Set your gender for calibrated thresholds:
+              <strong>{locale === "ar" ? "النوع غير محدد:" : "Gender Unset:"}</strong>{" "}
+              {locale === "ar"
+                ? "معايير القوة بتستخدم المتوسط العام. حدد نوعك عشان نحسب أرقامك بدقة:"
+                : "Rank standards are currently using neutral averages. Set your gender for calibrated thresholds:"}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -245,13 +300,13 @@ export function RankStandardsMatrix() {
               onClick={() => handleSetGender("male")}
               className="px-3 py-1 rounded-lg bg-surface-container-high border border-border-subtle hover:border-amber-core text-on-surface hover:text-amber-core transition-colors cursor-pointer"
             >
-              Male
+              {locale === "ar" ? "ذكر" : "Male"}
             </button>
             <button
               onClick={() => handleSetGender("female")}
               className="px-3 py-1 rounded-lg bg-surface-container-high border border-border-subtle hover:border-amber-core text-on-surface hover:text-amber-core transition-colors cursor-pointer"
             >
-              Female
+              {locale === "ar" ? "أنثى" : "Female"}
             </button>
           </div>
         </div>
@@ -263,14 +318,16 @@ export function RankStandardsMatrix() {
           <div className="flex items-center gap-2 text-text-muted">
             <Weight className="w-4 h-4 text-secondary-cyan shrink-0" />
             <span>
-              Bodyweight unset. Target thresholds will use 75kg default until logged.
+              {locale === "ar"
+                ? "وزن الجسم غير مسجل. هنستخدم 75 كجم كافتراضي لحد ما تسجل وزنك."
+                : "Bodyweight unset. Target thresholds will use 75kg default until logged."}
             </span>
           </div>
           <Link
             href="/body?tab=weight"
             className="text-xs font-mono text-secondary-cyan hover:underline flex items-center gap-1 font-bold"
           >
-            <span>Log in Weight Engine</span>
+            <span>{locale === "ar" ? "سجل في ميزان الجسم" : "Log in Weight Engine"}</span>
             <span>&rarr;</span>
           </Link>
         </div>
@@ -285,19 +342,21 @@ export function RankStandardsMatrix() {
             </div>
             <div>
               <h2 className="text-lg font-bold font-mono text-on-surface">
-                Strength Standards & Tier Matrix
+                {locale === "ar" ? "معايير القوة ومصفوفة المستويات" : "Strength Standards & Tier Matrix"}
               </h2>
               <p className="text-xs text-on-surface-variant">
-                Official 7-tier scientific bodyweight multipliers ({userGender ? (userGender === "male" ? "Men's Standards" : "Women's Standards") : "Neutral Averages"})
+                {locale === "ar"
+                  ? `مضاعفات أوزان الجسم العلمية لـ 7 مستويات (${userGender ? (userGender === "male" ? "معايير الرجال" : "معايير السيدات") : "المتوسط العام"})`
+                  : `Official 7-tier scientific bodyweight multipliers (${userGender ? (userGender === "male" ? "Men's Standards" : "Women's Standards") : "Neutral Averages"})`}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 bg-surface-container-high px-3 py-2 rounded-xl border border-border-subtle text-xs font-mono">
             <Weight className="w-4 h-4 text-secondary-cyan" />
-            <span className="text-text-muted">Current BW:</span>
+            <span className="text-text-muted">{locale === "ar" ? "الوزن الحالي:" : "Current BW:"}</span>
             <span className="font-bold text-on-surface">
-              {bodyweightKg ? `${bodyweightKg} kg` : "75 kg (default)"}
+              {bodyweightKg ? `${bodyweightKg} ${locale === "ar" ? "كجم" : "kg"}` : locale === "ar" ? "75 كجم (افتراضي)" : "75 kg (default)"}
             </span>
           </div>
         </div>
@@ -311,7 +370,7 @@ export function RankStandardsMatrix() {
               </div>
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                  Overall Strength Rank
+                  {locale === "ar" ? "تصنيف القوة الإجمالي" : "Overall Strength Rank"}
                 </span>
                 <div className="flex items-center gap-2">
                   <span
@@ -319,21 +378,21 @@ export function RankStandardsMatrix() {
                       overallRank.overallTier
                     )}`}
                   >
-                    {overallRank.overallTier}
+                    {getTierTranslation(overallRank.overallTier)}
                   </span>
                   <span className="text-xs font-mono text-text-muted">
-                    (Avg. {overallRank.averageRatio.toFixed(2)}x BW)
+                    ({locale === "ar" ? "متوسط" : "Avg."} {overallRank.averageRatio.toFixed(2)}x {locale === "ar" ? "من وزن الجسم" : "BW"})
                   </span>
                 </div>
               </div>
             </div>
 
             <div className="text-xs font-mono text-text-muted self-start sm:self-auto">
-              Based on{" "}
+              {locale === "ar" ? "محسوب على " : "Based on "}
               <strong className="text-on-surface">
-                {overallRank.liftsCount} of {overallRank.maxLifts}
+                {overallRank.liftsCount} {locale === "ar" ? "من" : "of"} {overallRank.maxLifts}
               </strong>{" "}
-              canonical ranked lifts
+              {locale === "ar" ? "رفعات أساسية مسجلة" : "canonical ranked lifts"}
             </div>
           </div>
         )}
@@ -349,7 +408,9 @@ export function RankStandardsMatrix() {
       {loading && (
         <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
-          <span className="text-xs font-mono">Loading strength matrices from database...</span>
+          <span className="text-xs font-mono">
+            {locale === "ar" ? "جاري تحميل مصفوفة القوة من السيرفر..." : "Loading strength matrices from database..."}
+          </span>
         </div>
       )}
 
@@ -364,15 +425,17 @@ export function RankStandardsMatrix() {
                   <div className="flex items-center gap-2">
                     <BarChart2 className="w-4 h-4 text-primary-lime" />
                     <h3 className="text-xs font-mono uppercase tracking-wider text-on-surface font-bold">
-                      Kinetic Power Profile
+                      {locale === "ar" ? "بروفايل القوة العضلية" : "Kinetic Power Profile"}
                     </h3>
                   </div>
                   <span className="text-[10px] font-mono text-text-muted">
-                    Ratio to Bodyweight
+                    {locale === "ar" ? "النسبة لوزن الجسم" : "Ratio to Bodyweight"}
                   </span>
                 </div>
                 <p className="text-[11px] text-text-muted">
-                  Geometric strength balance across the 6 canonical movements.
+                  {locale === "ar"
+                    ? "توزيع القوة وتوازن الحركات الأساسية الـ 6."
+                    : "Geometric strength balance across the 6 canonical movements."}
                 </p>
               </div>
 
@@ -392,14 +455,14 @@ export function RankStandardsMatrix() {
                       axisLine={false}
                     />
                     <Radar
-                      name="Your Ratio"
+                      name={locale === "ar" ? "نسبتك الحالية" : "Your Ratio"}
                       dataKey="userRatio"
                       stroke="#C6FF3D"
                       fill="#C6FF3D"
                       fillOpacity={0.4}
                     />
                     <Radar
-                      name="Gold Standard"
+                      name={locale === "ar" ? "المستوى الذهبي" : "Gold Standard"}
                       dataKey="gold"
                       stroke="#FFD700"
                       fill="#FFD700"
@@ -422,11 +485,11 @@ export function RankStandardsMatrix() {
               <div className="flex items-center justify-center gap-4 text-[10px] font-mono border-t border-border-subtle pt-3">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-primary-lime" />
-                  <span className="text-on-surface">Your Ratio</span>
+                  <span className="text-on-surface">{locale === "ar" ? "نسبتك الحالية" : "Your Ratio"}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-0.5 bg-rank-gold" />
-                  <span className="text-text-muted">Gold Benchmark</span>
+                  <span className="text-text-muted">{locale === "ar" ? "المعيار الذهبي" : "Gold Benchmark"}</span>
                 </div>
               </div>
             </div>
@@ -438,10 +501,10 @@ export function RankStandardsMatrix() {
                   <div className="flex items-center justify-between gap-3 pb-3 border-b border-border-subtle">
                     <div>
                       <span className="text-[10px] font-mono uppercase tracking-wider text-primary-lime font-bold">
-                        Detailed Standard Breakdown
+                        {locale === "ar" ? "تفاصيل المعايير للرفعة" : "Detailed Standard Breakdown"}
                       </span>
                       <h3 className="text-lg font-bold font-mono text-on-surface">
-                        {activeLift.name}
+                        {getExerciseName(activeLift.key, activeLift.name)}
                       </h3>
                     </div>
                     <span
@@ -449,36 +512,42 @@ export function RankStandardsMatrix() {
                         activeLift.currentTier
                       )}`}
                     >
-                      {activeLift.currentTier}
+                      {getTierTranslation(activeLift.currentTier)}
                     </span>
                   </div>
 
                   {/* Metrics Row */}
                   <div className="grid grid-cols-3 gap-3 my-4">
                     <div className="bg-surface-container-high p-3 rounded-xl border border-border-subtle">
-                      <span className="text-[10px] font-mono text-text-muted block">CURRENT PR 1RM</span>
+                      <span className="text-[10px] font-mono text-text-muted block">
+                        {locale === "ar" ? "أعلى رفعة PR 1RM" : "CURRENT PR 1RM"}
+                      </span>
                       <span className="text-base font-bold font-mono text-primary-lime">
                         {activeLift.currentPR
                           ? activeLift.key === "pull_up" && activeLift.currentPR.e1rm_kg === 0
-                            ? "Strict BW"
-                            : `${activeLift.currentPR.e1rm_kg} kg`
-                          : "Unlogged"}
+                            ? locale === "ar" ? "وزن الجسم صافي" : "Strict BW"
+                            : `${activeLift.currentPR.e1rm_kg} ${locale === "ar" ? "كجم" : "kg"}`
+                          : locale === "ar" ? "غير مسجل" : "Unlogged"}
                       </span>
                     </div>
                     <div className="bg-surface-container-high p-3 rounded-xl border border-border-subtle">
-                      <span className="text-[10px] font-mono text-text-muted block">BW RATIO</span>
+                      <span className="text-[10px] font-mono text-text-muted block">
+                        {locale === "ar" ? "النسبة للوزن" : "BW RATIO"}
+                      </span>
                       <span className="text-base font-bold font-mono text-secondary-cyan">
                         {activeLift.ratio > 0 ? `${activeLift.ratio.toFixed(2)}x` : "0.00x"}
                       </span>
                     </div>
                     <div className="bg-surface-container-high p-3 rounded-xl border border-border-subtle">
-                      <span className="text-[10px] font-mono text-text-muted block">NEXT TIER TARGET</span>
+                      <span className="text-[10px] font-mono text-text-muted block">
+                        {locale === "ar" ? "هدف المستوى الجاي" : "NEXT TIER TARGET"}
+                      </span>
                       <span className="text-base font-bold font-mono text-on-surface">
                         {activeLift.nextTargetKg !== undefined
-                          ? `${activeLift.nextTargetKg} kg`
+                          ? `${activeLift.nextTargetKg} ${locale === "ar" ? "كجم" : "kg"}`
                           : activeLift.isUnranked
-                          ? "Unranked"
-                          : "Mr. Olympia (Peak)"}
+                          ? locale === "ar" ? "غير مصنف" : "Unranked"
+                          : locale === "ar" ? "مستر أولمبيا (القمة)" : "Mr. Olympia (Peak)"}
                       </span>
                     </div>
                   </div>
@@ -488,10 +557,17 @@ export function RankStandardsMatrix() {
                     <div className="p-3.5 bg-surface-container-low border border-border-subtle rounded-xl space-y-2">
                       <div className="flex items-center justify-between text-xs font-mono">
                         <span className="text-text-muted">
-                          Progression to <span className="text-on-surface font-bold">{activeLift.nextTier}</span>:
+                          {locale === "ar" ? "التقدم نحو " : "Progression to "}
+                          <span className="text-on-surface font-bold">
+                            {getTierTranslation(activeLift.nextTier)}
+                          </span>:
                         </span>
                         <span className="text-primary-lime font-bold">
-                          {activeLift.kgToGo !== undefined ? `+${activeLift.kgToGo} kg needed` : ""}
+                          {activeLift.kgToGo !== undefined
+                            ? locale === "ar"
+                              ? `ناقصك +${activeLift.kgToGo} كجم`
+                              : `+${activeLift.kgToGo} kg needed`
+                            : ""}
                         </span>
                       </div>
                       <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
@@ -505,7 +581,7 @@ export function RankStandardsMatrix() {
 
                   {activeLift.isUnranked && activeLift.unrankedReason && (
                     <div className="p-3.5 bg-surface-container-low border border-border-subtle rounded-xl text-xs font-mono text-text-muted">
-                      Status: <span className="text-on-surface font-semibold">{activeLift.unrankedReason}</span>
+                      {locale === "ar" ? "الحالة:" : "Status:"} <span className="text-on-surface font-semibold">{activeLift.unrankedReason}</span>
                     </div>
                   )}
 
@@ -513,7 +589,9 @@ export function RankStandardsMatrix() {
                   {activeLift.standards.length > 0 && (
                     <div className="pt-3">
                       <span className="text-xs font-mono font-bold uppercase tracking-wider text-text-muted block mb-2">
-                        Visible 7-Tier Ladder ({effectiveBw} kg BW)
+                        {locale === "ar"
+                          ? `سلم المستويات الـ 7 (${effectiveBw} كجم وزن جسم)`
+                          : `Visible 7-Tier Ladder (${effectiveBw} kg BW)`}
                       </span>
                       <div className="grid grid-cols-7 gap-1.5 text-center text-xs font-mono">
                         {activeLift.standards.map((s) => {
@@ -530,10 +608,10 @@ export function RankStandardsMatrix() {
                               }`}
                             >
                               <span className="text-[9px] block uppercase font-bold truncate">
-                                {s.tier}
+                                {getTierTranslation(s.tier)}
                               </span>
                               <span className="text-xs font-bold font-mono text-on-surface block mt-0.5">
-                                {requiredKg} kg
+                                {requiredKg} {locale === "ar" ? "كجم" : "kg"}
                               </span>
                               <span className="text-[9px] text-text-muted block">
                                 {s.multiplier}x
@@ -549,7 +627,9 @@ export function RankStandardsMatrix() {
                 <div className="flex items-center gap-2 text-[11px] text-text-muted pt-2 border-t border-border-subtle">
                   <Info className="w-3.5 h-3.5 text-secondary-cyan shrink-0" />
                   <span>
-                    Below Bronze ratio shows Unranked. Pull-up ratio uses added weight only.
+                    {locale === "ar"
+                      ? "أقل من المستوى البرونزي بيعتبر غير مصنف. نسبة العقلة بتتحسب بالأوزان الإضافية فقط."
+                      : "Below Bronze ratio shows Unranked. Pull-up ratio uses added weight only."}
                   </span>
                 </div>
               </div>
@@ -571,10 +651,10 @@ export function RankStandardsMatrix() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h4 className="text-sm font-bold font-mono text-on-surface">
-                      {lift.name}
+                      {getExerciseName(lift.key, lift.name)}
                     </h4>
                     <span className="text-[10px] font-mono text-text-muted capitalize">
-                      {lift.muscle} • Key: {lift.key}
+                      {getMuscleTranslation(lift.muscle)}
                     </span>
                   </div>
                   <span
@@ -582,25 +662,31 @@ export function RankStandardsMatrix() {
                       lift.currentTier
                     )}`}
                   >
-                    {lift.currentTier}
+                    {getTierTranslation(lift.currentTier)}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="bg-surface-container-high p-2 rounded-xl border border-border-subtle">
-                    <span className="text-[10px] text-text-muted block">1RM RECORD</span>
+                    <span className="text-[10px] text-text-muted block">
+                      {locale === "ar" ? "رقمك القياسي 1RM" : "1RM RECORD"}
+                    </span>
                     <span className="text-xs font-bold text-primary-lime">
                       {lift.currentPR
                         ? lift.key === "pull_up" && lift.currentPR.e1rm_kg === 0
-                          ? "Strict BW"
-                          : `${lift.currentPR.e1rm_kg} kg`
+                          ? locale === "ar" ? "وزن الجسم" : "Strict BW"
+                          : `${lift.currentPR.e1rm_kg} ${locale === "ar" ? "كجم" : "kg"}`
                         : "-"}
                     </span>
                   </div>
                   <div className="bg-surface-container-high p-2 rounded-xl border border-border-subtle">
-                    <span className="text-[10px] text-text-muted block">NEXT GOAL</span>
+                    <span className="text-[10px] text-text-muted block">
+                      {locale === "ar" ? "الهدف القادم" : "NEXT GOAL"}
+                    </span>
                     <span className="text-xs font-bold text-on-surface">
-                      {lift.nextTargetKg !== undefined ? `${lift.nextTargetKg} kg` : "Peak"}
+                      {lift.nextTargetKg !== undefined
+                        ? `${lift.nextTargetKg} ${locale === "ar" ? "كجم" : "kg"}`
+                        : locale === "ar" ? "القمة" : "Peak"}
                     </span>
                   </div>
                 </div>
@@ -609,8 +695,17 @@ export function RankStandardsMatrix() {
                 {lift.nextTier && !lift.isUnranked && (
                   <div className="space-y-1">
                     <div className="flex justify-between text-[10px] font-mono text-text-muted">
-                      <span>To {lift.nextTier}</span>
-                      <span>{lift.kgToGo !== undefined ? `+${lift.kgToGo} kg` : ""}</span>
+                      <span>
+                        {locale === "ar" ? "للوصول إلى " : "To "}
+                        {getTierTranslation(lift.nextTier)}
+                      </span>
+                      <span>
+                        {lift.kgToGo !== undefined
+                          ? locale === "ar"
+                            ? `+${lift.kgToGo} كجم`
+                            : `+${lift.kgToGo} kg`
+                          : ""}
+                      </span>
                     </div>
                     <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
                       <div

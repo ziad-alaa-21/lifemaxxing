@@ -9,6 +9,7 @@ import {
   parseDateToEndOfDay,
   validateDeadlineInput,
 } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 import { X, Loader2, AlertCircle, CalendarClock } from "lucide-react";
 
 interface DeadlineModalProps {
@@ -37,6 +38,7 @@ export function DeadlineModal({
   initialDeadline,
   isBlocked = false,
 }: DeadlineModalProps) {
+  const { locale } = useI18n();
   const [subjectId, setSubjectId] = useState("");
   const [type, setType] = useState<DeadlineType>("exam");
   const [title, setTitle] = useState("");
@@ -137,11 +139,11 @@ export function DeadlineModal({
   }
 
   const deadlineTypes: { type: DeadlineType; label: string }[] = [
-    { type: "exam", label: "Exam" },
-    { type: "quiz", label: "Quiz" },
-    { type: "assignment", label: "Assignment" },
-    { type: "project", label: "Project" },
-    { type: "reading", label: "Reading" },
+    { type: "exam", label: locale === "ar" ? "امتحان" : "Exam" },
+    { type: "quiz", label: locale === "ar" ? "كويز" : "Quiz" },
+    { type: "assignment", label: locale === "ar" ? "واجب / شيت" : "Assignment" },
+    { type: "project", label: locale === "ar" ? "مشروع" : "Project" },
+    { type: "reading", label: locale === "ar" ? "مذاكرة / قراءة" : "Reading" },
   ];
 
   return (
@@ -154,7 +156,9 @@ export function DeadlineModal({
           <div className="flex items-center gap-2">
             <CalendarClock className="w-5 h-5 text-amber-400" />
             <h3 className="text-base font-bold font-mono text-on-surface">
-              {initialDeadline ? "Edit Deadline" : "Add Deadline"}
+              {locale === "ar"
+                ? initialDeadline ? "تعديل موعد التسليم" : "إضافة موعد تسليم"
+                : initialDeadline ? "Edit Deadline" : "Add Deadline"}
             </h3>
           </div>
           <button
@@ -176,7 +180,7 @@ export function DeadlineModal({
           {/* Subject Selector */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Subject *
+              {locale === "ar" ? "المادة *" : "Subject *"}
             </label>
             <select
               value={subjectId}
@@ -185,7 +189,7 @@ export function DeadlineModal({
               className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 transition-colors"
             >
               <option value="" disabled>
-                Select subject
+                {locale === "ar" ? "اختر المادة" : "Select subject"}
               </option>
               {subjects.map((sub) => (
                 <option key={sub.id} value={sub.id}>
@@ -198,7 +202,7 @@ export function DeadlineModal({
           {/* Type Selector */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Deadline Type *
+              {locale === "ar" ? "نوع التسليم *" : "Deadline Type *"}
             </label>
             <div className="flex flex-wrap gap-1.5">
               {deadlineTypes.map((dt) => (
@@ -221,14 +225,14 @@ export function DeadlineModal({
           {/* Title Input with dir="auto" */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Title *
+              {locale === "ar" ? "العنوان *" : "Title *"}
             </label>
             <input
               type="text"
               dir="auto"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Final Exam, Problem Set 4, تسليم المشروع"
+              placeholder={locale === "ar" ? "مثال: امتحان فاينال، شيت 4، تسليم المشروع" : "e.g. Final Exam, Problem Set 4, تسليم المشروع"}
               required
               className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors font-sans"
             />
@@ -238,7 +242,7 @@ export function DeadlineModal({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-on-surface-variant flex items-center justify-between">
-                <span>Due Date *</span>
+                <span>{locale === "ar" ? "تاريخ التسليم *" : "Due Date *"}</span>
                 <span className="text-[10px] text-text-muted">11:59 PM</span>
               </label>
               <input
@@ -252,7 +256,7 @@ export function DeadlineModal({
 
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-on-surface-variant">
-                Priority
+                {locale === "ar" ? "الأولوية" : "Priority"}
               </label>
               <select
                 value={priority}
@@ -261,9 +265,9 @@ export function DeadlineModal({
                 }
                 className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface font-mono focus:outline-none focus:border-amber-400 transition-colors capitalize"
               >
-                <option value="low">Low Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="high">High Priority</option>
+                <option value="low">{locale === "ar" ? "أولوية هادية" : "Low Priority"}</option>
+                <option value="medium">{locale === "ar" ? "أولوية متوسطة" : "Medium Priority"}</option>
+                <option value="high">{locale === "ar" ? "أولوية عاجلة / قصوى" : "High Priority"}</option>
               </select>
             </div>
           </div>
@@ -271,13 +275,13 @@ export function DeadlineModal({
           {/* Notes (Optional) */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Notes (Optional)
+              {locale === "ar" ? "ملاحظات (اختياري)" : "Notes (Optional)"}
             </label>
             <textarea
               dir="auto"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. Chapters 4-7 covered; bring scientific calculator"
+              placeholder={locale === "ar" ? "مثال: مراجعة الشباتر 4-7؛ هات الآلة الحاسبة" : "e.g. Chapters 4-7 covered; bring scientific calculator"}
               rows={2}
               className="w-full px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors font-sans resize-none"
             />
@@ -291,21 +295,23 @@ export function DeadlineModal({
               disabled={saving}
               className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving || isBlocked}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-surface text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Saving...</span>
+                  <span>{locale === "ar" ? "جاري الحفظ..." : "Saving..."}</span>
                 </>
               ) : (
                 <span>
-                  {initialDeadline ? "Update Deadline" : "Save Deadline"}
+                  {locale === "ar"
+                    ? initialDeadline ? "تحديث الموعد" : "حفظ الموعد"
+                    : initialDeadline ? "Update Deadline" : "Save Deadline"}
                 </span>
               )}
             </button>

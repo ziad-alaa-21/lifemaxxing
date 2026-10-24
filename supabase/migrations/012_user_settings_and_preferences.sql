@@ -39,6 +39,8 @@ CREATE TABLE public.user_settings (
   sound_volume integer NOT NULL DEFAULT 80 CHECK (sound_volume >= 0 AND sound_volume <= 100),
   vibration_enabled boolean NOT NULL DEFAULT true,
   hide_adherence_scores boolean NOT NULL DEFAULT false,
+  weekly_study_target_minutes integer DEFAULT NULL CHECK (weekly_study_target_minutes IS NULL OR (weekly_study_target_minutes >= 30 AND weekly_study_target_minutes <= 10080)),
+  first_day_of_week integer DEFAULT NULL CHECK (first_day_of_week IS NULL OR (first_day_of_week BETWEEN 0 AND 6)),
 
   -- Metadata
   created_at timestamptz NOT NULL DEFAULT now(),

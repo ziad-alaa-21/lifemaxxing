@@ -27,6 +27,7 @@ import {
   scaleSavedMealItems,
   getLocalDateString,
 } from "@/lib/nutrition";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface SavedMealsDrawerProps {
   isOpen: boolean;
@@ -44,6 +45,7 @@ export function SavedMealsDrawer({
   prefillTemplate,
 }: SavedMealsDrawerProps) {
   const { isOnline, guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
 
   const [savedMeals, setSavedMeals] = useState<SavedMeal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -295,6 +297,13 @@ export function SavedMealsDrawer({
     activeFilter === "favorites" ? m.is_favorite : true
   );
 
+  const MEAL_LABELS: Record<MealType, string> = {
+    breakfast: locale === "ar" ? "فطار" : "breakfast",
+    lunch: locale === "ar" ? "غدا" : "lunch",
+    dinner: locale === "ar" ? "عشا" : "dinner",
+    snack: locale === "ar" ? "سناك" : "snack",
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md">
       <div className="relative w-full max-w-lg bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -303,7 +312,7 @@ export function SavedMealsDrawer({
           <div className="flex items-center gap-2">
             <Bookmark className="w-5 h-5 text-secondary-cyan" />
             <h2 className="text-base font-bold font-mono text-on-surface">
-              Saved Meals & Templates
+              {locale === "ar" ? "الوجبات المحفوظة والقوالب" : "Saved Meals & Templates"}
             </h2>
           </div>
           <button
@@ -319,13 +328,17 @@ export function SavedMealsDrawer({
         {/* Undo Toast */}
         {deletedTemplate && (
           <div className="p-3 my-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
-            <span>Deleted template &ldquo;{deletedTemplate.name}&rdquo;</span>
+            <span>
+              {locale === "ar"
+                ? `اتمسح القالب "${deletedTemplate.name}"`
+                : `Deleted template "${deletedTemplate.name}"`}
+            </span>
             <button
               onClick={handleUndoTemplateDelete}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 active:scale-95 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             >
               <Undo2 className="w-3.5 h-3.5" />
-              <span>Undo</span>
+              <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
             </button>
           </div>
         )}
@@ -336,7 +349,7 @@ export function SavedMealsDrawer({
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
-                  Log Template to Today
+                  {locale === "ar" ? "تسجيل القالب للنهاردة" : "Log Template to Today"}
                 </span>
                 <div className="font-mono text-base font-bold text-on-surface">
                   {selectedMeal.name}
@@ -344,9 +357,9 @@ export function SavedMealsDrawer({
               </div>
               <button
                 onClick={() => setSelectedMeal(null)}
-                className="text-xs font-mono text-text-muted hover:text-on-surface underline"
+                className="text-xs font-mono text-text-muted hover:text-on-surface underline cursor-pointer"
               >
-                Back to List
+                {locale === "ar" ? "رجوع للقائمة" : "Back to List"}
               </button>
             </div>
 
@@ -356,28 +369,30 @@ export function SavedMealsDrawer({
                 <button
                   key={t}
                   onClick={() => setSelectedMealType(t)}
-                  className={`py-1.5 rounded-lg capitalize font-bold transition-all ${
+                  className={`py-1.5 rounded-lg capitalize font-bold transition-all cursor-pointer ${
                     selectedMealType === t
-                      ? "bg-secondary-cyan text-charcoal-dark"
+                      ? "bg-secondary-cyan text-on-primary"
                       : "text-text-muted hover:text-on-surface"
                   }`}
                 >
-                  {t}
+                  {MEAL_LABELS[t]}
                 </button>
               ))}
             </div>
 
             {/* Portion Scaling Multipliers (Item 6) */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="text-text-muted">Portion Multiplier:</label>
+              <label className="text-text-muted">
+                {locale === "ar" ? "مضاعف الكمية:" : "Portion Multiplier:"}
+              </label>
               <div className="grid grid-cols-4 gap-2">
                 {[0.5, 1.0, 1.5, 2.0].map((m) => (
                   <button
                     key={m}
                     onClick={() => setMultiplier(m)}
-                    className={`py-2 rounded-xl border text-center font-bold transition-all ${
+                    className={`py-2 rounded-xl border text-center font-bold transition-all cursor-pointer ${
                       multiplier === m
-                        ? "bg-secondary-cyan text-charcoal-dark border-secondary-cyan"
+                        ? "bg-secondary-cyan text-on-primary border-secondary-cyan"
                         : "bg-surface-container-lowest border-border-subtle text-on-surface hover:border-secondary-cyan/40"
                     }`}
                   >
@@ -393,12 +408,22 @@ export function SavedMealsDrawer({
               const totals = computeSavedMealTotals(scaled);
               return (
                 <div className="p-3 rounded-xl bg-surface-container-lowest border border-border-subtle flex items-center justify-between font-mono text-xs">
-                  <span className="text-text-muted">Scaled Meal Impact:</span>
+                  <span className="text-text-muted">
+                    {locale === "ar" ? "إجمالي الوجبة بعد التعديل:" : "Scaled Meal Impact:"}
+                  </span>
                   <div className="flex items-center gap-2.5">
-                    <span className="font-bold text-on-surface">{totals.total_calories} kcal</span>
-                    <span className="text-primary-lime font-bold">{totals.total_protein_g}g P</span>
-                    <span className="text-secondary-cyan">{totals.total_carbs_g}g C</span>
-                    <span className="text-rank-gold">{totals.total_fats_g}g F</span>
+                    <span className="font-bold text-on-surface">
+                      {totals.total_calories} {locale === "ar" ? "سعرة" : "kcal"}
+                    </span>
+                    <span className="text-primary-lime font-bold">
+                      {totals.total_protein_g}{locale === "ar" ? "جم ب" : "g P"}
+                    </span>
+                    <span className="text-secondary-cyan">
+                      {totals.total_carbs_g}{locale === "ar" ? "جم ك" : "g C"}
+                    </span>
+                    <span className="text-rank-gold">
+                      {totals.total_fats_g}{locale === "ar" ? "جم د" : "g F"}
+                    </span>
                   </div>
                 </div>
               );
@@ -408,17 +433,21 @@ export function SavedMealsDrawer({
             <button
               onClick={handleLogSavedMeal}
               disabled={logging}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
             >
               {logging ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Logging Meal...</span>
+                  <span>{locale === "ar" ? "جاري تسجيل الوجبة..." : "Logging Meal..."}</span>
                 </>
               ) : (
                 <>
                   <Check className="w-4 h-4" />
-                  <span>Confirm & Log {multiplier}x Portion</span>
+                  <span>
+                    {locale === "ar"
+                      ? `تأكيد وتسجيل وجبة بمقدار ${multiplier}x`
+                      : `Confirm & Log ${multiplier}x Portion`}
+                  </span>
                 </>
               )}
             </button>
@@ -428,13 +457,13 @@ export function SavedMealsDrawer({
           <div className="my-4 p-4 rounded-2xl bg-surface-container-high border border-border-subtle space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold font-mono text-on-surface">
-                New Meal Template
+                {locale === "ar" ? "قالب وجبة جديد" : "New Meal Template"}
               </span>
               <button
                 onClick={() => setIsCreating(false)}
-                className="text-xs font-mono text-text-muted hover:text-on-surface"
+                className="text-xs font-mono text-text-muted hover:text-on-surface cursor-pointer"
               >
-                Cancel
+                {locale === "ar" ? "إلغاء" : "Cancel"}
               </button>
             </div>
 
@@ -447,10 +476,12 @@ export function SavedMealsDrawer({
 
             <div className="space-y-3 font-mono text-xs">
               <div>
-                <label className="text-text-muted block mb-1">Template Name *</label>
+                <label className="text-text-muted block mb-1">
+                  {locale === "ar" ? "اسم القالب *" : "Template Name *"}
+                </label>
                 <input
                   type="text"
-                  placeholder="e.g. Post-Workout Breakfast"
+                  placeholder={locale === "ar" ? "مثال: فطار بعد الجيم" : "e.g. Post-Workout Breakfast"}
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface focus:outline-none"
@@ -458,23 +489,27 @@ export function SavedMealsDrawer({
               </div>
 
               <div>
-                <label className="text-text-muted block mb-1">Default Meal Type</label>
+                <label className="text-text-muted block mb-1">
+                  {locale === "ar" ? "نوع الوجبة الافتراضي" : "Default Meal Type"}
+                </label>
                 <select
                   value={newMealType}
                   onChange={(e) => setNewMealType(e.target.value as MealType)}
                   className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface focus:outline-none capitalize"
                 >
-                  <option value="breakfast">Breakfast</option>
-                  <option value="lunch">Lunch</option>
-                  <option value="dinner">Dinner</option>
-                  <option value="snack">Snack</option>
+                  <option value="breakfast">{MEAL_LABELS.breakfast}</option>
+                  <option value="lunch">{MEAL_LABELS.lunch}</option>
+                  <option value="dinner">{MEAL_LABELS.dinner}</option>
+                  <option value="snack">{MEAL_LABELS.snack}</option>
                 </select>
               </div>
 
               {/* Items List */}
               <div className="space-y-2 pt-2 border-t border-border-subtle">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-text-muted">Food Items ({newItems.length})</span>
+                  <span className="text-[11px] text-text-muted">
+                    {locale === "ar" ? `الأصناف (${newItems.length})` : `Food Items (${newItems.length})`}
+                  </span>
                   <button
                     onClick={() =>
                       setNewItems([
@@ -482,9 +517,9 @@ export function SavedMealsDrawer({
                         { food_name: "", quantity: 1, unit: "serving", calories: null, protein_g: 0, carbs_g: 0, fats_g: 0 },
                       ])
                     }
-                    className="text-secondary-cyan hover:underline text-[11px] flex items-center gap-1"
+                    className="text-secondary-cyan hover:underline text-[11px] flex items-center gap-1 cursor-pointer"
                   >
-                    <Plus className="w-3 h-3" /> Add Item
+                    <Plus className="w-3 h-3" /> {locale === "ar" ? "إضافة صنف" : "Add Item"}
                   </button>
                 </div>
 
@@ -496,7 +531,7 @@ export function SavedMealsDrawer({
                     <div className="flex items-center justify-between gap-2">
                       <input
                         type="text"
-                        placeholder="Item name (e.g. 3 Eggs)"
+                        placeholder={locale === "ar" ? "اسم الصنف (مثال: 3 بيضات)" : "Item name (e.g. 3 Eggs)"}
                         value={it.food_name}
                         onChange={(e) => {
                           const updated = [...newItems];
@@ -508,7 +543,7 @@ export function SavedMealsDrawer({
                       {newItems.length > 1 && (
                         <button
                           onClick={() => setNewItems(newItems.filter((_, i) => i !== idx))}
-                          className="p-1 text-text-muted hover:text-[#F87171]"
+                          className="p-1 text-text-muted hover:text-[#F87171] cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -518,7 +553,7 @@ export function SavedMealsDrawer({
                     <div className="grid grid-cols-4 gap-1.5 text-[11px]">
                       <input
                         type="number"
-                        placeholder="kcal"
+                        placeholder={locale === "ar" ? "سعرة" : "kcal"}
                         value={it.calories ?? ""}
                         onChange={(e) => {
                           const updated = [...newItems];
@@ -529,7 +564,7 @@ export function SavedMealsDrawer({
                       />
                       <input
                         type="number"
-                        placeholder="Prot g"
+                        placeholder={locale === "ar" ? "بروتين" : "Prot g"}
                         value={it.protein_g || ""}
                         onChange={(e) => {
                           const updated = [...newItems];
@@ -540,7 +575,7 @@ export function SavedMealsDrawer({
                       />
                       <input
                         type="number"
-                        placeholder="Carb g"
+                        placeholder={locale === "ar" ? "كارب" : "Carb g"}
                         value={it.carbs_g || ""}
                         onChange={(e) => {
                           const updated = [...newItems];
@@ -551,7 +586,7 @@ export function SavedMealsDrawer({
                       />
                       <input
                         type="number"
-                        placeholder="Fat g"
+                        placeholder={locale === "ar" ? "دهون" : "Fat g"}
                         value={it.fats_g || ""}
                         onChange={(e) => {
                           const updated = [...newItems];
@@ -568,9 +603,11 @@ export function SavedMealsDrawer({
               <button
                 onClick={handleCreateTemplate}
                 disabled={savingTemplate}
-                className="w-full py-2.5 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+                className="w-full py-2.5 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
               >
-                {savingTemplate ? "Saving Template..." : "Save Meal Template"}
+                {savingTemplate
+                  ? locale === "ar" ? "جاري حفظ القالب..." : "Saving Template..."
+                  : locale === "ar" ? "حفظ قالب الوجبة" : "Save Meal Template"}
               </button>
             </div>
           </div>
@@ -582,33 +619,33 @@ export function SavedMealsDrawer({
               <div className="flex items-center gap-1.5 p-1 bg-surface-container-lowest rounded-xl font-mono text-xs">
                 <button
                   onClick={() => setActiveFilter("all")}
-                  className={`px-3 py-1 rounded-lg transition-all ${
+                  className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                     activeFilter === "all"
-                      ? "bg-secondary-cyan text-charcoal-dark font-bold"
+                      ? "bg-secondary-cyan text-on-primary font-bold"
                       : "text-text-muted hover:text-on-surface"
                   }`}
                 >
-                  All ({savedMeals.length})
+                  {locale === "ar" ? `الكل (${savedMeals.length})` : `All (${savedMeals.length})`}
                 </button>
                 <button
                   onClick={() => setActiveFilter("favorites")}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-lg transition-all ${
+                  className={`flex items-center gap-1 px-3 py-1 rounded-lg transition-all cursor-pointer ${
                     activeFilter === "favorites"
-                      ? "bg-rank-gold text-charcoal-dark font-bold"
+                      ? "bg-rank-gold text-on-primary font-bold"
                       : "text-text-muted hover:text-on-surface"
                   }`}
                 >
                   <Star className="w-3 h-3 fill-current" />
-                  <span>Starred</span>
+                  <span>{locale === "ar" ? "المميزة بنجمة" : "Starred"}</span>
                 </button>
               </div>
 
               <button
                 onClick={() => setIsCreating(true)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary-lime text-charcoal-dark font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary-lime text-on-primary font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>+ New Template</span>
+                <span>{locale === "ar" ? "+ قالب جديد" : "+ New Template"}</span>
               </button>
             </div>
 
@@ -616,14 +653,18 @@ export function SavedMealsDrawer({
             {loading ? (
               <div className="p-8 text-center font-mono text-xs text-text-muted flex items-center justify-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin text-secondary-cyan" />
-                <span>Loading saved meals...</span>
+                <span>{locale === "ar" ? "جاري تحميل الوجبات المحفوظة..." : "Loading saved meals..."}</span>
               </div>
             ) : filteredMeals.length === 0 ? (
               <div className="p-8 rounded-2xl bg-surface-container-lowest border border-border-subtle text-center space-y-2 font-mono">
                 <Bookmark className="w-8 h-8 mx-auto text-text-muted/40" />
-                <div className="text-xs font-bold text-on-surface">No Saved Meals Yet</div>
+                <div className="text-xs font-bold text-on-surface">
+                  {locale === "ar" ? "مفيش وجبات محفوظة لسه" : "No Saved Meals Yet"}
+                </div>
                 <p className="text-[11px] text-text-muted max-w-xs mx-auto">
-                  Create reusable templates for your favorite go-to meals to log them with 1 tap.
+                  {locale === "ar"
+                    ? "اعمل قوالب لوجباتك المفضلة عشان تسجلها بضغطة واحدة كل يوم."
+                    : "Create reusable templates for your favorite go-to meals to log them with 1 tap."}
                 </p>
               </div>
             ) : (
@@ -644,19 +685,21 @@ export function SavedMealsDrawer({
                           {meal.name}
                         </span>
                         <span className="px-1.5 py-0.2 rounded text-[9px] uppercase bg-surface-container-lowest text-text-muted">
-                          {meal.meal_type}
+                          {meal.meal_type ? MEAL_LABELS[meal.meal_type] : ""}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2.5 text-xs">
                         <span className="font-bold text-on-surface">
-                          {meal.total_calories} kcal
+                          {meal.total_calories} {locale === "ar" ? "سعرة" : "kcal"}
                         </span>
                         <span className="text-primary-lime font-bold">
-                          {meal.total_protein_g}g P
+                          {meal.total_protein_g}{locale === "ar" ? "جم ب" : "g P"}
                         </span>
                         <span className="text-text-muted text-[11px]">
-                          ({meal.items?.length || 0} items)
+                          {locale === "ar"
+                            ? `(${meal.items?.length || 0} صنف)`
+                            : `(${meal.items?.length || 0} items)`}
                         </span>
                       </div>
                     </div>
@@ -664,20 +707,20 @@ export function SavedMealsDrawer({
                     <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => handleToggleFavorite(meal)}
-                        className={`p-1.5 rounded-lg transition-colors ${
+                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                           meal.is_favorite
                             ? "text-rank-gold hover:bg-rank-gold/10"
                             : "text-text-muted hover:text-on-surface"
                         }`}
-                        title="Star Favorite"
+                        title={locale === "ar" ? "تمييز بنجمة" : "Star Favorite"}
                       >
                         <Star className={`w-4 h-4 ${meal.is_favorite ? "fill-rank-gold" : ""}`} />
                       </button>
 
                       <button
                         onClick={() => handleSoftDeleteTemplate(meal)}
-                        className="p-1.5 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-lowest transition-colors"
-                        title="Delete Template"
+                        className="p-1.5 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-lowest transition-colors cursor-pointer"
+                        title={locale === "ar" ? "مسح القالب" : "Delete Template"}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

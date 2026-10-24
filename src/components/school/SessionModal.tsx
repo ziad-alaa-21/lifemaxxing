@@ -9,6 +9,8 @@ import {
   parseTimeToMinutes,
   normalizeTimeString,
 } from "@/lib/school";
+import { formatTimeRange12h } from "@/lib/time";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface SessionModalProps {
   isOpen: boolean;
@@ -27,14 +29,14 @@ interface SessionModalProps {
   initialDayOfWeek?: number;
 }
 
-const SESSION_TYPES: { type: SessionType; label: string; tokenClass: string }[] = [
-  { type: "lecture", label: "Lecture", tokenClass: "session-lecture" },
-  { type: "lab", label: "Lab", tokenClass: "session-lab" },
-  { type: "section", label: "Section", tokenClass: "session-section" },
-  { type: "seminar", label: "Seminar", tokenClass: "session-seminar" },
+const SESSION_TYPES: { type: SessionType; labelEn: string; labelAr: string; tokenClass: string }[] = [
+  { type: "lecture", labelEn: "Lecture", labelAr: "محاضرة", tokenClass: "session-lecture" },
+  { type: "lab", labelEn: "Lab", labelAr: "معمل", tokenClass: "session-lab" },
+  { type: "section", labelEn: "Section", labelAr: "سكشن", tokenClass: "session-section" },
+  { type: "seminar", labelEn: "Seminar", labelAr: "سيمنار", tokenClass: "session-seminar" },
 ];
 
-const DAYS_OF_WEEK = [
+const DAYS_OF_WEEK_EN = [
   { value: 0, label: "Sunday" },
   { value: 1, label: "Monday" },
   { value: 2, label: "Tuesday" },
@@ -42,6 +44,16 @@ const DAYS_OF_WEEK = [
   { value: 4, label: "Thursday" },
   { value: 5, label: "Friday" },
   { value: 6, label: "Saturday" },
+];
+
+const DAYS_OF_WEEK_AR = [
+  { value: 0, label: "الأحد" },
+  { value: 1, label: "الإثنين" },
+  { value: 2, label: "الثلاثاء" },
+  { value: 3, label: "الأربعاء" },
+  { value: 4, label: "الخميس" },
+  { value: 5, label: "الجمعة" },
+  { value: 6, label: "السبت" },
 ];
 
 export function SessionModal({
@@ -53,6 +65,7 @@ export function SessionModal({
   initialData,
   initialDayOfWeek = 0,
 }: SessionModalProps) {
+  const { locale } = useI18n();
   const activeSubjects = useMemo(
     () => subjects.filter((s) => !s.deleted_at && !s.archived),
     [subjects]
@@ -66,6 +79,8 @@ export function SessionModal({
   const [sessionType, setSessionType] = useState<SessionType>("lecture");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const daysList = locale === "ar" ? DAYS_OF_WEEK_AR : DAYS_OF_WEEK_EN;
 
   useEffect(() => {
     if (initialData) {
@@ -112,13 +127,13 @@ export function SessionModal({
     if (conflictingSession) {
       const sub = subjects.find((s) => s.id === conflictingSession.subject_id);
       return {
-        subjectName: sub?.name || "Existing Class",
+        subjectName: sub?.name || (locale === "ar" ? "حصة حالية" : "Existing Class"),
         start: normalizeTimeString(conflictingSession.start_time),
         end: normalizeTimeString(conflictingSession.end_time),
       };
     }
     return null;
-  }, [dayOfWeek, startTime, endTime, existingSessions, initialData, subjects]);
+  }, [dayOfWeek, startTime, endTime, existingSessions, initialData, subjects, locale]);
 
   if (!isOpen) return null;
 
@@ -127,7 +142,7 @@ export function SessionModal({
     setError(null);
 
     if (!subjectId) {
-      setError("Please select a subject.");
+      setError(locale === "ar" ? "من فضلك اختار المادة الدراسية." : "Please select a subject.");
       return;
     }
 
@@ -135,22 +150,38 @@ export function SessionModal({
     const endMins = parseTimeToMinutes(endTime);
 
     if (endMins <= startMins) {
-      setError("End time must be strictly after start time.");
+      setError(
+        locale === "ar"
+          ? "وقت الانتهاء لازم يكون بعد وقت البدء."
+          : "End time must be strictly after start time."
+      );
       return;
     }
 
     const durationMins = endMins - startMins;
     if (durationMins < 15) {
-      setError("Session duration must be at least 15 minutes.");
+      setError(
+        locale === "ar"
+          ? "مدة الحصة لازم تكون 15 دقيقة على الأقل."
+          : "Session duration must be at least 15 minutes."
+      );
       return;
     }
     if (durationMins > 720) {
-      setError("Session duration cannot exceed 12 hours.");
+      setError(
+        locale === "ar"
+          ? "مدة الحصة لا يمكن تتجاوز 12 ساعة."
+          : "Session duration cannot exceed 12 hours."
+      );
       return;
     }
 
     if (location.trim().length > 100) {
-      setError("Location cannot exceed 100 characters.");
+      setError(
+        locale === "ar"
+          ? "المكان لا يمكن يتجاوز 100 حرف."
+          : "Location cannot exceed 100 characters."
+      );
       return;
     }
 
@@ -166,7 +197,10 @@ export function SessionModal({
       });
       onClose();
     } catch (err: any) {
-      setError(err?.message || "Failed to save schedule session.");
+      setError(
+        err?.message ||
+          (locale === "ar" ? "حصل خطأ أثناء حفظ الحصة في الجدول." : "Failed to save schedule session.")
+      );
     } finally {
       setSaving(false);
     }
@@ -180,7 +214,13 @@ export function SessionModal({
       >
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle/50">
           <h2 className="text-base font-bold text-on-surface">
-            {initialData ? "Edit Class Session" : "Add Class Session"}
+            {initialData
+              ? locale === "ar"
+                ? "تعديل موعد الحصة / المحاضرة"
+                : "Edit Class Session"
+              : locale === "ar"
+              ? "إضافة حصة دراسية للجدول"
+              : "Add Class Session"}
           </h2>
           <button
             onClick={onClose}
@@ -192,14 +232,16 @@ export function SessionModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs">
           {/* Subject Picker */}
           <div>
-            <label className="block text-xs font-medium text-text-muted mb-1.5">Subject</label>
+            <label className="block text-xs font-medium text-text-muted mb-1.5">
+              {locale === "ar" ? "المادة الدراسية" : "Subject"}
+            </label>
             <select
               value={subjectId}
               onChange={(e) => setSubjectId(e.target.value)}
-              className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400"
+              className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-xs text-on-surface focus:outline-none focus:border-amber-400"
             >
               {activeSubjects.map((sub) => (
                 <option key={sub.id} value={sub.id}>
@@ -211,13 +253,15 @@ export function SessionModal({
 
           {/* Day of Week */}
           <div>
-            <label className="block text-xs font-medium text-text-muted mb-1.5">Day of Week</label>
+            <label className="block text-xs font-medium text-text-muted mb-1.5">
+              {locale === "ar" ? "يوم الأسبوع" : "Day of Week"}
+            </label>
             <select
               value={dayOfWeek}
               onChange={(e) => setDayOfWeek(parseInt(e.target.value, 10))}
-              className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400"
+              className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-xs text-on-surface focus:outline-none focus:border-amber-400"
             >
-              {DAYS_OF_WEEK.map((d) => (
+              {daysList.map((d) => (
                 <option key={d.value} value={d.value}>
                   {d.label}
                 </option>
@@ -228,22 +272,26 @@ export function SessionModal({
           {/* Time pickers */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-text-muted mb-1.5">Start Time</label>
+              <label className="block text-xs font-medium text-text-muted mb-1.5">
+                {locale === "ar" ? "وقت البدء" : "Start Time"}
+              </label>
               <input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400 font-mono"
+                className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-xs text-on-surface focus:outline-none focus:border-amber-400 font-mono"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-text-muted mb-1.5">End Time</label>
+              <label className="block text-xs font-medium text-text-muted mb-1.5">
+                {locale === "ar" ? "وقت الانتهاء" : "End Time"}
+              </label>
               <input
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400 font-mono"
+                className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-xs text-on-surface focus:outline-none focus:border-amber-400 font-mono"
                 required
               />
             </div>
@@ -254,31 +302,45 @@ export function SessionModal({
             <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2">
               <span className="text-base leading-none">⚠️</span>
               <div>
-                <span className="font-semibold">Advisory Overlap:</span> Overlaps with{" "}
-                <span className="font-medium text-amber-200">{advisoryConflict.subjectName}</span> (
-                {advisoryConflict.start} – {advisoryConflict.end}). You can still save if intentional.
+                <span className="font-semibold">
+                  {locale === "ar" ? "تنبيه تعارض مواعيد:" : "Advisory Overlap:"}
+                </span>{" "}
+                {locale === "ar" ? (
+                  <>
+                    في تعارض مع <span className="font-medium text-amber-200">{advisoryConflict.subjectName}</span> (
+                    {formatTimeRange12h(advisoryConflict.start, advisoryConflict.end, { locale })}). تقدر تكمل الحفظ لو ده مقصود.
+                  </>
+                ) : (
+                  <>
+                    Overlaps with{" "}
+                    <span className="font-medium text-amber-200">{advisoryConflict.subjectName}</span> (
+                    {formatTimeRange12h(advisoryConflict.start, advisoryConflict.end, { locale })}). You can still save if intentional.
+                  </>
+                )}
               </div>
             </div>
           )}
 
           {/* Session Type Pills */}
           <div>
-            <label className="block text-xs font-medium text-text-muted mb-1.5">Session Type</label>
+            <label className="block text-xs font-medium text-text-muted mb-1.5">
+              {locale === "ar" ? "نوع الحصة" : "Session Type"}
+            </label>
             <div className="grid grid-cols-4 gap-2">
-              {SESSION_TYPES.map(({ type, label, tokenClass }) => {
+              {SESSION_TYPES.map(({ type, labelEn, labelAr, tokenClass }) => {
                 const isSelected = sessionType === type;
                 return (
                   <button
                     key={type}
                     type="button"
                     onClick={() => setSessionType(type)}
-                    className={`py-2 px-1 text-center rounded-xl text-xs font-semibold border transition-all ${
+                    className={`py-2 px-1 text-center rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                       isSelected
-                        ? `${tokenClass} ring-2 ring-amber-400/40 shadow-sm`
+                        ? `${tokenClass} ring-2 ring-amber-400/40 shadow-sm font-bold`
                         : "bg-surface-container-high/60 border-border-subtle text-text-muted hover:text-on-surface"
                     }`}
                   >
-                    {label}
+                    {locale === "ar" ? labelAr : labelEn}
                   </button>
                 );
               })}
@@ -288,7 +350,10 @@ export function SessionModal({
           {/* Location with dir="auto" */}
           <div>
             <label className="block text-xs font-medium text-text-muted mb-1.5">
-              Location / Room <span className="text-[11px] text-text-muted">(Supports Arabic)</span>
+              {locale === "ar" ? "المكان / القاعة أو المدرج" : "Location / Room"}{" "}
+              <span className="text-[11px] text-text-muted">
+                {locale === "ar" ? "(يدعم العربية)" : "(Supports Arabic)"}
+              </span>
             </label>
             <input
               type="text"
@@ -296,8 +361,8 @@ export function SessionModal({
               maxLength={100}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g. Hall 302, مبنى الهندسة"
-              className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400"
+              placeholder={locale === "ar" ? "مثلاً: مدرج 302، مبنى هندسة" : "e.g. Hall 302, مبنى الهندسة"}
+              className="w-full px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-xs text-on-surface focus:outline-none focus:border-amber-400 text-start"
             />
           </div>
 
@@ -308,16 +373,26 @@ export function SessionModal({
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 rounded-xl text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-surface transition-colors disabled:opacity-50"
+              className="px-5 py-2 rounded-xl text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-on-primary transition-colors disabled:opacity-50 cursor-pointer"
             >
-              {saving ? "Saving..." : initialData ? "Save Changes" : "Add to Timetable"}
+              {saving
+                ? locale === "ar"
+                  ? "جاري الحفظ..."
+                  : "Saving..."
+                : initialData
+                ? locale === "ar"
+                  ? "حفظ التعديلات"
+                  : "Save Changes"
+                : locale === "ar"
+                ? "إضافة إلى الجدول"
+                : "Add to Timetable"}
             </button>
           </div>
         </form>

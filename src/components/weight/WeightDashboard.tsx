@@ -40,6 +40,7 @@ import {
   calculateProjectedGoalDate,
 } from "@/lib/weight";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface WeightDashboardProps {
   onWeightUpdated?: (newWeight: number) => void;
@@ -47,6 +48,7 @@ interface WeightDashboardProps {
 
 export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
   const { guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -206,7 +208,11 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
     const val = parseFloat(newWeightInput);
     if (isNaN(val) || val <= 30 || val >= 300) {
-      alert("Please enter a valid weight between 30kg and 300kg.");
+      alert(
+        locale === "ar"
+          ? "من فضلك دخل وزن مظبوط بين 30 و 300 كجم."
+          : "Please enter a valid weight between 30kg and 300kg."
+      );
       return;
     }
 
@@ -259,7 +265,11 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
     const val = parseFloat(newWeightInput);
     if (isNaN(val) || val <= 30 || val >= 300) {
-      alert("Please enter a valid weight between 30kg and 300kg.");
+      alert(
+        locale === "ar"
+          ? "من فضلك دخل وزن مظبوط بين 30 و 300 كجم."
+          : "Please enter a valid weight between 30kg and 300kg."
+      );
       return;
     }
 
@@ -440,15 +450,17 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
           <div className="flex items-center gap-2 text-on-surface">
             <Info className="w-4 h-4 text-primary-lime" />
             <span>
-              Weigh-in entry ({lastDeletedEntry.weight_kg} kg) deleted.
+              {locale === "ar"
+                ? `تم مسح تسجيل الوزن (${lastDeletedEntry.weight_kg} كجم).`
+                : `Weigh-in entry (${lastDeletedEntry.weight_kg} kg) deleted.`}
             </span>
           </div>
           <button
             onClick={handleUndoDelete}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:bg-primary-lime/90 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:bg-primary-lime/90 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Undo</span>
+            <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
           </button>
         </div>
       )}
@@ -463,10 +475,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
             </div>
             <div>
               <h2 className="text-lg font-bold font-mono text-on-surface">
-                Body Composition & Weight
+                {locale === "ar" ? "تكوين الجسم والوزن" : "Body Composition & Weight"}
               </h2>
               <p className="text-xs text-on-surface-variant">
-                Daily weigh-ins, 7-day moving averages, and goal-calibrated rate analytics
+                {locale === "ar"
+                  ? "تسجيلات يومية، متوسط متحرك ٧ أيام، وتحليلات معدل التغيير حسب أهدافك"
+                  : "Daily weigh-ins, 7-day moving averages, and goal-calibrated rate analytics"}
               </p>
             </div>
           </div>
@@ -482,7 +496,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-text-muted hover:text-on-surface transition-colors cursor-pointer"
             >
               <Edit2 className="w-3.5 h-3.5" />
-              <span>Goal Settings</span>
+              <span>{locale === "ar" ? "إعدادات الهدف" : "Goal Settings"}</span>
             </button>
 
             <button
@@ -492,10 +506,10 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 setNewNoteInput("");
                 setIsLogModalOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-lime text-charcoal-dark font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-lime/90 shadow-[0_0_15px_rgba(198,255,61,0.2)]"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-lime/90 shadow-xs"
             >
               <Plus className="w-4 h-4" />
-              <span>Log Weight</span>
+              <span>{locale === "ar" ? "سجل وزنك" : "Log Weight"}</span>
             </button>
           </div>
         </div>
@@ -511,7 +525,9 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
       {loading && (
         <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-secondary-cyan" />
-          <span className="text-xs font-mono">Loading body composition data...</span>
+          <span className="text-xs font-mono">
+            {locale === "ar" ? "بنحمّل بيانات تكوين الجسم..." : "Loading body composition data..."}
+          </span>
         </div>
       )}
 
@@ -522,17 +538,23 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
             {/* 1. Current Weight */}
             <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
               <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                Current Weight
+                {locale === "ar" ? "الوزن الحالي" : "Current Weight"}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-xl font-bold font-mono text-on-surface">
-                  {currentWeight !== null ? `${currentWeight} kg` : "Unlogged"}
+                  {currentWeight !== null
+                    ? `${currentWeight} ${locale === "ar" ? "كجم" : "kg"}`
+                    : locale === "ar"
+                    ? "مش مسجل"
+                    : "Unlogged"}
                 </span>
               </div>
               <p className="text-[11px] font-mono text-text-muted">
                 {dailyEntries.length > 0
-                  ? `Latest: ${dailyEntries[dailyEntries.length - 1].date}`
-                  : "No weigh-ins yet"}
+                  ? (locale === "ar"
+                      ? `آخر تسجيل: ${dailyEntries[dailyEntries.length - 1].date}`
+                      : `Latest: ${dailyEntries[dailyEntries.length - 1].date}`)
+                  : (locale === "ar" ? "لسه مسجلتش وزن" : "No weigh-ins yet")}
               </p>
             </div>
 
@@ -540,35 +562,45 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
             <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                  Goal Target
+                  {locale === "ar" ? "الهدف المحدد" : "Goal Target"}
                 </span>
                 <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-surface-container-high text-secondary-cyan">
-                  {goalType}
+                  {goalType === "cut"
+                    ? (locale === "ar" ? "تنشيف" : "cut")
+                    : goalType === "bulk"
+                    ? (locale === "ar" ? "تضخيم" : "bulk")
+                    : (locale === "ar" ? "إعادة تشكيل" : "recomp")}
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-xl font-bold font-mono text-secondary-cyan">
-                  {targetWeight ? `${targetWeight} kg` : "Unset"}
+                  {targetWeight
+                    ? `${targetWeight} ${locale === "ar" ? "كجم" : "kg"}`
+                    : locale === "ar"
+                    ? "مش محدد"
+                    : "Unset"}
                 </span>
                 {deltaToGoal !== null && (
                   <span className="text-xs font-mono text-text-muted">
-                    ({deltaToGoal > 0 ? `+${deltaToGoal}` : deltaToGoal} kg)
+                    ({deltaToGoal > 0 ? `+${deltaToGoal}` : deltaToGoal} {locale === "ar" ? "كجم" : "kg"})
                   </span>
                 )}
               </div>
               <p className="text-[11px] font-mono text-text-muted truncate">
                 {projectedGoal && projectedGoal.projectedDate
-                  ? `ETA: ${projectedGoal.statusText}`
+                  ? (locale === "ar"
+                      ? `الميعاد المتوقع: ${projectedGoal.statusText}`
+                      : `ETA: ${projectedGoal.statusText}`)
                   : targetWeight
-                  ? "Projected date calibrating"
-                  : "Set target in settings"}
+                  ? (locale === "ar" ? "بنحسب الميعاد المتوقع" : "Projected date calibrating")
+                  : (locale === "ar" ? "حدد هدفك في الإعدادات" : "Set target in settings")}
               </p>
             </div>
 
             {/* 3. Weekly Rate of Change (Goal-Aware) */}
             <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
               <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                Rate of Change
+                {locale === "ar" ? "معدل التغيير" : "Rate of Change"}
               </span>
               <div className="flex items-baseline gap-2">
                 {rateResult.status === "Active" ? (
@@ -577,31 +609,41 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                       {rateResult.rateKgPerWeek! > 0
                         ? `+${rateResult.rateKgPerWeek}`
                         : rateResult.rateKgPerWeek}{" "}
-                      kg
+                      {locale === "ar" ? "كجم" : "kg"}
                     </span>
-                    <span className="text-[10px] font-mono text-text-muted">/ wk</span>
+                    <span className="text-[10px] font-mono text-text-muted">
+                      {locale === "ar" ? "/ أسبوع" : "/ wk"}
+                    </span>
                   </>
                 ) : (
                   <span className="text-xl font-bold font-mono text-text-muted">
-                    Calibrating...
+                    {locale === "ar" ? "جاري الحساب..." : "Calibrating..."}
                   </span>
                 )}
               </div>
               <p className="text-[11px] font-mono text-text-muted">
                 {rateResult.status === "Active"
-                  ? `${rateSemantic.label} (14d OLS slope)`
-                  : "Requires 4+ logs across 7+ days"}
+                  ? (locale === "ar"
+                      ? `${rateSemantic.label} (ميل ١٤ يوم)`
+                      : `${rateSemantic.label} (14d OLS slope)`)
+                  : (locale === "ar"
+                      ? "محتاج ٤ تسجيلات أو أكتر خلال ٧+ أيام"
+                      : "Requires 4+ logs across 7+ days")}
               </p>
             </div>
 
             {/* 4. Secondary BMI (No clinical wording, no red/green judgment) */}
             <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
               <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                Body Mass Index
+                {locale === "ar" ? "مؤشر كتلة الجسم (BMI)" : "Body Mass Index"}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-xl font-bold font-mono text-on-surface">
-                  {bmiInfo.bmi !== null ? bmiInfo.bmi : "Unset"}
+                  {bmiInfo.bmi !== null
+                    ? bmiInfo.bmi
+                    : locale === "ar"
+                    ? "مش محدد"
+                    : "Unset"}
                 </span>
                 {bmiInfo.bmi !== null && (
                   <span className="text-xs font-mono text-text-muted">
@@ -610,7 +652,9 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 )}
               </div>
               <p className="text-[11px] font-mono text-text-muted">
-                {heightCm ? `Height: ${heightCm} cm` : "Add height in settings"}
+                {heightCm
+                  ? (locale === "ar" ? `الطول: ${heightCm} سم` : `Height: ${heightCm} cm`)
+                  : (locale === "ar" ? "سجل طولك في الإعدادات" : "Add height in settings")}
               </p>
             </div>
           </div>
@@ -620,10 +664,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-bold font-mono text-on-surface">
-                  Weight Progression & 7-Day Trend
+                  {locale === "ar" ? "تطور الوزن ومتوسط ٧ أيام" : "Weight Progression & 7-Day Trend"}
                 </h3>
                 <p className="text-[11px] text-on-surface-variant font-mono">
-                  Smoothed 7-day rolling average filters water weight fluctuations
+                  {locale === "ar"
+                    ? "المتوسط المتحرك لـ ٧ أيام بيلغي تأثير احتباس السوائل"
+                    : "Smoothed 7-day rolling average filters water weight fluctuations"}
                 </p>
               </div>
 
@@ -635,11 +681,11 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                     onClick={() => setTimeRange(r)}
                     className={`px-3 py-1 rounded-lg text-xs font-mono transition-colors ${
                       timeRange === r
-                        ? "bg-secondary-cyan text-charcoal-dark font-bold shadow-sm"
+                        ? "bg-secondary-cyan text-on-primary font-bold shadow-sm"
                         : "text-text-muted hover:text-on-surface"
                     }`}
                   >
-                    {r}
+                    {r === "7D" && locale === "ar" ? "٧ أيام" : r === "30D" && locale === "ar" ? "٣٠ يوم" : r === "90D" && locale === "ar" ? "٩٠ يوم" : r === "ALL" && locale === "ar" ? "الكل" : r}
                   </button>
                 ))}
               </div>
@@ -647,9 +693,13 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
             {filteredTrendData.length === 0 ? (
               <div className="h-56 flex flex-col items-center justify-center text-center p-6 border border-dashed border-border-subtle rounded-xl text-text-muted">
-                <p className="text-xs font-mono">No weight entries recorded for this range</p>
+                <p className="text-xs font-mono">
+                  {locale === "ar" ? "مفيش تسجيلات وزن في الفترة دي" : "No weight entries recorded for this range"}
+                </p>
                 <p className="text-[10px] text-on-surface-variant mt-1">
-                  Log your daily weigh-in to view trends and rate of change
+                  {locale === "ar"
+                    ? "سجل وزنك اليومي عشان تتابع المسار ومعدل التغيير"
+                    : "Log your daily weigh-in to view trends and rate of change"}
                 </p>
               </div>
             ) : (
@@ -677,9 +727,11 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                             <div className="bg-surface-container-highest border border-border-subtle p-2.5 rounded-xl shadow-xl text-xs font-mono space-y-1">
                               <div className="text-text-muted text-[10px]">{data.date}</div>
                               <div className="flex items-center gap-2">
-                                <span className="text-on-surface">Raw: {data.rawWeight} kg</span>
+                                <span className="text-on-surface">
+                                  {locale === "ar" ? `الفعلي: ${data.rawWeight} كجم` : `Raw: ${data.rawWeight} kg`}
+                                </span>
                                 <span className="text-primary-lime font-bold">
-                                  7D Avg: {data.movingAvg} kg
+                                  {locale === "ar" ? `متوسط ٧ أيام: ${data.movingAvg} كجم` : `7D Avg: ${data.movingAvg} kg`}
                                 </span>
                               </div>
                             </div>
@@ -694,7 +746,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                         stroke="#38BDF8"
                         strokeDasharray="4 4"
                         label={{
-                          value: `Target: ${targetWeight}kg`,
+                          value: locale === "ar" ? `الهدف: ${targetWeight} كجم` : `Target: ${targetWeight}kg`,
                           fill: "#38BDF8",
                           fontSize: 10,
                           fontFamily: "monospace",
@@ -733,27 +785,31 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-secondary-cyan" />
                 <h3 className="text-sm font-bold font-mono text-on-surface">
-                  Recorded Weigh-In History
+                  {locale === "ar" ? "سجل الأوزان السابقة" : "Recorded Weigh-In History"}
                 </h3>
               </div>
               <span className="text-xs font-mono text-text-muted">
-                {entries.length} {entries.length === 1 ? "entry" : "entries"}
+                {locale === "ar"
+                  ? `${entries.length} تسجيل`
+                  : `${entries.length} ${entries.length === 1 ? "entry" : "entries"}`}
               </span>
             </div>
 
             {entries.length === 0 ? (
               <div className="p-8 text-center text-text-muted font-mono text-xs">
-                No weigh-ins found in weight_logs. Tap &ldquo;Log Weight&rdquo; to add your first record.
+                {locale === "ar"
+                  ? "مفيش أوزان مسجلة. اضغط على \"سجل وزنك\" عشان تضيف أول تسجيل."
+                  : "No weigh-ins found in weight_logs. Tap \u201cLog Weight\u201d to add your first record."}
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs font-mono">
+                <table className="w-full text-start text-xs font-mono">
                   <thead className="bg-surface-container-high/60 text-text-muted border-b border-border-subtle">
                     <tr>
-                      <th className="py-2.5 px-4 font-normal">Date</th>
-                      <th className="py-2.5 px-4 font-normal">Weight</th>
-                      <th className="py-2.5 px-4 font-normal">Note</th>
-                      <th className="py-2.5 px-4 font-normal text-right">Actions</th>
+                      <th className="py-2.5 px-4 font-normal text-start">{locale === "ar" ? "التاريخ" : "Date"}</th>
+                      <th className="py-2.5 px-4 font-normal text-start">{locale === "ar" ? "الوزن" : "Weight"}</th>
+                      <th className="py-2.5 px-4 font-normal text-start">{locale === "ar" ? "ملاحظة" : "Note"}</th>
+                      <th className="py-2.5 px-4 font-normal text-end">{locale === "ar" ? "إجراءات" : "Actions"}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-subtle">
@@ -762,35 +818,35 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                         key={entry.id}
                         className="hover:bg-surface-container-high/40 transition-colors"
                       >
-                        <td className="py-3 px-4 text-on-surface">
-                          {new Date(entry.logged_at).toLocaleDateString("en-US", {
+                        <td className="py-3 px-4 text-on-surface text-start">
+                          {new Date(entry.logged_at).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
                             year: "numeric",
                             month: "short",
                             day: "numeric",
                           })}
                         </td>
-                        <td className="py-3 px-4 font-bold text-secondary-cyan">
-                          {entry.weight_kg} kg
+                        <td className="py-3 px-4 font-bold text-secondary-cyan text-start">
+                          {entry.weight_kg} {locale === "ar" ? "كجم" : "kg"}
                         </td>
-                        <td className="py-3 px-4 text-text-muted max-w-xs truncate">
+                        <td className="py-3 px-4 text-text-muted max-w-xs truncate text-start">
                           {entry.note || "-"}
                         </td>
-                        <td className="py-3 px-4 text-right space-x-2">
+                        <td className="py-3 px-4 text-end space-x-2 space-x-reverse">
                           <button
                             onClick={() => {
                               setEditingEntry(entry);
                               setNewWeightInput(entry.weight_kg.toString());
                               setNewNoteInput(entry.note || "");
                             }}
-                            className="p-1.5 text-text-muted hover:text-on-surface transition-colors"
-                            title="Edit entry"
+                            className="p-1.5 text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+                            title={locale === "ar" ? "تعديل التسجيل" : "Edit entry"}
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteEntry(entry)}
-                            className="p-1.5 text-text-muted hover:text-crimson-alert transition-colors"
-                            title="Soft delete entry"
+                            className="p-1.5 text-text-muted hover:text-crimson-alert transition-colors cursor-pointer"
+                            title={locale === "ar" ? "مسح التسجيل" : "Soft delete entry"}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -813,12 +869,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               <div className="flex items-center gap-2">
                 <Weight className="w-4 h-4 text-primary-lime" />
                 <h3 className="text-sm font-bold font-mono text-on-surface uppercase">
-                  Log Bodyweight
+                  {locale === "ar" ? "تسجيل وزن الجسم" : "Log Bodyweight"}
                 </h3>
               </div>
               <button
                 onClick={() => setIsLogModalOpen(false)}
-                className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -826,14 +882,14 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
             <form onSubmit={handleAddEntry} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Weight (kg)
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "الوزن (كجم)" : "Weight (kg)"}
                 </label>
                 <input
                   type="number"
                   step="0.1"
                   required
-                  placeholder="e.g. 75.4"
+                  placeholder={locale === "ar" ? "مثلاً 75.4" : "e.g. 75.4"}
                   value={newWeightInput}
                   onChange={(e) => setNewWeightInput(e.target.value)}
                   className="w-full bg-surface-container-high border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs font-mono text-on-surface focus:outline-none focus:border-secondary-cyan transition-colors"
@@ -842,8 +898,8 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Date
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "التاريخ" : "Date"}
                 </label>
                 <input
                   type="date"
@@ -854,12 +910,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Note (Optional)
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "ملاحظة (اختياري)" : "Note (Optional)"}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Fasted morning weigh-in"
+                  placeholder={locale === "ar" ? "مثلاً وزن الصبح على الريق" : "e.g. Fasted morning weigh-in"}
                   value={newNoteInput}
                   onChange={(e) => setNewNoteInput(e.target.value)}
                   className="w-full bg-surface-container-high border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs font-mono text-on-surface focus:outline-none focus:border-secondary-cyan transition-colors"
@@ -870,15 +926,15 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 <button
                   type="button"
                   onClick={() => setIsLogModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                  className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
                 >
-                  Cancel
+                  {locale === "ar" ? "إلغاء" : "Cancel"}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-primary-lime text-charcoal-dark font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-primary-lime/90"
+                  className="px-5 py-2.5 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-primary-lime/90 cursor-pointer shadow-xs"
                 >
-                  Save Weigh-In
+                  {locale === "ar" ? "حفظ الوزن" : "Save Weigh-In"}
                 </button>
               </div>
             </form>
@@ -894,12 +950,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               <div className="flex items-center gap-2">
                 <Edit2 className="w-4 h-4 text-secondary-cyan" />
                 <h3 className="text-sm font-bold font-mono text-on-surface uppercase">
-                  Edit Weigh-In Record
+                  {locale === "ar" ? "تعديل تسجيل الوزن" : "Edit Weigh-In Record"}
                 </h3>
               </div>
               <button
                 onClick={() => setEditingEntry(null)}
-                className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -907,8 +963,8 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
             <form onSubmit={handleEditEntry} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Weight (kg)
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "الوزن (كجم)" : "Weight (kg)"}
                 </label>
                 <input
                   type="number"
@@ -922,8 +978,8 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Note (Optional)
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "ملاحظة (اختياري)" : "Note (Optional)"}
                 </label>
                 <input
                   type="text"
@@ -937,15 +993,15 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 <button
                   type="button"
                   onClick={() => setEditingEntry(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                  className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
                 >
-                  Cancel
+                  {locale === "ar" ? "إلغاء" : "Cancel"}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-secondary-cyan text-charcoal-dark font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-secondary-cyan/90"
+                  className="px-5 py-2.5 rounded-xl bg-secondary-cyan text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-secondary-cyan/90 cursor-pointer shadow-xs"
                 >
-                  Update Entry
+                  {locale === "ar" ? "تحديث التسجيل" : "Update Entry"}
                 </button>
               </div>
             </form>
@@ -961,12 +1017,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4 text-secondary-cyan" />
                 <h3 className="text-sm font-bold font-mono text-on-surface uppercase">
-                  Goal & Anthropometrics
+                  {locale === "ar" ? "الهدف والقياسات البدنية" : "Goal & Anthropometrics"}
                 </h3>
               </div>
               <button
                 onClick={() => setIsGoalModalOpen(false)}
-                className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -974,8 +1030,8 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
             <form onSubmit={handleSaveGoals} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Goal Phase
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "مرحلة الهدف" : "Goal Phase"}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {(["cut", "recomp", "bulk"] as const).map((mode) => (
@@ -983,26 +1039,30 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                       key={mode}
                       type="button"
                       onClick={() => setEditGoalType(mode)}
-                      className={`py-2 rounded-xl border text-xs font-mono uppercase tracking-wider transition-all ${
+                      className={`py-2 rounded-xl border text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
                         editGoalType === mode
                           ? "bg-secondary-cyan/15 border-secondary-cyan text-secondary-cyan font-bold"
                           : "bg-surface-container-high border-border-subtle text-text-muted hover:text-on-surface"
                       }`}
                     >
-                      {mode}
+                      {mode === "cut"
+                        ? (locale === "ar" ? "تنشيف" : "cut")
+                        : mode === "bulk"
+                        ? (locale === "ar" ? "تضخيم" : "bulk")
+                        : (locale === "ar" ? "إعادة تشكيل" : "recomp")}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Target Weight (kg)
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "الوزن المستهدف (كجم)" : "Target Weight (kg)"}
                 </label>
                 <input
                   type="number"
                   step="0.1"
-                  placeholder="e.g. 72.0"
+                  placeholder={locale === "ar" ? "مثلاً 72.0" : "e.g. 72.0"}
                   value={editTargetWeight}
                   onChange={(e) => setEditTargetWeight(e.target.value)}
                   className="w-full bg-surface-container-high border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs font-mono text-on-surface focus:outline-none focus:border-secondary-cyan transition-colors"
@@ -1010,13 +1070,13 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5">
-                  Height (cm) — Used for BMI
+                <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-1.5 text-start">
+                  {locale === "ar" ? "الطول (سم) — بيستخدم للـ BMI" : "Height (cm) — Used for BMI"}
                 </label>
                 <input
                   type="number"
                   step="1"
-                  placeholder="e.g. 178"
+                  placeholder={locale === "ar" ? "مثلاً 178" : "e.g. 178"}
                   value={editHeight}
                   onChange={(e) => setEditHeight(e.target.value)}
                   className="w-full bg-surface-container-high border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs font-mono text-on-surface focus:outline-none focus:border-secondary-cyan transition-colors"
@@ -1027,15 +1087,15 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 <button
                   type="button"
                   onClick={() => setIsGoalModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                  className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
                 >
-                  Cancel
+                  {locale === "ar" ? "إلغاء" : "Cancel"}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-secondary-cyan text-charcoal-dark font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-secondary-cyan/90"
+                  className="px-5 py-2.5 rounded-xl bg-secondary-cyan text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-secondary-cyan/90 cursor-pointer shadow-xs"
                 >
-                  Save Goals
+                  {locale === "ar" ? "حفظ الأهداف" : "Save Goals"}
                 </button>
               </div>
             </form>

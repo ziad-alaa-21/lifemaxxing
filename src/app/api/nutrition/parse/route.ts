@@ -5,26 +5,166 @@ import {
   matchDictionaryFood,
 } from "@/lib/nutrition";
 
-// In-memory rate limiting map: ip -> { count, resetTime }
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+// Persistent rate limiting & daily abuse prevention
+const minuteLimitMap = new Map<string, { count: number; resetTime: number }>();
+const dailyQuotaMap = new Map<string, { count: number; day: string }>();
 
-function checkRateLimit(ip: string): boolean {
+const MAX_PER_MINUTE = 15;
+const MAX_PER_DAY = 50;
+
+function getUserLocalDate(timeZone: string = "UTC"): string {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return formatter.format(new Date()); // Formats as YYYY-MM-DD
+  } catch {
+    return new Date().toISOString().split("T")[0];
+  }
+}
+
+function checkMemoryAbuseLimits(
+  userId: string,
+  localDateStr: string,
+  userTimezone: string
+): { allowed: boolean; reason?: string } {
   const now = Date.now();
-  const windowMs = 60 * 1000; // 1 minute
-  const maxRequests = 30;
 
-  const record = rateLimitMap.get(ip);
-  if (!record || now > record.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
-    return true;
+  // 1. Daily per-user cap in user's timezone
+  const dailyRecord = dailyQuotaMap.get(userId);
+  if (!dailyRecord || dailyRecord.day !== localDateStr) {
+    dailyQuotaMap.set(userId, { count: 1, day: localDateStr });
+  } else {
+    if (dailyRecord.count >= MAX_PER_DAY) {
+      return {
+        allowed: false,
+        reason: `Daily quota of ${MAX_PER_DAY} AI food parsing requests reached for today in timezone ${userTimezone}. You can continue logging foods manually.`,
+      };
+    }
+    dailyRecord.count += 1;
   }
 
-  if (record.count >= maxRequests) {
-    return false;
+  // 2. Minute per-user burst rate limit (15/min)
+  const windowMs = 60 * 1000;
+  const minuteRecord = minuteLimitMap.get(userId);
+  if (!minuteRecord || now > minuteRecord.resetTime) {
+    minuteLimitMap.set(userId, { count: 1, resetTime: now + windowMs });
+  } else {
+    if (minuteRecord.count >= MAX_PER_MINUTE) {
+      return {
+        allowed: false,
+        reason: "Too many AI food parsing requests in a short time. Please wait a minute.",
+      };
+    }
+    minuteRecord.count += 1;
   }
 
-  record.count += 1;
-  return true;
+  return { allowed: true };
+}
+
+async function checkPersistentAbuseLimits(
+  supabase: any,
+  userId: string
+): Promise<{ allowed: boolean; reason?: string }> {
+  // 1. Fetch user's configured timezone from profile (fallback to UTC)
+  let userTimezone = "UTC";
+  try {
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("timezone")
+      .eq("id", userId)
+      .maybeSingle();
+    if (prof?.timezone) {
+      userTimezone = prof.timezone;
+    }
+  } catch {
+    userTimezone = "UTC";
+  }
+
+  const localDateStr = getUserLocalDate(userTimezone);
+
+  // 2. Attempt atomic check via PostgreSQL RPC function
+  try {
+    const { data: rpcRes, error: rpcErr } = await supabase.rpc("check_ai_rate_limit", {
+      p_route: "nutrition_parse",
+    });
+
+    if (!rpcErr && rpcRes) {
+      if (rpcRes.allowed === false) {
+        return {
+          allowed: false,
+          reason: rpcRes.reason || "Rate limit exceeded. Please wait before making more requests.",
+        };
+      }
+      return { allowed: true };
+    }
+  } catch {
+    // Fall back to table query or memory
+  }
+
+  // 3. Fallback to direct table query on public.ai_rate_limits
+  try {
+    const now = Date.now();
+    const { data: rec, error: recErr } = await supabase
+      .from("ai_rate_limits")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("route", "nutrition_parse")
+      .maybeSingle();
+
+    if (!recErr) {
+      if (!rec) {
+        await supabase.from("ai_rate_limits").insert({
+          user_id: userId,
+          route: "nutrition_parse",
+          minute_window: new Date().toISOString(),
+          minute_count: 1,
+          daily_date: localDateStr,
+          daily_count: 1,
+        });
+        return { allowed: true };
+      }
+
+      const winStart = new Date(rec.minute_window).getTime();
+      const inMinute = now - winStart < 60000;
+      if (inMinute && rec.minute_count >= MAX_PER_MINUTE) {
+        return {
+          allowed: false,
+          reason: `Too many AI food parsing requests in a short time (max ${MAX_PER_MINUTE}/min). Please wait a moment.`,
+        };
+      }
+
+      const isSameDay = rec.daily_date === localDateStr;
+      if (isSameDay && rec.daily_count >= MAX_PER_DAY) {
+        return {
+          allowed: false,
+          reason: `Daily quota of ${MAX_PER_DAY} AI food parsing requests reached for today in timezone ${userTimezone}. You can continue logging foods manually.`,
+        };
+      }
+
+      await supabase
+        .from("ai_rate_limits")
+        .update({
+          minute_count: inMinute ? rec.minute_count + 1 : 1,
+          minute_window: inMinute ? rec.minute_window : new Date().toISOString(),
+          daily_count: isSameDay ? rec.daily_count + 1 : 1,
+          daily_date: localDateStr,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId)
+        .eq("route", "nutrition_parse");
+
+      return { allowed: true };
+    }
+  } catch {
+    // If table doesn't exist yet, fall back to in-memory map
+  }
+
+  // 4. In-memory fallback
+  return checkMemoryAbuseLimits(userId, localDateStr, userTimezone);
 }
 
 /**
@@ -189,10 +329,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Per-user Rate Limiting (30 requests/minute)
-    if (!checkRateLimit(user.id)) {
+    // 2. Per-user Rate Limiting & Daily Abuse Protection (Database & Timezone aware)
+    const limitCheck = await checkPersistentAbuseLimits(supabase, user.id);
+    if (!limitCheck.allowed) {
       return NextResponse.json(
-        { error: "Rate limit exceeded. Please wait a minute before making more requests." },
+        { error: limitCheck.reason || "Rate limit exceeded. Please wait before making more requests." },
         { status: 429 }
       );
     }

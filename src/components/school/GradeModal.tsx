@@ -7,6 +7,7 @@ import {
   GradeType,
   validateGradeInput,
 } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 import { X, Loader2, AlertCircle, Award } from "lucide-react";
 
 interface GradeModalProps {
@@ -37,6 +38,7 @@ export function GradeModal({
   initialGrade,
   isBlocked = false,
 }: GradeModalProps) {
+  const { locale } = useI18n();
   const [subjectId, setSubjectId] = useState("");
   const [type, setType] = useState<GradeType>("quiz");
   const [title, setTitle] = useState("");
@@ -171,7 +173,9 @@ export function GradeModal({
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5 text-amber-400" />
             <h3 className="text-base font-bold font-mono text-on-surface">
-              {initialGrade ? "Edit Grade Entry" : "Record Grade"}
+              {locale === "ar"
+                ? initialGrade ? "تعديل الدرجة" : "تسجيل درجة جديدة"
+                : initialGrade ? "Edit Grade Entry" : "Record Grade"}
             </h3>
           </div>
           <button
@@ -193,7 +197,7 @@ export function GradeModal({
           {/* Subject Selector */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Subject *
+              {locale === "ar" ? "المادة *" : "Subject *"}
             </label>
             <select
               value={subjectId}
@@ -202,7 +206,7 @@ export function GradeModal({
               className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 transition-colors"
             >
               <option value="" disabled>
-                Select subject
+                {locale === "ar" ? "اختر المادة" : "Select subject"}
               </option>
               {subjects.map((sub) => (
                 <option key={sub.id} value={sub.id}>
@@ -215,7 +219,7 @@ export function GradeModal({
           {/* Grade Type: Strictly 'quiz' vs 'big_exam' */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Assessment Type * (2 Types Only)
+              {locale === "ar" ? "نوع التقييم * (كويز أو امتحان رئيسي)" : "Assessment Type * (2 Types Only)"}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -228,7 +232,7 @@ export function GradeModal({
                 }`}
               >
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
-                <span>Quiz (Circle)</span>
+                <span>{locale === "ar" ? "كويز (دائرة)" : "Quiz (Circle)"}</span>
               </button>
               <button
                 type="button"
@@ -240,7 +244,7 @@ export function GradeModal({
                 }`}
               >
                 <span className="w-2.5 h-2.5 rotate-45 bg-indigo-400 inline-block" />
-                <span>Big Exam (Diamond)</span>
+                <span>{locale === "ar" ? "امتحان رئيسي (معين)" : "Big Exam (Diamond)"}</span>
               </button>
             </div>
           </div>
@@ -248,14 +252,14 @@ export function GradeModal({
           {/* Title Input with dir="auto" */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Assessment Title *
+              {locale === "ar" ? "عنوان التقييم *" : "Assessment Title *"}
             </label>
             <input
               type="text"
               dir="auto"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Thermodynamics Quiz 1, Midterm Exam, كويز 1"
+              placeholder={locale === "ar" ? "مثال: كويز ميكانيكا 1، امتحان نص الترم" : "e.g. Thermodynamics Quiz 1, Midterm Exam, كويز 1"}
               required
               className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors font-sans"
             />
@@ -265,12 +269,12 @@ export function GradeModal({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-on-surface-variant">
-                Mark Achieved *
+                {locale === "ar" ? "الدرجة المحققة *" : "Mark Achieved *"}
               </label>
               <input
                 type="number"
                 min="0"
-                step="0.25"
+                step="any"
                 value={markAchieved}
                 onChange={(e) => setMarkAchieved(e.target.value)}
                 placeholder="e.g. 18.5"
@@ -280,12 +284,12 @@ export function GradeModal({
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-on-surface-variant">
-                Total Mark * (&gt; 0)
+                {locale === "ar" ? "الدرجة النهائية * (> 0)" : "Total Mark * (> 0)"}
               </label>
               <input
                 type="number"
-                min="0.1"
-                step="0.25"
+                min="0.01"
+                step="any"
                 value={markTotal}
                 onChange={(e) => setMarkTotal(e.target.value)}
                 placeholder="e.g. 20"
@@ -298,7 +302,9 @@ export function GradeModal({
           {/* Computed Percentage Preview */}
           {computedPct !== null && (
             <div className="px-3.5 py-2 rounded-xl bg-surface-container-low border border-border-subtle flex items-center justify-between text-xs font-mono">
-              <span className="text-text-muted">Score Percentage:</span>
+              <span className="text-text-muted">
+                {locale === "ar" ? "النسبة المئوية:" : "Score Percentage:"}
+              </span>
               <span
                 className={`font-bold ${
                   computedPct >= 80
@@ -317,14 +323,16 @@ export function GradeModal({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-on-surface-variant flex items-center justify-between">
-                <span>Weight %</span>
-                <span className="text-[10px] text-text-muted">Optional</span>
+                <span>{locale === "ar" ? "الوزن النسبي %" : "Weight %"}</span>
+                <span className="text-[10px] text-text-muted">
+                  {locale === "ar" ? "اختياري" : "Optional"}
+                </span>
               </label>
               <input
                 type="number"
                 min="0"
                 max="100"
-                step="0.5"
+                step="any"
                 value={weightPct}
                 onChange={(e) => setWeightPct(e.target.value)}
                 placeholder="e.g. 15"
@@ -333,7 +341,7 @@ export function GradeModal({
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-on-surface-variant">
-                Entry Date *
+                {locale === "ar" ? "تاريخ التقييم *" : "Entry Date *"}
               </label>
               <input
                 type="date"
@@ -348,13 +356,13 @@ export function GradeModal({
           {/* Notes (Optional) */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Notes (Optional)
+              {locale === "ar" ? "ملاحظات (اختياري)" : "Notes (Optional)"}
             </label>
             <textarea
               dir="auto"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="e.g. Lost marks on derivation; revision needed on chapter 3"
+              placeholder={locale === "ar" ? "مثال: نقصت في الاستنتاج؛ محتاج مراجعة على الشابتر التالت" : "e.g. Lost marks on derivation; revision needed on chapter 3"}
               rows={2}
               className="w-full px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors font-sans resize-none"
             />
@@ -368,20 +376,24 @@ export function GradeModal({
               disabled={saving}
               className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving || isBlocked}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-surface text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Saving...</span>
+                  <span>{locale === "ar" ? "جاري الحفظ..." : "Saving..."}</span>
                 </>
               ) : (
-                <span>{initialGrade ? "Update Grade" : "Save Grade"}</span>
+                <span>
+                  {locale === "ar"
+                    ? initialGrade ? "تحديث الدرجة" : "حفظ الدرجة"
+                    : initialGrade ? "Update Grade" : "Save Grade"}
+                </span>
               )}
             </button>
           </div>

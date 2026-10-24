@@ -1609,9 +1609,9 @@ export function SchoolView() {
 
           {/* SubTab Content */}
           {practiceSubTab === "mistakes" ? (
-            !isModuleActive("module_school_mistakes") ? (
+            !isModuleActive("module_school") ? (
               <DisabledModuleFallback
-                moduleKey="module_school_mistakes"
+                moduleKey="module_school"
                 onEnabled={() => setPracticeSubTab("mistakes")}
               />
             ) : (
@@ -1634,9 +1634,9 @@ export function SchoolView() {
               />
             )
           ) : (
-            !isModuleActive("module_school_topics") ? (
+            !isModuleActive("module_school") ? (
               <DisabledModuleFallback
-                moduleKey="module_school_topics"
+                moduleKey="module_school"
                 onEnabled={() => setPracticeSubTab("topics")}
               />
             ) : (
@@ -1666,9 +1666,9 @@ export function SchoolView() {
       {/* TAB 5: TIMETABLE                                              */}
       {/* ============================================================== */}
       {!loading && activeTab === "timetable" && (
-        !isModuleActive("module_school_timetable") ? (
+        !isModuleActive("module_school") ? (
           <DisabledModuleFallback
-            moduleKey="module_school_timetable"
+            moduleKey="module_school"
             onEnabled={() => handleTabChange("timetable")}
           />
         ) : (

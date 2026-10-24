@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { calculateWeeklyStudyProgress } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface WeeklyTargetCardProps {
   weeklyTargetMinutes: number | null;
@@ -14,6 +15,7 @@ export function WeeklyTargetCard({
   completedMinutes,
   onUpdateTarget,
 }: WeeklyTargetCardProps) {
+  const { locale } = useI18n();
   const [isEditing, setIsEditing] = useState(false);
   const [targetHoursInput, setTargetHoursInput] = useState<string>(
     weeklyTargetMinutes ? (weeklyTargetMinutes / 60).toString() : ""
@@ -43,14 +45,22 @@ export function WeeklyTargetCard({
 
       const hours = parseFloat(targetHoursInput);
       if (isNaN(hours) || hours <= 0) {
-        setError("Target must be a positive number.");
+        setError(
+          locale === "ar"
+            ? "المستهدف لازم يكون رقم موجب أكبر من الصفر."
+            : "Target must be a positive number."
+        );
         setSaving(false);
         return;
       }
 
       const minutes = Math.round(hours * 60);
       if (minutes < 30 || minutes > 10080) {
-        setError("Target must be between 0.5 hours (30m) and 168 hours.");
+        setError(
+          locale === "ar"
+            ? "المستهدف لازم يكون بين نصف ساعة (30 دقيقة) و 168 ساعة."
+            : "Target must be between 0.5 hours (30m) and 168 hours."
+        );
         setSaving(false);
         return;
       }
@@ -58,7 +68,10 @@ export function WeeklyTargetCard({
       await onUpdateTarget(minutes);
       setIsEditing(false);
     } catch (err: any) {
-      setError(err?.message || "Failed to update target");
+      setError(
+        err?.message ||
+          (locale === "ar" ? "حصل خطأ أثناء تحديث المستهدف" : "Failed to update target")
+      );
     } finally {
       setSaving(false);
     }
@@ -85,8 +98,14 @@ export function WeeklyTargetCard({
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-on-surface">Weekly Study Target</h3>
-            <p className="text-xs text-text-muted">Total deep work focus across all subjects</p>
+            <h3 className="text-sm font-semibold text-on-surface">
+              {locale === "ar" ? "المستهدف الأسبوعي للمذاكرة" : "Weekly Study Target"}
+            </h3>
+            <p className="text-xs text-text-muted">
+              {locale === "ar"
+                ? "إجمالي ساعات التركيز العميق لكل المواد الدراسية"
+                : "Total deep work focus across all subjects"}
+            </p>
           </div>
         </div>
 
@@ -96,9 +115,15 @@ export function WeeklyTargetCard({
               setTargetHoursInput(weeklyTargetMinutes ? (weeklyTargetMinutes / 60).toString() : "");
               setIsEditing(true);
             }}
-            className="text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors px-2.5 py-1 rounded-lg hover:bg-amber-500/10"
+            className="text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors px-2.5 py-1 rounded-lg hover:bg-amber-500/10 cursor-pointer"
           >
-            {weeklyTargetMinutes ? "Edit" : "Set Target"}
+            {weeklyTargetMinutes
+              ? locale === "ar"
+                ? "تعديل"
+                : "Edit"
+              : locale === "ar"
+              ? "تحديد مستهدف"
+              : "Set Target"}
           </button>
         )}
       </div>
@@ -106,7 +131,7 @@ export function WeeklyTargetCard({
       {isEditing ? (
         <form onSubmit={handleSave} className="mt-3 pt-3 border-t border-border-subtle/40">
           <label className="block text-xs font-medium text-text-muted mb-1.5">
-            Target Study Hours per Week
+            {locale === "ar" ? "ساعات المذاكرة المستهدفة في الأسبوع" : "Target Study Hours per Week"}
           </label>
           <div className="flex items-center gap-2">
             <input
@@ -118,9 +143,11 @@ export function WeeklyTargetCard({
               onChange={(e) => setTargetHoursInput(e.target.value)}
               placeholder="e.g. 15"
               autoFocus
-              className="flex-1 px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400"
+              className="flex-1 px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400 text-start"
             />
-            <span className="text-xs text-text-muted">hrs/week</span>
+            <span className="text-xs text-text-muted">
+              {locale === "ar" ? "ساعة/أسبوع" : "hrs/week"}
+            </span>
           </div>
 
           {error && <p className="text-xs text-status-negative mt-1.5">{error}</p>}
@@ -131,34 +158,43 @@ export function WeeklyTargetCard({
                 type="button"
                 onClick={handleClear}
                 disabled={saving}
-                className="text-xs text-status-negative hover:underline px-2 py-1 mr-auto"
+                className="text-xs text-status-negative hover:underline px-2 py-1 mr-auto rtl:mr-0 rtl:ml-auto cursor-pointer"
               >
-                Clear Target
+                {locale === "ar" ? "مسح المستهدف" : "Clear Target"}
               </button>
             )}
             <button
               type="button"
               onClick={() => setIsEditing(false)}
               disabled={saving}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-on-surface hover:bg-surface-container-high cursor-pointer"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-surface transition-colors disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-on-primary transition-colors disabled:opacity-50 cursor-pointer"
             >
-              {saving ? "Saving..." : "Save Target"}
+              {saving
+                ? locale === "ar"
+                  ? "جاري الحفظ..."
+                  : "Saving..."
+                : locale === "ar"
+                ? "حفظ المستهدف"
+                : "Save Target"}
             </button>
           </div>
         </form>
       ) : weeklyTargetMinutes === null ? (
         <div className="mt-2 py-3 px-3.5 bg-surface-container-low rounded-xl border border-border-subtle/50 flex items-center justify-between">
           <div className="text-xs text-text-muted">
-            <span className="text-on-surface font-medium">{progress.completedHoursFormatted}</span> studied this week
+            <span className="text-on-surface font-medium">{progress.completedHoursFormatted}</span>{" "}
+            {locale === "ar" ? "تمت مذاكرتها الأسبوع ده" : "studied this week"}
           </div>
-          <span className="text-xs text-text-muted italic">No target defined</span>
+          <span className="text-xs text-text-muted italic">
+            {locale === "ar" ? "لم يُحدد مستهدف" : "No target defined"}
+          </span>
         </div>
       ) : (
         <div className="mt-2 space-y-2">
@@ -168,7 +204,11 @@ export function WeeklyTargetCard({
               <span className="text-text-muted"> / {progress.targetHoursFormatted}</span>
             </div>
             <div className="font-semibold text-amber-400">
-              {progress.isCompleted ? "Goal Reached! 🎉" : `${progress.progressPct}%`}
+              {progress.isCompleted
+                ? locale === "ar"
+                  ? "حققت الهدف بالكامل! 🎉"
+                  : "Goal Reached! 🎉"
+                : `${progress.progressPct}%`}
             </div>
           </div>
 
@@ -185,11 +225,17 @@ export function WeeklyTargetCard({
             <span>
               {progress.isCompleted
                 ? progress.isOverTarget
-                  ? `Over target by ${(progress.completedMinutes / 60 - progress.targetMinutes! / 60).toFixed(1)}h`
+                  ? locale === "ar"
+                    ? `متجاوز المستهدف بـ ${(progress.completedMinutes / 60 - progress.targetMinutes! / 60).toFixed(1)}ساعة`
+                    : `Over target by ${(progress.completedMinutes / 60 - progress.targetMinutes! / 60).toFixed(1)}h`
+                  : locale === "ar"
+                  ? "الهدف مكتمل"
                   : "Target fulfilled"
+                : locale === "ar"
+                ? `متبقي ${progress.remainingHoursFormatted}`
                 : `${progress.remainingHoursFormatted} remaining`}
             </span>
-            <span>Week active</span>
+            <span>{locale === "ar" ? "الأسبوع الحالي" : "Week active"}</span>
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/shell/AppShell";
 import { redirect } from "next/navigation";
+import { provisionFirstLogin } from "@/lib/authProvisioning";
 
 export default async function AppLayout({
   children,
@@ -16,8 +17,16 @@ export default async function AppLayout({
     redirect("/login");
   }
 
+  // Fallback provisioning: ensures a user who confirmed their email but skipped
+  // callback/confirm provisioning still receives idempotent first-login records on first load.
+  try {
+    await provisionFirstLogin(supabase, user);
+  } catch (err) {
+    console.error("Fallback first-login provisioning error in AppLayout:", err);
+  }
+
   return (
-    <AppShell userEmail={user.email ?? null} userId={user.id}>
+    <AppShell userEmail={user.email ?? ""} userId={user.id}>
       {children}
     </AppShell>
   );

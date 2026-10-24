@@ -35,8 +35,10 @@ import { MealTimeline } from "./MealTimeline";
 import { FrequentFoodsBar } from "./FrequentFoodsBar";
 import { SavedMealsDrawer } from "./SavedMealsDrawer";
 import { WeeklyAnalyticsCard } from "./WeeklyAnalyticsCard";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 export function NutritionDashboard() {
+  const { locale } = useI18n();
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -315,7 +317,9 @@ export function NutritionDashboard() {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center space-y-3 font-mono">
         <Loader2 className="w-8 h-8 animate-spin text-secondary-cyan" />
-        <span className="text-xs text-text-muted">Loading Nutrition Engine...</span>
+        <span className="text-xs text-text-muted">
+          {locale === "ar" ? "بنحمّل محرك التغذية..." : "Loading Nutrition Engine..."}
+        </span>
       </div>
     );
   }
@@ -327,7 +331,7 @@ export function NutritionDashboard() {
         <div className="p-4 rounded-2xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-3 text-xs font-mono text-[#F87171]">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <div className="font-bold">Schema Notice</div>
+            <div className="font-bold">{locale === "ar" ? "تنبيه النظام" : "Schema Notice"}</div>
             <div>{errorMsg}</div>
           </div>
         </div>
@@ -339,17 +343,17 @@ export function NutritionDashboard() {
           <Calendar className="w-4 h-4 text-secondary-cyan" />
           <span className="text-xs font-mono font-bold text-on-surface">
             {selectedDate === getLocalDateString(new Date(), userProfile.timezone)
-              ? `Today (${selectedDate})`
+              ? (locale === "ar" ? `النهاردة (${selectedDate})` : `Today (${selectedDate})`)
               : selectedDate}
           </span>
         </div>
 
         <button
           onClick={() => setIsSettingsModalOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-text-muted hover:text-on-surface hover:border-secondary-cyan transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-text-muted hover:text-on-surface hover:border-secondary-cyan transition-colors cursor-pointer"
         >
           <Settings2 className="w-3.5 h-3.5 text-secondary-cyan" />
-          <span>Target Settings</span>
+          <span>{locale === "ar" ? "إعدادات الأهداف" : "Target Settings"}</span>
         </button>
       </div>
 
@@ -361,16 +365,18 @@ export function NutritionDashboard() {
             <Flame className="w-6 h-6" />
           </div>
           <div className="font-mono text-base font-bold text-on-surface">
-            Set Your Nutritional Targets
+            {locale === "ar" ? "حدد أهداف التغذية الخاصة بيك" : "Set Your Nutritional Targets"}
           </div>
           <p className="font-mono text-xs text-text-muted max-w-md mx-auto">
-            No default numbers are invented. Provide your bodyweight, height, and birth year to compute estimated targets, or set custom targets manually.
+            {locale === "ar"
+              ? "مفيش أرقام افتراضية بنخترعها. دخل وزنك وطولك وسنة ميلادك لحساب أهداف تقديرية، أو حط أهداف مخصصة بنفسك."
+              : "No default numbers are invented. Provide your bodyweight, height, and birth year to compute estimated targets, or set custom targets manually."}
           </p>
           <button
             onClick={() => setIsSettingsModalOpen(true)}
-            className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
-            Configure Targets Now
+            {locale === "ar" ? "حدد أهدافك دلوقتي" : "Configure Targets Now"}
           </button>
         </div>
       ) : (
@@ -379,19 +385,25 @@ export function NutritionDashboard() {
           <div className="flex items-start justify-between font-mono">
             <div>
               <div className="text-[11px] uppercase tracking-wider text-text-muted">
-                Energy Balance
+                {locale === "ar" ? "توازن السعرات" : "Energy Balance"}
               </div>
               <div className="text-3xl font-extrabold text-on-surface mt-1 flex items-baseline gap-2">
                 <span>{totalCalories}</span>
                 <span className="text-sm font-medium text-text-muted">
-                  / {targetCals} kcal
+                  / {targetCals} {locale === "ar" ? "سعرة" : "kcal"}
                 </span>
               </div>
             </div>
 
-            <div className="text-right">
+            <div className="text-end">
               <div className="text-[11px] uppercase tracking-wider text-text-muted">
-                {caloriesRemaining !== null && caloriesRemaining >= 0 ? "Remaining" : "Over Budget"}
+                {caloriesRemaining !== null && caloriesRemaining >= 0
+                  ? locale === "ar"
+                    ? "المتبقي"
+                    : "Remaining"
+                  : locale === "ar"
+                  ? "تجاوزت الهدف"
+                  : "Over Budget"}
               </div>
               <div
                 className={`text-2xl font-bold mt-1 ${
@@ -400,7 +412,7 @@ export function NutritionDashboard() {
                     : "text-[#F87171]"
                 }`}
               >
-                {caloriesRemaining !== null ? Math.abs(caloriesRemaining) : 0} kcal
+                {caloriesRemaining !== null ? Math.abs(caloriesRemaining) : 0} {locale === "ar" ? "سعرة" : "kcal"}
               </div>
             </div>
           </div>
@@ -422,7 +434,9 @@ export function NutritionDashboard() {
             {/* Protein */}
             <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-primary-lime font-bold">Protein</span>
+                <span className="text-primary-lime font-bold">
+                  {locale === "ar" ? "بروتين" : "Protein"}
+                </span>
                 <span className="text-text-muted text-[11px]">
                   {targetProt ? `${totalProtein}/${targetProt}g` : `${totalProtein}g`}
                 </span>
@@ -438,7 +452,9 @@ export function NutritionDashboard() {
             {/* Carbs */}
             <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-secondary-cyan font-bold">Carbs</span>
+                <span className="text-secondary-cyan font-bold">
+                  {locale === "ar" ? "كارب" : "Carbs"}
+                </span>
                 <span className="text-text-muted text-[11px]">
                   {targetCarbs ? `${totalCarbs}/${targetCarbs}g` : `${totalCarbs}g`}
                 </span>
@@ -454,7 +470,9 @@ export function NutritionDashboard() {
             {/* Fats */}
             <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-rank-gold font-bold">Fats</span>
+                <span className="text-rank-gold font-bold">
+                  {locale === "ar" ? "دهون" : "Fats"}
+                </span>
                 <span className="text-text-muted text-[11px]">
                   {targetFats ? `${totalFats}/${targetFats}g` : `${totalFats}g`}
                 </span>
@@ -481,10 +499,10 @@ export function NutritionDashboard() {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => setIsAiModalOpen(true)}
-            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-lime text-charcoal-dark font-bold shadow-[0_0_15px_rgba(198,255,61,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-lime text-on-primary font-bold shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Parse Meal with AI</span>
+            <span>{locale === "ar" ? "تحليل وجبة بالذكاء الاصطناعي" : "Parse Meal with AI"}</span>
           </button>
 
           <button
@@ -492,7 +510,7 @@ export function NutritionDashboard() {
             className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 text-secondary-cyan" />
-            <span>+ Manual Food Entry</span>
+            <span>{locale === "ar" ? "+ تسجيل أكل يدوي" : "+ Manual Food Entry"}</span>
           </button>
         </div>
 
@@ -504,7 +522,7 @@ export function NutritionDashboard() {
           className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
         >
           <Bookmark className="w-4 h-4 text-secondary-cyan" />
-          <span>Saved Meals & Templates</span>
+          <span>{locale === "ar" ? "الوجبات المحفوظة والقوالب" : "Saved Meals & Templates"}</span>
         </button>
       </div>
 

@@ -1,21 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, KeyRound, Mail, Smartphone, LogOut, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { clearPWACaches } from "@/components/pwa/PWAProvider";
+import { executeCleanSignOut } from "@/lib/signOutHelper";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { MIN_PASSWORD_LENGTH, isGoogleOnlyUser } from "@/lib/authConfig";
 
 interface AccountTabProps {
   userEmail: string | null;
   userId: string | null;
+  isGoogleOnly?: boolean;
 }
 
-export function AccountTab({ userEmail, userId }: AccountTabProps) {
-  const router = useRouter();
+export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps) {
+  const { locale, dict } = useI18n();
   const [signingOut, setSigningOut] = useState(false);
   const [signingOutOthers, setSigningOutOthers] = useState(false);
   const [signOutOthersSuccess, setSignOutOthersSuccess] = useState(false);
+  const [detectedGoogleOnly, setDetectedGoogleOnly] = useState<boolean>(Boolean(isGoogleOnly));
+
+  const googleOnlyAccount =
+    typeof isGoogleOnly === "boolean" ? isGoogleOnly : detectedGoogleOnly;
+
+  useEffect(() => {
+    if (typeof isGoogleOnly === "boolean") {
+      return;
+    }
+    let mounted = true;
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (mounted && data?.user) {
+          setDetectedGoogleOnly(isGoogleOnlyUser(data.user));
+        }
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, [isGoogleOnly]);
 
   // Password update modal states
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -37,10 +61,7 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
   const handleSignOut = async () => {
     setSigningOut(true);
     try {
-      await clearPWACaches();
-      await supabase.auth.signOut();
-      router.push("/login");
-      router.refresh();
+      await executeCleanSignOut();
     } finally {
       setSigningOut(false);
     }
@@ -54,8 +75,9 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
       await supabase.auth.signOut({ scope: "others" });
       setSignOutOthersSuccess(true);
       setTimeout(() => setSignOutOthersSuccess(false), 4000);
-    } catch (err: any) {
-      alert(err.message || "Failed to sign out of other devices");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to sign out of other devices";
+      alert(msg);
     } finally {
       setSigningOutOthers(false);
     }
@@ -67,17 +89,23 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
     setPasswordSuccess(false);
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords do not match.");
+      setPasswordError(
+        locale === "ar" ? "كلمتا السر غير متطابقتين." : "New passwords do not match."
+      );
       return;
     }
-    if (newPassword.length < 8) {
-      setPasswordError("Password must be at least 8 characters long.");
+    if (newPassword.length < MIN_PASSWORD_LENGTH) {
+      setPasswordError(
+        locale === "ar"
+          ? `يجب ألا تقل كلمة السر عن ${MIN_PASSWORD_LENGTH} أحرف.`
+          : `Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`
+      );
       return;
     }
 
     setPasswordLoading(true);
     try {
-      if (!userEmail) throw new Error("User email not found");
+      if (!userEmail) throw new Error(locale === "ar" ? "تعذر العثور على البريد الإلكتروني" : "User email not found");
 
       // 1. Re-authenticate with current password
       const { error: signInErr } = await supabase.auth.signInWithPassword({
@@ -86,7 +114,9 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
       });
 
       if (signInErr) {
-        throw new Error("Current password is incorrect.");
+        throw new Error(
+          locale === "ar" ? "كلمة السر الحالية غير صحيحة." : "Current password is incorrect."
+        );
       }
 
       // 2. Update password
@@ -104,8 +134,12 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
         setIsPasswordModalOpen(false);
         setPasswordSuccess(false);
       }, 2000);
-    } catch (err: any) {
-      setPasswordError(err.message || "Failed to change password.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      setPasswordError(
+        msg ||
+          (locale === "ar" ? "فشل تغيير كلمة السر." : "Failed to change password.")
+      );
     } finally {
       setPasswordLoading(false);
     }
@@ -117,13 +151,17 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
     setEmailSuccess(false);
 
     if (!newEmail || !newEmail.includes("@")) {
-      setEmailError("Please enter a valid email address.");
+      setEmailError(
+        locale === "ar"
+          ? "يرجى كتابة عنوان بريد إلكتروني صالح."
+          : "Please enter a valid email address."
+      );
       return;
     }
 
     setEmailLoading(true);
     try {
-      if (!userEmail) throw new Error("User email not found");
+      if (!userEmail) throw new Error(locale === "ar" ? "تعذر العثور على البريد الإلكتروني" : "User email not found");
 
       // 1. Re-authenticate with current password
       const { error: signInErr } = await supabase.auth.signInWithPassword({
@@ -132,13 +170,17 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
       });
 
       if (signInErr) {
-        throw new Error("Current password is incorrect.");
+        throw new Error(
+          locale === "ar" ? "كلمة السر الحالية غير صحيحة." : "Current password is incorrect."
+        );
       }
 
       // 2. Request email update
-      const { error: updateErr } = await supabase.auth.updateUser({
-        email: newEmail,
-      });
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const { error: updateErr } = await supabase.auth.updateUser(
+        { email: newEmail },
+        { emailRedirectTo: `${origin}/auth/confirm?next=/settings` }
+      );
 
       if (updateErr) throw updateErr;
 
@@ -148,8 +190,12 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
         setIsEmailModalOpen(false);
         setEmailSuccess(false);
       }, 3000);
-    } catch (err: any) {
-      setEmailError(err.message || "Failed to change email.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      setEmailError(
+        msg ||
+          (locale === "ar" ? "فشل تحديث البريد الإلكتروني." : "Failed to change email.")
+      );
     } finally {
       setEmailLoading(false);
     }
@@ -161,46 +207,52 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
       <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <User className="w-4 h-4 text-primary-lime" />
-          <h3 className="text-sm font-bold font-mono text-on-surface">Account Credentials</h3>
+          <h3 className="text-sm font-bold font-mono text-on-surface">
+            {locale === "ar" ? "بيانات وبيئة الحساب" : "Account Credentials"}
+          </h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-3.5 bg-surface-container-low rounded-xl border border-border-subtle space-y-1">
             <div className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
-              Email Address
+              {locale === "ar" ? "البريد الإلكتروني" : "Email Address"}
             </div>
-            <div className="text-xs font-mono text-on-surface truncate">
-              {userEmail || "Signed In"}
+            <div className="text-xs font-mono text-on-surface truncate" dir="ltr">
+              {userEmail || (locale === "ar" ? "تم تسجيل الدخول" : "Signed In")}
             </div>
           </div>
 
           <div className="p-3.5 bg-surface-container-low rounded-xl border border-border-subtle space-y-1">
             <div className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
-              Account ID (auth.uid)
+              {locale === "ar" ? "معرف الحساب (auth.uid)" : "Account ID (auth.uid)"}
             </div>
-            <div className="text-xs font-mono text-primary-lime truncate">
-              {userId || "None"}
+            <div className="text-xs font-mono text-primary-lime truncate" dir="ltr">
+              {userId || (locale === "ar" ? "لا يوجد" : "None")}
             </div>
           </div>
         </div>
 
-        {/* Security Actions */}
+        {/* Security Actions (Change Password & Change Email hidden for Google-only accounts) */}
         <div className="pt-2 flex flex-wrap gap-3">
-          <button
-            onClick={() => setIsPasswordModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-on-surface transition-colors cursor-pointer"
-          >
-            <KeyRound className="w-3.5 h-3.5 text-primary-lime" />
-            <span>Change Password</span>
-          </button>
+          {!googleOnlyAccount && (
+            <>
+              <button
+                onClick={() => setIsPasswordModalOpen(true)}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-on-surface transition-colors cursor-pointer"
+              >
+                <KeyRound className="w-3.5 h-3.5 text-primary-lime" />
+                <span>{locale === "ar" ? "تغيير كلمة السر" : "Change Password"}</span>
+              </button>
 
-          <button
-            onClick={() => setIsEmailModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-on-surface transition-colors cursor-pointer"
-          >
-            <Mail className="w-3.5 h-3.5 text-tertiary-purple" />
-            <span>Change Email</span>
-          </button>
+              <button
+                onClick={() => setIsEmailModalOpen(true)}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-on-surface transition-colors cursor-pointer"
+              >
+                <Mail className="w-3.5 h-3.5 text-tertiary-purple" />
+                <span>{locale === "ar" ? "تغيير البريد الإلكتروني" : "Change Email"}</span>
+              </button>
+            </>
+          )}
 
           <button
             onClick={handleSignOutOthers}
@@ -212,14 +264,20 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
             ) : (
               <Smartphone className="w-3.5 h-3.5 text-amber-core" />
             )}
-            <span>Sign Out Other Devices</span>
+            <span>
+              {locale === "ar" ? "تسجيل الخروج من الأجهزة الأخرى" : "Sign Out Other Devices"}
+            </span>
           </button>
         </div>
 
         {signOutOthersSuccess && (
           <div className="p-3 bg-emerald-success/10 border border-emerald-success/20 rounded-xl flex items-center gap-2 text-xs font-mono text-emerald-success">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
-            <span>All other active device sessions have been revoked.</span>
+            <span>
+              {locale === "ar"
+                ? "تم تسجيل الخروج بنجاح وإلغاء صلاحية كافة الجلسات الأخرى."
+                : "All other active device sessions have been revoked."}
+            </span>
           </div>
         )}
       </div>
@@ -227,8 +285,14 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
       {/* Sign Out Card */}
       <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle flex items-center justify-between">
         <div>
-          <h4 className="text-xs font-bold font-mono text-on-surface">End Current Session</h4>
-          <p className="text-[11px] text-text-muted mt-0.5">Clears local shell caches and signs out of this device.</p>
+          <h4 className="text-xs font-bold font-mono text-on-surface">
+            {locale === "ar" ? "إنهاء الجلسة الحالية" : "End Current Session"}
+          </h4>
+          <p className="text-[11px] text-text-muted mt-0.5">
+            {locale === "ar"
+              ? "يمسح الذاكرة المؤقتة ويسجل الخروج من هذا الجهاز."
+              : "Clears local shell caches and signs out of this device."}
+          </p>
         </div>
         <button
           onClick={handleSignOut}
@@ -236,20 +300,28 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-crimson-alert/10 hover:bg-crimson-alert/20 border border-crimson-alert/30 text-crimson-alert text-xs font-mono font-semibold transition-colors cursor-pointer disabled:opacity-50"
         >
           {signingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
-          <span>Sign Out</span>
+          <span>{locale === "ar" ? "تسجيل الخروج" : "Sign Out"}</span>
         </button>
       </div>
 
       {/* Password Modal */}
-      {isPasswordModalOpen && (
+      {!googleOnlyAccount && isPasswordModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-border-subtle max-w-md w-full space-y-4">
-            <h3 className="text-sm font-bold font-mono text-on-surface">Change Password</h3>
-            <p className="text-xs text-text-muted">Requires re-authentication with your existing password.</p>
+            <h3 className="text-sm font-bold font-mono text-on-surface">
+              {locale === "ar" ? "تغيير كلمة السر" : "Change Password"}
+            </h3>
+            <p className="text-xs text-text-muted">
+              {locale === "ar"
+                ? "يتطلب إعادة التحقق من كلمة السر الحالية أولاً."
+                : "Requires re-authentication with your existing password."}
+            </p>
 
             <form onSubmit={handleChangePassword} className="space-y-3">
               <div>
-                <label className="text-[11px] font-mono text-text-muted uppercase">Current Password</label>
+                <label className="text-[11px] font-mono text-text-muted uppercase">
+                  {locale === "ar" ? "كلمة السر الحالية" : "Current Password"}
+                </label>
                 <input
                   type="password"
                   required
@@ -260,7 +332,9 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-text-muted uppercase">New Password</label>
+                <label className="text-[11px] font-mono text-text-muted uppercase">
+                  {locale === "ar" ? "كلمة السر الجديدة" : "New Password"}
+                </label>
                 <input
                   type="password"
                   required
@@ -271,7 +345,9 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-text-muted uppercase">Confirm New Password</label>
+                <label className="text-[11px] font-mono text-text-muted uppercase">
+                  {locale === "ar" ? "تأكيد كلمة السر الجديدة" : "Confirm New Password"}
+                </label>
                 <input
                   type="password"
                   required
@@ -291,7 +367,11 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
               {passwordSuccess && (
                 <div className="p-2.5 bg-emerald-success/10 border border-emerald-success/20 rounded-xl flex items-center gap-2 text-xs font-mono text-emerald-success">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>Password updated successfully!</span>
+                  <span>
+                    {locale === "ar"
+                      ? "تم تحديث كلمة السر بنجاح!"
+                      : "Password updated successfully!"}
+                  </span>
                 </div>
               )}
 
@@ -301,14 +381,20 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
                   onClick={() => setIsPasswordModalOpen(false)}
                   className="px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface cursor-pointer"
                 >
-                  Cancel
+                  {dict.common.cancel}
                 </button>
                 <button
                   type="submit"
                   disabled={passwordLoading}
-                  className="px-4 py-2 rounded-xl bg-primary-lime text-surface text-xs font-mono font-bold hover:bg-primary-lime-dim cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold hover:bg-primary-lime-dim cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
                 >
-                  {passwordLoading ? "Verifying..." : "Update Password"}
+                  {passwordLoading
+                    ? locale === "ar"
+                      ? "جاري التحقق..."
+                      : "Verifying..."
+                    : locale === "ar"
+                    ? "تحديث كلمة السر"
+                    : "Update Password"}
                 </button>
               </div>
             </form>
@@ -317,15 +403,23 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
       )}
 
       {/* Email Modal */}
-      {isEmailModalOpen && (
+      {!googleOnlyAccount && isEmailModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-border-subtle max-w-md w-full space-y-4">
-            <h3 className="text-sm font-bold font-mono text-on-surface">Change Email</h3>
-            <p className="text-xs text-text-muted">A confirmation link will be sent to both your old and new email addresses.</p>
+            <h3 className="text-sm font-bold font-mono text-on-surface">
+              {locale === "ar" ? "تغيير البريد الإلكتروني" : "Change Email"}
+            </h3>
+            <p className="text-xs text-text-muted">
+              {locale === "ar"
+                ? "سيتم إرسال رابط تأكيد للبريدين القديم والجديد."
+                : "A confirmation link will be sent to both your old and new email addresses."}
+            </p>
 
             <form onSubmit={handleChangeEmail} className="space-y-3">
               <div>
-                <label className="text-[11px] font-mono text-text-muted uppercase">Current Password</label>
+                <label className="text-[11px] font-mono text-text-muted uppercase">
+                  {locale === "ar" ? "كلمة السر الحالية" : "Current Password"}
+                </label>
                 <input
                   type="password"
                   required
@@ -336,7 +430,9 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-text-muted uppercase">New Email Address</label>
+                <label className="text-[11px] font-mono text-text-muted uppercase">
+                  {locale === "ar" ? "البريد الإلكتروني الجديد" : "New Email Address"}
+                </label>
                 <input
                   type="email"
                   required
@@ -356,7 +452,11 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
               {emailSuccess && (
                 <div className="p-2.5 bg-emerald-success/10 border border-emerald-success/20 rounded-xl flex items-center gap-2 text-xs font-mono text-emerald-success">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>Confirmation link sent to your new email.</span>
+                  <span>
+                    {locale === "ar"
+                      ? "تم إرسال رابط التأكيد لبريدك الجديد."
+                      : "Confirmation link sent to your new email."}
+                  </span>
                 </div>
               )}
 
@@ -366,14 +466,20 @@ export function AccountTab({ userEmail, userId }: AccountTabProps) {
                   onClick={() => setIsEmailModalOpen(false)}
                   className="px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface cursor-pointer"
                 >
-                  Cancel
+                  {dict.common.cancel}
                 </button>
                 <button
                   type="submit"
                   disabled={emailLoading}
-                  className="px-4 py-2 rounded-xl bg-primary-lime text-surface text-xs font-mono font-bold hover:bg-primary-lime-dim cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold hover:bg-primary-lime-dim cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
                 >
-                  {emailLoading ? "Verifying..." : "Update Email"}
+                  {emailLoading
+                    ? locale === "ar"
+                      ? "جاري التحقق..."
+                      : "Verifying..."
+                    : locale === "ar"
+                    ? "تحديث البريد"
+                    : "Update Email"}
                 </button>
               </div>
             </form>

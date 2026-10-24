@@ -22,8 +22,6 @@ import { WeightDashboard } from "@/components/weight/WeightDashboard";
 import { SleepDashboard } from "@/components/sleep/SleepDashboard";
 import { NutritionDashboard } from "@/components/nutrition/NutritionDashboard";
 import { useI18n } from "@/lib/i18n/I18nContext";
-import { useUserModules } from "@/lib/modules/UserModulesContext";
-import { DisabledModuleFallback } from "@/components/modules/DisabledModuleFallback";
 
 interface Exercise {
   id: string;
@@ -41,7 +39,6 @@ function BodyViewContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { dict, locale } = useI18n();
-  const { isModuleActive } = useUserModules();
 
   const tabParam = (searchParams.get("tab") as TabKey) || "logger";
   const [activeTab, setActiveTab] = useState<TabKey>(tabParam);
@@ -213,92 +210,36 @@ function BodyViewContent() {
 
       {/* Tab 1: Active Workout Session */}
       {activeTab === "logger" && (
-        isModuleActive("module_workouts") ? (
-          <ActiveWorkoutSession
-            onWorkoutSaved={() => {
-              switchTab("history");
-            }}
-          />
-        ) : (
-          <DisabledModuleFallback
-            moduleKey="module_workouts"
-            onEnabled={() => switchTab("logger")}
-          />
-        )
+        <ActiveWorkoutSession
+          onWorkoutSaved={() => {
+            switchTab("history");
+          }}
+        />
       )}
 
       {/* Tab 2: Body Weight Dashboard & Composition */}
-      {activeTab === "weight" && (
-        isModuleActive("module_weight") ? (
-          <WeightDashboard />
-        ) : (
-          <DisabledModuleFallback
-            moduleKey="module_weight"
-            onEnabled={() => switchTab("weight")}
-          />
-        )
-      )}
+      {activeTab === "weight" && <WeightDashboard />}
 
       {/* Tab 3: Sleep & Circadian Telemetry */}
-      {activeTab === "sleep" && (
-        isModuleActive("module_sleep") ? (
-          <SleepDashboard />
-        ) : (
-          <DisabledModuleFallback
-            moduleKey="module_sleep"
-            onEnabled={() => switchTab("sleep")}
-          />
-        )
-      )}
+      {activeTab === "sleep" && <SleepDashboard />}
 
       {/* Tab 4: Nutrition & Macro Telemetry Engine */}
-      {activeTab === "nutrition" && (
-        isModuleActive("module_nutrition") ? (
-          <NutritionDashboard />
-        ) : (
-          <DisabledModuleFallback
-            moduleKey="module_nutrition"
-            onEnabled={() => switchTab("nutrition")}
-          />
-        )
-      )}
+      {activeTab === "nutrition" && <NutritionDashboard />}
 
       {/* Tab 5: Strength Standards & Radar Matrix */}
-      {activeTab === "standards" && (
-        isModuleActive("module_workouts") ? (
-          <RankStandardsMatrix />
-        ) : (
-          <DisabledModuleFallback
-            moduleKey="module_workouts"
-            onEnabled={() => switchTab("standards")}
-          />
-        )
-      )}
+      {activeTab === "standards" && <RankStandardsMatrix />}
 
       {/* Tab 6: Workout History & Volume Tracking */}
       {activeTab === "history" && (
-        isModuleActive("module_workouts") ? (
-          <WorkoutHistory
-            onStartWorkoutClick={() => {
-              switchTab("logger");
-            }}
-          />
-        ) : (
-          <DisabledModuleFallback
-            moduleKey="module_workouts"
-            onEnabled={() => switchTab("history")}
-          />
-        )
+        <WorkoutHistory
+          onStartWorkoutClick={() => {
+            switchTab("logger");
+          }}
+        />
       )}
 
       {/* Tab 7: Exercise Catalog */}
       {activeTab === "catalog" && (
-        !isModuleActive("module_workouts") ? (
-          <DisabledModuleFallback
-            moduleKey="module_workouts"
-            onEnabled={() => switchTab("catalog")}
-          />
-        ) : (
         <div className="space-y-5">
           {/* Catalog Top Filter */}
           <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
@@ -418,7 +359,6 @@ function BodyViewContent() {
             </div>
           )}
         </div>
-        )
       )}
     </div>
   );

@@ -3,17 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  Dumbbell,
-  Utensils,
-  Moon,
-  Scale,
   Timer,
+  Zap,
+  Activity,
   CheckCircle2,
   BookOpen,
   Smartphone,
-  Calendar,
-  ListChecks,
-  BookX,
+  GraduationCap,
   Power,
   Settings,
   Loader2,
@@ -24,17 +20,13 @@ import { useUserModules } from "@/lib/modules/UserModulesContext";
 import { useI18n } from "@/lib/i18n/I18nContext";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  Dumbbell,
-  Utensils,
-  Moon,
-  Scale,
   Timer,
+  Zap,
+  Activity,
   CheckCircle2,
   BookOpen,
   Smartphone,
-  Calendar,
-  ListChecks,
-  BookX,
+  GraduationCap,
 };
 
 interface DisabledModuleFallbackProps {
@@ -52,7 +44,7 @@ export function DisabledModuleFallback({
   const [isEnabling, setIsEnabling] = useState(false);
 
   const def = MODULE_DEFINITIONS[moduleKey];
-  const Icon = ICON_MAP[def.icon] || Sparkles;
+  const Icon = (def && ICON_MAP[def.icon]) || Sparkles;
 
   const handleEnable = async () => {
     setIsEnabling(true);
@@ -80,8 +72,8 @@ export function DisabledModuleFallback({
 
       <h3 className="text-lg sm:text-xl font-bold font-mono text-on-surface mt-3">
         {isAr
-          ? `قسم ${def.labelAr} مقفول دلوقتي`
-          : `${def.labelEn} is turned off`}
+          ? `قسم ${def?.labelAr || moduleKey} مقفول دلوقتي`
+          : `${def?.labelEn || moduleKey} is turned off`}
       </h3>
 
       <p className="text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto mt-2 leading-relaxed">
@@ -96,27 +88,22 @@ export function DisabledModuleFallback({
           id={`enable-module-btn-${moduleKey}`}
           disabled={isEnabling}
           onClick={handleEnable}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary-lime text-surface font-mono text-xs font-bold tracking-wide hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary-lime text-surface font-mono text-xs font-bold tracking-wide hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
         >
           {isEnabling ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>{isAr ? "جارٍ التفعيل..." : "Enabling..."}</span>
-            </>
+            <Loader2 className="w-4 h-4 animate-spin text-surface" />
           ) : (
-            <>
-              <Power className="w-4 h-4" />
-              <span>{isAr ? `تشغيل ${def.labelAr}` : `Turn on ${def.labelEn}`}</span>
-            </>
+            <Power className="w-4 h-4 text-surface" />
           )}
+          <span>{isAr ? "تشغيل القسم ده" : "Turn On Module"}</span>
         </button>
 
         <Link
           href="/settings?tab=modules"
-          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-mono text-xs font-medium border border-border-subtle transition-colors flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-on-surface font-mono text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
-          <Settings className="w-4 h-4 text-on-surface-variant" />
-          <span>{isAr ? "إدارة الأقسام في الإعدادات" : "Manage in Settings"}</span>
+          <Settings className="w-4 h-4 text-text-muted" />
+          <span>{isAr ? "إدارة كل الأقسام" : "Manage All Modules"}</span>
         </Link>
       </div>
     </div>

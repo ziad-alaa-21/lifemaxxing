@@ -13,6 +13,7 @@ import {
   History,
   Loader2,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface MistakeRedoModalProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export function MistakeRedoModal({
   subject,
   onLogRedo,
 }: MistakeRedoModalProps) {
+  const { locale } = useI18n();
   const [revealed, setRevealed] = useState(false);
   const [userScratchpad, setUserScratchpad] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -47,7 +49,13 @@ export function MistakeRedoModal({
       await onLogRedo(mistake.id, result, userScratchpad.trim() || undefined);
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to record redo attempt");
+      setError(
+        err instanceof Error
+          ? err.message
+          : locale === "ar"
+          ? "حصل خطأ أثناء تسجيل محاولة الإعادة"
+          : "Failed to record redo attempt"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -58,6 +66,13 @@ export function MistakeRedoModal({
     careless: "bg-amber-500/15 border-amber-500/30 text-amber-300",
     time: "bg-stone-500/15 border-stone-500/30 text-stone-300",
     memory: "bg-teal-500/15 border-teal-500/30 text-teal-300",
+  };
+
+  const causeLabels: Record<string, string> = {
+    concept: locale === "ar" ? "سوء فهم نظري" : "concept",
+    careless: locale === "ar" ? "تسرع وسهو" : "careless",
+    time: locale === "ar" ? "ضيق وقت" : "time",
+    memory: locale === "ar" ? "نسيان القانون" : "memory",
   };
 
   return (
@@ -79,7 +94,7 @@ export function MistakeRedoModal({
                   dir="auto"
                   className="text-base font-bold font-mono text-on-surface truncate max-w-[260px] sm:max-w-xs"
                 >
-                  Redo: {mistake.topic}
+                  {locale === "ar" ? `إعادة حل: ${mistake.topic}` : `Redo: ${mistake.topic}`}
                 </h3>
                 {subject && (
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high border border-border-subtle text-amber-300">
@@ -91,7 +106,7 @@ export function MistakeRedoModal({
                     causeColors[mistake.cause] || causeColors.concept
                   }`}
                 >
-                  {mistake.cause}
+                  {causeLabels[mistake.cause] || mistake.cause}
                 </span>
               </div>
             </div>
@@ -116,12 +131,14 @@ export function MistakeRedoModal({
           <div className="flex items-center justify-between text-xs font-mono text-on-surface-variant font-semibold uppercase tracking-wider">
             <div className="flex items-center gap-1.5">
               <HelpCircle className="w-4 h-4 text-amber-400" />
-              <span>Problem Statement / Context</span>
+              <span>{locale === "ar" ? "نص المسألة أو سياق السؤال" : "Problem Statement / Context"}</span>
             </div>
             {mistake.redo_history && mistake.redo_history.length > 0 && (
               <span className="text-[10px] text-text-muted flex items-center gap-1 lowercase">
                 <History className="w-3 h-3" />
-                {mistake.redo_history.length} prior redo(s)
+                {locale === "ar"
+                  ? `${mistake.redo_history.length} محاولة سابقة`
+                  : `${mistake.redo_history.length} prior redo(s)`}
               </span>
             )}
           </div>
@@ -137,23 +154,29 @@ export function MistakeRedoModal({
         {!revealed && (
           <div className="space-y-2">
             <label className="text-xs font-mono text-on-surface-variant flex items-center justify-between">
-              <span>Attempt Redo Solution (Mental / Scratchpad)</span>
-              <span className="text-[10px] text-text-muted">Solve before revealing solution</span>
+              <span>{locale === "ar" ? "جرب تحل المسألة هنا (مسودة تفكير)" : "Attempt Redo Solution (Mental / Scratchpad)"}</span>
+              <span className="text-[10px] text-text-muted">
+                {locale === "ar" ? "حل بنفسك قبل ما تشوف الإجابة" : "Solve before revealing solution"}
+              </span>
             </label>
             <textarea
               dir="auto"
               value={userScratchpad}
               onChange={(e) => setUserScratchpad(e.target.value)}
-              placeholder="Work through your derivation or final answer here..."
+              placeholder={
+                locale === "ar"
+                  ? "اكتب خطوات تفكيرك أو حلك النهائي هنا..."
+                  : "Work through your derivation or final answer here..."
+              }
               rows={4}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-xs font-sans text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted resize-y"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-xs font-sans text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted resize-y text-start"
             />
             <button
               onClick={() => setRevealed(true)}
               className="w-full py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-semibold uppercase flex items-center justify-center gap-2 hover:bg-amber-500/25 transition-all cursor-pointer"
             >
               <Eye className="w-4 h-4" />
-              <span>Reveal Correct Solution & Compare</span>
+              <span>{locale === "ar" ? "أظهر الحل الصح وقارن حلك" : "Reveal Correct Solution & Compare"}</span>
             </button>
           </div>
         )}
@@ -165,7 +188,7 @@ export function MistakeRedoModal({
             {userScratchpad && (
               <div className="p-3 rounded-xl bg-surface-container-high border border-border-subtle space-y-1">
                 <span className="text-[10px] font-mono text-on-surface-variant uppercase tracking-wider block">
-                  Your Scratchpad Attempt:
+                  {locale === "ar" ? "محاولتك في المسودة:" : "Your Scratchpad Attempt:"}
                 </span>
                 <p dir="auto" className="text-xs text-on-surface font-sans leading-relaxed whitespace-pre-wrap">
                   {userScratchpad}
@@ -176,7 +199,7 @@ export function MistakeRedoModal({
             {/* The Flaw Made */}
             <div className="p-3.5 rounded-xl bg-crimson-alert/10 border border-crimson-alert/25 space-y-1">
               <span className="text-[11px] font-mono text-crimson-alert font-bold uppercase tracking-wider block">
-                The Original Error / Flaw
+                {locale === "ar" ? "الخطأ أو السهو الأصلي" : "The Original Error / Flaw"}
               </span>
               <p dir="auto" className="text-xs text-on-surface font-sans leading-relaxed">
                 {mistake.error_made}
@@ -186,7 +209,7 @@ export function MistakeRedoModal({
             {/* The Correct Solution */}
             <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 space-y-1">
               <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">
-                Verified Correct Solution
+                {locale === "ar" ? "الحل النموذجي المعتمد" : "Verified Correct Solution"}
               </span>
               <p
                 dir="auto"
@@ -199,10 +222,12 @@ export function MistakeRedoModal({
             {/* Redo Self-Rating Actions */}
             <div className="p-4 rounded-xl bg-surface-container-high/60 border border-border-subtle text-center space-y-3">
               <h4 className="text-xs font-mono text-on-surface font-semibold">
-                Did you re-solve this problem correctly?
+                {locale === "ar" ? "هل حليت المسألة دي صح المرة دي؟" : "Did you re-solve this problem correctly?"}
               </h4>
               <p className="text-[10px] font-mono text-text-muted">
-                Correct will mark it resolved and advance the next redo interval. Wrong will keep it in &quot;Redo today&quot;.
+                {locale === "ar"
+                  ? "لو حليت صح هتتسجل محلولة وتترحل لموعد أبعد. لو لسه غلط هتفضل مستحقة الإعادة النهاردة."
+                  : "Correct will mark it resolved and advance the next redo interval. Wrong will keep it in \"Redo today\"."}
               </p>
               <div className="flex items-center justify-center gap-3">
                 <button
@@ -216,20 +241,20 @@ export function MistakeRedoModal({
                   ) : (
                     <RotateCcw className="w-3.5 h-3.5" />
                   )}
-                  <span>Still Wrong (1 Day)</span>
+                  <span>{locale === "ar" ? "لسه غلط (إعادة بعد يوم)" : "Still Wrong (1 Day)"}</span>
                 </button>
                 <button
                   type="button"
                   disabled={submitting}
                   onClick={() => handleRedoResult("correct")}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-surface text-xs font-mono font-bold uppercase hover:bg-emerald-400 transition-all cursor-pointer shadow-[0_0_16px_rgba(16,185,129,0.25)] disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-emerald-400 transition-all cursor-pointer shadow-[0_0_16px_rgba(16,185,129,0.25)] disabled:opacity-50"
                 >
                   {submitting ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : (
                     <Check className="w-4 h-4 stroke-[3]" />
                   )}
-                  <span>Got it Correct (Resolved)</span>
+                  <span>{locale === "ar" ? "حليتها صح تمام (تم الحل)" : "Got it Correct (Resolved)"}</span>
                 </button>
               </div>
             </div>

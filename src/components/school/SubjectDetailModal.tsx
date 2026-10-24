@@ -27,6 +27,7 @@ import {
   Play,
   CheckCircle2,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface SubjectDetailModalProps {
   isOpen: boolean;
@@ -59,6 +60,7 @@ export function SubjectDetailModal({
   onOpenStudySession,
   onToggleDeadlineComplete,
 }: SubjectDetailModalProps) {
+  const { locale } = useI18n();
   const [deleteSafeguardModal, setDeleteSafeguardModal] = useState(false);
   const [confirmingArchive, setConfirmingArchive] = useState(false);
 
@@ -126,17 +128,20 @@ export function SubjectDetailModal({
                 )}
                 {subject.archived && (
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-highest text-text-muted">
-                    Archived
+                    {locale === "ar" ? "مؤرشفة" : "Archived"}
                   </span>
                 )}
               </div>
               <p className="text-xs text-on-surface-variant font-mono mt-0.5">
-                {subjectGrades.length}{" "}
-                {subjectGrades.length === 1 ? "grade recorded" : "grades recorded"}
+                {locale === "ar"
+                  ? `${subjectGrades.length} تقييم مسجل`
+                  : `${subjectGrades.length} ${
+                      subjectGrades.length === 1 ? "grade recorded" : "grades recorded"
+                    }`}
                 {subject.target_grade !== null &&
                   subject.target_grade !== undefined && (
                     <span className="text-emerald-400 ml-2">
-                      • Target: {subject.target_grade}%
+                      • {locale === "ar" ? "المستهدف:" : "Target:"} {subject.target_grade}%
                     </span>
                   )}
               </p>
@@ -147,16 +152,16 @@ export function SubjectDetailModal({
             {/* Study with Focus Timer Button */}
             <button
               onClick={() => onOpenStudySession(subject)}
-              title="Start Study Session (Focus Timer)"
+              title={locale === "ar" ? "بدء جلسة مذاكرة (مؤقت التركيز)" : "Start Study Session (Focus Timer)"}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-medium hover:bg-amber-500/20 transition-all cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 fill-amber-300" />
-              <span className="hidden sm:inline">Study</span>
+              <span className="hidden sm:inline">{locale === "ar" ? "مذاكرة" : "Study"}</span>
             </button>
 
             <button
               onClick={() => onOpenEditSubject(subject)}
-              title="Edit Subject"
+              title={locale === "ar" ? "تعديل المادة" : "Edit Subject"}
               className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
             >
               <Edit2 className="w-4 h-4" />
@@ -177,7 +182,7 @@ export function SubjectDetailModal({
             {/* Main Subject Average Card */}
             <div className="p-4 rounded-xl bg-surface-container-high/60 border border-border-subtle space-y-1.5">
               <span className="text-[11px] font-mono text-on-surface-variant block uppercase tracking-wider">
-                {averageStats.label}
+                {locale === "ar" ? "المعدل التراكمي للمادة" : averageStats.label}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-bold font-mono text-on-surface">
@@ -187,13 +192,17 @@ export function SubjectDetailModal({
                 </span>
                 {averageStats.isWeighted && (
                   <span className="text-[11px] font-mono text-amber-400">
-                    Weighted
+                    {locale === "ar" ? "موزون بالأوزان" : "Weighted"}
                   </span>
                 )}
               </div>
               <p className="text-[11px] text-text-muted">
                 {averageStats.hasGrades
-                  ? `Computed across ${averageStats.totalGrades} assessments`
+                  ? locale === "ar"
+                    ? `محسوب عبر ${averageStats.totalGrades} تقييم مسجل`
+                    : `Computed across ${averageStats.totalGrades} assessments`
+                  : locale === "ar"
+                  ? "لا توجد تقييمات مسجلة بعد"
                   : "No evaluations logged yet"}
               </p>
             </div>
@@ -202,11 +211,11 @@ export function SubjectDetailModal({
             <div className="p-4 rounded-xl bg-surface-container-high/60 border border-border-subtle space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
-                  Target Projection
+                  {locale === "ar" ? "توقعات تحقيق الهدف" : "Target Projection"}
                 </span>
                 {subject.target_grade && (
                   <span className="text-[11px] font-mono text-emerald-400">
-                    Goal: {subject.target_grade}%
+                    {locale === "ar" ? "المستهدف:" : "Goal:"} {subject.target_grade}%
                   </span>
                 )}
               </div>
@@ -215,7 +224,11 @@ export function SubjectDetailModal({
               </div>
               <p className="text-[11px] text-text-muted">
                 {targetStats.available
-                  ? `Remaining coursework weight: ${targetStats.remainingWeightPct}%`
+                  ? locale === "ar"
+                    ? `الوزن النسبي المتبقي من أعمال السنة: ${targetStats.remainingWeightPct}%`
+                    : `Remaining coursework weight: ${targetStats.remainingWeightPct}%`
+                  : locale === "ar"
+                  ? "حدد النسبة المستهدفة وأوزان التقييمات للتفعيل"
                   : "Set a target grade and course weights to activate"}
               </p>
             </div>
@@ -226,17 +239,23 @@ export function SubjectDetailModal({
             <div className="p-4 rounded-xl bg-surface-container-high/40 border border-border-subtle space-y-2.5">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-on-surface font-semibold">
-                  Assessment Split (Quiz vs Big Exam)
+                  {locale === "ar"
+                    ? "مقارنة الأداء (الكويزات ضد الامتحانات الرئيسية)"
+                    : "Assessment Split (Quiz vs Big Exam)"}
                 </span>
                 <span className="text-text-muted text-[10px]">
-                  Requires &ge; 2 of each
+                  {locale === "ar" ? "يتطلب تقييمين على الأقل من كل نوع" : "Requires ≥ 2 of each"}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div className="p-3 rounded-lg bg-surface-container border border-border-subtle">
                   <div className="flex items-center gap-1.5 text-xs font-mono text-amber-400">
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                    <span>Quizzes ({quizVsExamStats.quizCount})</span>
+                    <span>
+                      {locale === "ar"
+                        ? `كويزات (${quizVsExamStats.quizCount})`
+                        : `Quizzes (${quizVsExamStats.quizCount})`}
+                    </span>
                   </div>
                   <div className="text-lg font-bold font-mono text-on-surface mt-1">
                     {quizVsExamStats.quizAveragePct}%
@@ -245,7 +264,11 @@ export function SubjectDetailModal({
                 <div className="p-3 rounded-lg bg-surface-container border border-border-subtle">
                   <div className="flex items-center gap-1.5 text-xs font-mono text-indigo-400">
                     <span className="w-2.5 h-2.5 rotate-45 bg-indigo-400" />
-                    <span>Big Exams ({quizVsExamStats.bigExamCount})</span>
+                    <span>
+                      {locale === "ar"
+                        ? `امتحانات رئيسية (${quizVsExamStats.bigExamCount})`
+                        : `Big Exams (${quizVsExamStats.bigExamCount})`}
+                    </span>
                   </div>
                   <div className="text-lg font-bold font-mono text-on-surface mt-1">
                     {quizVsExamStats.bigExamAveragePct}%
@@ -258,7 +281,7 @@ export function SubjectDetailModal({
           {/* Visual Trend Chart */}
           <div className="space-y-2">
             <h3 className="text-xs font-mono uppercase tracking-wider text-on-surface-variant">
-              Chronological Trend
+              {locale === "ar" ? "التطور الزمني للدرجات" : "Chronological Trend"}
             </h3>
             <GradeTrendChart
               grades={subjectGrades}
@@ -271,16 +294,19 @@ export function SubjectDetailModal({
           <div className="space-y-2.5">
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="text-on-surface-variant uppercase tracking-wider">
-                Upcoming Subject Deadlines
+                {locale === "ar" ? "المواعيد والمهام القادمة للمادة" : "Upcoming Subject Deadlines"}
               </span>
               <span className="text-text-muted text-[10px]">
-                {subjectDeadlines.filter((d) => !d.completed).length} Pending
+                {subjectDeadlines.filter((d) => !d.completed).length}{" "}
+                {locale === "ar" ? "متبقي" : "Pending"}
               </span>
             </div>
 
             {subjectDeadlines.length === 0 ? (
               <div className="p-3.5 rounded-xl bg-surface-container/40 border border-border-subtle text-center text-xs font-mono text-text-muted">
-                No deadlines registered for this subject
+                {locale === "ar"
+                  ? "لا توجد مواعيد تسليم مسجلة لهذه المادة"
+                  : "No deadlines registered for this subject"}
               </div>
             ) : (
               <div className="space-y-2">
@@ -335,14 +361,14 @@ export function SubjectDetailModal({
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="text-on-surface-variant uppercase tracking-wider">
-                Assessment History
+                {locale === "ar" ? "سجل التقييمات والدرجات" : "Assessment History"}
               </span>
               <button
                 onClick={() => onOpenAddGrade(subject.id)}
                 className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 text-xs font-mono hover:bg-amber-500/20 transition-all cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add Grade</span>
+                <span>{locale === "ar" ? "إضافة درجة" : "Add Grade"}</span>
               </button>
             </div>
 
@@ -350,14 +376,20 @@ export function SubjectDetailModal({
               <div className="p-6 rounded-xl bg-surface-container/40 border border-border-subtle text-center space-y-2">
                 <Award className="w-8 h-8 text-amber-400/40 mx-auto" />
                 <p className="text-xs font-mono text-on-surface-variant">
-                  No assessments logged for {subject.name}
+                  {locale === "ar"
+                    ? `لا توجد تقييمات مسجلة لمادة ${subject.name}`
+                    : `No assessments logged for ${subject.name}`}
                 </p>
                 <button
                   onClick={() => onOpenAddGrade(subject.id)}
                   className="inline-flex items-center gap-1.5 text-xs font-mono text-amber-400 hover:underline pt-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Record your first quiz or big exam</span>
+                  <span>
+                    {locale === "ar"
+                      ? "سجل أول كويز أو امتحان رئيسي"
+                      : "Record your first quiz or big exam"}
+                  </span>
                 </button>
               </div>
             ) : (
@@ -378,12 +410,12 @@ export function SubjectDetailModal({
                         {isQuiz ? (
                           <span
                             className="w-3 h-3 rounded-full bg-amber-400 shrink-0"
-                            title="Quiz"
+                            title={locale === "ar" ? "كويز" : "Quiz"}
                           />
                         ) : (
                           <span
                             className="w-3 h-3 rotate-45 bg-indigo-400 shrink-0"
-                            title="Big Exam"
+                            title={locale === "ar" ? "امتحان رئيسي" : "Big Exam"}
                           />
                         )}
                         <div className="min-w-0">
@@ -398,14 +430,22 @@ export function SubjectDetailModal({
                                   : "bg-indigo-400/10 text-indigo-300"
                               }`}
                             >
-                              {isQuiz ? "Quiz" : "Big Exam"}
+                              {isQuiz
+                                ? locale === "ar"
+                                  ? "كويز"
+                                  : "Quiz"
+                                : locale === "ar"
+                                ? "امتحان رئيسي"
+                                : "Big Exam"}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-[11px] font-mono text-text-muted mt-0.5">
                             <span>{g.entry_date}</span>
                             {g.weight_pct !== null &&
                               g.weight_pct !== undefined && (
-                                <span>• Weight: {g.weight_pct}%</span>
+                                <span>
+                                  • {locale === "ar" ? "الوزن:" : "Weight:"} {g.weight_pct}%
+                                </span>
                               )}
                             {g.note && (
                               <span className="truncate max-w-[150px] italic">
@@ -417,7 +457,7 @@ export function SubjectDetailModal({
                       </div>
 
                       <div className="flex items-center gap-3 shrink-0">
-                        <div className="text-right">
+                        <div className="text-end">
                           <div className="text-sm font-bold font-mono text-on-surface">
                             {pct}%
                           </div>
@@ -425,7 +465,7 @@ export function SubjectDetailModal({
                             {g.mark_achieved} / {g.mark_total}
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 border-l border-border-subtle pl-2">
+                        <div className="flex items-center gap-1 border-l border-border-subtle pl-2 rtl:border-l-0 rtl:border-r rtl:pl-0 rtl:pr-2">
                           <button
                             onClick={() => onOpenEditGrade(g)}
                             className="p-1 rounded text-text-muted hover:text-on-surface hover:bg-surface-container transition-colors"
@@ -456,14 +496,22 @@ export function SubjectDetailModal({
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-container text-xs font-mono text-text-muted hover:text-on-surface hover:border-border-medium transition-colors"
             >
               <Archive className="w-3.5 h-3.5" />
-              <span>{subject.archived ? "Restore to Active" : "Archive"}</span>
+              <span>
+                {subject.archived
+                  ? locale === "ar"
+                    ? "استعادة للمواد النشطة"
+                    : "Restore to Active"
+                  : locale === "ar"
+                  ? "أرشفة المادة"
+                  : "Archive"}
+              </span>
             </button>
             <button
               onClick={handleDeleteClick}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-crimson-alert/30 bg-crimson-alert/10 text-xs font-mono text-crimson-alert hover:bg-crimson-alert/20 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>Delete</span>
+              <span>{locale === "ar" ? "حذف" : "Delete"}</span>
             </button>
           </div>
 
@@ -471,7 +519,7 @@ export function SubjectDetailModal({
             onClick={onClose}
             className="px-4 py-1.5 rounded-lg text-xs font-mono text-text-muted hover:text-on-surface transition-colors"
           >
-            Close
+            {locale === "ar" ? "إغلاق" : "Close"}
           </button>
         </div>
 
@@ -482,27 +530,38 @@ export function SubjectDetailModal({
               <div className="flex items-center gap-3 text-amber-400">
                 <AlertTriangle className="w-6 h-6 shrink-0" />
                 <h3 className="text-base font-bold font-mono text-on-surface">
-                  Subject Has Recorded Grades
+                  {locale === "ar" ? "المادة دي مسجل ليها درجات سابقة" : "Subject Has Recorded Grades"}
                 </h3>
               </div>
               <p className="text-xs text-on-surface-variant leading-relaxed">
-                This subject has <strong>{subjectGrades.length} recorded grades</strong>.
-                Deleting it directly would erase your academic history.
-                <br /><br />
-                We will <strong>archive it instead</strong> so your grades and historical averages are safely preserved while hiding it from active terms.
+                {locale === "ar" ? (
+                  <>
+                    المادة دي فيها <strong>{subjectGrades.length} درجات مسجلة</strong>.
+                    حذفها نهائياً هيمسح تاريخك الأكاديمي.
+                    <br /><br />
+                    هنقوم <strong>بأرشفتها بدل الحذف</strong> عشان نحافظ على درجاتك ومعدلك التراكمي وتختفي من قائمة المواد الحالية.
+                  </>
+                ) : (
+                  <>
+                    This subject has <strong>{subjectGrades.length} recorded grades</strong>.
+                    Deleting it directly would erase your academic history.
+                    <br /><br />
+                    We will <strong>archive it instead</strong> so your grades and historical averages are safely preserved while hiding it from active terms.
+                  </>
+                )}
               </p>
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
                 <button
                   onClick={() => setDeleteSafeguardModal(false)}
                   className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface transition-colors"
                 >
-                  Cancel
+                  {locale === "ar" ? "إلغاء" : "Cancel"}
                 </button>
                 <button
                   onClick={handleConfirmSafeguardArchive}
-                  className="px-4 py-2 rounded-xl bg-amber-500 text-surface text-xs font-mono font-semibold uppercase hover:bg-amber-400 transition-colors shadow-md"
+                  className="px-4 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase hover:bg-amber-400 transition-colors shadow-md"
                 >
-                  Archive Subject Safely
+                  {locale === "ar" ? "أرشفة المادة بأمان" : "Archive Subject Safely"}
                 </button>
               </div>
             </div>

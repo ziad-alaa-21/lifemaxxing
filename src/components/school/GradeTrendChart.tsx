@@ -1,7 +1,6 @@
-"use client";
-
 import React, { useState } from "react";
 import { GradeItem, calculateGradePercentage, round1 } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface GradeTrendChartProps {
   grades: GradeItem[];
@@ -16,6 +15,7 @@ export function GradeTrendChart({
   targetGrade,
   subjectColor = "#F59E0B",
 }: GradeTrendChartProps) {
+  const { locale } = useI18n();
   const [range, setRange] = useState<RangeOption>("ALL");
   const [hoveredGrade, setHoveredGrade] = useState<{
     grade: GradeItem;
@@ -48,10 +48,12 @@ export function GradeTrendChart({
     return (
       <div className="h-44 flex flex-col items-center justify-center bg-surface-container/50 rounded-xl border border-border-subtle p-4 text-center">
         <p className="text-xs font-mono text-on-surface-variant">
-          No grade entries yet
+          {locale === "ar" ? "لا توجد درجات مسجلة بعد" : "No grade entries yet"}
         </p>
         <p className="text-[11px] text-text-muted mt-0.5">
-          Log quizzes and big exams to visualize score progression
+          {locale === "ar"
+            ? "سجل الكويزات والامتحانات لمتابعة تطور درجاتك"
+            : "Log quizzes and big exams to visualize score progression"}
         </p>
       </div>
     );
@@ -108,38 +110,47 @@ export function GradeTrendChart({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
-            <span>Quiz (Circle)</span>
+            <span>{locale === "ar" ? "كويز (دائرة)" : "Quiz (Circle)"}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rotate-45 bg-indigo-400 inline-block" />
-            <span>Big Exam (Diamond)</span>
+            <span>{locale === "ar" ? "امتحان رئيسي (معين)" : "Big Exam (Diamond)"}</span>
           </div>
           {targetY !== null && (
             <div className="flex items-center gap-1.5">
               <span className="w-3 border-b-2 border-dashed border-emerald-400 inline-block" />
-              <span>Target ({targetGrade}%)</span>
+              <span>{locale === "ar" ? `المستهدف (${targetGrade}%)` : `Target (${targetGrade}%)`}</span>
             </div>
           )}
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center bg-surface-container-highest p-0.5 rounded-lg border border-border-subtle font-mono text-[10px]">
-            {(["30D", "90D", "ALL"] as RangeOption[]).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRange(r)}
-                className={`px-2 py-0.5 rounded-md font-semibold transition-all cursor-pointer ${
-                  range === r
-                    ? "bg-amber-400 text-charcoal-dark shadow-sm"
-                    : "text-text-muted hover:text-on-surface"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
+            {(["30D", "90D", "ALL"] as RangeOption[]).map((r) => {
+              const rangeLabels: Record<RangeOption, string> = {
+                "30D": locale === "ar" ? "30 يوم" : "30D",
+                "90D": locale === "ar" ? "90 يوم" : "90D",
+                ALL: locale === "ar" ? "الكل" : "ALL",
+              };
+              return (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRange(r)}
+                  className={`px-2 py-0.5 rounded-md font-semibold transition-all cursor-pointer ${
+                    range === r
+                      ? "bg-amber-400 text-on-primary shadow-sm"
+                      : "text-text-muted hover:text-on-surface"
+                  }`}
+                >
+                  {rangeLabels[r]}
+                </button>
+              );
+            })}
           </div>
           <span className="text-[10px] text-text-muted">
-            {activeGrades.length} {activeGrades.length === 1 ? "entry" : "entries"}
+            {locale === "ar"
+              ? `${activeGrades.length} تقييم`
+              : `${activeGrades.length} ${activeGrades.length === 1 ? "entry" : "entries"}`}
           </span>
         </div>
       </div>
@@ -266,7 +277,13 @@ export function GradeTrendChart({
                     : "bg-indigo-400/20 text-indigo-300"
                 }`}
               >
-                {hoveredGrade.grade.type === "quiz" ? "Quiz" : "Big Exam"}
+                {hoveredGrade.grade.type === "quiz"
+                  ? locale === "ar"
+                    ? "كويز"
+                    : "Quiz"
+                  : locale === "ar"
+                  ? "امتحان رئيسي"
+                  : "Big Exam"}
               </span>
               <span className="text-[10px] text-text-muted">
                 {hoveredGrade.grade.entry_date}
@@ -284,7 +301,7 @@ export function GradeTrendChart({
             {hoveredGrade.grade.weight_pct !== null &&
               hoveredGrade.grade.weight_pct !== undefined && (
                 <div className="text-[10px] text-text-muted mt-0.5">
-                  Weight: {hoveredGrade.grade.weight_pct}%
+                  {locale === "ar" ? "الوزن:" : "Weight:"} {hoveredGrade.grade.weight_pct}%
                 </div>
               )}
           </div>

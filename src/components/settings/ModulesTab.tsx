@@ -2,28 +2,26 @@
 
 import React, { useState } from "react";
 import {
-  Dumbbell,
-  Utensils,
-  Moon,
-  Scale,
   Timer,
+  Zap,
+  Activity,
   CheckCircle2,
   BookOpen,
   Smartphone,
-  Calendar,
-  ListChecks,
-  BookX,
+  GraduationCap,
   Sparkles,
   Layers,
   AlertCircle,
   Loader2,
   Check,
-  Info,
+  Dumbbell,
+  Utensils,
+  Moon,
+  Scale,
 } from "lucide-react";
 import {
   ModuleKey,
   ALL_MODULE_KEYS,
-  STARTER_PACK_MODULES,
   MODULE_DEFINITIONS,
 } from "@/lib/modules";
 import { useUserModules } from "@/lib/modules/UserModulesContext";
@@ -35,12 +33,12 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Moon,
   Scale,
   Timer,
+  Zap,
+  Activity,
   CheckCircle2,
   BookOpen,
   Smartphone,
-  Calendar,
-  ListChecks,
-  BookX,
+  GraduationCap,
 };
 
 export function ModulesTab() {
@@ -55,28 +53,40 @@ export function ModulesTab() {
   const handleToggle = async (key: ModuleKey) => {
     setErrorMsg(null);
     setSuccessMsg(null);
-    const currentValue = isModuleActive(key);
-    const nextValue = !currentValue;
-
     setTogglingKey(key);
-    const res = await toggleModule(key, nextValue);
+
+    const currentValue = isModuleActive(key);
+    const targetValue = !currentValue;
+
+    // Safety guard: if disabling, ensure at least one remains enabled
+    if (!targetValue) {
+      const activeCount = ALL_MODULE_KEYS.filter((k) =>
+        k === key ? false : isModuleActive(k)
+      ).length;
+
+      if (activeCount === 0) {
+        setErrorMsg(
+          isAr
+            ? "لازم يفضل قسم واحد على الأقل مفعّل."
+            : "At least one module must remain enabled."
+        );
+        setTogglingKey(null);
+        return;
+      }
+    }
+
+    const res = await toggleModule(key, targetValue);
     setTogglingKey(null);
 
     if (!res.success) {
-      setErrorMsg(
-        isAr
-          ? res.error === "At least one module must remain enabled."
-            ? "لازم تسيب قسم واحد شغال على الأقل."
-            : res.error || "حصل خطأ أثناء تحديث القسم"
-          : res.error || "Failed to update module"
-      );
+      setErrorMsg(res.error || "Failed to update module");
     } else {
       setSuccessMsg(
         isAr
-          ? nextValue
+          ? targetValue
             ? `تم تشغيل ${MODULE_DEFINITIONS[key].labelAr}`
             : `تم إيقاف ${MODULE_DEFINITIONS[key].labelAr}`
-          : nextValue
+          : targetValue
           ? `Enabled ${MODULE_DEFINITIONS[key].labelEn}`
           : `Disabled ${MODULE_DEFINITIONS[key].labelEn}`
       );
@@ -103,16 +113,16 @@ export function ModulesTab() {
   ];
 
   const mindKeys: ModuleKey[] = [
-    "module_mind_focus",
-    "module_mind_discipline",
-    "module_mind_reading",
-    "module_mind_screentime",
+    "module_focus",
+    "module_math",
+    "module_checkins",
+    "module_discipline",
+    "module_reading",
+    "module_screentime",
   ];
 
   const schoolKeys: ModuleKey[] = [
-    "module_school_timetable",
-    "module_school_topics",
-    "module_school_mistakes",
+    "module_school",
   ];
 
   const renderModuleRow = (key: ModuleKey) => {
@@ -140,23 +150,23 @@ export function ModulesTab() {
 
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-on-surface">
+              <h4 className="text-sm font-semibold tracking-tight text-on-surface">
                 {isAr ? def.labelAr : def.labelEn}
-              </span>
+              </h4>
               <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-medium ${
+                className={`text-[10px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider ${
                   active
-                    ? "bg-primary-lime/15 text-primary-lime"
-                    : "bg-surface-container-highest text-text-muted"
+                    ? "bg-primary-lime/20 text-primary-lime border border-primary-lime/30"
+                    : "bg-surface-container-highest text-text-muted border border-border-subtle"
                 }`}
               >
                 {active
                   ? isAr
-                    ? "شغال"
+                    ? "مفعّل"
                     : "Active"
                   : isAr
-                  ? "مقفول"
-                  : "Off"}
+                  ? "متوقف"
+                  : "Disabled"}
               </span>
             </div>
             <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
@@ -168,12 +178,12 @@ export function ModulesTab() {
         {/* Toggle Switch */}
         <button
           type="button"
-          id={`toggle-switch-${key}`}
           role="switch"
+          id={`settings-toggle-${key}`}
           aria-checked={active}
           disabled={isUpdating}
           onClick={() => handleToggle(key)}
-          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-lime focus:ring-offset-2 focus:ring-offset-surface ${
+          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-lime/40 disabled:opacity-50 ${
             active ? "bg-primary-lime" : "bg-surface-container-highest"
           }`}
         >
@@ -209,7 +219,7 @@ export function ModulesTab() {
             <p className="text-xs text-on-surface-variant leading-relaxed max-w-xl">
               {isAr
                 ? "تقدر تظهر أو تخفي أي قسم من أقسام الجسد والعقل والدراسة في أي وقت. إيقاف أي قسم بيخفي واجهته بس، لكن كل بياناتك وسجلاتك بتفضل محفوظة بالكامل."
-                : "Customize which modules are active across Body, Mind, and School. Turning a module off hides its views and Today entries, but never deletes any of your data."}
+                : "Customize which modular features are active across Body, Mind, and School. Turning a module off hides its views and Today entries, but never deletes any of your data."}
             </p>
           </div>
 
@@ -217,7 +227,7 @@ export function ModulesTab() {
             type="button"
             id="settings-enable-all-btn"
             onClick={handleEnableAll}
-            className="px-3.5 py-2 rounded-xl text-xs font-mono font-medium bg-surface-container-high hover:bg-surface-container-highest text-on-surface border border-border-subtle transition-colors shrink-0"
+            className="px-3.5 py-2 rounded-xl text-xs font-mono font-medium bg-surface-container-high hover:bg-surface-container-highest text-on-surface border border-border-subtle transition-colors shrink-0 cursor-pointer"
           >
             {isAr ? "تشغيل الكل" : "Enable All"}
           </button>
@@ -260,7 +270,7 @@ export function ModulesTab() {
       {/* School Modules */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase px-1">
-          <BookOpen className="w-4 h-4 text-primary-lime" />
+          <GraduationCap className="w-4 h-4 text-primary-lime" />
           <span>{isAr ? "أقسام الدراسة والمذاكرة" : "School & Academic Modules"}</span>
         </div>
         <div className="space-y-2.5">{schoolKeys.map(renderModuleRow)}</div>

@@ -10,6 +10,7 @@ import {
   getLocalDateString,
   MealType,
 } from "@/lib/nutrition";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface FrequentFoodsBarProps {
   onFoodLogged: () => void;
@@ -21,6 +22,7 @@ export function FrequentFoodsBar({
   userTimezone,
 }: FrequentFoodsBarProps) {
   const { isOnline, guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
 
   const [frequentFoods, setFrequentFoods] = useState<FrequentFoodItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -240,15 +242,17 @@ export function FrequentFoodsBar({
           <div className="flex items-center gap-2">
             <Check className="w-3.5 h-3.5 text-primary-lime" />
             <span>
-              Logged {loggedToast.name} ({loggedToast.calories} kcal)
+              {locale === "ar"
+                ? `اتسجل ${loggedToast.name} (${loggedToast.calories} سعرة)`
+                : `Logged ${loggedToast.name} (${loggedToast.calories} kcal)`}
             </span>
           </div>
           <button
             onClick={handleUndoQuickLog}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Undo2 className="w-3.5 h-3.5" />
-            <span>Undo</span>
+            <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
           </button>
         </div>
       )}
@@ -257,20 +261,24 @@ export function FrequentFoodsBar({
       <div className="flex items-center gap-2 overflow-x-auto pb-1 font-mono text-xs no-scrollbar">
         <span className="text-[10px] uppercase tracking-wider text-text-muted shrink-0 flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-secondary-cyan" />
-          Frequent:
+          {locale === "ar" ? "المتكرر:" : "Frequent:"}
         </span>
 
         {frequentFoods.map((item) => (
           <button
             key={item.normalized_name}
             onClick={() => handleQuickLog(item)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all shrink-0 cursor-pointer text-left"
-            title={`1-Tap Log: ${item.typical_quantity} ${item.typical_unit} · ${item.typical_calories} kcal`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle hover:border-secondary-cyan hover:bg-secondary-cyan/10 active:scale-95 transition-all shrink-0 cursor-pointer text-start"
+            title={
+              locale === "ar"
+                ? `تسجيل بضغطة واحدة: ${item.typical_quantity} ${item.typical_unit} · ${item.typical_calories} سعرة`
+                : `1-Tap Log: ${item.typical_quantity} ${item.typical_unit} · ${item.typical_calories} kcal`
+            }
           >
             <Plus className="w-3 h-3 text-secondary-cyan shrink-0" />
             <span className="font-bold text-on-surface">{item.display_name}</span>
             <span className="text-[10px] text-text-muted">
-              ({item.typical_quantity} {item.typical_unit} · {item.typical_calories} kcal)
+              ({item.typical_quantity} {item.typical_unit} · {item.typical_calories} {locale === "ar" ? "سعرة" : "kcal"})
             </span>
           </button>
         ))}

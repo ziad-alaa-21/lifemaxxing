@@ -23,6 +23,7 @@ import {
   getLocalDateString,
   ConfidenceTier,
 } from "@/lib/nutrition";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface ConfirmFoodModalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export function ConfirmFoodModal({
   userTimezone,
 }: ConfirmFoodModalProps) {
   const { isOnline, guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
 
   const [query, setQuery] = useState("");
   const [mealType, setMealType] = useState<MealType>("lunch");
@@ -122,7 +124,13 @@ export function ConfirmFoodModal({
         const {
           data: { user },
         } = await supabase.auth.getUser();
-        if (!user) throw new Error("Authentication required");
+        if (!user) {
+          throw new Error(
+            locale === "ar"
+              ? "يجب تسجيل الدخول أولاً لحفظ الوجبة في حسابك."
+              : "Authentication required. Please sign in to save meals."
+          );
+        }
 
         const now = new Date();
         const localDate = getLocalDateString(now, userTimezone);
@@ -165,14 +173,37 @@ export function ConfirmFoodModal({
   const getConfidenceBadge = (c: ConfidenceTier) => {
     switch (c) {
       case "high":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-primary-lime/10 text-primary-lime border border-primary-lime/30">High Confidence</span>;
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-primary-lime/10 text-primary-lime border border-primary-lime/30">
+            {locale === "ar" ? "دقة عالية" : "High Confidence"}
+          </span>
+        );
       case "medium":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#7DD3FC]/10 text-[#7DD3FC] border border-[#7DD3FC]/30">Estimated</span>;
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#7DD3FC]/10 text-[#7DD3FC] border border-[#7DD3FC]/30">
+            {locale === "ar" ? "تقديري" : "Estimated"}
+          </span>
+        );
       case "low":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-rank-gold/10 text-rank-gold border border-rank-gold/30">Low Confidence</span>;
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-rank-gold/10 text-rank-gold border border-rank-gold/30">
+            {locale === "ar" ? "دقة منخفضة" : "Low Confidence"}
+          </span>
+        );
       case "could_not_estimate":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/30">Could Not Estimate</span>;
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/30">
+            {locale === "ar" ? "غير محدد" : "Could Not Estimate"}
+          </span>
+        );
     }
+  };
+
+  const MEAL_LABELS: Record<MealType, string> = {
+    breakfast: locale === "ar" ? "فطار" : "breakfast",
+    lunch: locale === "ar" ? "غدا" : "lunch",
+    dinner: locale === "ar" ? "عشا" : "dinner",
+    snack: locale === "ar" ? "سناك" : "snack",
   };
 
   return (
@@ -182,7 +213,7 @@ export function ConfirmFoodModal({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-secondary-cyan" />
             <h2 className="text-base font-bold font-mono text-on-surface">
-              AI Natural Food Logger
+              {locale === "ar" ? "تسجيل الوجبات الذكي" : "AI Natural Food Logger"}
             </h2>
           </div>
           <button
@@ -199,13 +230,13 @@ export function ConfirmFoodModal({
             <button
               key={m}
               onClick={() => setMealType(m)}
-              className={`py-2 text-[11px] font-mono uppercase tracking-wider font-semibold rounded-lg transition-all capitalize ${
+              className={`py-2 text-[11px] font-mono uppercase tracking-wider font-semibold rounded-lg transition-all capitalize cursor-pointer ${
                 mealType === m
-                  ? "bg-secondary-cyan text-charcoal-dark shadow-sm font-bold"
+                  ? "bg-secondary-cyan text-on-primary shadow-sm font-bold"
                   : "text-text-muted hover:text-on-surface"
               }`}
             >
-              {m}
+              {MEAL_LABELS[m]}
             </button>
           ))}
         </div>
@@ -213,36 +244,42 @@ export function ConfirmFoodModal({
         {/* Natural Language Input Box */}
         <div className="space-y-2">
           <label className="block text-xs font-mono text-text-muted">
-            Describe what you ate (English, Arabic, Franco-Arab)
+            {locale === "ar"
+              ? "اوصف أكلت إيه (عربي، مصري، إنجليزي، أو فرانكو)"
+              : "Describe what you ate (English, Arabic, Franco-Arab)"}
           </label>
           <div className="relative">
             <textarea
               rows={3}
               maxLength={500}
-              placeholder="e.g. 3 eggs, 2 sourdough slices, flat white OR طبق كشري و كانز دايت OR 2 ful, 3 ta3meya"
+              placeholder={
+                locale === "ar"
+                  ? "مثال: طبق كشري وكانز دايت، أو 3 بيضات ورغيف بلدي وقهوة"
+                  : "e.g. 3 eggs, 2 sourdough slices, flat white OR طبق كشري و كانز دايت OR 2 ful, 3 ta3meya"
+              }
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="w-full p-3 rounded-2xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface placeholder:text-text-muted/60 focus:border-secondary-cyan focus:outline-none resize-none"
             />
-            <div className="text-[10px] font-mono text-text-muted text-right mt-1">
-              {query.length}/500 chars
+            <div className="text-[10px] font-mono text-text-muted text-end mt-1">
+              {query.length}/500 {locale === "ar" ? "حرف" : "chars"}
             </div>
           </div>
 
           <button
             onClick={handleParse}
             disabled={parsing || !query.trim()}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-primary-lime text-charcoal-dark shadow-[0_0_15px_rgba(198,255,61,0.25)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-primary-lime text-on-primary shadow-xs hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
           >
             {parsing ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Parsing with Grounded AI...</span>
+                <span>{locale === "ar" ? "جاري التحليل بالذكاء الاصطناعي..." : "Parsing with Grounded AI..."}</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                <span>Parse Items</span>
+                <span>{locale === "ar" ? "تحليل الوجبة" : "Parse Items"}</span>
               </>
             )}
           </button>
@@ -261,9 +298,11 @@ export function ConfirmFoodModal({
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="font-bold text-on-surface flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-secondary-cyan" />
-                Reviewed Meal Items ({items.length})
+                {locale === "ar" ? `عناصر الوجبة المراجعة (${items.length})` : `Reviewed Meal Items (${items.length})`}
               </span>
-              <span className="text-[11px] text-text-muted">Tap Confirm to save</span>
+              <span className="text-[11px] text-text-muted">
+                {locale === "ar" ? "دوس تأكيد للحفظ" : "Tap Confirm to save"}
+              </span>
             </div>
 
             <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
@@ -287,7 +326,7 @@ export function ConfirmFoodModal({
 
                     <button
                       onClick={() => removeItem(idx)}
-                      className="p-1 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-lowest transition-colors"
+                      className="p-1 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-lowest transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -329,13 +368,19 @@ export function ConfirmFoodModal({
                           }
                           className="w-16 px-2 py-1 rounded-lg bg-surface-container-lowest border border-[#F87171]/40 font-mono text-xs text-center text-on-surface focus:outline-none"
                         />
-                        <span className="text-[10px] font-mono text-[#F87171]">Enter kcal</span>
+                        <span className="text-[10px] font-mono text-[#F87171]">
+                          {locale === "ar" ? "أدخل السعرات" : "Enter kcal"}
+                        </span>
                       </div>
                     ) : (
-                      <div className="text-right font-mono text-xs">
-                        <div className="font-bold text-on-surface">{it.calories} kcal</div>
+                      <div className="text-end font-mono text-xs">
+                        <div className="font-bold text-on-surface">
+                          {it.calories} {locale === "ar" ? "سعرة" : "kcal"}
+                        </div>
                         <div className="text-[10px] text-text-muted">
-                          P: {it.protein_g}g | C: {it.carbs_g}g | F: {it.fats_g}g
+                          {locale === "ar"
+                            ? `ب: ${it.protein_g}جم | ك: ${it.carbs_g}جم | د: ${it.fats_g}جم`
+                            : `P: ${it.protein_g}g | C: ${it.carbs_g}g | F: ${it.fats_g}g`}
                         </div>
                       </div>
                     )}
@@ -346,31 +391,47 @@ export function ConfirmFoodModal({
 
             {/* Total Meal Impact Summary */}
             <div className="p-3 rounded-2xl bg-surface-container-lowest border border-border-subtle flex items-center justify-between font-mono text-xs">
-              <span className="text-text-muted">Total Meal Impact:</span>
+              <span className="text-text-muted">{locale === "ar" ? "إجمالي الوجبة:" : "Total Meal Impact:"}</span>
               <div className="flex items-center gap-3">
-                <span className="font-bold text-on-surface">{totalMealCals} kcal</span>
-                <span className="text-primary-lime font-semibold">{totalMealProt}g Prot</span>
-                <span className="text-secondary-cyan">{totalMealCarbs}g C</span>
-                <span className="text-rank-gold">{totalMealFats}g F</span>
+                <span className="font-bold text-on-surface">
+                  {totalMealCals} {locale === "ar" ? "سعرة" : "kcal"}
+                </span>
+                <span className="text-primary-lime font-semibold">
+                  {totalMealProt}{locale === "ar" ? "جم بروتين" : "g Prot"}
+                </span>
+                <span className="text-secondary-cyan">
+                  {totalMealCarbs}{locale === "ar" ? "جم ك" : "g C"}
+                </span>
+                <span className="text-rank-gold">
+                  {totalMealFats}{locale === "ar" ? "جم د" : "g F"}
+                </span>
               </div>
             </div>
+
+            {/* Error above confirm button */}
+            {parseError && (
+              <div className="p-3 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-2.5 text-[#F87171] text-xs font-mono">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{parseError}</span>
+              </div>
+            )}
 
             {/* Confirm & Save Button */}
             <div className="pt-2">
               <button
                 onClick={handleConfirmAndSave}
                 disabled={saving}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-charcoal-dark shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
               >
                 {saving ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Saving Meal...</span>
+                    <span>{locale === "ar" ? "جاري الحفظ..." : "Saving Meal..."}</span>
                   </>
                 ) : (
                   <>
                     <Check className="w-4 h-4" />
-                    <span>Confirm & Save Meal</span>
+                    <span>{locale === "ar" ? "تأكيد وحفظ الوجبة" : "Confirm & Save Meal"}</span>
                   </>
                 )}
               </button>

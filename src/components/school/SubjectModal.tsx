@@ -7,6 +7,7 @@ import {
   PROHIBITED_COLOR,
   validateSubjectInput,
 } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 import { X, Loader2, AlertCircle, Bookmark } from "lucide-react";
 
 interface SubjectModalProps {
@@ -31,6 +32,7 @@ export function SubjectModal({
   existingNames = [],
   isBlocked = false,
 }: SubjectModalProps) {
+  const { locale } = useI18n();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [color, setColor] = useState(SUBJECT_PALETTE[0].value);
@@ -133,7 +135,9 @@ export function SubjectModal({
           <div className="flex items-center gap-2">
             <Bookmark className="w-5 h-5 text-amber-400" />
             <h3 className="text-base font-bold font-mono text-on-surface">
-              {initialSubject ? "Edit Subject" : "New Subject"}
+              {locale === "ar"
+                ? initialSubject ? "تعديل بيانات المادة" : "إضافة مادة جديدة"
+                : initialSubject ? "Edit Subject" : "New Subject"}
             </h3>
           </div>
           <button
@@ -155,15 +159,17 @@ export function SubjectModal({
           {/* Name Input with dir="auto" for Arabic support */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant flex items-center justify-between">
-              <span>Subject Name *</span>
-              <span className="text-[10px] text-text-muted">Unique</span>
+              <span>{locale === "ar" ? "اسم المادة *" : "Subject Name *"}</span>
+              <span className="text-[10px] text-text-muted">
+                {locale === "ar" ? "فريد" : "Unique"}
+              </span>
             </label>
             <input
               type="text"
               dir="auto"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Physics, Advanced Math, تاريخ"
+              placeholder={locale === "ar" ? "مثال: فيزياء، تفاضل وتكامل، تاريخ" : "e.g. Physics, Advanced Math, تاريخ"}
               required
               className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors font-sans"
             />
@@ -172,7 +178,7 @@ export function SubjectModal({
           {/* Code Input (Optional) */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant">
-              Course Code (Optional)
+              {locale === "ar" ? "كود المادة (اختياري)" : "Course Code (Optional)"}
             </label>
             <input
               type="text"
@@ -186,14 +192,14 @@ export function SubjectModal({
           {/* Target Grade (%) */}
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-on-surface-variant flex items-center justify-between">
-              <span>Target Grade % (Optional)</span>
+              <span>{locale === "ar" ? "النسبة المستهدفة % (اختياري)" : "Target Grade % (Optional)"}</span>
               <span className="text-[10px] text-text-muted">0 – 100%</span>
             </label>
             <input
               type="number"
               min="0"
               max="100"
-              step="0.5"
+              step="any"
               value={targetGrade}
               onChange={(e) => setTargetGrade(e.target.value)}
               placeholder="e.g. 90"
@@ -204,7 +210,7 @@ export function SubjectModal({
           {/* Color Palette Picker (Never Lime #C6FF3D) */}
           <div className="space-y-2">
             <label className="text-xs font-mono text-on-surface-variant">
-              Subject Color Palette
+              {locale === "ar" ? "لون المادة المميز" : "Subject Color Palette"}
             </label>
             <div className="grid grid-cols-4 gap-2.5">
               {SUBJECT_PALETTE.map((opt) => (
@@ -238,20 +244,24 @@ export function SubjectModal({
               disabled={saving}
               className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving || isBlocked}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-surface text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Saving...</span>
+                  <span>{locale === "ar" ? "جاري الحفظ..." : "Saving..."}</span>
                 </>
               ) : (
-                <span>{initialSubject ? "Update Subject" : "Create Subject"}</span>
+                <span>
+                  {locale === "ar"
+                    ? initialSubject ? "تحديث المادة" : "إنشاء المادة"
+                    : initialSubject ? "Update Subject" : "Create Subject"}
+                </span>
               )}
             </button>
           </div>

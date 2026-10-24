@@ -2,6 +2,8 @@
 
 import React from "react";
 import { Sun, Moon, Coffee, ShieldAlert, Sparkles, Info } from "lucide-react";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { formatTimeTo12h } from "@/lib/time";
 
 interface CircadianDialProps {
   targetBedtime?: string; // e.g. "23:00"
@@ -16,6 +18,7 @@ export function CircadianDial({
   caffeineCutoffHours = 10,
   screenCutoffMinutes = 60,
 }: CircadianDialProps) {
+  const { locale } = useI18n();
   // Current local time
   const [nowHour, setNowHour] = React.useState<number>(12);
   const [nowMinute, setNowMinute] = React.useState<number>(0);
@@ -54,41 +57,41 @@ export function CircadianDial({
 
   const landmarks = [
     {
-      time: targetWakeTime,
-      title: "Morning Light & Wake",
-      desc: "Cortisol spike & phase anchor (within 60m of waking)",
+      time: formatTimeTo12h(targetWakeTime, { locale }),
+      title: locale === "ar" ? "شمس الصباح والصحيان" : "Morning Light & Wake",
+      desc: locale === "ar" ? "تحفيز الكورتيزول وتثبيت الساعة البيولوجية (خلال ٦٠ دقيقة)" : "Cortisol spike & phase anchor (within 60m of waking)",
       icon: Sun,
       color: "text-[#7DD3FC] border-[#7DD3FC]/30 bg-[#7DD3FC]/10",
       dotColor: "bg-[#7DD3FC]",
     },
     {
-      time: `${((wakeH + 4) % 24).toString().padStart(2, "0")}:00`,
-      title: "Peak Physical / Cognitive",
-      desc: "Optimal alertness & body temperature peak",
+      time: formatTimeTo12h(`${((wakeH + 4) % 24).toString().padStart(2, "0")}:00`, { locale }),
+      title: locale === "ar" ? "ذروة النشاط الذهني والبدني" : "Peak Physical / Cognitive",
+      desc: locale === "ar" ? "أعلى درجات التركيز وقمة حرارة الجسم" : "Optimal alertness & body temperature peak",
       icon: Sparkles,
       color: "text-primary-lime border-primary-lime/30 bg-primary-lime/10",
       dotColor: "bg-primary-lime",
     },
     {
-      time: caffeineTimeFormatted,
-      title: "Caffeine Cutoff",
-      desc: `Adenosine receptor clearance (${caffeineCutoffHours}h before bedtime)`,
+      time: formatTimeTo12h(caffeineTimeFormatted, { locale }),
+      title: locale === "ar" ? "وقف الكافيين" : "Caffeine Cutoff",
+      desc: locale === "ar" ? `تنظيف مستقبلات الأدينوزين (${caffeineCutoffHours} ساعات قبل النوم)` : `Adenosine receptor clearance (${caffeineCutoffHours}h before bedtime)`,
       icon: Coffee,
       color: "text-rank-bronze border-rank-bronze/30 bg-rank-bronze/10",
       dotColor: "bg-rank-bronze",
     },
     {
-      time: screenTimeFormatted,
-      title: "Screen & Dim Light",
-      desc: `Melatonin secretion onset (${screenCutoffMinutes}m wind-down)`,
+      time: formatTimeTo12h(screenTimeFormatted, { locale }),
+      title: locale === "ar" ? "وقف الشاشات والضوء الخافت" : "Screen & Dim Light",
+      desc: locale === "ar" ? `بدء إفراز الميلاتونين (${screenCutoffMinutes} دقيقة استرخاء)` : `Melatonin secretion onset (${screenCutoffMinutes}m wind-down)`,
       icon: ShieldAlert,
       color: "text-rank-platinum border-rank-platinum/30 bg-rank-platinum/10",
       dotColor: "bg-rank-platinum",
     },
     {
-      time: targetBedtime,
-      title: "Target Bedtime",
-      desc: "Cellular repair, growth hormone & memory consolidation",
+      time: formatTimeTo12h(targetBedtime, { locale }),
+      title: locale === "ar" ? "وقت النوم المستهدف" : "Target Bedtime",
+      desc: locale === "ar" ? "إصلاح الخلايا، هرمون النمو، وتثبيت الذاكرة" : "Cellular repair, growth hormone & memory consolidation",
       icon: Moon,
       color: "text-[#7DD3FC] border-[#7DD3FC]/30 bg-[#7DD3FC]/10",
       dotColor: "bg-[#7DD3FC]",
@@ -105,22 +108,24 @@ export function CircadianDial({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-bold font-mono text-on-surface">
-                Circadian Dial & Solar Windows
+                {locale === "ar" ? "مسار اليوم والنوافذ الشمسية" : "Circadian Dial & Solar Windows"}
               </h3>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-[10px] font-mono text-text-muted border border-border-subtle">
                 <Info className="w-2.5 h-2.5" />
-                General guidance
+                {locale === "ar" ? "إرشادات عامة" : "General guidance"}
               </span>
             </div>
             <p className="text-[11px] text-on-surface-variant font-mono">
-              24-Hour biological rhythm anchored to target bedtime {targetBedtime}
+              {locale === "ar"
+                ? `إيقاع بيولوجي مرتبط بوقت النوم المستهدف ${formatTimeTo12h(targetBedtime, { locale })}`
+                : `Circadian biological rhythm anchored to target bedtime ${formatTimeTo12h(targetBedtime, { locale })}`}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-border-subtle text-[11px] font-mono text-text-muted self-start sm:self-auto">
           <span className="w-1.5 h-1.5 rounded-full bg-primary-lime animate-pulse" />
           <span>
-            {nowHour.toString().padStart(2, "0")}:{nowMinute.toString().padStart(2, "0")} Current
+            {formatTimeTo12h(`${nowHour}:${nowMinute}`, { locale })} {locale === "ar" ? "الوقت الحالي" : "Current"}
           </span>
         </div>
       </div>
@@ -159,11 +164,11 @@ export function CircadianDial({
 
         {/* Milestone Marks */}
         <div className="flex justify-between text-[10px] font-mono text-text-muted pt-2">
-          <span>00:00</span>
-          <span>06:00</span>
-          <span>12:00</span>
-          <span>18:00</span>
-          <span>24:00</span>
+          <span>{formatTimeTo12h("00:00", { locale })}</span>
+          <span>{formatTimeTo12h("06:00", { locale })}</span>
+          <span>{formatTimeTo12h("12:00", { locale })}</span>
+          <span>{formatTimeTo12h("18:00", { locale })}</span>
+          <span>{formatTimeTo12h("24:00", { locale })}</span>
         </div>
       </div>
 

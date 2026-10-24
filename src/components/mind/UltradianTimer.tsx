@@ -30,6 +30,7 @@ import {
   playHarmonicChime,
 } from "@/lib/mind";
 import { SessionCompleteModal } from "./SessionCompleteModal";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface UltradianTimerProps {
   onSessionLogged: () => void;
@@ -56,6 +57,7 @@ export function UltradianTimer({
   initialTaskCategory = "Coding",
   initialTaskIntention = "",
 }: UltradianTimerProps) {
+  const { locale } = useI18n();
   // Preset mode: default 50/10
   const [selectedMode, setSelectedMode] = useState<FocusMode>(defaultMode);
   const [phase, setPhase] = useState<TimerPhase>("idle");
@@ -217,9 +219,10 @@ export function UltradianTimer({
 
   // Handle phase completion
   const handleIntervalCompleted = useCallback(() => {
-    const finishTimeStr = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
+    const finishTimeStr = new Date().toLocaleTimeString(locale === "ar" ? "ar-EG" : [], {
+      hour: "numeric",
       minute: "2-digit",
+      hour12: true,
     });
 
     if (phase === "working") {
@@ -378,11 +381,12 @@ export function UltradianTimer({
         <div className="relative z-10 p-4 rounded-2xl bg-surface-container-high border border-primary-lime/40 space-y-2 text-xs font-mono animate-fade-in">
           <div className="flex items-center gap-2 text-primary-lime font-bold">
             <AlertTriangle className="w-4 h-4" />
-            <span>Recovered Session from this Device</span>
+            <span>{locale === "ar" ? "جلسة مستعادة من جهازك" : "Recovered Session from this Device"}</span>
           </div>
           <p className="text-text-muted text-[11px] leading-relaxed">
-            A {recoveryPrompt.elapsedMinutes}m focus session was active when the
-            app was closed. Would you like to log it or discard?
+            {locale === "ar"
+              ? `كان فيه جلسة تركيز مدتها ${recoveryPrompt.elapsedMinutes} دقيقة شغالة لما التطبيق اتقفل. تحب تسجلها ولا تتجاهلها؟`
+              : `A ${recoveryPrompt.elapsedMinutes}m focus session was active when the app was closed. Would you like to log it or discard?`}
           </p>
           <div className="flex gap-2 pt-1">
             <button
@@ -395,15 +399,15 @@ export function UltradianTimer({
                 setIsModalOpen(true);
                 setRecoveryPrompt(null);
               }}
-              className="px-4 py-1.5 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 cursor-pointer"
+              className="px-4 py-1.5 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 cursor-pointer"
             >
-              Log Session
+              {locale === "ar" ? "تسجيل الجلسة" : "Log Session"}
             </button>
             <button
               onClick={() => setRecoveryPrompt(null)}
               className="px-3 py-1.5 rounded-xl bg-surface-container border border-border-subtle text-text-muted hover:text-on-surface cursor-pointer"
             >
-              Discard
+              {locale === "ar" ? "تجاهل" : "Discard"}
             </button>
           </div>
         </div>
@@ -422,7 +426,7 @@ export function UltradianTimer({
                 onClick={() => handleModeChange(m)}
                 className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-tertiary-purple text-charcoal-dark shadow-[0_0_12px_rgba(167,139,250,0.3)]"
+                    ? "bg-tertiary-purple text-on-primary shadow-[0_0_12px_rgba(167,139,250,0.3)]"
                     : "text-text-muted hover:text-on-surface"
                 }`}
               >
@@ -448,7 +452,7 @@ export function UltradianTimer({
             ) : (
               <VolumeX className="w-3.5 h-3.5 text-text-muted" />
             )}
-            <span>{chimeEnabled ? `${soundVolume}%` : "Muted"}</span>
+            <span>{chimeEnabled ? `${soundVolume}%` : locale === "ar" ? "صامت" : "Muted"}</span>
           </button>
         </div>
       </div>
@@ -457,18 +461,20 @@ export function UltradianTimer({
       {showAudioControls && (
         <div className="relative z-10 p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-3 font-mono text-xs animate-fade-in">
           <div className="flex items-center justify-between">
-            <span className="text-text-muted">Chime Sound:</span>
+            <span className="text-text-muted">{locale === "ar" ? "صوت التنبيه:" : "Chime Sound:"}</span>
             <button
               onClick={() => setChimeEnabled(!chimeEnabled)}
               className="px-2.5 py-1 rounded-lg bg-surface-container-high border border-border-subtle cursor-pointer"
             >
-              {chimeEnabled ? "Enabled" : "Muted"}
+              {chimeEnabled
+                ? locale === "ar" ? "مفعّل" : "Enabled"
+                : locale === "ar" ? "مكتوم" : "Muted"}
             </button>
           </div>
 
           {chimeEnabled && (
             <div className="flex items-center justify-between gap-3">
-              <span className="text-text-muted text-[11px]">Volume:</span>
+              <span className="text-text-muted text-[11px]">{locale === "ar" ? "مستوى الصوت:" : "Volume:"}</span>
               <input
                 type="range"
                 min={10}
@@ -487,20 +493,24 @@ export function UltradianTimer({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-text-muted">
               <Vibrate className="w-3.5 h-3.5" />
-              <span>Vibration:</span>
+              <span>{locale === "ar" ? "الاهتزاز:" : "Vibration:"}</span>
             </div>
             <button
               onClick={() => setVibrationEnabled(!vibrationEnabled)}
               className="px-2.5 py-1 rounded-lg bg-surface-container-high border border-border-subtle cursor-pointer"
             >
-              {vibrationEnabled ? "On" : "Off"}
+              {vibrationEnabled
+                ? locale === "ar" ? "شغال" : "On"
+                : locale === "ar" ? "مقفول" : "Off"}
             </button>
           </div>
 
           <div className="text-[10px] text-text-muted/80 flex items-start gap-1 pt-1 border-t border-border-subtle">
             <Info className="w-3 h-3 shrink-0 mt-0.5" />
             <span>
-              Chime & vibration trigger in-app. Background alerts depend on OS power management.
+              {locale === "ar"
+                ? "التنبيه والاهتزاز بيشتغلوا جوه التطبيق. التنبيهات في الخلفية بتعتمد على إعدادات إدارة الطاقة بجهازك."
+                : "Chime & vibration trigger in-app. Background alerts depend on OS power management."}
             </span>
           </div>
         </div>
@@ -511,22 +521,34 @@ export function UltradianTimer({
         {/* Category Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
           <span className="text-text-muted text-[10px] uppercase tracking-wider shrink-0 mr-1">
-            Category:
+            {locale === "ar" ? "التصنيف:" : "Category:"}
           </span>
-          {TASK_CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setTaskCategory(cat)}
-              disabled={phase !== "idle"}
-              className={`px-2.5 py-1 rounded-xl text-[11px] transition-all cursor-pointer shrink-0 border ${
-                taskCategory === cat
-                  ? "bg-tertiary-purple/20 text-tertiary-purple border-tertiary-purple/40 font-bold"
-                  : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+          {TASK_CATEGORIES.map((cat) => {
+            const arCategoryMap: Record<string, string> = {
+              Coding: "برمجة",
+              Study: "مذاكرة",
+              Reading: "قراءة",
+              Writing: "كتابة",
+              "Deep Work": "عمل عميق",
+              Admin: "إداريات",
+              Planning: "تخطيط",
+            };
+            const displayCat = locale === "ar" ? (arCategoryMap[cat] || cat) : cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setTaskCategory(cat)}
+                disabled={phase !== "idle"}
+                className={`px-2.5 py-1 rounded-xl text-[11px] transition-all cursor-pointer shrink-0 border ${
+                  taskCategory === cat
+                    ? "bg-tertiary-purple/20 text-tertiary-purple border-tertiary-purple/40 font-bold"
+                    : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
+                }`}
+              >
+                {displayCat}
+              </button>
+            );
+          })}
         </div>
 
         {/* Intention Input */}
@@ -534,7 +556,27 @@ export function UltradianTimer({
           type="text"
           value={taskIntention}
           onChange={(e) => setTaskIntention(e.target.value)}
-          placeholder={`What are you focusing on in this ${taskCategory} sprint?`}
+          placeholder={
+            locale === "ar"
+              ? `هتركز على إيه في جلسة الـ ${
+                  taskCategory === "Coding"
+                    ? "برمجة"
+                    : taskCategory === "Study"
+                    ? "مذاكرة"
+                    : taskCategory === "Reading"
+                    ? "قراءة"
+                    : taskCategory === "Writing"
+                    ? "كتابة"
+                    : taskCategory === "Deep Work"
+                    ? "شغل عميق"
+                    : taskCategory === "Admin"
+                    ? "مهام إدارية"
+                    : taskCategory === "Planning"
+                    ? "تخطيط"
+                    : taskCategory
+                } دي؟`
+              : `What are you focusing on in this ${taskCategory} sprint?`
+          }
           disabled={phase === "working" || phase === "break"}
           className="w-full text-center px-4 py-2 text-sm bg-transparent border-b border-border-subtle text-on-surface placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple transition-colors"
         />
@@ -574,17 +616,37 @@ export function UltradianTimer({
               {isBreak ? (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-secondary-cyan/15 text-secondary-cyan border border-secondary-cyan/30">
                   <Coffee className="w-3 h-3" />
-                  <span>Renewal Break</span>
+                  <span>{locale === "ar" ? "استراحة تجديد طاقة" : "Renewal Break"}</span>
                 </span>
               ) : phase === "paused" ? (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/15 text-amber-300 border border-amber-400/30">
                   <Pause className="w-3 h-3" />
-                  <span>Paused</span>
+                  <span>{locale === "ar" ? "متوقف مؤقتًا" : "Paused"}</span>
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
                   <Flame className="w-3 h-3" />
-                  <span>{taskCategory} Focus</span>
+                  <span>
+                    {locale === "ar"
+                      ? `تركيز ${
+                          taskCategory === "Coding"
+                            ? "برمجة"
+                            : taskCategory === "Study"
+                            ? "مذاكرة"
+                            : taskCategory === "Reading"
+                            ? "قراءة"
+                            : taskCategory === "Writing"
+                            ? "كتابة"
+                            : taskCategory === "Deep Work"
+                            ? "عمل عميق"
+                            : taskCategory === "Admin"
+                            ? "إداريات"
+                            : taskCategory === "Planning"
+                            ? "تخطيط"
+                            : taskCategory
+                        }`
+                      : `${taskCategory} Focus`}
+                  </span>
                 </span>
               )}
             </div>
@@ -599,7 +661,11 @@ export function UltradianTimer({
               {phase === "idle"
                 ? `${preset.name}`
                 : isBreak
-                ? `${preset.breakMinutes}m Break`
+                ? locale === "ar"
+                  ? `${preset.breakMinutes} دقيقة استراحة`
+                  : `${preset.breakMinutes}m Break`
+                : locale === "ar"
+                ? `${Math.round(elapsed / 60)} دقيقة من ${preset.workMinutes} دقيقة`
                 : `${Math.round(elapsed / 60)}m of ${preset.workMinutes}m`}
             </div>
           </div>
@@ -608,7 +674,11 @@ export function UltradianTimer({
         {/* Local Device Integrity Notice */}
         <div className="text-[10px] font-mono text-text-muted mt-2 flex items-center gap-1.5 opacity-70">
           <Clock className="w-3 h-3" />
-          <span>Timer runs locally on this device</span>
+          <span>
+            {locale === "ar"
+              ? "المؤقت شغال محليًا بدقة على جهازك"
+              : "Timer runs locally on this device"}
+          </span>
         </div>
       </div>
 
@@ -617,10 +687,10 @@ export function UltradianTimer({
         {phase === "idle" && (
           <button
             onClick={handleStartWork}
-            className="flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-sm bg-primary-lime text-charcoal-dark shadow-[0_0_20px_rgba(198,255,61,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-sm bg-primary-lime text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
-            <Play className="w-4 h-4 fill-current" />
-            <span>Start Deep Work</span>
+            <Play className="w-4 h-4 fill-current text-on-primary" />
+            <span>{locale === "ar" ? "ابدأ جلسة التركيز" : "Start Deep Work"}</span>
           </button>
         )}
 
@@ -631,15 +701,15 @@ export function UltradianTimer({
               className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-surface-container-high border border-border-subtle text-on-surface hover:border-tertiary-purple active:scale-95 transition-all cursor-pointer"
             >
               <Pause className="w-4 h-4 fill-current" />
-              <span>Pause</span>
+              <span>{locale === "ar" ? "إيقاف مؤقت" : "Pause"}</span>
             </button>
 
             <button
               onClick={handleFinishEarly}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-charcoal-dark shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-on-primary shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Complete</span>
+              <CheckCircle2 className="w-4 h-4 text-on-primary" />
+              <span>{locale === "ar" ? "إنهاء الجلسة" : "Complete"}</span>
             </button>
           </>
         )}
@@ -648,16 +718,16 @@ export function UltradianTimer({
           <>
             <button
               onClick={handleResume}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-charcoal-dark shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-on-primary shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             >
-              <Play className="w-4 h-4 fill-current" />
-              <span>Resume</span>
+              <Play className="w-4 h-4 fill-current text-on-primary" />
+              <span>{locale === "ar" ? "استئناف" : "Resume"}</span>
             </button>
 
             <button
               onClick={handleReset}
               className="p-3.5 rounded-2xl bg-surface-container-high border border-border-subtle text-text-muted hover:text-on-surface active:scale-95 transition-all cursor-pointer"
-              title="Reset Timer"
+              title={locale === "ar" ? "إعادة ضبط" : "Reset Timer"}
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -667,7 +737,7 @@ export function UltradianTimer({
               className="flex items-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-sm bg-surface-container-high border border-border-subtle text-on-surface hover:border-tertiary-purple active:scale-95 transition-all cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4 text-tertiary-purple" />
-              <span>Log Elapsed</span>
+              <span>{locale === "ar" ? "تسجيل الوقت" : "Log Elapsed"}</span>
             </button>
           </>
         )}

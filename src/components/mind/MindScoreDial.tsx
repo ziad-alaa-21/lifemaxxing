@@ -3,12 +3,14 @@
 import React from "react";
 import { Sparkles, Brain, Info, CheckCircle2 } from "lucide-react";
 import { MindScoreBreakdown } from "@/lib/mindScore";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface MindScoreDialProps {
   scoreData: MindScoreBreakdown;
 }
 
 export function MindScoreDial({ scoreData }: MindScoreDialProps) {
+  const { locale } = useI18n();
   const { totalScore, label, hasActivity, focusPts, disciplinePts, mathPts, readingPts, screenTimePts } =
     scoreData;
 
@@ -53,7 +55,9 @@ export function MindScoreDial({ scoreData }: MindScoreDialProps) {
               {totalScore !== null ? (
                 <>
                   <span className="text-2xl font-extrabold text-on-surface">{totalScore}</span>
-                  <span className="text-[9px] uppercase text-text-muted">Score</span>
+                  <span className="text-[9px] uppercase text-text-muted">
+                    {locale === "ar" ? "الدرجة" : "Score"}
+                  </span>
                 </>
               ) : (
                 <span className="text-xs text-text-muted font-bold">--</span>
@@ -63,14 +67,20 @@ export function MindScoreDial({ scoreData }: MindScoreDialProps) {
 
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-on-surface">Daily Mind Score</h2>
+              <h2 className="text-base font-bold text-on-surface">
+                {locale === "ar" ? "مؤشر الجاهزية الذهنية اليومي" : "Daily Mind Score"}
+              </h2>
               <span className="px-2 py-0.5 rounded-full text-[10px] bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30 font-bold">
                 {label}
               </span>
             </div>
             <p className="text-xs text-on-surface-variant max-w-sm">
               {hasActivity
-                ? "Unified cognitive readiness synthesizing focus, habits, mental math, reading & screen balance."
+                ? locale === "ar"
+                  ? "تقييم ذهني موحد بيجمع بين التركيز، العادات، الحساب الذهني، القراءة، وتوازن وقت الشاشة."
+                  : "Unified cognitive readiness synthesizing focus, habits, mental math, reading & screen balance."
+                : locale === "ar"
+                ? "مفيش بيانات اتسجلت للنهاردة لسه. سجل جلسة تركيز أو عادات أو قراءة عشان نحسب نتيجتك."
                 : "No telemetry logged today. Log focus sessions, daily habits, or reading to compute your score."}
             </p>
           </div>
@@ -81,24 +91,44 @@ export function MindScoreDial({ scoreData }: MindScoreDialProps) {
       {hasActivity && (
         <div className="pt-2 border-t border-border-subtle grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
           <div className="p-2.5 rounded-xl bg-surface-container-low border border-border-subtle space-y-0.5">
-            <div className="text-[10px] text-text-muted uppercase">Focus Work</div>
-            <div className="font-bold text-tertiary-purple">+{focusPts} pts</div>
+            <div className="text-[10px] text-text-muted uppercase">
+              {locale === "ar" ? "جلسات التركيز" : "Focus Work"}
+            </div>
+            <div className="font-bold text-tertiary-purple">
+              +{focusPts} {locale === "ar" ? "نقطة" : "pts"}
+            </div>
           </div>
           <div className="p-2.5 rounded-xl bg-surface-container-low border border-border-subtle space-y-0.5">
-            <div className="text-[10px] text-text-muted uppercase">Discipline</div>
-            <div className="font-bold text-primary-lime">+{disciplinePts} pts</div>
+            <div className="text-[10px] text-text-muted uppercase">
+              {locale === "ar" ? "الالتزامات" : "Discipline"}
+            </div>
+            <div className="font-bold text-primary-lime">
+              +{disciplinePts} {locale === "ar" ? "نقطة" : "pts"}
+            </div>
           </div>
           <div className="p-2.5 rounded-xl bg-surface-container-low border border-border-subtle space-y-0.5">
-            <div className="text-[10px] text-text-muted uppercase">Math Agility</div>
-            <div className="font-bold text-amber-core">+{mathPts} pts</div>
+            <div className="text-[10px] text-text-muted uppercase">
+              {locale === "ar" ? "الحساب الذهني" : "Math Agility"}
+            </div>
+            <div className="font-bold text-amber-core">
+              +{mathPts} {locale === "ar" ? "نقطة" : "pts"}
+            </div>
           </div>
           <div className="p-2.5 rounded-xl bg-surface-container-low border border-border-subtle space-y-0.5">
-            <div className="text-[10px] text-text-muted uppercase">Reading</div>
-            <div className="font-bold text-sky-400">+{readingPts} pts</div>
+            <div className="text-[10px] text-text-muted uppercase">
+              {locale === "ar" ? "القراءة" : "Reading"}
+            </div>
+            <div className="font-bold text-sky-400">
+              +{readingPts} {locale === "ar" ? "نقطة" : "pts"}
+            </div>
           </div>
           <div className="p-2.5 rounded-xl bg-surface-container-low border border-border-subtle space-y-0.5">
-            <div className="text-[10px] text-text-muted uppercase">Screen Balance</div>
-            <div className="font-bold text-secondary-cyan">+{screenTimePts} pts</div>
+            <div className="text-[10px] text-text-muted uppercase">
+              {locale === "ar" ? "توازن الشاشة" : "Screen Balance"}
+            </div>
+            <div className="font-bold text-secondary-cyan">
+              +{screenTimePts} {locale === "ar" ? "نقطة" : "pts"}
+            </div>
           </div>
         </div>
       )}

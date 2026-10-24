@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { SubjectItem, AcademicTopicItem, parseBulkTopics } from "@/lib/school";
 import { X, Loader2, AlertCircle, ListPlus, Check } from "lucide-react";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface BulkTopicModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function BulkTopicModal({
   preselectedSubjectId,
   isBlocked = false,
 }: BulkTopicModalProps) {
+  const { locale } = useI18n();
   const [subjectId, setSubjectId] = useState(
     preselectedSubjectId || (subjects.length > 0 ? subjects[0].id : "")
   );
@@ -45,17 +47,25 @@ export function BulkTopicModal({
     setError(null);
 
     if (isBlocked) {
-      setError("Offline: saving disabled to protect sync integrity.");
+      setError(
+        locale === "ar"
+          ? "وضع عدم الاتصال: الحفظ معطل لحماية تزامن البيانات."
+          : "Offline: saving disabled to protect sync integrity."
+      );
       return;
     }
 
     if (!subjectId) {
-      setError("Please select a subject.");
+      setError(locale === "ar" ? "من فضلك اختار المادة الدراسية." : "Please select a subject.");
       return;
     }
 
     if (!parsed.valid || parsed.topics.length === 0) {
-      setError("Please enter at least one valid topic (one per line, max 120 chars).");
+      setError(
+        locale === "ar"
+          ? "من فضلك اكتب موضوع واحد صحيح على الأقل (كل موضوع في سطر، بحد أقصى 120 حرف)."
+          : "Please enter at least one valid topic (one per line, max 120 chars)."
+      );
       return;
     }
 
@@ -64,7 +74,13 @@ export function BulkTopicModal({
       await onSaveBulk(subjectId, parsed.topics);
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to bulk import topics");
+      setError(
+        err instanceof Error
+          ? err.message
+          : locale === "ar"
+          ? "حصل خطأ أثناء استيراد المواضيع"
+          : "Failed to bulk import topics"
+      );
     } finally {
       setSaving(false);
     }
@@ -84,10 +100,12 @@ export function BulkTopicModal({
             </div>
             <div>
               <h2 className="text-base font-bold font-mono text-on-surface">
-                Bulk Add Syllabus Topics
+                {locale === "ar" ? "إضافة مواضيع المنهج دفعة واحدة" : "Bulk Add Syllabus Topics"}
               </h2>
               <p className="text-[11px] text-on-surface-variant font-mono">
-                Paste your course topics list (one per line)
+                {locale === "ar"
+                  ? "الصق قائمة مفاهيم أو دروس المنهج (كل موضوع في سطر مستقل)"
+                  : "Paste your course topics list (one per line)"}
               </p>
             </div>
           </div>
@@ -110,7 +128,7 @@ export function BulkTopicModal({
           {/* Subject Picker */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-              Subject <span className="text-crimson-alert">*</span>
+              {locale === "ar" ? "المادة الدراسية" : "Subject"} <span className="text-crimson-alert">*</span>
             </label>
             <select
               value={subjectId}
@@ -130,10 +148,12 @@ export function BulkTopicModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Topics List (One Per Line)
+                {locale === "ar" ? "قائمة المواضيع (سطر لكل موضوع)" : "Topics List (One Per Line)"}
               </label>
               <span className="text-[10px] text-text-muted">
-                {parsed.topics.length} topic(s) detected
+                {locale === "ar"
+                  ? `${parsed.topics.length} موضوع تم رصده`
+                  : `${parsed.topics.length} topic(s) detected`}
               </span>
             </div>
             <textarea
@@ -141,8 +161,12 @@ export function BulkTopicModal({
               rows={8}
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              placeholder="e.g.&#10;Limits and Continuity&#10;Derivative Rules & Chain Rule&#10;Mean Value Theorem&#10;Optimization Problems&#10;Fundamental Theorem of Calculus"
-              className="w-full px-3.5 py-2.5 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-indigo-500/50 resize-y font-sans text-xs"
+              placeholder={
+                locale === "ar"
+                  ? "مثلاً:&#10;النهايات والاتصال&#10;قواعد الاشتقاق وقاعدة السلسلة&#10;نظرية القيمة المتوسطة&#10;تطبيقات القيم العظمى والصغرى&#10;النظرية الأساسية في التفاضل والتكامل"
+                  : "e.g.&#10;Limits and Continuity&#10;Derivative Rules & Chain Rule&#10;Mean Value Theorem&#10;Optimization Problems&#10;Fundamental Theorem of Calculus"
+              }
+              className="w-full px-3.5 py-2.5 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-indigo-500/50 resize-y font-sans text-xs text-start"
               required
             />
           </div>
@@ -150,7 +174,9 @@ export function BulkTopicModal({
           {/* Validation Errors Preview */}
           {parsed.errors.length > 0 && (
             <div className="p-3 rounded-xl bg-crimson-alert/10 border border-crimson-alert/20 text-crimson-alert text-[11px] space-y-1 max-h-24 overflow-y-auto">
-              <div className="font-semibold">Validation violations:</div>
+              <div className="font-semibold">
+                {locale === "ar" ? "تنبيهات التدقيق والملاحظات:" : "Validation violations:"}
+              </div>
               {parsed.errors.map((err, i) => (
                 <div key={i}>{err}</div>
               ))}
@@ -161,11 +187,17 @@ export function BulkTopicModal({
           {parsed.duplicates.length > 0 && (
             <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] space-y-1">
               <div className="font-semibold">
-                {parsed.duplicates.length} duplicate(s) automatically skipped:
+                {locale === "ar"
+                  ? `${parsed.duplicates.length} موضوع مكرر تم تجاوزه تلقائياً:`
+                  : `${parsed.duplicates.length} duplicate(s) automatically skipped:`}
               </div>
               <div className="text-[10px] text-text-muted truncate">
                 {parsed.duplicates.slice(0, 3).join(" • ")}
-                {parsed.duplicates.length > 3 ? ` ... (+${parsed.duplicates.length - 3} more)` : ""}
+                {parsed.duplicates.length > 3
+                  ? locale === "ar"
+                    ? ` ... (+${parsed.duplicates.length - 3} إضافي)`
+                    : ` ... (+${parsed.duplicates.length - 3} more)`
+                  : ""}
               </div>
             </div>
           )}
@@ -175,11 +207,20 @@ export function BulkTopicModal({
             <div className="p-3 rounded-xl bg-surface-container-high/60 border border-border-subtle space-y-1.5">
               <div className="flex items-center gap-1.5 text-emerald-400 font-semibold text-[11px]">
                 <Check className="w-3.5 h-3.5" />
-                <span>Ready to import {parsed.topics.length} topic(s) (unscheduled until started)</span>
+                <span>
+                  {locale === "ar"
+                    ? `جاهز لاستيراد ${parsed.topics.length} موضوع (غير مجدول حتى تبدأ دراسته)`
+                    : `Ready to import ${parsed.topics.length} topic(s) (unscheduled until started)`}
+                </span>
               </div>
               <div className="text-[10px] text-text-muted truncate">
-                Preview: {parsed.topics.slice(0, 3).join(" • ")}
-                {parsed.topics.length > 3 ? ` ... (+${parsed.topics.length - 3} more)` : ""}
+                {locale === "ar" ? "معاينة: " : "Preview: "}
+                {parsed.topics.slice(0, 3).join(" • ")}
+                {parsed.topics.length > 3
+                  ? locale === "ar"
+                    ? ` ... (+${parsed.topics.length - 3} إضافي)`
+                    : ` ... (+${parsed.topics.length - 3} more)`
+                  : ""}
               </div>
             </div>
           )}
@@ -192,20 +233,24 @@ export function BulkTopicModal({
               disabled={saving}
               className="px-4 py-2 rounded-xl text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving || parsed.topics.length === 0 || parsed.errors.length > 0}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-500 text-surface font-semibold hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Importing...</span>
+                  <span>{locale === "ar" ? "جاري الاستيراد..." : "Importing..."}</span>
                 </>
               ) : (
-                <span>Import {parsed.topics.length} Topics</span>
+                <span>
+                  {locale === "ar"
+                    ? `استيراد ${parsed.topics.length} موضوع`
+                    : `Import ${parsed.topics.length} Topics`}
+                </span>
               )}
             </button>
           </div>

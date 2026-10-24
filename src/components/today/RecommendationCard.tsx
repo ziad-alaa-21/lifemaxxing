@@ -16,8 +16,12 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
   const getCategoryBadge = (badge: string) => {
     if (locale !== "ar") return badge;
     if (badge.includes("Recovery")) return "تنبيه استشفاء";
-    if (badge.includes("Deep Work")) return "تركيز ذهني";
-    if (badge.includes("Session Prep")) return "جاهزية التمرين";
+    if (badge.includes("Deep Work") || badge.includes("Cognitive Focus")) return "تركيز ذهني";
+    if (badge.includes("Missing Telemetry") || badge.includes("Missing")) return "بيانات ناقصة";
+    if (badge.includes("Baseline Calibrating")) return "معايرة الأساس";
+    if (badge.includes("Session Prep") || badge.includes("Training Calibration")) return "جاهزية التمرين";
+    if (badge.includes("Strength & Load")) return "أحمال التمرين";
+    if (badge.includes("Academic Priority")) return "أولوية دراسية";
     if (badge.includes("Pillar")) return "توازن اليوم";
     return badge;
   };

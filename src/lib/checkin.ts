@@ -15,11 +15,6 @@ export interface MindCheckin {
   focus_score: number; // 1 - 5
   context_tags: string[];
   notes?: string | null;
-  auto_context?: {
-    sleepHours?: number | null;
-    caffeineMg?: number | null;
-    waterMl?: number | null;
-  };
   created_at?: string;
   updated_at?: string;
   deleted_at?: string | null;

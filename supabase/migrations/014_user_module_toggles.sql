@@ -102,7 +102,7 @@ CREATE POLICY "Users can delete own modules"
   USING (auth.uid() = user_id);
 
 -- 6. Safe backfill for existing active users
--- Backfills all existing profiles where the user is NOT deleted.
+-- Backfills all existing profiles where user exists in auth.users.
 -- Existing users are marked has_completed_onboarding = true with all modules enabled.
 INSERT INTO public.user_modules (
   user_id,
@@ -124,8 +124,7 @@ SELECT
   true,
   true, true, true, true, true, true, true, true, true, true, true
 FROM public.profiles p
-JOIN auth.users u ON u.id = p.id
-WHERE u.deleted_at IS NULL
+WHERE EXISTS (SELECT 1 FROM auth.users u WHERE u.id = p.id)
 ON CONFLICT (user_id) DO NOTHING;
 
 -- 7. Signup Mechanism Note:
@@ -133,3 +132,7 @@ ON CONFLICT (user_id) DO NOTHING;
 -- "Idempotent Upsert on First Sign-in" (ensureUserModules in src/lib/modules.ts).
 -- This runs under the authenticated user's session with auth.uid() = user_id,
 -- eliminating cross-schema trigger permission failures on auth.users in Supabase.
+
+-- 8. Explicit PostgREST Cache Reload
+NOTIFY pgrst, 'reload schema';
+

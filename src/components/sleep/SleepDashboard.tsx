@@ -27,9 +27,12 @@ import {
 import { SleepLogModal } from "@/components/sleep/SleepLogModal";
 import { CircadianDial } from "@/components/sleep/CircadianDial";
 import { SleepTrendChart } from "@/components/sleep/SleepTrendChart";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { formatTimeTo12h } from "@/lib/time";
 
 export function SleepDashboard() {
   const { guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
 
   const [userId, setUserId] = useState<string | null>(null);
   const [entries, setEntries] = useState<SleepEntry[]>([]);
@@ -322,7 +325,9 @@ export function SleepDashboard() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-3 font-mono">
         <Loader2 className="w-8 h-8 text-[#7DD3FC] animate-spin" />
-        <p className="text-xs text-text-muted">Loading sleep & circadian telemetry...</p>
+        <p className="text-xs text-text-muted">
+          {locale === "ar" ? "بنحمّل قياسات النوم والريتم اليومي..." : "Loading sleep & circadian telemetry..."}
+        </p>
       </div>
     );
   }
@@ -336,9 +341,13 @@ export function SleepDashboard() {
             <Moon className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-on-surface">Sleep & Circadian Telemetry</h2>
+            <h2 className="text-xl font-bold text-on-surface">
+              {locale === "ar" ? "قياسات النوم والنظام اليومي" : "Sleep & Circadian Telemetry"}
+            </h2>
             <p className="text-xs text-on-surface-variant">
-              Recovery architecture, circular midpoint consistency, and solar protocols
+              {locale === "ar"
+                ? "بنية الاستشفاء، ثبات منتصف النوم الدائري، وبروتوكولات ضوء الشمس"
+                : "Recovery architecture, circular midpoint consistency, and solar protocols"}
             </p>
           </div>
         </div>
@@ -349,17 +358,17 @@ export function SleepDashboard() {
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-border-subtle bg-surface-container-high hover:bg-surface-container-highest text-xs text-text-muted hover:text-on-surface transition-all cursor-pointer"
           >
             <SettingsIcon className="w-4 h-4" />
-            <span>Settings</span>
+            <span>{locale === "ar" ? "الإعدادات" : "Settings"}</span>
           </button>
           <button
             onClick={() => {
               setEditingEntry(null);
               setIsLogModalOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#7DD3FC] hover:bg-[#7DD3FC]/90 text-charcoal-dark font-bold text-xs shadow-[0_0_15px_rgba(125,211,252,0.3)] transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#7DD3FC] hover:bg-[#7DD3FC]/90 text-on-primary font-bold text-xs shadow-[0_0_15px_rgba(125,211,252,0.3)] transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
-            <span>LOG SLEEP</span>
+            <span>{locale === "ar" ? "سجل نومك" : "LOG SLEEP"}</span>
           </button>
         </div>
       </div>
@@ -369,7 +378,7 @@ export function SleepDashboard() {
         <div className="p-4 rounded-2xl bg-crimson-alert/10 border border-crimson-alert/30 text-crimson-alert text-xs flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <p className="font-bold">Database Error (sleep_logs)</p>
+            <p className="font-bold">{locale === "ar" ? "مشكلة في قاعدة البيانات (sleep_logs)" : "Database Error (sleep_logs)"}</p>
             <p className="opacity-90">{error}</p>
           </div>
         </div>
@@ -379,14 +388,16 @@ export function SleepDashboard() {
       {showUndoBanner && lastDeletedEntry && (
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-charcoal-dark border border-border-subtle shadow-2xl rounded-2xl px-5 py-3 flex items-center gap-4 animate-slide-up">
           <span className="text-xs text-on-surface font-mono">
-            Sleep log for {lastDeletedEntry.sleep_date} soft-deleted.
+            {locale === "ar"
+              ? `تم مسح تسجيل النوم ليوم ${lastDeletedEntry.sleep_date}.`
+              : `Sleep log for ${lastDeletedEntry.sleep_date} soft-deleted.`}
           </span>
           <button
             onClick={handleUndoDelete}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#7DD3FC] text-charcoal-dark text-xs font-bold hover:bg-[#7DD3FC]/90 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#7DD3FC] text-on-primary text-xs font-bold hover:bg-[#7DD3FC]/90 transition-all cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Undo</span>
+            <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
           </button>
         </div>
       )}
@@ -397,7 +408,7 @@ export function SleepDashboard() {
         <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              Latest Sleep Score
+              {locale === "ar" ? "آخر جودة نوم" : "Latest Sleep Score"}
             </span>
             {latestScore && (
               <span
@@ -422,7 +433,11 @@ export function SleepDashboard() {
             <span className="text-xs text-text-muted">/ 100</span>
           </div>
           <p className="text-[11px] text-on-surface-variant font-mono">
-            {latestScore ? latestScore.label : "Log your first sleep night"}
+            {latestScore
+              ? latestScore.label
+              : locale === "ar"
+              ? "سجل أول ليلة نوم"
+              : "Log your first sleep night"}
           </p>
         </div>
 
@@ -430,7 +445,7 @@ export function SleepDashboard() {
         <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              7-Day Avg Duration
+              {locale === "ar" ? "متوسط المدة (٧ أيام)" : "7-Day Avg Duration"}
             </span>
             <Clock className="w-4 h-4 text-[#7DD3FC]" />
           </div>
@@ -440,7 +455,9 @@ export function SleepDashboard() {
             </span>
           </div>
           <p className="text-[11px] text-on-surface-variant font-mono">
-            Target: {sleepTargetHours ? `${sleepTargetHours}h` : "Not set"} ({stats.count} nights recorded)
+            {locale === "ar"
+              ? `الهدف: ${sleepTargetHours ? `${sleepTargetHours} ساعات` : "مش محدد"} (${stats.count} ليالي مسجلة)`
+              : `Target: ${sleepTargetHours ? `${sleepTargetHours}h` : "Not set"} (${stats.count} nights recorded)`}
           </p>
         </div>
 
@@ -448,7 +465,7 @@ export function SleepDashboard() {
         <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              Midpoint Stability
+              {locale === "ar" ? "ثبات منتصف النوم" : "Midpoint Stability"}
             </span>
             <span
               className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
@@ -459,7 +476,11 @@ export function SleepDashboard() {
                   : "text-[#F87171] border-[#F87171]/30 bg-[#F87171]/10"
               }`}
             >
-              {midpoint.stability}
+              {midpoint.stability === "Consistent"
+                ? (locale === "ar" ? "مستقر" : "Consistent")
+                : midpoint.stability === "Moderate"
+                ? (locale === "ar" ? "متوسط" : "Moderate")
+                : (locale === "ar" ? "غير منتظم" : "Irregular")}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
@@ -468,7 +489,9 @@ export function SleepDashboard() {
             </span>
           </div>
           <p className="text-[11px] text-on-surface-variant font-mono">
-            &plusmn;{midpoint.stdDevMinutes}m variability (circular stat)
+            {locale === "ar"
+              ? `تغير \u00b1${midpoint.stdDevMinutes} دقيقة (إحصاء دائري)`
+              : `\u00b1${midpoint.stdDevMinutes}m variability (circular stat)`}
           </p>
         </div>
 
@@ -476,17 +499,19 @@ export function SleepDashboard() {
         <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              7-Day Nap Volume
+              {locale === "ar" ? "قيلولات الـ ٧ أيام" : "7-Day Nap Volume"}
             </span>
             <Sun className="w-4 h-4 text-rank-bronze" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-on-surface">
-              {stats.totalNapsMinutes}m
+              {stats.totalNapsMinutes}{locale === "ar" ? " دقيقة" : "m"}
             </span>
           </div>
           <p className="text-[11px] text-on-surface-variant font-mono">
-            Recorded separate from nocturnal sleep
+            {locale === "ar"
+              ? "مسجلة منفصلة عن نوم الليل"
+              : "Recorded separate from nocturnal sleep"}
           </p>
         </div>
       </div>
@@ -506,14 +531,20 @@ export function SleepDashboard() {
       <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-on-surface">
-            Recorded Sleep History ({entries.length} entries)
+            {locale === "ar"
+              ? `سجل النوم السابق (${entries.length} تسجيل)`
+              : `Recorded Sleep History (${entries.length} entries)`}
           </h3>
-          <span className="text-xs text-text-muted">Soft delete with instant undo</span>
+          <span className="text-xs text-text-muted">
+            {locale === "ar" ? "مسح آمن مع إمكانية التراجع الفوري" : "Soft delete with instant undo"}
+          </span>
         </div>
 
         {entries.length === 0 ? (
           <div className="py-10 text-center text-xs text-text-muted">
-            No sleep logs recorded yet. Tap LOG SLEEP above to start tracking.
+            {locale === "ar"
+              ? "مفيش بيانات نوم مسجلة لسه. اضغط على \"سجل نومك\" فوق عشان تبدأ تتابع."
+              : "No sleep logs recorded yet. Tap LOG SLEEP above to start tracking."}
           </div>
         ) : (
           <div className="divide-y divide-border-subtle">
@@ -526,8 +557,14 @@ export function SleepDashboard() {
               );
               const b = new Date(entry.bedtime);
               const w = new Date(entry.wake_time);
-              const bTime = `${b.getHours().toString().padStart(2, "0")}:${b.getMinutes().toString().padStart(2, "0")}`;
-              const wTime = `${w.getHours().toString().padStart(2, "0")}:${w.getMinutes().toString().padStart(2, "0")}`;
+              const bTime = formatTimeTo12h(
+                `${b.getHours().toString().padStart(2, "0")}:${b.getMinutes().toString().padStart(2, "0")}`,
+                { locale }
+              );
+              const wTime = formatTimeTo12h(
+                `${w.getHours().toString().padStart(2, "0")}:${w.getMinutes().toString().padStart(2, "0")}`,
+                { locale }
+              );
               const hours = Math.floor(entry.duration_minutes / 60);
               const mins = entry.duration_minutes % 60;
 
@@ -553,18 +590,22 @@ export function SleepDashboard() {
                           {entry.sleep_date}
                         </span>
                         <span className="text-[11px] text-text-muted">
-                          {bTime} &rarr; {wTime} ({hours}h {mins}m)
+                          {bTime} &rarr; {wTime} {locale === "ar" ? `(${hours}س ${mins}د)` : `(${hours}h ${mins}m)`}
                         </span>
                         {entry.nap_minutes ? (
                           <span className="px-1.5 py-0.5 rounded text-[10px] bg-rank-bronze/10 text-rank-bronze border border-rank-bronze/30">
-                            +{entry.nap_minutes}m nap
+                            {locale === "ar" ? `+${entry.nap_minutes} د قيلولة` : `+${entry.nap_minutes}m nap`}
                           </span>
                         ) : null}
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-text-muted mt-0.5">
-                        <span>Score: {scoreObj.tier}</span>
+                        <span>{locale === "ar" ? `التقييم: ${scoreObj.tier}` : `Score: ${scoreObj.tier}`}</span>
                         <span>&bull;</span>
-                        <span>{entry.awakenings_count || 0} awakenings</span>
+                        <span>
+                          {locale === "ar"
+                            ? `${entry.awakenings_count || 0} مرات صحيان`
+                            : `${entry.awakenings_count || 0} awakenings`}
+                        </span>
                         {entry.notes && (
                           <>
                             <span>&bull;</span>
@@ -584,14 +625,14 @@ export function SleepDashboard() {
                         setIsLogModalOpen(true);
                       }}
                       className="p-1.5 rounded-lg hover:bg-surface-container-high text-text-muted hover:text-on-surface transition-all cursor-pointer"
-                      title="Edit Entry"
+                      title={locale === "ar" ? "تعديل التسجيل" : "Edit Entry"}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeleteEntry(entry)}
                       className="p-1.5 rounded-lg hover:bg-crimson-alert/15 text-text-muted hover:text-crimson-alert transition-all cursor-pointer"
-                      title="Soft Delete Entry"
+                      title={locale === "ar" ? "مسح التسجيل" : "Soft Delete Entry"}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -621,12 +662,14 @@ export function SleepDashboard() {
           <div className="bg-surface-container rounded-3xl p-6 border border-border-subtle w-full max-w-sm space-y-4 shadow-2xl">
             <h3 className="text-sm font-bold text-on-surface flex items-center gap-2">
               <SettingsIcon className="w-4 h-4 text-[#7DD3FC]" />
-              <span>Sleep & Circadian Targets</span>
+              <span>{locale === "ar" ? "أهداف النوم ومسار اليوم" : "Sleep & Circadian Targets"}</span>
             </h3>
 
             <form onSubmit={handleSaveSettings} className="space-y-3 font-mono text-xs">
               <div className="space-y-1">
-                <label className="text-text-muted">Target Sleep Duration (hours)</label>
+                <label className="text-text-muted text-start block">
+                  {locale === "ar" ? "مدة النوم المستهدفة (ساعات)" : "Target Sleep Duration (hours)"}
+                </label>
                 <input
                   type="number"
                   step="0.5"
@@ -639,7 +682,9 @@ export function SleepDashboard() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-text-muted">Caffeine Cutoff (hours before bed)</label>
+                <label className="text-text-muted text-start block">
+                  {locale === "ar" ? "وقف الكافيين (ساعات قبل النوم)" : "Caffeine Cutoff (hours before bed)"}
+                </label>
                 <input
                   type="number"
                   step="1"
@@ -652,7 +697,9 @@ export function SleepDashboard() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-text-muted">Screen Wind-Down Cutoff (minutes)</label>
+                <label className="text-text-muted text-start block">
+                  {locale === "ar" ? "وقف الشاشات والاسترخاء (دقائق)" : "Screen Wind-Down Cutoff (minutes)"}
+                </label>
                 <input
                   type="number"
                   step="15"
@@ -665,7 +712,9 @@ export function SleepDashboard() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-text-muted">Timezone</label>
+                <label className="text-text-muted text-start block">
+                  {locale === "ar" ? "المنطقة الزمنية" : "Timezone"}
+                </label>
                 <input
                   type="text"
                   value={timezone}
@@ -681,13 +730,13 @@ export function SleepDashboard() {
                   onClick={() => setIsSettingsModalOpen(false)}
                   className="px-3 py-2 rounded-xl border border-border-subtle text-text-muted hover:text-on-surface cursor-pointer"
                 >
-                  Cancel
+                  {locale === "ar" ? "إلغاء" : "Cancel"}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#7DD3FC] text-charcoal-dark font-bold hover:bg-[#7DD3FC]/90 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#7DD3FC] text-on-primary font-bold hover:bg-[#7DD3FC]/90 cursor-pointer shadow-xs"
                 >
-                  Save Settings
+                  {locale === "ar" ? "حفظ الإعدادات" : "Save Settings"}
                 </button>
               </div>
             </form>

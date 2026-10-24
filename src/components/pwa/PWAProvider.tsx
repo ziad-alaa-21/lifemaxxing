@@ -73,6 +73,26 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
 
     // 3. Service Worker registration & update listener
     if ("serviceWorker" in navigator) {
+      if (process.env.NODE_ENV === "development") {
+        // In local development, unregister any active service worker and purge caches
+        // so Fast Refresh and Turbopack never serve stale client bundles that cause hydration mismatches.
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const reg of registrations) {
+            reg.unregister();
+            console.log("[PWA] Unregistered service worker in dev mode:", reg.scope);
+          }
+        });
+        if ("caches" in window) {
+          caches.keys().then((names) => {
+            for (const name of names) {
+              caches.delete(name);
+              console.log("[PWA] Purged cache in dev mode:", name);
+            }
+          });
+        }
+        return;
+      }
+
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => {
@@ -172,7 +192,7 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     >
       {/* Global Offline Warning Bar */}
       {!isOnline && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-core text-bg-darkest px-4 py-2 text-xs font-mono flex items-center justify-center gap-2 shadow-lg backdrop-blur-md">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-core text-on-primary px-4 py-2 text-xs font-mono flex items-center justify-center gap-2 shadow-sm backdrop-blur-md">
           <WifiOff className="w-4 h-4 shrink-0 stroke-[2.5]" />
           <span className="font-bold">Offline Mode:</span>
           <span>Read-only cache active. Saving and modifications are temporarily blocked.</span>
@@ -196,9 +216,9 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={applyUpdate}
-              className="px-3 py-1.5 rounded-lg bg-primary-lime text-surface text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim flex items-center gap-1 cursor-pointer shadow-[0_0_12px_rgba(198,255,61,0.25)]"
+              className="px-3 py-1.5 rounded-lg bg-primary-lime text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim flex items-center gap-1 cursor-pointer shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary"
             >
-              <RefreshCw className="w-3 h-3" />
+              <RefreshCw className="w-3 h-3 text-on-primary stroke-current" />
               <span>Update</span>
             </button>
             <button

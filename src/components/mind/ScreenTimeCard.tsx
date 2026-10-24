@@ -18,6 +18,7 @@ import {
   formatMinutesToHours,
 } from "@/lib/screentime";
 import { supabase } from "@/lib/supabase/client";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface ScreenTimeCardProps {
   selectedDate: string;
@@ -28,6 +29,7 @@ export function ScreenTimeCard({
   selectedDate,
   onScreenTimeUpdated,
 }: ScreenTimeCardProps) {
+  const { locale } = useI18n();
   const [log, setLog] = useState<ScreenTimeLog | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -45,6 +47,10 @@ export function ScreenTimeCard({
   // Load screen time log for selectedDate
   useEffect(() => {
     async function loadData() {
+      if (!selectedDate) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       try {
         const {
@@ -149,8 +155,12 @@ export function ScreenTimeCard({
             <Smartphone className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-mono text-on-surface">Screen Time Telemetry</h3>
-            <p className="text-[10px] font-mono text-on-surface-variant">Manual daily input</p>
+            <h3 className="text-sm font-bold font-mono text-on-surface">
+              {locale === "ar" ? "متابعة وقت الشاشة" : "Screen Time Telemetry"}
+            </h3>
+            <p className="text-[10px] font-mono text-on-surface-variant">
+              {locale === "ar" ? "تسجيل يومي يدوي" : "Manual daily input"}
+            </p>
           </div>
         </div>
 
@@ -161,14 +171,16 @@ export function ScreenTimeCard({
             </span>
           ) : (
             <span className="text-xs font-mono text-text-muted px-2.5 py-1 rounded-full bg-surface-container-low border border-border-subtle">
-              No log today
+              {locale === "ar" ? "مفيش تسجيل النهاردة" : "No log today"}
             </span>
           )}
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle font-mono text-xs text-on-surface cursor-pointer transition-colors"
           >
-            {log ? "Edit Log" : "Log Today"}
+            {log
+              ? locale === "ar" ? "تعديل التسجيل" : "Edit Log"
+              : locale === "ar" ? "سجل النهاردة" : "Log Today"}
           </button>
         </div>
       </div>
@@ -184,10 +196,14 @@ export function ScreenTimeCard({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <span className="text-primary-lime font-medium">
-                {breakdown.productivePct}% Productive ({formatMinutesToHours(breakdown.productiveMinutes)})
+                {locale === "ar"
+                  ? `${breakdown.productivePct}% إنتاجي (${formatMinutesToHours(breakdown.productiveMinutes)})`
+                  : `${breakdown.productivePct}% Productive (${formatMinutesToHours(breakdown.productiveMinutes)})`}
               </span>
               <span className="text-amber-core font-medium">
-                {breakdown.entertainmentPct}% Entertainment ({formatMinutesToHours(breakdown.entertainmentMinutes)})
+                {locale === "ar"
+                  ? `${breakdown.entertainmentPct}% ترفيه وسوشيال (${formatMinutesToHours(breakdown.entertainmentMinutes)})`
+                  : `${breakdown.entertainmentPct}% Entertainment (${formatMinutesToHours(breakdown.entertainmentMinutes)})`}
               </span>
             </div>
             <div className="w-full h-2.5 rounded-full bg-surface-container-high overflow-hidden flex">
@@ -211,13 +227,19 @@ export function ScreenTimeCard({
 
           <div className="grid grid-cols-2 gap-3 text-xs pt-1">
             <div className="p-3 rounded-xl bg-surface-container-low border border-border-subtle">
-              <div className="text-[10px] uppercase text-text-muted">Balance Ratio</div>
+              <div className="text-[10px] uppercase text-text-muted">
+                {locale === "ar" ? "معدل التوازن" : "Balance Ratio"}
+              </div>
               <div className="font-bold text-on-surface mt-0.5">{breakdown.ratioLabel}</div>
             </div>
             <div className="p-3 rounded-xl bg-surface-container-low border border-border-subtle">
-              <div className="text-[10px] uppercase text-text-muted">Phone Pickups</div>
+              <div className="text-[10px] uppercase text-text-muted">
+                {locale === "ar" ? "مرات فتح الموبايل" : "Phone Pickups"}
+              </div>
               <div className="font-bold text-on-surface mt-0.5">
-                {breakdown.pickupsCount !== null ? `${breakdown.pickupsCount} times` : "Not recorded"}
+                {breakdown.pickupsCount !== null
+                  ? locale === "ar" ? `${breakdown.pickupsCount} مرة` : `${breakdown.pickupsCount} times`
+                  : locale === "ar" ? "لم يُسجل" : "Not recorded"}
               </div>
             </div>
           </div>
@@ -225,13 +247,13 @@ export function ScreenTimeCard({
       ) : (
         <div className="p-6 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-2">
           <p className="text-xs font-mono text-text-muted">
-            No screen time logged for today.
+            {locale === "ar" ? "مفيش وقت شاشة متسجل للنهاردة لسه." : "No screen time logged for today."}
           </p>
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 rounded-xl bg-secondary-cyan/15 border border-secondary-cyan/30 text-secondary-cyan font-mono text-xs font-bold hover:bg-secondary-cyan/25 cursor-pointer transition-colors"
           >
-            + Log Screen Time
+            {locale === "ar" ? "+ سجل وقت الشاشة" : "+ Log Screen Time"}
           </button>
         </div>
       )}
@@ -243,7 +265,9 @@ export function ScreenTimeCard({
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-secondary-cyan" />
-                <h3 className="text-sm font-bold text-on-surface">Manual Screen Time Entry</h3>
+                <h3 className="text-sm font-bold text-on-surface">
+                  {locale === "ar" ? "تسجيل وقت الشاشة يدويًا" : "Manual Screen Time Entry"}
+                </h3>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -262,8 +286,8 @@ export function ScreenTimeCard({
             <div className="space-y-3">
               {/* Total Time Inputs */}
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Total Screen Time
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "إجمالي وقت الشاشة" : "Total Screen Time"}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle">
@@ -274,9 +298,9 @@ export function ScreenTimeCard({
                       value={hours}
                       onChange={(e) => setHours(e.target.value)}
                       placeholder="0"
-                      className="w-full bg-transparent text-on-surface focus:outline-none"
+                      className="w-full bg-transparent text-on-surface focus:outline-none text-start"
                     />
-                    <span className="text-text-muted">hours</span>
+                    <span className="text-text-muted">{locale === "ar" ? "ساعات" : "hours"}</span>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle">
                     <input
@@ -286,55 +310,55 @@ export function ScreenTimeCard({
                       value={minutes}
                       onChange={(e) => setMinutes(e.target.value)}
                       placeholder="0"
-                      className="w-full bg-transparent text-on-surface focus:outline-none"
+                      className="w-full bg-transparent text-on-surface focus:outline-none text-start"
                     />
-                    <span className="text-text-muted">mins</span>
+                    <span className="text-text-muted">{locale === "ar" ? "دقائق" : "mins"}</span>
                   </div>
                 </div>
               </div>
 
               {/* Productive Minutes */}
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Productive / Work Focus (Minutes)
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "الوقت الإنتاجي / شغل ومذاكرة (دقائق)" : "Productive / Work Focus (Minutes)"}
                 </label>
                 <input
                   type="number"
                   min={0}
                   value={prodMinutes}
                   onChange={(e) => setProdMinutes(e.target.value)}
-                  placeholder="e.g. 150"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan"
+                  placeholder={locale === "ar" ? "مثال: 150" : "e.g. 150"}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
                 />
               </div>
 
               {/* Entertainment Minutes */}
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Entertainment / Social (Minutes)
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "وقت السوشيال ميديا والترفيه (دقائق)" : "Entertainment / Social (Minutes)"}
                 </label>
                 <input
                   type="number"
                   min={0}
                   value={entMinutes}
                   onChange={(e) => setEntMinutes(e.target.value)}
-                  placeholder="e.g. 60"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan"
+                  placeholder={locale === "ar" ? "مثال: 60" : "e.g. 60"}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
                 />
               </div>
 
               {/* Pickups */}
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Device Pickups (Optional)
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "عدد مرات فتح القفل (اختياري)" : "Device Pickups (Optional)"}
                 </label>
                 <input
                   type="number"
                   min={0}
                   value={pickups}
                   onChange={(e) => setPickups(e.target.value)}
-                  placeholder="e.g. 45"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan"
+                  placeholder={locale === "ar" ? "مثال: 45" : "e.g. 45"}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
                 />
               </div>
             </div>
@@ -344,15 +368,15 @@ export function ScreenTimeCard({
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 rounded-xl text-text-muted hover:text-on-surface cursor-pointer"
               >
-                Cancel
+                {locale === "ar" ? "إلغاء" : "Cancel"}
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving || (!hours && !minutes)}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-secondary-cyan text-charcoal-dark hover:brightness-110 cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-secondary-cyan text-on-primary hover:brightness-110 cursor-pointer disabled:opacity-50"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                <span>Save Telemetry</span>
+                <span>{locale === "ar" ? "حفظ وقت الشاشة" : "Save Telemetry"}</span>
               </button>
             </div>
           </div>

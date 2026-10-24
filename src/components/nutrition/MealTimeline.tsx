@@ -24,6 +24,8 @@ import {
   evaluateMealProtein,
 } from "@/lib/nutrition";
 
+import { useI18n } from "@/lib/i18n/I18nContext";
+
 interface MealTimelineProps {
   meals: MealLogEntry[];
   onMealsUpdated: () => void;
@@ -33,12 +35,6 @@ interface MealTimelineProps {
 }
 
 const MEAL_ORDER: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
-const MEAL_LABELS: Record<MealType, string> = {
-  breakfast: "Breakfast",
-  lunch: "Lunch",
-  dinner: "Dinner",
-  snack: "Snacks & Other",
-};
 
 export function MealTimeline({
   meals,
@@ -48,7 +44,15 @@ export function MealTimeline({
   onSaveAsTemplate,
 }: MealTimelineProps) {
   const { isOnline, guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
   const guidelineG = calculateProteinPerMealGuideline(currentWeightKg);
+
+  const MEAL_LABELS: Record<MealType, string> = {
+    breakfast: locale === "ar" ? "الفطار" : "Breakfast",
+    lunch: locale === "ar" ? "الغدا" : "Lunch",
+    dinner: locale === "ar" ? "العشا" : "Dinner",
+    snack: locale === "ar" ? "سناكس وتصبيرة" : "Snacks & Other",
+  };
 
   const [deletedMeal, setDeletedMeal] = useState<{ id: string; name: string } | null>(null);
   const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -138,13 +142,29 @@ export function MealTimeline({
   const getConfidenceBadge = (c: ConfidenceTier) => {
     switch (c) {
       case "high":
-        return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-lime/10 text-primary-lime border border-primary-lime/20">Verified</span>;
+        return (
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-lime/10 text-primary-lime border border-primary-lime/20">
+            {locale === "ar" ? "مؤكد" : "Verified"}
+          </span>
+        );
       case "medium":
-        return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#7DD3FC]/10 text-[#7DD3FC] border border-[#7DD3FC]/20">Estimated</span>;
+        return (
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#7DD3FC]/10 text-[#7DD3FC] border border-[#7DD3FC]/20">
+            {locale === "ar" ? "تقديري" : "Estimated"}
+          </span>
+        );
       case "low":
-        return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-rank-gold/10 text-rank-gold border border-rank-gold/20">Approx</span>;
+        return (
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-rank-gold/10 text-rank-gold border border-rank-gold/20">
+            {locale === "ar" ? "تقريبي" : "Approx"}
+          </span>
+        );
       case "could_not_estimate":
-        return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/20">Manual</span>;
+        return (
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/20">
+            {locale === "ar" ? "يدوي" : "Manual"}
+          </span>
+        );
     }
   };
 
@@ -155,10 +175,12 @@ export function MealTimeline({
           <Utensils className="w-6 h-6" />
         </div>
         <div className="font-mono text-sm font-bold text-on-surface">
-          No Meals Logged Today
+          {locale === "ar" ? "مفيش وجبات متسجلة النهاردة" : "No Meals Logged Today"}
         </div>
         <p className="font-mono text-xs text-text-muted max-w-sm mx-auto">
-          Start your nutrition telemetry by describing a meal with AI or adding items manually.
+          {locale === "ar"
+            ? "ابدأ سجل تغذيتك بوصف وجبتك بالذكاء الاصطناعي أو ضيف الأصناف يدوي."
+            : "Start your nutrition telemetry by describing a meal with AI or adding items manually."}
         </p>
       </div>
     );
@@ -169,13 +191,15 @@ export function MealTimeline({
       {/* Undo Toast */}
       {deletedMeal && (
         <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
-          <span>Deleted &ldquo;{deletedMeal.name}&rdquo;</span>
+          <span>
+            {locale === "ar" ? `اتمسحت "${deletedMeal.name}"` : `Deleted "${deletedMeal.name}"`}
+          </span>
           <button
             onClick={handleUndo}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all"
           >
             <Undo2 className="w-3.5 h-3.5" />
-            <span>Undo</span>
+            <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
           </button>
         </div>
       )}
@@ -205,32 +229,42 @@ export function MealTimeline({
                 {/* Protein per meal guideline badge (Item 4: neutral, snacks unjudged) */}
                 {type === "snack" ? (
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-surface-container-high text-text-muted border border-border-subtle">
-                    {protEval.label}
+                    {locale === "ar" ? "وجبة خفيفة" : protEval.label}
                   </span>
                 ) : protEval.meetsGuideline ? (
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary-lime/10 text-primary-lime border border-primary-lime/20 flex items-center gap-1">
                     <Check className="w-2.5 h-2.5" />
-                    <span>Target met ({groupProt}g / {guidelineG}g)</span>
+                    <span>
+                      {locale === "ar"
+                        ? `الهدف اتحقق (${groupProt} جم / ${guidelineG} جم)`
+                        : `Target met (${groupProt}g / ${guidelineG}g)`}
+                    </span>
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded-full text-[10px] bg-surface-container-high text-text-muted border border-border-subtle">
-                    {groupProt}g / {guidelineG}g guideline
+                    {locale === "ar"
+                      ? `المستهدف (${groupProt} جم / ${guidelineG} جم)`
+                      : `${groupProt}g / ${guidelineG}g guideline`}
                   </span>
                 )}
               </div>
 
               <div className="flex items-center gap-2.5 text-xs">
-                <span className="font-bold text-on-surface">{groupCals} kcal</span>
-                <span className="text-primary-lime font-semibold">{groupProt}g Prot</span>
+                <span className="font-bold text-on-surface">
+                  {groupCals} {locale === "ar" ? "سعرة" : "kcal"}
+                </span>
+                <span className="text-primary-lime font-semibold">
+                  {groupProt} {locale === "ar" ? "جم بروتين" : "g Prot"}
+                </span>
 
                 {onSaveAsTemplate && (
                   <button
                     onClick={() => onSaveAsTemplate(type, groupMeals)}
                     className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-[10px] text-text-muted hover:text-on-surface transition-colors cursor-pointer"
-                    title="Save this meal as a reusable template"
+                    title={locale === "ar" ? "حفظ الوجبة كقالب متكرر" : "Save this meal as a reusable template"}
                   >
                     <BookmarkPlus className="w-3 h-3 text-secondary-cyan" />
-                    <span>Save</span>
+                    <span>{locale === "ar" ? "حفظ كقالب" : "Save"}</span>
                   </button>
                 )}
               </div>
@@ -239,9 +273,10 @@ export function MealTimeline({
             {/* Meal Items */}
             <div className="space-y-2">
               {groupMeals.map((meal) => {
-                const timeStr = new Date(meal.logged_at).toLocaleTimeString([], {
-                  hour: "2-digit",
+                const timeStr = new Date(meal.logged_at).toLocaleTimeString(locale === "ar" ? "ar-EG" : [], {
+                  hour: "numeric",
                   minute: "2-digit",
+                  hour12: true,
                 });
 
                 return (
@@ -262,18 +297,22 @@ export function MealTimeline({
 
                       <div className="flex items-center gap-3 text-[11px] text-text-muted">
                         <span>
-                          {meal.calories !== null ? `${meal.calories} kcal` : "No kcal"}
+                          {meal.calories !== null
+                            ? `${meal.calories} ${locale === "ar" ? "سعرة" : "kcal"}`
+                            : locale === "ar"
+                            ? "بدون سعرات"
+                            : "No kcal"}
                         </span>
                         <span className="text-primary-lime">
-                          {meal.protein_g}g P
+                          {meal.protein_g}{locale === "ar" ? " جم ب" : "g P"}
                         </span>
                         <span className="text-secondary-cyan">
-                          {meal.carbs_g}g C
+                          {meal.carbs_g}{locale === "ar" ? " جم ك" : "g C"}
                         </span>
                         <span className="text-rank-gold">
-                          {meal.fats_g}g F
+                          {meal.fats_g}{locale === "ar" ? " جم د" : "g F"}
                         </span>
-                        <span>at {timeStr}</span>
+                        <span>{locale === "ar" ? `الساعة ${timeStr}` : `at ${timeStr}`}</span>
                       </div>
                     </div>
 
@@ -302,7 +341,7 @@ export function MealTimeline({
                       <button
                         onClick={() => handleSoftDelete(meal)}
                         className="p-1.5 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-high transition-colors"
-                        title="Delete meal entry"
+                        title={locale === "ar" ? "مسح الوجبة" : "Delete meal entry"}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

@@ -15,6 +15,7 @@ import {
   Plus,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface WorkoutHistoryItem {
   id: string;
@@ -46,6 +47,7 @@ interface WorkoutHistoryProps {
 }
 
 export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
+  const { locale } = useI18n();
   const [workouts, setWorkouts] = useState<WorkoutHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -99,7 +101,10 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
   }, []);
 
   const handleDelete = async (workoutId: string) => {
-    if (!confirm("Are you sure you want to remove this workout log?")) return;
+    const confirmMsg = locale === "ar"
+      ? "متأكد إنك عاوز تحذف سجل التمرين ده؟"
+      : "Are you sure you want to remove this workout log?";
+    if (!confirm(confirmMsg)) return;
 
     try {
       const { error: delErr } = await supabase
@@ -108,7 +113,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
         .eq("id", workoutId);
 
       if (delErr) {
-        alert(`Failed to delete: ${delErr.message}`);
+        alert(locale === "ar" ? `فشل الحذف: ${delErr.message}` : `Failed to delete: ${delErr.message}`);
       } else {
         setWorkouts((prev) => prev.filter((w) => w.id !== workoutId));
       }
@@ -127,10 +132,12 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
           </div>
           <div>
             <h2 className="text-lg font-bold font-mono text-on-surface">
-              Session History & Volume
+              {locale === "ar" ? "سجل التمارين والحجم التدريبي" : "Session History & Volume"}
             </h2>
             <p className="text-xs text-on-surface-variant">
-              Chronological log of completed workouts, tonnage, and individual set telemetry
+              {locale === "ar"
+                ? "سجل زمني لجميع التمارين المنتهية، إجمالي الأوزان المرفوعة، وبيانات كل جولة"
+                : "Chronological log of completed workouts, tonnage, and individual set telemetry"}
             </p>
           </div>
         </div>
@@ -138,10 +145,10 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
         {onStartWorkoutClick && (
           <button
             onClick={onStartWorkoutClick}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-lime text-charcoal-dark font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-lime/90 shadow-[0_0_15px_rgba(198,255,61,0.2)] self-start sm:self-auto"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-lime/90 shadow-xs self-start sm:self-auto"
           >
             <Plus className="w-4 h-4" />
-            <span>New Session</span>
+            <span>{locale === "ar" ? "تمرين جديد" : "New Session"}</span>
           </button>
         )}
       </div>
@@ -156,7 +163,9 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
       {loading && (
         <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-secondary-cyan" />
-          <span className="text-xs font-mono">Loading workout telemetry...</span>
+          <span className="text-xs font-mono">
+            {locale === "ar" ? "جاري تحميل سجل التمارين..." : "Loading workout telemetry..."}
+          </span>
         </div>
       )}
 
@@ -168,19 +177,21 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
           </div>
           <div className="space-y-1">
             <h3 className="text-sm font-bold font-mono text-on-surface">
-              No Workouts Recorded Yet
+              {locale === "ar" ? "لسه مفيش تمارين متسجلة" : "No Workouts Recorded Yet"}
             </h3>
             <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
-              Your logged sessions and strength sets will appear here once saved.
+              {locale === "ar"
+                ? "تمارينك وجولات القوة هتظهر هنا فور حفظها."
+                : "Your logged sessions and strength sets will appear here once saved."}
             </p>
           </div>
           {onStartWorkoutClick && (
             <button
               onClick={onStartWorkoutClick}
-              className="px-4 py-2 rounded-xl bg-primary-lime text-charcoal-dark font-mono font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 transition-all cursor-pointer hover:bg-primary-lime/90 shadow-[0_0_15px_rgba(198,255,61,0.2)]"
+              className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 transition-all cursor-pointer hover:bg-primary-lime/90 shadow-xs"
             >
               <Plus className="w-4 h-4" />
-              <span>Start Workout Now</span>
+              <span>{locale === "ar" ? "ابدأ تمرينك دلوقتي" : "Start Workout Now"}</span>
             </button>
           )}
         </div>
@@ -192,15 +203,16 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
           {workouts.map((workout) => {
             const isExpanded = expandedWorkoutId === workout.id;
             const startDate = new Date(workout.started_at);
-            const formattedDate = startDate.toLocaleDateString(undefined, {
+            const formattedDate = startDate.toLocaleDateString(locale === "ar" ? "ar-EG" : undefined, {
               weekday: "short",
               month: "short",
               day: "numeric",
               year: "numeric",
             });
-            const formattedTime = startDate.toLocaleTimeString(undefined, {
-              hour: "2-digit",
+            const formattedTime = startDate.toLocaleTimeString(locale === "ar" ? "ar-EG" : undefined, {
+              hour: "numeric",
               minute: "2-digit",
+              hour12: true,
             });
 
             // Calculate metrics
@@ -237,7 +249,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
                       {workout.completed_at && (
                         <span className="flex items-center gap-1 text-[10px] font-mono text-status-success bg-status-success/10 px-2 py-0.5 rounded-md border border-status-success/30 font-bold">
                           <CheckCircle2 className="w-3 h-3" />
-                          <span>Finished</span>
+                          <span>{locale === "ar" ? "مكتمل" : "Finished"}</span>
                         </span>
                       )}
                     </div>
@@ -256,16 +268,20 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
 
                   <div className="flex items-center gap-3">
                     {/* Tonnage Badge */}
-                    <div className="bg-surface-container-high px-3 py-1.5 rounded-xl border border-border-subtle text-right">
-                      <span className="text-[10px] font-mono text-text-muted block">VOLUME</span>
+                    <div className="bg-surface-container-high px-3 py-1.5 rounded-xl border border-border-subtle text-end">
+                      <span className="text-[10px] font-mono text-text-muted block">
+                        {locale === "ar" ? "إجمالي الحجم" : "VOLUME"}
+                      </span>
                       <span className="text-xs font-bold font-mono text-primary-lime">
-                        {Math.round(totalTonnage).toLocaleString()} kg
+                        {Math.round(totalTonnage).toLocaleString()} {locale === "ar" ? "كجم" : "kg"}
                       </span>
                     </div>
 
                     {/* Sets Count */}
-                    <div className="bg-surface-container-high px-3 py-1.5 rounded-xl border border-border-subtle text-right">
-                      <span className="text-[10px] font-mono text-text-muted block">SETS</span>
+                    <div className="bg-surface-container-high px-3 py-1.5 rounded-xl border border-border-subtle text-end">
+                      <span className="text-[10px] font-mono text-text-muted block">
+                        {locale === "ar" ? "الجولات" : "SETS"}
+                      </span>
                       <span className="text-xs font-bold font-mono text-secondary-cyan">
                         {totalCompletedSets}
                       </span>
@@ -278,7 +294,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
                         handleDelete(workout.id);
                       }}
                       className="w-8 h-8 rounded-lg hover:bg-surface-container-highest text-text-muted hover:text-crimson-alert flex items-center justify-center transition-colors cursor-pointer"
-                      title="Delete workout"
+                      title={locale === "ar" ? "حذف التمرين" : "Delete workout"}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -308,7 +324,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
                               #{idx + 1}
                             </span>
                             <span className="text-sm font-bold font-mono text-on-surface">
-                              {we.exercises?.name || "Exercise"}
+                              {we.exercises?.name || (locale === "ar" ? "تمرين" : "Exercise")}
                             </span>
                           </div>
                           <span className="text-[11px] font-mono text-text-muted capitalize">
@@ -318,44 +334,46 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
 
                         {/* Sets table */}
                         <div className="overflow-x-auto">
-                          <table className="w-full text-left text-xs font-mono">
+                          <table className="w-full text-start text-xs font-mono">
                             <thead>
                               <tr className="text-text-muted border-b border-border-subtle/30 pb-1">
-                                <th className="py-1 px-2 w-16">SET</th>
-                                <th className="py-1 px-2">WEIGHT</th>
-                                <th className="py-1 px-2">REPS</th>
-                                <th className="py-1 px-2">EST. 1RM</th>
-                                <th className="py-1 px-2 text-right">STATUS</th>
+                                <th className="py-1 px-2 w-16">{locale === "ar" ? "الجولة" : "SET"}</th>
+                                <th className="py-1 px-2">{locale === "ar" ? "الوزن" : "WEIGHT"}</th>
+                                <th className="py-1 px-2">{locale === "ar" ? "العدات" : "REPS"}</th>
+                                <th className="py-1 px-2">{locale === "ar" ? "التقديري 1RM" : "EST. 1RM"}</th>
+                                <th className="py-1 px-2 text-end">{locale === "ar" ? "الحالة" : "STATUS"}</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-border-subtle/20">
                               {(we.workout_sets || []).map((s) => (
                                 <tr key={s.id} className="text-on-surface">
                                   <td className="py-2 px-2 text-text-muted font-bold">
-                                    Set {s.set_number}
+                                    {locale === "ar" ? `جولة ${s.set_number}` : `Set ${s.set_number}`}
                                   </td>
                                   <td className="py-2 px-2 font-bold text-on-surface">
-                                    {s.weight_kg} kg
+                                    {s.weight_kg} {locale === "ar" ? "كجم" : "kg"}
                                   </td>
                                   <td className="py-2 px-2 font-bold text-on-surface">
-                                    {s.reps} reps
+                                    {s.reps} {locale === "ar" ? "عدة" : "reps"}
                                   </td>
                                   <td className="py-2 px-2">
                                     {s.e1rm_kg ? (
                                       <span className="text-primary-lime font-bold">
-                                        {s.e1rm_kg} kg
+                                        {s.e1rm_kg} {locale === "ar" ? "كجم" : "kg"}
                                       </span>
                                     ) : (
                                       <span className="text-text-muted">-</span>
                                     )}
                                   </td>
-                                  <td className="py-2 px-2 text-right">
+                                  <td className="py-2 px-2 text-end">
                                     {s.is_completed ? (
                                       <span className="text-status-success font-semibold">
-                                        ✓ Completed
+                                        ✓ {locale === "ar" ? "تم بنجاح" : "Completed"}
                                       </span>
                                     ) : (
-                                      <span className="text-text-muted">Skipped</span>
+                                      <span className="text-text-muted">
+                                        {locale === "ar" ? "تم التخطي" : "Skipped"}
+                                      </span>
                                     )}
                                   </td>
                                 </tr>

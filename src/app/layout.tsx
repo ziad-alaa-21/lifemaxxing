@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { PWAProvider } from "@/components/pwa/PWAProvider";
+import { I18nProvider } from "@/lib/i18n/I18nContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -54,7 +55,9 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full bg-surface text-on-surface flex flex-col font-sans selection:bg-primary-lime/20 selection:text-primary-lime">
-        <PWAProvider>{children}</PWAProvider>
+        <I18nProvider>
+          <PWAProvider>{children}</PWAProvider>
+        </I18nProvider>
       </body>
     </html>
   );

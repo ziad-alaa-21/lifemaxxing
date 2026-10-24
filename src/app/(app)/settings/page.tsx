@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { SettingsView } from "@/components/views/SettingsView";
 import { redirect } from "next/navigation";
+import { getDeletionReauthMethod, isGoogleOnlyUser } from "@/lib/authConfig";
 
 export const metadata = {
   title: "Settings • Life",
@@ -18,6 +19,11 @@ export default async function SettingsPage() {
   }
 
   return (
-    <SettingsView userEmail={user.email ?? null} userId={user.id} />
+    <SettingsView
+      userEmail={user.email ?? ""}
+      userId={user.id}
+      isGoogleOnly={isGoogleOnlyUser(user)}
+      reauthMethod={getDeletionReauthMethod(user)}
+    />
   );
 }

@@ -2,6 +2,20 @@
  * Stage 2: User Module Toggles & First-Time Onboarding
  * Deterministic types, module metadata, starter pack,
  * idempotent upsert on first sign-in, and Egyptian colloquial Arabic register.
+ *
+ * Aligned with Migration 017:
+ * The 11 modular toggles across Body, Mind, and School:
+ * - module_workouts (Body: Workouts & Strength)
+ * - module_nutrition (Body: Nutrition & Fuel)
+ * - module_sleep (Body: Sleep & Circadian)
+ * - module_weight (Body: Weight Tracking)
+ * - module_focus (Mind: Focus Timer)
+ * - module_math (Mind: Mental Math Arena)
+ * - module_checkins (Mind: Mood & Energy Check-in)
+ * - module_discipline (Mind: Discipline Commitments)
+ * - module_reading (Mind: Reading & Book Log)
+ * - module_screentime (Mind: Screen Time Telemetry)
+ * - module_school (School: Academic Dashboard & Timetable)
  */
 
 import { SupabaseClient } from "@supabase/supabase-js";
@@ -11,29 +25,28 @@ export type ModuleKey =
   | "module_nutrition"
   | "module_sleep"
   | "module_weight"
-  | "module_mind_focus"
-  | "module_mind_discipline"
-  | "module_mind_reading"
-  | "module_mind_screentime"
-  | "module_school_timetable"
-  | "module_school_topics"
-  | "module_school_mistakes";
+  | "module_focus"
+  | "module_math"
+  | "module_checkins"
+  | "module_discipline"
+  | "module_reading"
+  | "module_screentime"
+  | "module_school";
 
 export interface UserModulesRecord {
-  id?: string;
   user_id: string;
   has_completed_onboarding: boolean;
   module_workouts: boolean | null;
   module_nutrition: boolean | null;
   module_sleep: boolean | null;
   module_weight: boolean | null;
-  module_mind_focus: boolean | null;
-  module_mind_discipline: boolean | null;
-  module_mind_reading: boolean | null;
-  module_mind_screentime: boolean | null;
-  module_school_timetable: boolean | null;
-  module_school_topics: boolean | null;
-  module_school_mistakes: boolean | null;
+  module_focus: boolean | null;
+  module_math: boolean | null;
+  module_checkins: boolean | null;
+  module_discipline: boolean | null;
+  module_reading: boolean | null;
+  module_screentime: boolean | null;
+  module_school: boolean | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -53,19 +66,19 @@ export const ALL_MODULE_KEYS: ModuleKey[] = [
   "module_nutrition",
   "module_sleep",
   "module_weight",
-  "module_mind_focus",
-  "module_mind_discipline",
-  "module_mind_reading",
-  "module_mind_screentime",
-  "module_school_timetable",
-  "module_school_topics",
-  "module_school_mistakes",
+  "module_focus",
+  "module_math",
+  "module_checkins",
+  "module_discipline",
+  "module_reading",
+  "module_screentime",
+  "module_school",
 ];
 
 export const STARTER_PACK_MODULES: ModuleKey[] = [
   "module_workouts",
   "module_nutrition",
-  "module_mind_focus",
+  "module_focus",
 ];
 
 export const MODULE_DEFINITIONS: Record<ModuleKey, ModuleDefinition> = {
@@ -73,40 +86,40 @@ export const MODULE_DEFINITIONS: Record<ModuleKey, ModuleDefinition> = {
     key: "module_workouts",
     pillar: "body",
     labelEn: "Workouts & Strength",
-    labelAr: "التمارين والقوة",
-    descriptionEn: "Log sets, track exercises, and build progressive overload.",
-    descriptionAr: "سجل مجاميعك، تابع التمارين، وطوّر أوزانك أول بأول.",
+    labelAr: "التمارين والحديد",
+    descriptionEn: "Log sets, reps, progressive overload, and RPE.",
+    descriptionAr: "سجل مجاميعك وأوزانك وزيادة الحمل التدريبي خطوة بخطوة.",
     icon: "Dumbbell",
   },
   module_nutrition: {
     key: "module_nutrition",
     pillar: "body",
-    labelEn: "Nutrition & Hydration",
-    labelAr: "الأكل وشرب المية",
-    descriptionEn: "Track meals, calories, protein, and daily water intake.",
-    descriptionAr: "تابع وجباتك، سعراتك، البروتين، وشرب المية في يومك.",
+    labelEn: "Nutrition & Fuel",
+    labelAr: "الأكل والتغذية",
+    descriptionEn: "Calories, macros, water, and meal logging.",
+    descriptionAr: "حساب السعرات والماكروز والبروتين ومتابعة وجباتك.",
     icon: "Utensils",
   },
   module_sleep: {
     key: "module_sleep",
     pillar: "body",
-    labelEn: "Sleep & Circadian Rhythm",
-    labelAr: "النوم والساعة البيولوجية",
-    descriptionEn: "Track sleep duration, bedtime consistency, and wake-up target.",
-    descriptionAr: "سجل ساعات نومك، التزامك بمواعيد النوم، وصحيانك في ميعادك.",
+    labelEn: "Sleep & Circadian",
+    labelAr: "النوم والراحة",
+    descriptionEn: "Bedtime consistency, sleep debt, and recovery.",
+    descriptionAr: "ظبط ميعاد نومك وساعات راحتك وجودة استشفائك.",
     icon: "Moon",
   },
   module_weight: {
     key: "module_weight",
     pillar: "body",
-    labelEn: "Bodyweight Trends",
-    labelAr: "متابعة وزن الجسم",
-    descriptionEn: "Weigh-in logs with moving averages and rate of change.",
-    descriptionAr: "سجل وزنك وشوف منحنى التغير والوزن المتوسط بهدوء.",
+    labelEn: "Weight Tracking",
+    labelAr: "متابعة الوزن",
+    descriptionEn: "Morning weigh-ins, moving average, and body trend.",
+    descriptionAr: "سجل وزنك كل يوم وشوف اتجاه التغيير بدون وسوسة.",
     icon: "Scale",
   },
-  module_mind_focus: {
-    key: "module_mind_focus",
+  module_focus: {
+    key: "module_focus",
     pillar: "mind",
     labelEn: "Focus Timer",
     labelAr: "مؤقت التركيز",
@@ -114,17 +127,35 @@ export const MODULE_DEFINITIONS: Record<ModuleKey, ModuleDefinition> = {
     descriptionAr: "جلسات تركيز بدون تشتيت مع فترات راحة مظبوطة.",
     icon: "Timer",
   },
-  module_mind_discipline: {
-    key: "module_mind_discipline",
+  module_math: {
+    key: "module_math",
+    pillar: "mind",
+    labelEn: "Mental Math Arena",
+    labelAr: "تدريب الحساب الذهني",
+    descriptionEn: "Sprint and precision mental arithmetic training.",
+    descriptionAr: "تمارين سرعة ودقة للحساب الذهني لتنشيط العقل.",
+    icon: "Zap",
+  },
+  module_checkins: {
+    key: "module_checkins",
+    pillar: "mind",
+    labelEn: "Mood & Energy Check-in",
+    labelAr: "تسجيل المزاج والطاقة",
+    descriptionEn: "Calibrate daily mood, energy, and cognitive focus.",
+    descriptionAr: "سجل حالتك الذهنية وطاقتك اليومية بصدق وسرعة.",
+    icon: "Activity",
+  },
+  module_discipline: {
+    key: "module_discipline",
     pillar: "mind",
     labelEn: "Discipline & Daily Habits",
     labelAr: "الالتزام والعادات اليومية",
-    descriptionEn: "Daily non-negotiable habits and mood check-ins.",
-    descriptionAr: "عاداتك الأساسية اللي مفيهاش فصال وتسجيل حالتك اليومية.",
+    descriptionEn: "Daily non-negotiable habits and commitments.",
+    descriptionAr: "عاداتك الأساسية اللي مفيهاش فصال يومياً.",
     icon: "CheckCircle2",
   },
-  module_mind_reading: {
-    key: "module_mind_reading",
+  module_reading: {
+    key: "module_reading",
     pillar: "mind",
     labelEn: "Reading & Book Log",
     labelAr: "القراءة والكتب",
@@ -132,8 +163,8 @@ export const MODULE_DEFINITIONS: Record<ModuleKey, ModuleDefinition> = {
     descriptionAr: "تابع الصفحات اللي قريتها والكتب اللي شغال فيها دلوقتي.",
     icon: "BookOpen",
   },
-  module_mind_screentime: {
-    key: "module_mind_screentime",
+  module_screentime: {
+    key: "module_screentime",
     pillar: "mind",
     labelEn: "Screen Time Control",
     labelAr: "وقت الشاشات والموبايل",
@@ -141,32 +172,14 @@ export const MODULE_DEFINITIONS: Record<ModuleKey, ModuleDefinition> = {
     descriptionAr: "سجل استخدامك للشاشة وحافظ على وقت هدوء قبل النوم.",
     icon: "Smartphone",
   },
-  module_school_timetable: {
-    key: "module_school_timetable",
+  module_school: {
+    key: "module_school",
     pillar: "school",
-    labelEn: "Class Schedule & Timetable",
-    labelAr: "جدول الحصص والمحاضرات",
-    descriptionEn: "Weekly recurring schedule and class timetable grid.",
-    descriptionAr: "جدولك الأسبوعي ومواعيد حصصك ومحاضراتك منظمة.",
-    icon: "Calendar",
-  },
-  module_school_topics: {
-    key: "module_school_topics",
-    pillar: "school",
-    labelEn: "Topics & Spaced Revision",
-    labelAr: "المواضيع والمراجعة الذكية",
-    descriptionEn: "Subject topics with spaced repetition intervals.",
-    descriptionAr: "مواضيع المواد ومواعيد مراجعتها على فترات متباعدة.",
-    icon: "ListChecks",
-  },
-  module_school_mistakes: {
-    key: "module_school_mistakes",
-    pillar: "school",
-    labelEn: "Mistakes Notebook",
-    labelAr: "دفتر الأخطاء",
-    descriptionEn: "Log exam and homework mistakes, analyze causes, and redo them.",
-    descriptionAr: "سجل الغلطات اللي وقعت فيها في الامتحانات وحلها تاني عشان تثبت.",
-    icon: "BookX",
+    labelEn: "School & Academic Hub",
+    labelAr: "الدراسة والمذاكرة",
+    descriptionEn: "Class schedule, exams, study targets, and subject revision.",
+    descriptionAr: "جدول الحصص والامتحانات والمراجعات ومتابعة المذاكرة.",
+    icon: "GraduationCap",
   },
 };
 
@@ -200,13 +213,13 @@ export async function ensureUserModules(
       module_nutrition: true,
       module_sleep: true,
       module_weight: true,
-      module_mind_focus: true,
-      module_mind_discipline: true,
-      module_mind_reading: true,
-      module_mind_screentime: true,
-      module_school_timetable: true,
-      module_school_topics: true,
-      module_school_mistakes: true,
+      module_focus: true,
+      module_math: true,
+      module_checkins: true,
+      module_discipline: true,
+      module_reading: true,
+      module_screentime: true,
+      module_school: true,
     };
   }
 
@@ -243,19 +256,19 @@ export async function ensureUserModules(
     module_nutrition: null,
     module_sleep: null,
     module_weight: null,
-    module_mind_focus: null,
-    module_mind_discipline: null,
-    module_mind_reading: null,
-    module_mind_screentime: null,
-    module_school_timetable: null,
-    module_school_topics: null,
-    module_school_mistakes: null,
+    module_focus: null,
+    module_math: null,
+    module_checkins: null,
+    module_discipline: null,
+    module_reading: null,
+    module_screentime: null,
+    module_school: null,
   };
 }
 
 /**
  * Complete Onboarding:
- * Explicitly sets all 11 columns to true or false (no NULLs)
+ * Explicitly sets all 7 columns to true or false (no NULLs)
  * and sets has_completed_onboarding = true.
  * Enforces the at-least-one-true constraint before sending.
  */
@@ -371,17 +384,15 @@ export function isPillarActive(
       );
     case "mind":
       return (
-        modules.module_mind_focus === true ||
-        modules.module_mind_discipline === true ||
-        modules.module_mind_reading === true ||
-        modules.module_mind_screentime === true
+        modules.module_focus === true ||
+        modules.module_math === true ||
+        modules.module_checkins === true ||
+        modules.module_discipline === true ||
+        modules.module_reading === true ||
+        modules.module_screentime === true
       );
     case "school":
-      return (
-        modules.module_school_timetable === true ||
-        modules.module_school_topics === true ||
-        modules.module_school_mistakes === true
-      );
+      return modules.module_school === true;
     default:
       return false;
   }

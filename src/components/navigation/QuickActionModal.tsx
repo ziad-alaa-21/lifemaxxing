@@ -232,40 +232,36 @@ export function QuickActionModal({
         {/* Short List of Quick Actions (Filtered by active modules) */}
         <div className="grid grid-cols-2 gap-2.5">
           {/* Action 1: Water */}
-          {isModuleActive("module_nutrition") && (
-            <button
-              onClick={handleLogWater}
-              className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-secondary-cyan/15 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan mb-2">
-                <Droplets className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-semibold text-on-surface group-hover:text-secondary-cyan transition-colors">
-                {dict.quickAction.logWater}
-              </div>
-              <div className="text-[10px] font-mono text-text-muted mt-0.5">
-                +{waterIncrement} {locale === "ar" ? "مل (من الإعدادات)" : "ml (from settings)"}
-              </div>
-            </button>
-          )}
+          <button
+            onClick={handleLogWater}
+            className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-secondary-cyan/15 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan mb-2">
+              <Droplets className="w-4 h-4" />
+            </div>
+            <div className="text-xs font-semibold text-on-surface group-hover:text-secondary-cyan transition-colors">
+              {dict.quickAction.logWater}
+            </div>
+            <div className="text-[10px] font-mono text-text-muted mt-0.5">
+              +{waterIncrement} {locale === "ar" ? "مل (من الإعدادات)" : "ml (from settings)"}
+            </div>
+          </button>
 
           {/* Action 2: Caffeine */}
-          {isModuleActive("module_nutrition") && (
-            <button
-              onClick={handleLogCaffeine}
-              className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-2">
-                <Coffee className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-semibold text-on-surface group-hover:text-amber-400 transition-colors">
-                {dict.quickAction.logCaffeine}
-              </div>
-              <div className="text-[10px] font-mono text-text-muted mt-0.5">
-                +{caffeineIncrement} {locale === "ar" ? "مجم (من الإعدادات)" : "mg (from settings)"}
-              </div>
-            </button>
-          )}
+          <button
+            onClick={handleLogCaffeine}
+            className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-2">
+              <Coffee className="w-4 h-4" />
+            </div>
+            <div className="text-xs font-semibold text-on-surface group-hover:text-amber-400 transition-colors">
+              {dict.quickAction.logCaffeine}
+            </div>
+            <div className="text-[10px] font-mono text-text-muted mt-0.5">
+              +{caffeineIncrement} {locale === "ar" ? "مجم (من الإعدادات)" : "mg (from settings)"}
+            </div>
+          </button>
 
           {/* Action 3: Weight */}
           {isModuleActive("module_weight") && (
@@ -286,7 +282,7 @@ export function QuickActionModal({
           )}
 
           {/* Action 4: Focus Timer */}
-          {isModuleActive("module_mind_focus") && (
+          {isModuleActive("module_focus") && (
             <button
               onClick={() => {
                 router.push("/mind?tab=focus");
@@ -307,7 +303,7 @@ export function QuickActionModal({
           )}
 
           {/* Action 5: Check-in */}
-          {isModuleActive("module_mind_discipline") && (
+          {isModuleActive("module_checkins") && (
             <button
               onClick={() => setIsCheckinOpen(true)}
               className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
@@ -346,7 +342,7 @@ export function QuickActionModal({
           )}
 
           {/* Action 7: Deadline */}
-          {(isModuleActive("module_school_timetable") || isModuleActive("module_school_topics")) && (
+          {isModuleActive("module_school") && (
             <button
               onClick={() => {
                 router.push("/school?tab=plan");

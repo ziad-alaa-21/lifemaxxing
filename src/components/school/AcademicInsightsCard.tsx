@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AcademicInsightItem } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface AcademicInsightsCardProps {
   insights: AcademicInsightItem[];
@@ -12,14 +13,19 @@ export function AcademicInsightsCard({
   insights,
   onNavigateTab,
 }: AcademicInsightsCardProps) {
+  const { locale } = useI18n();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   if (insights.length === 0) {
     return (
       <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm">
-        <h3 className="text-sm font-bold text-on-surface mb-1">Academic Insights</h3>
+        <h3 className="text-sm font-bold text-on-surface mb-1">
+          {locale === "ar" ? "رؤى وملاحظات أكاديمية" : "Academic Insights"}
+        </h3>
         <p className="text-xs text-text-muted">
-          All study patterns and assessments are balanced. Insights will appear as coursework progresses.
+          {locale === "ar"
+            ? "كل أنماط المذاكرة والتقييمات متوازنة حالياً. الرؤى والتوجيهات هتبان تلقائياً مع تقدم المنهج."
+            : "All study patterns and assessments are balanced. Insights will appear as coursework progresses."}
         </p>
       </div>
     );
@@ -29,13 +35,17 @@ export function AcademicInsightsCard({
     <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm space-y-3">
       <div className="flex items-center justify-between pb-1 border-b border-border-subtle/50">
         <div>
-          <h3 className="text-sm font-bold text-on-surface">Academic Observations</h3>
+          <h3 className="text-sm font-bold text-on-surface">
+            {locale === "ar" ? "ملاحظات وتوجيهات دراسية" : "Academic Observations"}
+          </h3>
           <p className="text-xs text-text-muted">
-            Telemetry-driven suggestions based on your logged sessions and topics
+            {locale === "ar"
+              ? "اقتراحات مبنية على بيانات جلسات المذاكرة ومفاهيم المنهج"
+              : "Telemetry-driven suggestions based on your logged sessions and topics"}
           </p>
         </div>
         <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-amber-300 border border-border-subtle">
-          {insights.length} note{insights.length === 1 ? "" : "s"}
+          {locale === "ar" ? `${insights.length} ملاحظة` : `${insights.length} note${insights.length === 1 ? "" : "s"}`}
         </span>
       </div>
 
@@ -66,15 +76,21 @@ export function AcademicInsightsCard({
                 <button
                   type="button"
                   onClick={() => setExpandedId(isExpanded ? null : item.id)}
-                  className="text-[11px] text-text-muted hover:text-on-surface hover:underline"
+                  className="text-[11px] text-text-muted hover:text-on-surface hover:underline cursor-pointer"
                 >
-                  {isExpanded ? "Hide details" : "Why am I seeing this?"}
+                  {isExpanded
+                    ? locale === "ar"
+                      ? "إخفاء التفاصيل"
+                      : "Hide details"
+                    : locale === "ar"
+                    ? "ليه ظهرت لي الملاحظة دي؟"
+                    : "Why am I seeing this?"}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => onNavigateTab(item.actionTab)}
-                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 transition-colors"
+                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 transition-colors cursor-pointer"
                 >
                   {item.actionText} →
                 </button>
@@ -82,7 +98,9 @@ export function AcademicInsightsCard({
 
               {isExpanded && (
                 <div className="p-2.5 rounded-lg bg-surface-container border border-border-subtle text-[11px] text-text-muted">
-                  <span className="font-semibold text-on-surface">Data rationale:</span>{" "}
+                  <span className="font-semibold text-on-surface">
+                    {locale === "ar" ? "تحليل البيانات:" : "Data rationale:"}
+                  </span>{" "}
                   {item.whySeeingThis}
                 </div>
               )}

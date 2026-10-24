@@ -30,6 +30,7 @@ import {
   MathSessionSummary,
 } from "@/lib/mathTrainer";
 import { feedbackManager } from "@/lib/telemetryFeedback";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface MathTrainerModalProps {
   isOpen: boolean;
@@ -42,6 +43,7 @@ export function MathTrainerModal({
   onClose,
   onSessionSaved,
 }: MathTrainerModalProps) {
+  const { locale } = useI18n();
   // Config state
   const [mode, setMode] = useState<MathMode>("sprint");
   const [operation, setOperation] = useState<MathOperation>("mixed");
@@ -58,6 +60,8 @@ export function MathTrainerModal({
   const [personalBest, setPersonalBest] = useState<PersonalBestRecord | null>(null);
   const [isNewPB, setIsNewPB] = useState<boolean>(false);
   const [savingSession, setSavingSession] = useState<boolean>(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [finalSummary, setFinalSummary] = useState<MathSessionSummary | null>(null);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(feedbackManager.soundEnabled);
 
@@ -180,6 +184,8 @@ export function MathTrainerModal({
 
   const saveToServer = async (summary: MathSessionSummary, sessionAttempts: MathAttempt[]) => {
     setSavingSession(true);
+    setSaveStatus("saving");
+    setSaveError(null);
     try {
       const res = await fetch("/api/mind/math/submit", {
         method: "POST",
@@ -195,13 +201,19 @@ export function MathTrainerModal({
       });
 
       if (res.ok) {
+        setSaveStatus("saved");
         if (onSessionSaved) onSessionSaved(summary);
       } else {
-        const data = await res.json();
-        console.warn("Server math submit notice:", data.error);
+        const data = await res.json().catch(() => ({ error: "Server rejected session" }));
+        console.error("Server math submit failed:", data.error);
+        setSaveStatus("error");
+        setSaveError(data.error || `HTTP ${res.status}: Failed to save math session`);
       }
     } catch (err) {
-      console.warn("Network error saving math session:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("Network error saving math session:", msg);
+      setSaveStatus("error");
+      setSaveError(msg);
     } finally {
       setSavingSession(false);
     }
@@ -294,12 +306,12 @@ export function MathTrainerModal({
             <div className="w-9 h-9 rounded-xl bg-primary-lime/10 border border-primary-lime/30 flex items-center justify-center text-primary-lime">
               <Brain className="w-5 h-5" />
             </div>
-            <div>
+            <div className="text-start">
               <h2 className="text-base font-bold font-mono text-on-surface">
-                Mental Math Trainer
+                {locale === "ar" ? "تدريب الحساب الذهني" : "Mental Math Trainer"}
               </h2>
               <p className="text-[11px] font-mono text-on-surface-variant">
-                Cognitive speed & precision
+                {locale === "ar" ? "السرعة والتركيز الحسابي" : "Cognitive speed & precision"}
               </p>
             </div>
           </div>
@@ -307,14 +319,15 @@ export function MathTrainerModal({
             <button
               onClick={toggleSound}
               className="p-2 rounded-xl text-text-muted hover:text-on-surface bg-surface-container-high border border-border-subtle cursor-pointer transition-colors"
-              title={soundEnabled ? "Mute audio" : "Enable audio"}
+              title={soundEnabled ? (locale === "ar" ? "كتم الصوت" : "Mute audio") : (locale === "ar" ? "تشغيل الصوت" : "Enable audio")}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
             <button
               onClick={() => {
                 if (gameState === "running") {
-                  if (confirm("Quit current session? Unfinished sessions are not saved.")) {
+                  const confirmMsg = locale === "ar" ? "عايز تخرج؟ الجلسة اللي مش كاملة مش هتتسجل." : "Quit current session? Unfinished sessions are not saved.";
+                  if (confirm(confirmMsg)) {
                     if (timerRef.current) clearInterval(timerRef.current);
                     setGameState("idle");
                     onClose();
@@ -337,41 +350,41 @@ export function MathTrainerModal({
             <div className="space-y-4">
               {/* Mode Selector */}
               <div>
-                <label className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-1.5 block">
-                  Training Mode
+                <label className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-1.5 block text-start">
+                  {locale === "ar" ? "نوع التدريب" : "Training Mode"}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setMode("sprint")}
-                    className={`p-3 rounded-2xl border text-left cursor-pointer transition-all ${
+                    className={`p-3 rounded-2xl border text-start cursor-pointer transition-all ${
                       mode === "sprint"
                         ? "bg-primary-lime/10 border-primary-lime/40 text-on-surface"
                         : "bg-surface-container-low border-border-subtle text-text-muted hover:border-border-default"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold font-mono">60s Sprint</span>
+                      <span className="text-xs font-bold font-mono">{locale === "ar" ? "سباق 60 ثانية" : "60s Sprint"}</span>
                       <Zap className="w-3.5 h-3.5 text-primary-lime" />
                     </div>
                     <p className="text-[10px] text-on-surface-variant">
-                      Score = correct answers in 60s
+                      {locale === "ar" ? "النتيجة = الإجابات الصح في دقيقة" : "Score = correct answers in 60s"}
                     </p>
                   </button>
 
                   <button
                     onClick={() => setMode("precision")}
-                    className={`p-3 rounded-2xl border text-left cursor-pointer transition-all ${
+                    className={`p-3 rounded-2xl border text-start cursor-pointer transition-all ${
                       mode === "precision"
                         ? "bg-primary-lime/10 border-primary-lime/40 text-on-surface"
                         : "bg-surface-container-low border-border-subtle text-text-muted hover:border-border-default"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold font-mono">20 Precision</span>
+                      <span className="text-xs font-bold font-mono">{locale === "ar" ? "20 سؤال تركيز" : "20 Precision"}</span>
                       <Target className="w-3.5 h-3.5 text-sky-400" />
                     </div>
                     <p className="text-[10px] text-on-surface-variant">
-                      Accuracy % and total time
+                      {locale === "ar" ? "نسبة الدقة وإجمالي الوقت" : "Accuracy % and total time"}
                     </p>
                   </button>
                 </div>
@@ -379,8 +392,8 @@ export function MathTrainerModal({
 
               {/* Operation Selector */}
               <div>
-                <label className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-1.5 block">
-                  Operation
+                <label className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-1.5 block text-start">
+                  {locale === "ar" ? "العمليات الحسابية" : "Operation"}
                 </label>
                 <div className="grid grid-cols-5 gap-1.5">
                   {(
@@ -389,7 +402,7 @@ export function MathTrainerModal({
                       { id: "sub", label: "-" },
                       { id: "mul", label: "×" },
                       { id: "div", label: "÷" },
-                      { id: "mixed", label: "Mix" },
+                      { id: "mixed", label: locale === "ar" ? "ميكس" : "Mix" },
                     ] as const
                   ).map((op) => (
                     <button
@@ -397,7 +410,7 @@ export function MathTrainerModal({
                       onClick={() => setOperation(op.id)}
                       className={`py-2 rounded-xl border text-center font-mono font-bold text-xs cursor-pointer transition-all ${
                         operation === op.id
-                          ? "bg-primary-lime text-surface border-primary-lime"
+                          ? "bg-primary-lime text-on-primary border-primary-lime"
                           : "bg-surface-container-low border-border-subtle text-text-muted hover:text-on-surface"
                       }`}
                     >
@@ -409,23 +422,30 @@ export function MathTrainerModal({
 
               {/* Difficulty Selector */}
               <div>
-                <label className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-1.5 block">
-                  Difficulty Level
+                <label className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-1.5 block text-start">
+                  {locale === "ar" ? "مستوى الصعوبة" : "Difficulty Level"}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {(["easy", "medium", "hard"] as const).map((diff) => (
-                    <button
-                      key={diff}
-                      onClick={() => setDifficulty(diff)}
-                      className={`py-2 rounded-xl border capitalize font-mono text-xs font-medium cursor-pointer transition-all ${
-                        difficulty === diff
-                          ? "bg-primary-lime/10 border-primary-lime/40 text-primary-lime"
-                          : "bg-surface-container-low border-border-subtle text-text-muted hover:text-on-surface"
-                      }`}
-                    >
-                      {diff}
-                    </button>
-                  ))}
+                  {(["easy", "medium", "hard"] as const).map((diff) => {
+                    const diffLabels = {
+                      easy: locale === "ar" ? "سهل" : "easy",
+                      medium: locale === "ar" ? "متوسط" : "medium",
+                      hard: locale === "ar" ? "صعب" : "hard",
+                    };
+                    return (
+                      <button
+                        key={diff}
+                        onClick={() => setDifficulty(diff)}
+                        className={`py-2 rounded-xl border capitalize font-mono text-xs font-medium cursor-pointer transition-all ${
+                          difficulty === diff
+                            ? "bg-primary-lime/10 border-primary-lime/40 text-primary-lime"
+                            : "bg-surface-container-low border-border-subtle text-text-muted hover:text-on-surface"
+                        }`}
+                      >
+                        {diffLabels[diff]}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -433,17 +453,17 @@ export function MathTrainerModal({
               <div className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <Trophy className="w-4 h-4 text-amber-core" />
-                  <span className="text-xs font-mono text-on-surface-variant">Personal Best</span>
+                  <span className="text-xs font-mono text-on-surface-variant">{locale === "ar" ? "أحسن رقم قياسي" : "Personal Best"}</span>
                 </div>
                 <div className="text-xs font-mono font-bold text-primary-lime">
                   {personalBest ? (
                     mode === "sprint" ? (
-                      `${personalBest.bestScore} correct`
+                      `${personalBest.bestScore} ${locale === "ar" ? "صح" : "correct"}`
                     ) : (
-                      `${personalBest.bestAccuracyPct}% (${personalBest.bestDurationSeconds}s)`
+                      `${personalBest.bestAccuracyPct}% (${personalBest.bestDurationSeconds} ${locale === "ar" ? "ثانية" : "s"})`
                     )
                   ) : (
-                    <span className="text-text-muted font-normal">None recorded</span>
+                    <span className="text-text-muted font-normal">{locale === "ar" ? "مفيش أرقام مسجلة لسه" : "None recorded"}</span>
                   )}
                 </div>
               </div>
@@ -451,10 +471,10 @@ export function MathTrainerModal({
               {/* Start Button */}
               <button
                 onClick={startSession}
-                className="w-full py-3.5 rounded-2xl bg-primary-lime text-surface font-mono font-bold text-sm uppercase tracking-wider hover:bg-primary-lime-dim shadow-[0_0_20px_rgba(198,255,61,0.25)] flex items-center justify-center gap-2 cursor-pointer transition-all"
+                className="w-full py-3.5 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-sm uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all"
               >
                 <Play className="w-4 h-4 fill-surface" />
-                <span>Start Training</span>
+                <span>{locale === "ar" ? "ابدأ التدريب الذهني" : "Start Training"}</span>
               </button>
             </div>
           )}
@@ -467,16 +487,16 @@ export function MathTrainerModal({
                 <div className="flex items-center gap-1.5 text-text-muted">
                   <Clock className="w-3.5 h-3.5" />
                   {mode === "sprint" ? (
-                    <span className="text-amber-core font-bold">{sprintRemainingSeconds}s remaining</span>
+                    <span className="text-amber-core font-bold">{locale === "ar" ? `باقي ${sprintRemainingSeconds} ثانية` : `${sprintRemainingSeconds}s remaining`}</span>
                   ) : (
-                    <span>Question {attempts.length + 1} / 20</span>
+                    <span>{locale === "ar" ? `السؤال ${attempts.length + 1} من 20` : `Question ${attempts.length + 1} / 20`}</span>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-success font-semibold">
-                    {attempts.filter((a) => a.correct).length} correct
+                    {attempts.filter((a) => a.correct).length} {locale === "ar" ? "صح" : "correct"}
                   </span>
-                  <span className="text-text-muted">({attempts.length} done)</span>
+                  <span className="text-text-muted">({attempts.length} {locale === "ar" ? "اتحلوا" : "done"})</span>
                 </div>
               </div>
 
@@ -493,7 +513,7 @@ export function MathTrainerModal({
               </div>
 
               {/* Numeric Keypad for Mobile and Touch */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2" dir="ltr">
                 {["1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "0", "BACK"].map((key) => (
                   <button
                     key={key}
@@ -509,9 +529,9 @@ export function MathTrainerModal({
               <button
                 onClick={submitAnswer}
                 disabled={userAnswer.trim() === ""}
-                className="w-full py-3.5 rounded-2xl bg-primary-lime text-surface font-mono font-bold text-sm uppercase tracking-wider hover:bg-primary-lime-dim shadow-[0_0_16px_rgba(198,255,61,0.2)] disabled:opacity-40 cursor-pointer transition-all"
+                className="w-full py-3.5 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-sm uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer transition-all"
               >
-                Submit Answer
+                {locale === "ar" ? "تأكيد الإجابة" : "Submit Answer"}
               </button>
             </div>
           )}
@@ -522,64 +542,104 @@ export function MathTrainerModal({
               {isNewPB && (
                 <div className="p-3 rounded-2xl bg-amber-core/10 border border-amber-core/30 flex items-center justify-center gap-2 text-amber-core font-mono text-xs font-bold animate-pulse">
                   <Trophy className="w-4 h-4" />
-                  <span>NEW PERSONAL BEST ACHIEVED!</span>
+                  <span>{locale === "ar" ? "حققت رقم قياسي جديد! عاش!" : "NEW PERSONAL BEST ACHIEVED!"}</span>
                 </div>
               )}
 
               {/* Main Score Display */}
               <div className="p-6 rounded-3xl bg-surface-container-high border border-border-subtle space-y-1">
                 <div className="text-[11px] font-mono uppercase tracking-wider text-text-muted">
-                  {finalSummary.mode === "sprint" ? "Sprint Score" : "Precision Score"}
+                  {finalSummary.mode === "sprint"
+                    ? (locale === "ar" ? "نتيجة السباق" : "Sprint Score")
+                    : (locale === "ar" ? "نتيجة التركيز" : "Precision Score")}
                 </div>
                 <div className="text-4xl font-mono font-extrabold text-primary-lime">
                   {finalSummary.mode === "sprint"
-                    ? `${finalSummary.score} Correct`
-                    : `${finalSummary.score}% Accuracy`}
+                    ? `${finalSummary.score} ${locale === "ar" ? "صح" : "Correct"}`
+                    : `${finalSummary.score}% ${locale === "ar" ? "دقة" : "Accuracy"}`}
                 </div>
                 <p className="text-xs text-on-surface-variant font-mono">
-                  {finalSummary.correct_answers} of {finalSummary.total_questions} questions correct
+                  {locale === "ar"
+                    ? `${finalSummary.correct_answers} من ${finalSummary.total_questions} أسئلة صح`
+                    : `${finalSummary.correct_answers} of ${finalSummary.total_questions} questions correct`}
                 </p>
               </div>
 
               {/* Accuracy & Speed Separated */}
-              <div className="grid grid-cols-2 gap-3 text-left">
+              <div className="grid grid-cols-2 gap-3 text-start">
                 <div className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle space-y-0.5">
-                  <div className="text-[10px] font-mono uppercase text-text-muted">Accuracy</div>
+                  <div className="text-[10px] font-mono uppercase text-text-muted">{locale === "ar" ? "الدقة" : "Accuracy"}</div>
                   <div className="text-base font-mono font-bold text-on-surface">
                     {finalSummary.accuracy_pct}%
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle space-y-0.5">
-                  <div className="text-[10px] font-mono uppercase text-text-muted">Avg Speed</div>
+                  <div className="text-[10px] font-mono uppercase text-text-muted">{locale === "ar" ? "متوسط السرعة" : "Avg Speed"}</div>
                   <div className="text-base font-mono font-bold text-on-surface">
-                    {(finalSummary.avg_response_time_ms / 1000).toFixed(2)}s / item
+                    {(finalSummary.avg_response_time_ms / 1000).toFixed(2)} {locale === "ar" ? "ث/مسألة" : "s / item"}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle space-y-0.5">
-                  <div className="text-[10px] font-mono uppercase text-text-muted">Total Time</div>
+                  <div className="text-[10px] font-mono uppercase text-text-muted">{locale === "ar" ? "إجمالي الوقت" : "Total Time"}</div>
                   <div className="text-base font-mono font-bold text-on-surface">
-                    {finalSummary.duration_seconds} seconds
+                    {finalSummary.duration_seconds} {locale === "ar" ? "ثانية" : "seconds"}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle space-y-0.5">
-                  <div className="text-[10px] font-mono uppercase text-text-muted">Database Trust</div>
-                  <div className="text-base font-mono font-bold text-emerald-success flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Verified</span>
-                  </div>
+                  <div className="text-[10px] font-mono uppercase text-text-muted">{locale === "ar" ? "حالة التسجيل" : "Database Trust"}</div>
+                  {saveStatus === "saving" && (
+                    <div className="text-xs font-mono font-bold text-amber-core flex items-center gap-1">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>{locale === "ar" ? "جاري الحفظ..." : "Saving..."}</span>
+                    </div>
+                  )}
+                  {saveStatus === "saved" && (
+                    <div className="text-xs font-mono font-bold text-emerald-success flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{locale === "ar" ? "تم الحفظ والتأكيد" : "Verified"}</span>
+                    </div>
+                  )}
+                  {saveStatus === "error" && (
+                    <div className="text-xs font-mono font-bold text-crimson-alert flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      <span>{locale === "ar" ? "فشل الحفظ" : "Save Failed"}</span>
+                    </div>
+                  )}
+                  {saveStatus === "idle" && (
+                    <div className="text-xs font-mono text-text-muted">
+                      <span>{locale === "ar" ? "غير مسجل" : "Unsaved"}</span>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* Error Banner when save fails */}
+              {saveStatus === "error" && (
+                <div className="p-3.5 rounded-2xl bg-crimson-alert/15 border border-crimson-alert/30 text-crimson-alert flex items-start gap-2.5 font-mono text-xs text-start">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <span className="font-bold block">Database Save Failed:</span>
+                    <span>{saveError || "Session could not be verified by the database"}</span>
+                  </div>
+                  <button
+                    onClick={() => saveToServer(finalSummary, attempts)}
+                    className="px-2.5 py-1 rounded-xl bg-crimson-alert/20 hover:bg-crimson-alert/30 text-crimson-alert font-bold uppercase text-[10px] cursor-pointer"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="pt-2 flex gap-2">
                 <button
                   onClick={startSession}
-                  className="flex-1 py-3 rounded-2xl bg-primary-lime text-surface font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer transition-all"
+                  className="flex-1 py-3 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer transition-all"
                 >
-                  Train Again
+                  {locale === "ar" ? "العب تاني" : "Train Again"}
                 </button>
                 <button
                   onClick={() => {
@@ -588,7 +648,7 @@ export function MathTrainerModal({
                   }}
                   className="px-5 py-3 rounded-2xl bg-surface-container-high border border-border-subtle text-text-muted hover:text-on-surface font-mono font-bold text-xs uppercase tracking-wider cursor-pointer transition-all"
                 >
-                  Done
+                  {locale === "ar" ? "تمام كدة" : "Done"}
                 </button>
               </div>
             </div>

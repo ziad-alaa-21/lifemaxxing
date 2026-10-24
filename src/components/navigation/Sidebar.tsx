@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { clearPWACaches } from "@/components/pwa/PWAProvider";
+import { executeCleanSignOut } from "@/lib/signOutHelper";
 import { useI18n } from "@/lib/i18n/I18nContext";
 import { useUserModules } from "@/lib/modules/UserModulesContext";
 
@@ -40,10 +41,11 @@ export function Sidebar({ userEmail, userId }: SidebarProps) {
 
   const handleSignOut = async () => {
     setSigningOut(true);
-    await clearPWACaches();
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
+    try {
+      await executeCleanSignOut();
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   return (

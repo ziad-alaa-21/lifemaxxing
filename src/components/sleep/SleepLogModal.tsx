@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { X, Moon, Star, Clock, AlertTriangle, Sparkles, Zap } from "lucide-react";
 import { SleepEntry, calculateSleepDuration, getTypicalTimes } from "@/lib/sleep";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { formatTimeTo12h } from "@/lib/time";
 
 interface SleepLogModalProps {
   isOpen: boolean;
@@ -28,6 +30,7 @@ export function SleepLogModal({
   editingEntry,
   recentEntries,
 }: SleepLogModalProps) {
+  const { locale } = useI18n();
   const [sleepDate, setSleepDate] = useState("");
   const [bedtime, setBedtime] = useState("23:00");
   const [wakeTime, setWakeTime] = useState("07:00");
@@ -138,10 +141,16 @@ export function SleepLogModal({
             </div>
             <div>
               <h3 className="text-base font-bold font-mono text-on-surface">
-                {editingEntry ? "Edit Sleep Log" : "Record Sleep Telemetry"}
+                {editingEntry
+                  ? locale === "ar"
+                    ? "تعديل تسجيل النوم"
+                    : "Edit Sleep Log"
+                  : locale === "ar"
+                  ? "تسجيل بيانات النوم"
+                  : "Record Sleep Telemetry"}
               </h3>
               <p className="text-xs text-on-surface-variant font-mono">
-                Body & Recovery Telemetry
+                {locale === "ar" ? "قياسات الجسم والاستشفاء" : "Body & Recovery Telemetry"}
               </p>
             </div>
           </div>
@@ -166,23 +175,25 @@ export function SleepLogModal({
             <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/80 border border-border-subtle">
               <div className="flex items-center gap-2 text-xs text-text-muted">
                 <Zap className="w-3.5 h-3.5 text-[#7DD3FC]" />
-                <span>Fast entry: {typical.typicalBedtime} → {typical.typicalWakeTime}</span>
+                <span>
+                  {locale === "ar" ? "إدخال سريع:" : "Fast entry:"} {formatTimeTo12h(typical.typicalBedtime, { locale })} &rarr; {formatTimeTo12h(typical.typicalWakeTime, { locale })}
+                </span>
               </div>
               <button
                 type="button"
                 onClick={handleFastPrefill}
                 className="px-2.5 py-1 rounded-lg bg-[#7DD3FC]/10 hover:bg-[#7DD3FC]/20 text-[#7DD3FC] border border-[#7DD3FC]/30 text-xs font-bold transition-all cursor-pointer"
               >
-                Same as usual
+                {locale === "ar" ? "زي العادة" : "Same as usual"}
               </button>
             </div>
           )}
 
           {/* Sleep Date */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-text-muted flex items-center gap-1.5">
+            <label className="text-xs font-semibold text-text-muted flex items-center gap-1.5 text-start">
               <Clock className="w-3.5 h-3.5" />
-              <span>Wake-up Date (Sleep Night Anchor)</span>
+              <span>{locale === "ar" ? "تاريخ الصحيان (الليلة المستهدفة)" : "Wake-up Date (Sleep Night Anchor)"}</span>
             </label>
             <input
               type="date"
@@ -196,9 +207,9 @@ export function SleepLogModal({
           {/* Bedtime & Wake Time Grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-text-muted flex items-center gap-1">
+              <label className="text-xs font-semibold text-text-muted flex items-center gap-1 text-start">
                 <Moon className="w-3 h-3 text-[#7DD3FC]" />
-                <span>Bedtime</span>
+                <span>{locale === "ar" ? "وقت النوم" : "Bedtime"}</span>
               </label>
               <input
                 type="time"
@@ -209,9 +220,9 @@ export function SleepLogModal({
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-text-muted flex items-center gap-1">
+              <label className="text-xs font-semibold text-text-muted flex items-center gap-1 text-start">
                 <Sparkles className="w-3 h-3 text-primary-lime" />
-                <span>Wake Time</span>
+                <span>{locale === "ar" ? "وقت الصحيان" : "Wake Time"}</span>
               </label>
               <input
                 type="time"
@@ -225,7 +236,9 @@ export function SleepLogModal({
 
           {/* Duration Preview Pill */}
           <div className="p-3 rounded-xl bg-surface-container-highest/70 border border-border-subtle flex items-center justify-between text-xs">
-            <span className="text-text-muted">Calculated Sleep Duration:</span>
+            <span className="text-text-muted">
+              {locale === "ar" ? "مدة النوم المحسوبة:" : "Calculated Sleep Duration:"}
+            </span>
             <span className={`font-bold ${durationCheck.isValid ? "text-[#7DD3FC]" : "text-crimson-alert"}`}>
               {durationCheck.durationFormatted}
             </span>
@@ -233,8 +246,8 @@ export function SleepLogModal({
 
           {/* Quality Rating (1 to 5 stars) */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-text-muted">
-              Perceived Quality / Restfulness (1-5)
+            <label className="text-xs font-semibold text-text-muted text-start block">
+              {locale === "ar" ? "جودة النوم والراحة (١ - ٥)" : "Perceived Quality / Restfulness (1-5)"}
             </label>
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -257,25 +270,25 @@ export function SleepLogModal({
           {/* Awakenings & Daytime Naps Grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-text-muted">
-                Awakenings
+              <label className="text-xs font-semibold text-text-muted text-start block">
+                {locale === "ar" ? "مرات الصحيان" : "Awakenings"}
               </label>
               <select
                 value={awakenings}
                 onChange={(e) => setAwakenings(Number(e.target.value))}
                 className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
               >
-                <option value={0}>0 (Continuous)</option>
-                <option value={1}>1 awakening</option>
-                <option value={2}>2 awakenings</option>
-                <option value={3}>3 awakenings</option>
-                <option value={4}>4+ awakenings</option>
+                <option value={0}>{locale === "ar" ? "ولا مرة (نوم متواصل)" : "0 (Continuous)"}</option>
+                <option value={1}>{locale === "ar" ? "مرة واحدة" : "1 awakening"}</option>
+                <option value={2}>{locale === "ar" ? "مرتين" : "2 awakenings"}</option>
+                <option value={3}>{locale === "ar" ? "٣ مرات" : "3 awakenings"}</option>
+                <option value={4}>{locale === "ar" ? "٤+ مرات" : "4+ awakenings"}</option>
               </select>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-text-muted">
-                Daytime Nap (min)
+              <label className="text-xs font-semibold text-text-muted text-start block">
+                {locale === "ar" ? "قيلولة نهارية (دقائق)" : "Daytime Nap (min)"}
               </label>
               <input
                 type="number"
@@ -291,14 +304,14 @@ export function SleepLogModal({
 
           {/* Notes */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-text-muted">
-              Context Notes (Optional)
+            <label className="text-xs font-semibold text-text-muted text-start block">
+              {locale === "ar" ? "ملاحظات وتفاصيل (اختياري)" : "Context Notes (Optional)"}
             </label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. Magnesium taken, cold room, late dinner"
+              placeholder={locale === "ar" ? "مثلاً: مغنيسيوم، أوضة ساقعة، عشا خفيف" : "e.g. Magnesium taken, cold room, late dinner"}
               className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
             />
           </div>
@@ -311,14 +324,24 @@ export function SleepLogModal({
               disabled={saving}
               className="px-4 py-2.5 rounded-xl border border-border-subtle text-xs text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-all cursor-pointer"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving || !durationCheck.isValid}
-              className="px-5 py-2.5 rounded-xl bg-[#7DD3FC] hover:bg-[#7DD3FC]/90 text-charcoal-dark font-bold text-xs transition-all shadow-[0_0_15px_rgba(125,211,252,0.3)] disabled:opacity-50 cursor-pointer flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-[#7DD3FC] hover:bg-[#7DD3FC]/90 text-on-primary font-bold text-xs transition-all shadow-[0_0_15px_rgba(125,211,252,0.3)] disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
-              {saving ? "Saving..." : editingEntry ? "Save Changes" : "Record Sleep Log"}
+              {saving
+                ? locale === "ar"
+                  ? "جاري الحفظ..."
+                  : "Saving..."
+                : editingEntry
+                ? locale === "ar"
+                  ? "حفظ التعديلات"
+                  : "Save Changes"
+                : locale === "ar"
+                ? "تسجيل النوم"
+                : "Record Sleep Log"}
             </button>
           </div>
         </form>

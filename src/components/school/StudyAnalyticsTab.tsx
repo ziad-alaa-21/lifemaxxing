@@ -11,6 +11,7 @@ import {
 import { WeeklyTargetCard } from "./WeeklyTargetCard";
 import { StudyHeatmap } from "./StudyHeatmap";
 import { AcademicInsightsCard } from "./AcademicInsightsCard";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface StudyAnalyticsTabProps {
   subjects: SubjectItem[];
@@ -33,6 +34,7 @@ export function StudyAnalyticsTab({
   onNavigateTab,
   firstDayOfWeek = 0,
 }: StudyAnalyticsTabProps) {
+  const { locale } = useI18n();
   const [showArchived, setShowArchived] = useState(false);
 
   const {
@@ -55,19 +57,25 @@ export function StudyAnalyticsTab({
       <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm space-y-4">
         <div className="flex items-center justify-between pb-1 border-b border-border-subtle/50">
           <div>
-            <h3 className="text-sm font-bold text-on-surface">Subject Study Breakdown</h3>
+            <h3 className="text-sm font-bold text-on-surface">
+              {locale === "ar" ? "توزيع ساعات المذاكرة والتركيز" : "Subject Study Breakdown"}
+            </h3>
             <p className="text-xs text-text-muted">
-              Deep work hours distribution across active coursework
+              {locale === "ar"
+                ? "توزيع جلسات التركيز العميق على المواد الدراسية النشطة"
+                : "Deep work hours distribution across active coursework"}
             </p>
           </div>
           <span className="text-xs font-bold text-on-surface">
-            Total: {totalHoursFormatted}
+            {locale === "ar" ? `الإجمالي: ${totalHoursFormatted}` : `Total: ${totalHoursFormatted}`}
           </span>
         </div>
 
         {activeBreakdown.length === 0 ? (
           <p className="text-xs text-text-muted py-3 text-center">
-            No study sessions logged for active subjects yet.
+            {locale === "ar"
+              ? "لسه مفيش جلسات مذاكرة مسجلة للمواد النشطة."
+              : "No study sessions logged for active subjects yet."}
           </p>
         ) : (
           <div className="space-y-3">
@@ -109,18 +117,22 @@ export function StudyAnalyticsTab({
             <button
               type="button"
               onClick={() => setShowArchived(!showArchived)}
-              className="text-xs text-text-muted hover:text-on-surface flex items-center gap-1.5 transition-colors"
+              className="text-xs text-text-muted hover:text-on-surface flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <span>{showArchived ? "▼" : "▶"}</span>
-              <span>Archived Courses History ({archivedBreakdown.length})</span>
+              <span>
+                {locale === "ar"
+                  ? `أرشيف المواد السابقة (${archivedBreakdown.length})`
+                  : `Archived Courses History (${archivedBreakdown.length})`}
+              </span>
             </button>
 
             {showArchived && (
-              <div className="mt-3 space-y-2.5 pl-2 opacity-60">
+              <div className="mt-3 space-y-2.5 pl-2 rtl:pl-0 rtl:pr-2 opacity-60">
                 {archivedBreakdown.map((item) => (
                   <div key={item.subjectId} className="flex items-center justify-between text-xs">
                     <span className="truncate text-text-muted">
-                      {item.subjectName} <span className="italic">(Archived)</span>
+                      {item.subjectName} <span className="italic">{locale === "ar" ? "(مؤرشفة)" : "(Archived)"}</span>
                     </span>
                     <span className="font-mono text-text-muted">{item.hoursFormatted}</span>
                   </div>

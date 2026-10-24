@@ -1,5 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createDirectClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
+import { RECOVERY_FLOW_COOKIE, canAccessResetPasswordPage } from "@/lib/authConfig";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -29,31 +31,72 @@ export async function updateSession(request: NextRequest) {
   });
 
   // Fetch verified user from Supabase Auth
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = (await supabase.auth.getUser()).data.user;
 
   const pathname = request.nextUrl.pathname;
 
-  const isLoginRoute = pathname === "/login";
-  const isAuthCallback = pathname.startsWith("/auth");
-  const isApiRoute = pathname.startsWith("/api");
-  const isPublicAsset =
+  // Support Authorization: Bearer <token> for API requests (e.g. scripts or mobile)
+  if (!user && pathname.startsWith("/api")) {
+    const authHeader = request.headers.get("authorization") || request.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+      const direct = createDirectClient(supabaseUrl, supabaseAnonKey);
+      const res = await direct.auth.getUser(token);
+      if (res.data?.user) {
+        user = res.data.user;
+      }
+    }
+  }
+
+  const isPublicRoute =
+    pathname === "/login" ||
+    pathname === "/reset-password" ||
+    pathname.startsWith("/auth") ||
+    pathname === "/privacy" ||
+    pathname === "/terms" ||
+    pathname === "/offline" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon.ico") ||
     pathname.startsWith("/manifest.json") ||
     pathname.startsWith("/icon-") ||
     pathname.includes(".");
 
+  // 0. Guard /reset-password: only accessible during an active recovery flow (lm_recovery_flow cookie).
+  // A normally signed-in user opening /reset-password directly is redirected to /today.
+  if (pathname === "/reset-password") {
+    const hasRecoveryCookie = request.cookies.get(RECOVERY_FLOW_COOKIE)?.value === "1";
+    const access = canAccessResetPasswordPage({
+      hasUser: Boolean(user),
+      hasRecoveryCookie,
+    });
+    if (!access.allowed && access.redirectTo) {
+      const url = request.nextUrl.clone();
+      url.pathname = access.redirectTo;
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
+
   // 1. Unauthenticated user trying to access protected routes
-  if (!user && !isLoginRoute && !isAuthCallback && !isPublicAsset && !isApiRoute) {
+  if (!user && !isPublicRoute) {
+    if (pathname.startsWith("/api")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    if (pathname !== "/") {
+      url.searchParams.set("next", pathname + request.nextUrl.search);
+      const hasAuthCookies = request.cookies.getAll().some((c) => c.name.startsWith("sb-"));
+      if (hasAuthCookies) {
+        url.searchParams.set("expired", "true");
+      }
+    }
     return NextResponse.redirect(url);
   }
 
   // 2. Authenticated user trying to access /login
-  if (user && isLoginRoute) {
+  if (user && pathname === "/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/today";
     return NextResponse.redirect(url);

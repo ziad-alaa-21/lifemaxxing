@@ -22,6 +22,7 @@ import {
 } from "@/lib/mind";
 import { supabase } from "@/lib/supabase/client";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface SubjectOption {
   id: string;
@@ -63,6 +64,7 @@ export function SessionCompleteModal({
   userTimezone,
 }: SessionCompleteModalProps) {
   const { isOnline, guardAction } = useOnlineGuard();
+  const { locale } = useI18n();
 
   const [taskCategory, setTaskCategory] = useState<string>(initialCategory);
   const [taskName, setTaskName] = useState(initialTaskName);
@@ -170,21 +172,21 @@ export function SessionCompleteModal({
             <div className="w-8 h-8 rounded-xl bg-tertiary-purple/10 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple">
               <Brain className="w-4 h-4" />
             </div>
-            <div>
+            <div className="text-start">
               <h2 className="text-sm font-bold text-on-surface">
                 {status === "ended_early"
-                  ? "Session Ended Early • Reflection"
-                  : "Session Complete • Reflection"}
+                  ? (locale === "ar" ? "الجلسة انتهت بدري • تسجيل الملاحظات" : "Session Ended Early • Reflection")
+                  : (locale === "ar" ? "انتهت جلسة التركيز • تسجيل الملاحظات" : "Session Complete • Reflection")}
               </h2>
               <div className="text-[11px] text-text-muted mt-0.5">
-                {actualMinutes}m Active Focus • {preset.name}
-                {pausedSeconds > 0 && ` (${Math.round(pausedSeconds / 60)}m paused)`}
+                {actualMinutes} {locale === "ar" ? "دقيقة تركيز فعلي" : "m Active Focus"} • {preset.name}
+                {pausedSeconds > 0 && ` (${Math.round(pausedSeconds / 60)} ${locale === "ar" ? "دقيقة توقف مؤقت" : "m paused"})`}
               </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+            className="p-1.5 rounded-xl text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -201,59 +203,72 @@ export function SessionCompleteModal({
         {/* Form Body */}
         <div className="space-y-4">
           {/* Task Category Selection */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-start">
             <label className="text-text-muted uppercase tracking-wider text-[10px]">
-              Task Category *
+              {locale === "ar" ? "تصنيف المهمة *" : "Task Category *"}
             </label>
             <div className="flex flex-wrap gap-1.5">
-              {TASK_CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setTaskCategory(cat)}
-                  className={`px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer border ${
-                    taskCategory === cat
-                      ? "bg-tertiary-purple text-charcoal-dark font-bold border-tertiary-purple shadow-[0_0_12px_rgba(167,139,250,0.3)]"
-                      : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+              {TASK_CATEGORIES.map((cat) => {
+                const catLabels: Record<string, string> = {
+                  Coding: "برمجة",
+                  Study: "مذاكرة",
+                  Reading: "قراءة",
+                  Writing: "كتابة",
+                  "Deep Work": "عمل عميق",
+                  Admin: "إداريات",
+                  Planning: "تخطيط",
+                };
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setTaskCategory(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer border ${
+                      taskCategory === cat
+                        ? "bg-tertiary-purple text-on-primary font-bold border-tertiary-purple shadow-[0_0_12px_rgba(167,139,250,0.3)]"
+                        : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
+                    }`}
+                  >
+                    {locale === "ar" ? (catLabels[cat] || cat) : cat}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* Task / Intention (defaults to Category if blank) */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-start">
             <div className="flex justify-between items-center text-[10px]">
               <label className="text-text-muted uppercase tracking-wider">
-                Session Description / Task Name
+                {locale === "ar" ? "وصف الجلسة / اسم المهمة" : "Session Description / Task Name"}
               </label>
               <span className="text-text-muted italic">
-                (Defaults to &ldquo;{taskCategory}&rdquo; if empty)
+                {locale === "ar"
+                  ? `(هيتسجل باسم "${taskCategory}" لو سبته فاضي)`
+                  : `(Defaults to "${taskCategory}" if empty)`}
               </span>
             </div>
             <input
               type="text"
               value={taskName}
               onChange={(e) => setTaskName(e.target.value)}
-              placeholder={`e.g. ${taskCategory} Sprint`}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple transition-colors"
+              placeholder={locale === "ar" ? `مثال: جلسة ${taskCategory}` : `e.g. ${taskCategory} Sprint`}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple transition-colors text-start"
             />
           </div>
 
           {/* Optional Subject Link (reused for School) */}
           {subjects.length > 0 && (
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 text-start">
               <label className="text-text-muted uppercase tracking-wider text-[10px]">
-                Link to Academic Subject (Optional)
+                {locale === "ar" ? "ربط بمادة دراسية (اختياري)" : "Link to Academic Subject (Optional)"}
               </label>
               <select
                 value={subjectId || ""}
                 onChange={(e) => setSubjectId(e.target.value || null)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface focus:outline-none focus:border-tertiary-purple"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface focus:outline-none focus:border-tertiary-purple text-start"
               >
-                <option value="">No subject linked</option>
+                <option value="">{locale === "ar" ? "غير مربوط بمادة" : "No subject linked"}</option>
                 {subjects.map((sub) => (
                   <option key={sub.id} value={sub.id}>
                     {sub.name}
@@ -264,13 +279,13 @@ export function SessionCompleteModal({
           )}
 
           {/* Rating */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-start">
             <div className="flex justify-between items-center text-[10px]">
               <label className="text-text-muted uppercase tracking-wider">
-                Session Rating
+                {locale === "ar" ? "تقييم جودة الجلسة" : "Session Rating"}
               </label>
               <span className="text-text-muted">
-                {rating ? `${rating} of 5` : "Unrated"}
+                {rating ? `${rating} / 5` : (locale === "ar" ? "بدون تقييم" : "Unrated")}
               </span>
             </div>
             <div className="flex items-center gap-2 p-2 bg-surface-container-lowest rounded-xl border border-border-subtle justify-center">
@@ -279,7 +294,7 @@ export function SessionCompleteModal({
                   key={star}
                   type="button"
                   onClick={() => setRating(rating === star ? null : star)}
-                  className={`p-1.5 rounded-lg transition-transform active:scale-90 ${
+                  className={`p-1.5 rounded-lg transition-transform active:scale-90 cursor-pointer ${
                     rating && star <= rating
                       ? "text-rank-gold"
                       : "text-text-muted/30"
@@ -293,13 +308,21 @@ export function SessionCompleteModal({
           </div>
 
           {/* Friction Tags (Neutral Wording) */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-start">
             <label className="text-text-muted uppercase tracking-wider text-[10px]">
-              Friction & Flow Tags
+              {locale === "ar" ? "ملاحظات التشتت وسريان التركيز" : "Friction & Flow Tags"}
             </label>
             <div className="flex flex-wrap gap-1.5">
               {FRICTION_TAGS.map((tag) => {
                 const isSelected = selectedFrictionTags.includes(tag);
+                const tagLabels: Record<string, string> = {
+                  "Phone Distraction": "تشتت بالموبايل",
+                  "Low Energy": "طاقة قليلة",
+                  "Deep Flow": "تركيز عميق (فلو)",
+                  "Overthinking": "تفكير زايد",
+                  "Environment Noise": "دوشة حواليا",
+                  "Clear Goal": "هدف واضح ومباشر",
+                };
                 return (
                   <button
                     key={tag}
@@ -311,7 +334,7 @@ export function SessionCompleteModal({
                         : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
                     }`}
                   >
-                    {tag}
+                    {locale === "ar" ? (tagLabels[tag] || tag) : tag}
                   </button>
                 );
               })}
@@ -341,30 +364,30 @@ export function SessionCompleteModal({
                     addCustomTag();
                   }
                 }}
-                placeholder="+ Add custom tag..."
-                className="flex-1 px-3 py-1.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface text-[11px] placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple"
+                placeholder={locale === "ar" ? "+ أضف وسماً خاصاً..." : "+ Add custom tag..."}
+                className="flex-1 px-3 py-1.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface text-[11px] placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple text-start"
               />
               <button
                 type="button"
                 onClick={addCustomTag}
                 className="px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-text-muted hover:text-on-surface text-[11px] cursor-pointer"
               >
-                Add
+                {locale === "ar" ? "إضافة" : "Add"}
               </button>
             </div>
           </div>
 
           {/* Notes */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-start">
             <label className="text-text-muted uppercase tracking-wider text-[10px]">
-              Reflection Notes (Optional)
+              {locale === "ar" ? "ملاحظات وانطباعات (اختياري)" : "Reflection Notes (Optional)"}
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="What worked? What resistance did you hit?"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple transition-colors resize-none"
+              placeholder={locale === "ar" ? "إيه اللي ساعدك تركز؟ وإيه الصعوبة اللي ظهرت؟" : "What worked? What resistance did you hit?"}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple transition-colors resize-none text-start"
             />
           </div>
         </div>
@@ -375,19 +398,19 @@ export function SessionCompleteModal({
             onClick={onClose}
             className="px-4 py-2.5 rounded-xl text-text-muted hover:text-on-surface transition-colors cursor-pointer"
           >
-            Cancel
+            {locale === "ar" ? "إلغاء" : "Cancel"}
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold bg-tertiary-purple text-charcoal-dark shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold bg-tertiary-purple text-on-primary shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Check className="w-4 h-4" />
             )}
-            <span>Log Session</span>
+            <span>{locale === "ar" ? "حفظ الجلسة" : "Log Session"}</span>
           </button>
         </div>
       </div>

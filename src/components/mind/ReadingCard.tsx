@@ -19,6 +19,7 @@ import {
   validateReadingLog,
 } from "@/lib/reading";
 import { supabase } from "@/lib/supabase/client";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface ReadingCardProps {
   selectedDate: string;
@@ -26,6 +27,7 @@ interface ReadingCardProps {
 }
 
 export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps) {
+  const { locale } = useI18n();
   const [books, setBooks] = useState<ReadingBook[]>([]);
   const [activeBook, setActiveBook] = useState<ReadingBook | null>(null);
   const [todayLogs, setTodayLogs] = useState<ReadingLog[]>([]);
@@ -51,6 +53,10 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
   // Load books & today's logs
   useEffect(() => {
     async function loadData() {
+      if (!selectedDate) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       try {
         const {
@@ -214,26 +220,30 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
             <BookOpen className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-mono text-on-surface">Mindful Reading</h3>
-            <p className="text-[10px] font-mono text-on-surface-variant">Daily pages & focus velocity</p>
+            <h3 className="text-sm font-bold font-mono text-on-surface">
+              {locale === "ar" ? "القراءة والاطلاع" : "Mindful Reading"}
+            </h3>
+            <p className="text-[10px] font-mono text-on-surface-variant">
+              {locale === "ar" ? "معدل الصفحات وتغذية العقل" : "Daily pages & focus velocity"}
+            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           {totalPagesToday > 0 ? (
             <span className="text-xs font-mono font-bold text-tertiary-purple px-2.5 py-1 rounded-full bg-tertiary-purple/10 border border-tertiary-purple/20">
-              {totalPagesToday} pages today
+              {locale === "ar" ? `${totalPagesToday} صفحة النهاردة` : `${totalPagesToday} pages today`}
             </span>
           ) : (
             <span className="text-xs font-mono text-text-muted px-2.5 py-1 rounded-full bg-surface-container-low border border-border-subtle">
-              No reading today
+              {locale === "ar" ? "مفيش قراءة النهاردة" : "No reading today"}
             </span>
           )}
           <button
             onClick={() => setIsLogModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-tertiary-purple text-charcoal-dark font-mono font-bold text-xs uppercase tracking-wider hover:brightness-110 cursor-pointer transition-all"
+            className="px-3 py-1.5 rounded-xl bg-tertiary-purple text-on-primary font-mono font-bold text-xs uppercase tracking-wider hover:brightness-110 cursor-pointer transition-all"
           >
-            Log Session
+            {locale === "ar" ? "سجل قراءة" : "Log Session"}
           </button>
         </div>
       </div>
@@ -251,14 +261,16 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                 {activeBook.title}
               </h4>
               <p className="text-[11px] font-mono text-on-surface-variant">
-                {activeBook.author ? `by ${activeBook.author}` : "Book in progress"}
+                {activeBook.author
+                  ? locale === "ar" ? `للكاتب: ${activeBook.author}` : `by ${activeBook.author}`
+                  : locale === "ar" ? "كتاب قيد القراءة" : "Book in progress"}
               </p>
             </div>
             <button
               onClick={() => setIsNewBookModalOpen(true)}
               className="text-[10px] font-mono text-text-muted hover:text-on-surface flex items-center gap-1 cursor-pointer"
             >
-              <span>Switch / Add</span>
+              <span>{locale === "ar" ? "تغيير / إضافة" : "Switch / Add"}</span>
               <ChevronRight className="w-3 h-3" />
             </button>
           </div>
@@ -267,7 +279,11 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
           {progress && (
             <div className="space-y-1.5 font-mono">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-text-muted">{progress.displayText}</span>
+                <span className="text-text-muted">
+                  {locale === "ar"
+                    ? `صفحة ${activeBook.current_page} من ${activeBook.total_pages}`
+                    : progress.displayText}
+                </span>
                 <span className="text-tertiary-purple font-bold">
                   {progress.percentComplete}%
                 </span>
@@ -284,13 +300,13 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
       ) : (
         <div className="p-6 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-2">
           <p className="text-xs font-mono text-text-muted">
-            No active book in reading list.
+            {locale === "ar" ? "مفيش كتاب حالي في قائمة القراءة." : "No active book in reading list."}
           </p>
           <button
             onClick={() => setIsNewBookModalOpen(true)}
             className="px-4 py-2 rounded-xl bg-tertiary-purple/15 border border-tertiary-purple/30 text-tertiary-purple font-mono text-xs font-bold hover:bg-tertiary-purple/25 cursor-pointer transition-colors"
           >
-            + Add Your First Book
+            {locale === "ar" ? "+ أضف كتابك الأول" : "+ Add Your First Book"}
           </button>
         </div>
       )}
@@ -302,7 +318,9 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
                 <Bookmark className="w-4 h-4 text-tertiary-purple" />
-                <h3 className="text-sm font-bold text-on-surface">Log Reading Session</h3>
+                <h3 className="text-sm font-bold text-on-surface">
+                  {locale === "ar" ? "تسجيل جلسة قراءة" : "Log Reading Session"}
+                </h3>
               </div>
               <button
                 onClick={() => setIsLogModalOpen(false)}
@@ -320,8 +338,8 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
 
             <div className="space-y-3">
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Pages Read Today
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "عدد الصفحات المقروءة النهاردة" : "Pages Read Today"}
                 </label>
                 <input
                   type="number"
@@ -329,14 +347,14 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                   max={2000}
                   value={logPages}
                   onChange={(e) => setLogPages(e.target.value)}
-                  placeholder="e.g. 25"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
+                  placeholder={locale === "ar" ? "مثال: 25" : "e.g. 25"}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Duration (Minutes - Optional)
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "المدة بالدقائق (اختياري)" : "Duration (Minutes - Optional)"}
                 </label>
                 <input
                   type="number"
@@ -344,21 +362,21 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                   max={1440}
                   value={logMinutes}
                   onChange={(e) => setLogMinutes(e.target.value)}
-                  placeholder="e.g. 35"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
+                  placeholder={locale === "ar" ? "مثال: 35" : "e.g. 35"}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Key Takeaway / Notes (Optional)
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "ملاحظة أو أهم فكرة طلعت بيها (اختياري)" : "Key Takeaway / Notes (Optional)"}
                 </label>
                 <textarea
                   value={logNotes}
                   onChange={(e) => setLogNotes(e.target.value)}
-                  placeholder="Notes, quote, or reflection..."
+                  placeholder={locale === "ar" ? "اكتب ملاحظة أو اقتباس عجبك..." : "Notes, quote, or reflection..."}
                   rows={2}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple resize-none text-start"
                 />
               </div>
             </div>
@@ -368,15 +386,15 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                 onClick={() => setIsLogModalOpen(false)}
                 className="px-4 py-2 rounded-xl text-text-muted hover:text-on-surface cursor-pointer"
               >
-                Cancel
+                {locale === "ar" ? "إلغاء" : "Cancel"}
               </button>
               <button
                 onClick={handleSaveLog}
                 disabled={submittingLog || !logPages.trim()}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-tertiary-purple text-charcoal-dark hover:brightness-110 cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-tertiary-purple text-on-primary hover:brightness-110 cursor-pointer disabled:opacity-50"
               >
                 {submittingLog ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                <span>Save Reading</span>
+                <span>{locale === "ar" ? "حفظ القراءة" : "Save Reading"}</span>
               </button>
             </div>
           </div>
@@ -390,7 +408,9 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
                 <Plus className="w-4 h-4 text-tertiary-purple" />
-                <h3 className="text-sm font-bold text-on-surface">Add Book to Reading List</h3>
+                <h3 className="text-sm font-bold text-on-surface">
+                  {locale === "ar" ? "إضافة كتاب لقائمة القراءة" : "Add Book to Reading List"}
+                </h3>
               </div>
               <button
                 onClick={() => setIsNewBookModalOpen(false)}
@@ -402,48 +422,48 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
 
             <div className="space-y-3">
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Book Title
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "اسم الكتاب" : "Book Title"}
                 </label>
                 <input
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="e.g. Deep Work"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
+                  placeholder={locale === "ar" ? "مثال: العادات الذرية" : "e.g. Deep Work"}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
               <div>
-                <label className="text-text-muted uppercase text-[11px] block mb-1">
-                  Author (Optional)
+                <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                  {locale === "ar" ? "اسم الكاتب / المؤلف (اختياري)" : "Author (Optional)"}
                 </label>
                 <input
                   type="text"
                   value={newAuthor}
                   onChange={(e) => setNewAuthor(e.target.value)}
-                  placeholder="e.g. Cal Newport"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
+                  placeholder={locale === "ar" ? "مثال: جيمس كلير" : "e.g. Cal Newport"}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-text-muted uppercase text-[11px] block mb-1">
-                    Total Pages
+                  <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                    {locale === "ar" ? "إجمالي الصفحات" : "Total Pages"}
                   </label>
                   <input
                     type="number"
                     min={1}
                     value={newTotalPages}
                     onChange={(e) => setNewTotalPages(e.target.value)}
-                    placeholder="e.g. 300"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
+                    placeholder={locale === "ar" ? "300" : "e.g. 300"}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                   />
                 </div>
                 <div>
-                  <label className="text-text-muted uppercase text-[11px] block mb-1">
-                    Starting Page
+                  <label className="text-text-muted uppercase text-[11px] block mb-1 text-start">
+                    {locale === "ar" ? "صفحة البداية" : "Starting Page"}
                   </label>
                   <input
                     type="number"
@@ -451,7 +471,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                     value={newStartPage}
                     onChange={(e) => setNewStartPage(e.target.value)}
                     placeholder="0"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                   />
                 </div>
               </div>
@@ -462,15 +482,15 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                 onClick={() => setIsNewBookModalOpen(false)}
                 className="px-4 py-2 rounded-xl text-text-muted hover:text-on-surface cursor-pointer"
               >
-                Cancel
+                {locale === "ar" ? "إلغاء" : "Cancel"}
               </button>
               <button
                 onClick={handleCreateBook}
                 disabled={submittingBook || !newTitle.trim()}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-tertiary-purple text-charcoal-dark hover:brightness-110 cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-tertiary-purple text-on-primary hover:brightness-110 cursor-pointer disabled:opacity-50"
               >
                 {submittingBook ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                <span>Add Book</span>
+                <span>{locale === "ar" ? "إضافة الكتاب" : "Add Book"}</span>
               </button>
             </div>
           </div>

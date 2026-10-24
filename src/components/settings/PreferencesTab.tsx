@@ -23,6 +23,7 @@ import {
   saveUserSettingsRow,
 } from "@/lib/settings";
 import { supabase } from "@/lib/supabase/client";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface PreferencesTabProps {
   initialProfile: UserProfile | null;
@@ -35,6 +36,8 @@ export function PreferencesTab({
   initialSettings,
   onRefresh,
 }: PreferencesTabProps) {
+  const { locale: i18nLocale, setLocale: setI18nLocale, dict } = useI18n();
+
   // Profiles preferences
   const [weightUnit, setWeightUnit] = useState<WeightUnit>(
     initialProfile?.weight_unit ?? "kg"
@@ -43,7 +46,7 @@ export function PreferencesTab({
     initialProfile?.timezone ?? "UTC"
   );
   const [locale, setLocale] = useState<AppLocale>(
-    initialProfile?.locale ?? "en"
+    (i18nLocale as AppLocale) || initialProfile?.locale || "en"
   );
 
   // UserSettings preferences
@@ -145,7 +148,7 @@ export function PreferencesTab({
                 onClick={() => setWeightUnit("kg")}
                 className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                   weightUnit === "kg"
-                    ? "bg-primary-lime text-surface shadow-[0_0_12px_rgba(198,255,61,0.2)]"
+                    ? "bg-primary-lime text-on-primary shadow-xs"
                     : "bg-surface-container-low border border-border-subtle text-on-surface"
                 }`}
               >
@@ -156,7 +159,7 @@ export function PreferencesTab({
                 onClick={() => setWeightUnit("lbs")}
                 className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                   weightUnit === "lbs"
-                    ? "bg-primary-lime text-surface shadow-[0_0_12px_rgba(198,255,61,0.2)]"
+                    ? "bg-primary-lime text-on-primary shadow-xs"
                     : "bg-surface-container-low border border-border-subtle text-on-surface"
                 }`}
               >
@@ -187,17 +190,23 @@ export function PreferencesTab({
           </div>
 
           <div>
-            <label className="text-[11px] font-mono text-text-muted uppercase">App Language</label>
+            <label className="text-[11px] font-mono text-text-muted uppercase">
+              {dict.settings.language}
+            </label>
             <select
               value={locale}
-              onChange={(e) => setLocale(e.target.value as AppLocale)}
-              className="w-full mt-1 px-3 py-2 bg-surface-container-low border border-border-subtle rounded-xl text-xs font-mono text-on-surface"
+              onChange={(e) => {
+                const next = e.target.value as AppLocale;
+                setLocale(next);
+                setI18nLocale(next);
+              }}
+              className="w-full mt-1 px-3 py-2 bg-surface-container-low border border-border-subtle rounded-xl text-xs font-mono text-on-surface cursor-pointer"
             >
               <option value="en">English (LTR)</option>
-              <option value="ar">العربية (Arabic - RTL)</option>
+              <option value="ar">العربية - اللهجة المصرية الفصحى (Arabic - RTL)</option>
             </select>
             <p className="text-[10px] text-text-muted mt-1.5">
-              Supports bidirectional layout direction.
+              {dict.settings.languageHelp}
             </p>
           </div>
         </div>
@@ -340,7 +349,7 @@ export function PreferencesTab({
         <button
           type="submit"
           disabled={saving}
-          className="px-6 py-2.5 rounded-xl bg-primary-lime text-surface text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim shadow-[0_0_16px_rgba(198,255,61,0.25)] cursor-pointer disabled:opacity-50"
+          className="px-6 py-2.5 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
         >
           {saving ? "Saving..." : "Save Preferences"}
         </button>

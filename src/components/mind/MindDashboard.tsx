@@ -53,11 +53,16 @@ import { MindCheckin, RATING_LABELS } from "@/lib/checkin";
 import { calculateCompositeMindScore } from "@/lib/mindScore";
 import { generateWeeklyMindInsights, DailyTelemetrySummary } from "@/lib/mindInsights";
 import { ScreenTimeLog } from "@/lib/screentime";
+import { useI18n } from "@/lib/i18n/I18nContext";
+import { useUserModules } from "@/lib/modules/UserModulesContext";
+import { DisabledModuleFallback } from "@/components/modules/DisabledModuleFallback";
 
 export function MindDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
+  const { dict, locale } = useI18n();
+  const { isModuleActive } = useUserModules();
 
   const currentTab = searchParams.get("tab") || "focus";
   const setTab = (tab: string) => {
@@ -92,7 +97,14 @@ export function MindDashboard() {
   });
 
   // Selected Date
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+      return getLocalDateString(new Date(), tz);
+    } catch {
+      return new Date().toISOString().split("T")[0];
+    }
+  });
 
   // Sessions for selected date
   const [sessions, setSessions] = useState<FocusSession[]>([]);
@@ -445,13 +457,17 @@ export function MindDashboard() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold font-mono text-on-surface">Mind Engine</h1>
+                <h1 className="text-lg font-bold font-mono text-on-surface">
+                  {dict.mind.engineTitle}
+                </h1>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
-                  Stage 7c Complete
+                  {locale === "ar" ? "جاهز ومكتمل" : "Stage 7c Complete"}
                 </span>
               </div>
               <p className="text-xs text-on-surface-variant mt-0.5 font-mono">
-                Ultradian focus, mental math agility, habits, reading, screen balance & cognitive score
+                {locale === "ar"
+                  ? "تركيز فائق، حساب ذهني، عادات والتزامات، قراءة، توازن وقت الشاشة، ومؤشر الجاهزية"
+                  : "Ultradian focus, mental math agility, habits, reading, screen balance & cognitive score"}
               </p>
             </div>
           </div>
@@ -462,7 +478,7 @@ export function MindDashboard() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs text-on-surface hover:border-tertiary-purple/40 transition-colors cursor-pointer"
             >
               <Settings2 className="w-3.5 h-3.5 text-tertiary-purple" />
-              <span>Goal & Chime</span>
+              <span>{locale === "ar" ? "الهدف والتنبيه" : "Goal & Chime"}</span>
             </button>
           </div>
         </div>
@@ -471,13 +487,13 @@ export function MindDashboard() {
       {/* URL-Based Tabs Navigation Bar */}
       <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-container border border-border-subtle overflow-x-auto">
         {[
-          { id: "focus", label: "Focus & Overview", icon: Clock },
-          { id: "math", label: "Mental Math", icon: Zap },
-          { id: "discipline", label: "Discipline", icon: ShieldCheck },
-          { id: "reading", label: "Reading", icon: BookOpen },
-          { id: "screentime", label: "Screen Time", icon: Smartphone },
-          { id: "checkin", label: "Check-in", icon: Heart },
-          { id: "insights", label: "Insights", icon: Lightbulb },
+          { id: "focus", label: dict.mind.focusTimer, icon: Clock },
+          { id: "math", label: dict.mind.mentalMath, icon: Zap },
+          { id: "discipline", label: locale === "ar" ? "الالتزامات" : "Discipline", icon: ShieldCheck },
+          { id: "reading", label: dict.mind.reading, icon: BookOpen },
+          { id: "screentime", label: dict.mind.screenTime, icon: Smartphone },
+          { id: "checkin", label: locale === "ar" ? "تسجيل الحالة" : "Check-in", icon: Heart },
+          { id: "insights", label: locale === "ar" ? "التحليلات" : "Insights", icon: Lightbulb },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -487,7 +503,7 @@ export function MindDashboard() {
               onClick={() => setTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? "bg-tertiary-purple text-charcoal-dark shadow-[0_0_16px_rgba(167,139,250,0.3)] font-bold"
+                  ? "bg-tertiary-purple text-on-primary shadow-[0_0_16px_rgba(167,139,250,0.3)] font-bold"
                   : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
               }`}
             >
@@ -565,6 +581,12 @@ export function MindDashboard() {
 
       {/* TAB 1: FOCUS & COMPREHENSIVE OVERVIEW */}
       {currentTab === "focus" && (
+        !isModuleActive("module_focus") ? (
+          <DisabledModuleFallback
+            moduleKey="module_focus"
+            onEnabled={() => setTab("focus")}
+          />
+        ) : (
         <div className="space-y-6">
           {/* Hero 1: Composite Mind Score Dial */}
           <MindScoreDial scoreData={compositeMindScore} />
@@ -574,7 +596,7 @@ export function MindDashboard() {
             {/* Focus Score */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1 relative overflow-hidden">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>Focus Score</span>
+                <span>{locale === "ar" ? "درجة التركيز" : "Focus Score"}</span>
                 <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface flex items-baseline gap-1">
@@ -584,7 +606,9 @@ export function MindDashboard() {
                     <span className="text-xs text-text-muted font-normal">/ 100</span>
                   </>
                 ) : (
-                  <span className="text-sm text-text-muted font-normal">No rating</span>
+                  <span className="text-sm text-text-muted font-normal">
+                    {locale === "ar" ? "مفيش تقييم" : "No rating"}
+                  </span>
                 )}
               </div>
               <div className="text-[10px] text-on-surface-variant truncate">{scoreData.label}</div>
@@ -593,16 +617,22 @@ export function MindDashboard() {
             {/* Deep Work Time */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>Deep Work</span>
+                <span>{locale === "ar" ? "العمل العميق" : "Deep Work"}</span>
                 <Clock className="w-3.5 h-3.5 text-secondary-cyan" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface">
                 {scoreData.totalActualMinutes}
-                <span className="text-xs text-text-muted font-normal ml-1">min</span>
+                <span className="text-xs text-text-muted font-normal ml-1">
+                  {locale === "ar" ? "دقيقة" : "min"}
+                </span>
               </div>
               <div className="text-[10px] text-on-surface-variant">
                 {userProfile.dailyFocusGoalMinutes
-                  ? `Goal: ${userProfile.dailyFocusGoalMinutes} min (${scoreData.goalProgressPercent}%)`
+                  ? locale === "ar"
+                    ? `الهدف: ${userProfile.dailyFocusGoalMinutes} دقيقة (${scoreData.goalProgressPercent}%)`
+                    : `Goal: ${userProfile.dailyFocusGoalMinutes} min (${scoreData.goalProgressPercent}%)`
+                  : locale === "ar"
+                  ? "مفيش هدف يومي محدد"
                   : "No daily goal set"}
               </div>
             </div>
@@ -610,20 +640,24 @@ export function MindDashboard() {
             {/* Sessions Done */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>Sessions</span>
+                <span>{locale === "ar" ? "الجلسات" : "Sessions"}</span>
                 <Target className="w-3.5 h-3.5 text-primary-lime" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface">
                 {scoreData.completedCount}
-                <span className="text-xs text-text-muted font-normal ml-1">done</span>
+                <span className="text-xs text-text-muted font-normal ml-1">
+                  {locale === "ar" ? "مكتملة" : "done"}
+                </span>
               </div>
-              <div className="text-[10px] text-on-surface-variant">Sprints & intervals</div>
+              <div className="text-[10px] text-on-surface-variant">
+                {locale === "ar" ? "فترات عمل وتركيز" : "Sprints & intervals"}
+              </div>
             </div>
 
             {/* Avg Rating */}
             <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>Session Rating</span>
+                <span>{locale === "ar" ? "تقييم الجلسات" : "Session Rating"}</span>
                 <Star className="w-3.5 h-3.5 text-amber-core" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface">
@@ -633,12 +667,18 @@ export function MindDashboard() {
                     <span className="text-xs text-text-muted font-normal">/ 5</span>
                   </>
                 ) : (
-                  <span className="text-sm text-text-muted font-normal">None</span>
+                  <span className="text-sm text-text-muted font-normal">
+                    {locale === "ar" ? "مفيش" : "None"}
+                  </span>
                 )}
               </div>
               <div className="text-[10px] text-on-surface-variant">
                 {sessions.filter((s) => s.rating).length > 0
-                  ? `${sessions.filter((s) => s.rating).length} rated sessions`
+                  ? locale === "ar"
+                    ? `${sessions.filter((s) => s.rating).length} جلسة متقيمة`
+                    : `${sessions.filter((s) => s.rating).length} rated sessions`
+                  : locale === "ar"
+                  ? "قيم جلساتك بعد ما تخلصها"
                   : "Rate completed focus"}
               </div>
             </div>
@@ -654,44 +694,60 @@ export function MindDashboard() {
                     <Zap className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-on-surface">Mental Math Summary</h3>
-                    <p className="text-[10px] text-on-surface-variant">Agility & calculation speed</p>
+                    <h3 className="text-sm font-bold text-on-surface">
+                      {locale === "ar" ? "ملخص الحساب الذهني" : "Mental Math Summary"}
+                    </h3>
+                    <p className="text-[10px] text-on-surface-variant">
+                      {locale === "ar" ? "السرعة والدقة في الحساب" : "Agility & calculation speed"}
+                    </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setIsMathModalOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-primary-lime text-surface font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer transition-all"
+                  className="px-3 py-1.5 rounded-xl bg-primary-lime text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer transition-all"
                 >
-                  Train Now
+                  {locale === "ar" ? "تدريب دلوقتي" : "Train Now"}
                 </button>
               </div>
 
               {mathSessions.length === 0 ? (
                 <div className="p-4 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-1.5">
-                  <p className="text-xs text-text-muted">No training today.</p>
+                  <p className="text-xs text-text-muted">
+                    {locale === "ar" ? "مفيش تدريب اتسجل النهاردة." : "No training today."}
+                  </p>
                   <p className="text-[10px] text-on-surface-variant">
-                    Sharpen mental processing speed in a 60-second sprint.
+                    {locale === "ar"
+                      ? "نشّط سرعة بديهتك وتفكيرك في تحدي 60 ثانية."
+                      : "Sharpen mental processing speed in a 60-second sprint."}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
-                      <div className="text-[10px] uppercase text-text-muted">Accuracy</div>
+                      <div className="text-[10px] uppercase text-text-muted">
+                        {locale === "ar" ? "الدقة" : "Accuracy"}
+                      </div>
                       <div className="text-lg font-bold text-primary-lime">{mathAccuracy}%</div>
                     </div>
                     <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
-                      <div className="text-[10px] uppercase text-text-muted">Avg Speed</div>
-                      <div className="text-lg font-bold text-on-surface">{mathAvgSpeed}s / item</div>
+                      <div className="text-[10px] uppercase text-text-muted">
+                        {locale === "ar" ? "متوسط السرعة" : "Avg Speed"}
+                      </div>
+                      <div className="text-lg font-bold text-on-surface">
+                        {mathAvgSpeed} {locale === "ar" ? "ث / مسألة" : "s / item"}
+                      </div>
                     </div>
                   </div>
 
                   {/* Sparkline Visual */}
                   <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle space-y-1.5">
                     <div className="flex items-center justify-between text-[10px] text-text-muted">
-                      <span>Recent Session Scores</span>
-                      <span>{mathSessions.length} logged</span>
+                      <span>{locale === "ar" ? "نتائج الجلسات الأخيرة" : "Recent Session Scores"}</span>
+                      <span>
+                        {mathSessions.length} {locale === "ar" ? "جلسة" : "logged"}
+                      </span>
                     </div>
                     <div className="flex items-end gap-1.5 h-10 pt-1">
                       {mathSessions
@@ -731,24 +787,40 @@ export function MindDashboard() {
             <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
               <div className="flex items-center gap-2">
                 <Heart className="w-4 h-4 text-amber-core" />
-                <h3 className="text-sm font-bold text-on-surface">Daily State Check-ins</h3>
+                <h3 className="text-sm font-bold text-on-surface">
+                  {locale === "ar" ? "تسجيل الحالة اليومية" : "Daily State Check-ins"}
+                </h3>
               </div>
               <button
                 onClick={() => setIsCheckinModalOpen(true)}
                 className="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs text-on-surface cursor-pointer transition-colors"
               >
-                Log Check-in
+                {locale === "ar" ? "تسجيل الحالة" : "Log Check-in"}
               </button>
             </div>
 
             {checkins.length === 0 ? (
               <p className="text-xs text-text-muted italic py-1">
-                No check-ins today. Calibrate mood, energy, and cognitive focus.
+                {locale === "ar"
+                  ? "مفيش تسجيلات للحالة النهاردة. قيّم مزاجك وطاقتك وتركيزك الذهني."
+                  : "No check-ins today. Calibrate mood, energy, and cognitive focus."}
               </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {(["morning", "midday", "evening"] as const).map((p) => {
                   const item = checkins.find((c) => c.period === p);
+                  const pLabel =
+                    p === "morning"
+                      ? locale === "ar"
+                        ? "الصبح"
+                        : "morning"
+                      : p === "midday"
+                      ? locale === "ar"
+                        ? "الضهر"
+                        : "midday"
+                      : locale === "ar"
+                      ? "بليل"
+                      : "evening";
                   return (
                     <div
                       key={p}
@@ -760,19 +832,23 @@ export function MindDashboard() {
                       }`}
                     >
                       <div className="text-[10px] uppercase font-bold text-text-muted capitalize">
-                        {p}
+                        {pLabel}
                       </div>
                       {item ? (
                         <div className="mt-1 space-y-0.5">
                           <div className="text-amber-core font-bold">
-                            Mood: {RATING_LABELS[item.mood_score]}
+                            {locale === "ar" ? "المزاج: " : "Mood: "}
+                            {RATING_LABELS[item.mood_score]}
                           </div>
                           <div className="text-[10px] text-on-surface-variant">
-                            Energy: {RATING_LABELS[item.energy_score]}
+                            {locale === "ar" ? "الطاقة: " : "Energy: "}
+                            {RATING_LABELS[item.energy_score]}
                           </div>
                         </div>
                       ) : (
-                        <div className="mt-1 text-text-muted text-[11px]">+ Tap to log</div>
+                        <div className="mt-1 text-text-muted text-[11px]">
+                          {locale === "ar" ? "+ اضغط للتسجيل" : "+ Tap to log"}
+                        </div>
                       )}
                     </div>
                   );
@@ -788,9 +864,13 @@ export function MindDashboard() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-base font-bold font-mono text-on-surface">Focus Session Timer</h2>
+                <h2 className="text-base font-bold font-mono text-on-surface">
+                  {locale === "ar" ? "مؤقت جلسات التركيز" : "Focus Session Timer"}
+                </h2>
                 <p className="text-xs text-on-surface-variant font-mono">
-                  Ultradian rhythm, sprints, and interval renewals
+                  {locale === "ar"
+                    ? "إيقاع التركيز الفائق، جلسات مكثفة، وتجديد النشاط"
+                    : "Ultradian rhythm, sprints, and interval renewals"}
                 </p>
               </div>
             </div>
@@ -814,10 +894,17 @@ export function MindDashboard() {
             />
           </div>
         </div>
+        )
       )}
 
       {/* TAB 2: MENTAL MATH ARENA */}
       {currentTab === "math" && (
+        !isModuleActive("module_math") ? (
+          <DisabledModuleFallback
+            moduleKey="module_math"
+            onEnabled={() => setTab("math")}
+          />
+        ) : (
         <div className="space-y-6">
           <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-subtle">
@@ -829,7 +916,7 @@ export function MindDashboard() {
               </div>
               <button
                 onClick={() => setIsMathModalOpen(true)}
-                className="px-5 py-2.5 rounded-2xl bg-primary-lime text-surface font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim shadow-[0_0_16px_rgba(198,255,61,0.25)] cursor-pointer transition-all"
+                className="px-5 py-2.5 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs cursor-pointer transition-all"
               >
                 Launch Trainer
               </button>
@@ -853,8 +940,9 @@ export function MindDashboard() {
                       </div>
                       <div className="text-[10px] text-text-muted">
                         {new Date(s.created_at).toLocaleTimeString([], {
-                          hour: "2-digit",
+                          hour: "numeric",
                           minute: "2-digit",
+                          hour12: true,
                         })}
                         {" • "}
                         {s.duration_seconds}s total
@@ -874,31 +962,59 @@ export function MindDashboard() {
             )}
           </div>
         </div>
+        )
       )}
 
       {/* TAB 3: DISCIPLINE COMMITMENTS */}
       {currentTab === "discipline" && (
-        <div className="space-y-6">
-          <DisciplineCard selectedDate={selectedDate} />
-        </div>
+        !isModuleActive("module_discipline") ? (
+          <DisabledModuleFallback
+            moduleKey="module_discipline"
+            onEnabled={() => setTab("discipline")}
+          />
+        ) : (
+          <div className="space-y-6">
+            <DisciplineCard selectedDate={selectedDate} />
+          </div>
+        )
       )}
 
       {/* TAB 4: READING ENGINE */}
       {currentTab === "reading" && (
-        <div className="space-y-6">
-          <ReadingCard selectedDate={selectedDate} onReadingUpdated={fetchSessions} />
-        </div>
+        !isModuleActive("module_reading") ? (
+          <DisabledModuleFallback
+            moduleKey="module_reading"
+            onEnabled={() => setTab("reading")}
+          />
+        ) : (
+          <div className="space-y-6">
+            <ReadingCard selectedDate={selectedDate} onReadingUpdated={fetchSessions} />
+          </div>
+        )
       )}
 
       {/* TAB 5: SCREEN TIME TELEMETRY */}
       {currentTab === "screentime" && (
-        <div className="space-y-6">
-          <ScreenTimeCard selectedDate={selectedDate} onScreenTimeUpdated={fetchSessions} />
-        </div>
+        !isModuleActive("module_screentime") ? (
+          <DisabledModuleFallback
+            moduleKey="module_screentime"
+            onEnabled={() => setTab("screentime")}
+          />
+        ) : (
+          <div className="space-y-6">
+            <ScreenTimeCard selectedDate={selectedDate} onScreenTimeUpdated={fetchSessions} />
+          </div>
+        )
       )}
 
       {/* TAB 6: MOOD & ENERGY CHECK-INS */}
       {currentTab === "checkin" && (
+        !isModuleActive("module_checkins") ? (
+          <DisabledModuleFallback
+            moduleKey="module_checkins"
+            onEnabled={() => setTab("checkin")}
+          />
+        ) : (
         <div className="space-y-6">
           <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-4 font-mono">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
@@ -931,8 +1047,9 @@ export function MindDashboard() {
                       </span>
                       <span className="text-[10px] text-text-muted">
                         {new Date(c.created_at || Date.now()).toLocaleTimeString([], {
-                          hour: "2-digit",
+                          hour: "numeric",
                           minute: "2-digit",
+                          hour12: true,
                         })}
                       </span>
                     </div>
@@ -961,6 +1078,7 @@ export function MindDashboard() {
             )}
           </div>
         </div>
+        )
       )}
 
       {/* TAB 7: WEEKLY INSIGHTS */}
@@ -1035,7 +1153,7 @@ export function MindDashboard() {
                       onClick={() => setTempDefaultMode(m)}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         isSel
-                          ? "bg-tertiary-purple text-charcoal-dark font-bold border-tertiary-purple shadow-[0_0_12px_rgba(167,139,250,0.3)]"
+                          ? "bg-tertiary-purple text-on-primary font-bold border-tertiary-purple shadow-[0_0_12px_rgba(167,139,250,0.3)]"
                           : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
                       }`}
                     >
@@ -1093,7 +1211,7 @@ export function MindDashboard() {
                 type="button"
                 onClick={handleSaveSettings}
                 disabled={savingSettings}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-tertiary-purple text-charcoal-dark hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold bg-tertiary-purple text-on-primary hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
               >
                 {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                 <span>Save Settings</span>

@@ -88,7 +88,28 @@ export async function POST(req: NextRequest) {
 
     const s = verification.summary;
 
-    // 2. Insert into math_sessions
+    // 2. Attempt atomic submission via submit_math_session RPC if available
+    const { data: rpcSessionId, error: rpcErr } = await supabase.rpc(
+      "submit_math_session",
+      {
+        p_mode: s.mode,
+        p_operation: s.operation,
+        p_difficulty: s.difficulty,
+        p_started_at: s.started_at,
+        p_ended_at: s.ended_at,
+        p_attempts: attempts,
+      }
+    );
+
+    if (!rpcErr && rpcSessionId) {
+      return NextResponse.json({
+        success: true,
+        sessionId: rpcSessionId,
+        summary: s,
+      });
+    }
+
+    // Fallback: Direct table insertion with rollback integrity
     const { data: sessionData, error: sessionErr } = await supabase
       .from("math_sessions")
       .insert([
@@ -137,7 +158,13 @@ export async function POST(req: NextRequest) {
       .insert(attemptsToInsert);
 
     if (attemptsErr) {
-      console.warn("Notice: could not record attempts breakdown:", attemptsErr.message);
+      console.error("Failed to record attempts breakdown:", attemptsErr.message);
+      // Clean up orphaned session
+      await supabase.from("math_sessions").delete().eq("id", sessionId);
+      return NextResponse.json(
+        { error: `Failed to record attempts breakdown: ${attemptsErr.message}` },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

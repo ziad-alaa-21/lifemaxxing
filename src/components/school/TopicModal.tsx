@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AcademicTopicItem, SubjectItem } from "@/lib/school";
 import { X, Loader2, AlertCircle, BookmarkCheck, Star } from "lucide-react";
+import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface TopicModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export function TopicModal({
   initialTopic,
   isBlocked = false,
 }: TopicModalProps) {
+  const { locale } = useI18n();
   const [subjectId, setSubjectId] = useState("");
   const [name, setName] = useState("");
   const [confidence, setConfidence] = useState<number>(3);
@@ -57,27 +59,39 @@ export function TopicModal({
     setError(null);
 
     if (isBlocked) {
-      setError("Offline: saving disabled to protect sync integrity.");
+      setError(
+        locale === "ar"
+          ? "وضع عدم الاتصال: الحفظ معطل لحماية تزامن البيانات."
+          : "Offline: saving disabled to protect sync integrity."
+      );
       return;
     }
 
     if (!subjectId) {
-      setError("Please select a subject.");
+      setError(locale === "ar" ? "من فضلك اختار المادة الدراسية." : "Please select a subject.");
       return;
     }
 
     if (!name.trim()) {
-      setError("Topic name is required.");
+      setError(locale === "ar" ? "اسم الموضوع أو المفهوم مطلوب." : "Topic name is required.");
       return;
     }
 
     if (name.trim().length > 120) {
-      setError("Topic name cannot exceed 120 characters.");
+      setError(
+        locale === "ar"
+          ? "اسم الموضوع لا يمكن يتجاوز 120 حرف."
+          : "Topic name cannot exceed 120 characters."
+      );
       return;
     }
 
     if (notes.trim().length > 1000) {
-      setError("Notes cannot exceed 1000 characters.");
+      setError(
+        locale === "ar"
+          ? "الملاحظات لا يمكن تتجاوز 1000 حرف."
+          : "Notes cannot exceed 1000 characters."
+      );
       return;
     }
 
@@ -91,18 +105,24 @@ export function TopicModal({
       });
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save topic");
+      setError(
+        err instanceof Error
+          ? err.message
+          : locale === "ar"
+          ? "حصل خطأ أثناء حفظ الموضوع"
+          : "Failed to save topic"
+      );
     } finally {
       setSaving(false);
     }
   }
 
   const confidenceLabels: Record<number, string> = {
-    1: "1 - Struggling (Reset to 1d)",
-    2: "2 - Low confidence (Reset to 1d)",
-    3: "3 - Moderate (Keep interval)",
-    4: "4 - Strong (Advance ladder)",
-    5: "5 - Mastered (Advance ladder)",
+    1: locale === "ar" ? "1 - محتاج تدريب أساسي (إعادة بكرة)" : "1 - Struggling (Reset to 1d)",
+    2: locale === "ar" ? "2 - مهزوز شوية (إعادة بكرة)" : "2 - Low confidence (Reset to 1d)",
+    3: locale === "ar" ? "3 - متوسط ومقبول (نفس الفاصل)" : "3 - Moderate (Keep interval)",
+    4: locale === "ar" ? "4 - فاهمه كويس جداً (ترقية لموعد أبعد)" : "4 - Strong (Advance ladder)",
+    5: locale === "ar" ? "5 - متقن ومثبت تماماً (ترقية لموعد أبعد)" : "5 - Mastered (Advance ladder)",
   };
 
   return (
@@ -119,10 +139,18 @@ export function TopicModal({
             </div>
             <div>
               <h2 className="text-base font-bold font-mono text-on-surface">
-                {initialTopic ? "Edit Syllabus Topic" : "Add Syllabus Topic"}
+                {initialTopic
+                  ? locale === "ar"
+                    ? "تعديل مفهوم المنهج"
+                    : "Edit Syllabus Topic"
+                  : locale === "ar"
+                  ? "إضافة مفهوم جديد للمنهج"
+                  : "Add Syllabus Topic"}
               </h2>
               <p className="text-[11px] text-on-surface-variant font-mono">
-                Track topic confidence with Leitner spaced repetition
+                {locale === "ar"
+                  ? "متابعة استيعاب الموضوع مع مراجعات لايتنر التكرارية"
+                  : "Track topic confidence with Leitner spaced repetition"}
               </p>
             </div>
           </div>
@@ -145,7 +173,7 @@ export function TopicModal({
           {/* Subject */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-              Subject <span className="text-crimson-alert">*</span>
+              {locale === "ar" ? "المادة الدراسية" : "Subject"} <span className="text-crimson-alert">*</span>
             </label>
             <select
               value={subjectId}
@@ -165,7 +193,7 @@ export function TopicModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Topic Name <span className="text-crimson-alert">*</span>
+                {locale === "ar" ? "اسم الموضوع / المفهوم" : "Topic Name"} <span className="text-crimson-alert">*</span>
               </label>
               <span className="text-[10px] text-text-muted">{name.length}/120</span>
             </div>
@@ -175,8 +203,8 @@ export function TopicModal({
               value={name}
               maxLength={120}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Taylor Series Expansions"
-              className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-indigo-500/50"
+              placeholder={locale === "ar" ? "مثلاً: مفكوك تايلور وتطبيقاته" : "e.g. Taylor Series Expansions"}
+              className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-indigo-500/50 text-start"
               required
             />
           </div>
@@ -184,7 +212,7 @@ export function TopicModal({
           {/* Confidence 1-5 */}
           <div className="space-y-2">
             <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider block">
-              Confidence Level: {confidenceLabels[confidence]}
+              {locale === "ar" ? "مستوى الفهم والاستيعاب:" : "Confidence Level:"} {confidenceLabels[confidence]}
             </label>
             <div className="flex items-center justify-between gap-2 p-2 bg-surface-container-high/60 rounded-xl border border-border-subtle">
               {[1, 2, 3, 4, 5].map((lvl) => {
@@ -220,7 +248,7 @@ export function TopicModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Key Notes / Formulas (Optional)
+                {locale === "ar" ? "ملاحظات هامة / قوانين رئيسية (اختياري)" : "Key Notes / Formulas (Optional)"}
               </label>
               <span className="text-[10px] text-text-muted">{notes.length}/1000</span>
             </div>
@@ -230,8 +258,12 @@ export function TopicModal({
               value={notes}
               maxLength={1000}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. Formula: f(x) = sum [f^(n)(a)/n! * (x-a)^n]..."
-              className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-indigo-500/50 resize-y"
+              placeholder={
+                locale === "ar"
+                  ? "مثلاً: القانون: f(x) = sum [f^(n)(a)/n! * (x-a)^n]..."
+                  : "e.g. Formula: f(x) = sum [f^(n)(a)/n! * (x-a)^n]..."
+              }
+              className="w-full px-3 py-2 bg-surface-container-high border border-border-subtle rounded-xl text-on-surface placeholder:text-text-muted focus:outline-none focus:border-indigo-500/50 resize-y text-start"
             />
           </div>
 
@@ -243,20 +275,28 @@ export function TopicModal({
               disabled={saving}
               className="px-4 py-2 rounded-xl text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
             >
-              Cancel
+              {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-500 text-surface font-semibold hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Saving...</span>
+                  <span>{locale === "ar" ? "جاري الحفظ..." : "Saving..."}</span>
                 </>
               ) : (
-                <span>{initialTopic ? "Update Topic" : "Add Topic"}</span>
+                <span>
+                  {initialTopic
+                    ? locale === "ar"
+                      ? "تحديث الموضوع"
+                      : "Update Topic"
+                    : locale === "ar"
+                    ? "إضافة الموضوع"
+                    : "Add Topic"}
+                </span>
               )}
             </button>
           </div>

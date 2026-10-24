@@ -7,6 +7,7 @@ import {
   calculateTopicStats,
   filterOverdueTopicQueue,
 } from "@/lib/school";
+import { useI18n } from "@/lib/i18n/I18nContext";
 import {
   BookmarkCheck,
   Plus,
@@ -42,6 +43,7 @@ export function TopicsTab({
   onQuickReview,
   onDeleteTopic,
 }: TopicsTabProps) {
+  const { locale } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubjectId, setSelectedSubjectId] = useState("all");
   const [reviewingId, setReviewingId] = useState<string | null>(null);
@@ -103,11 +105,17 @@ export function TopicsTab({
               </div>
               <div>
                 <div className="text-sm font-bold font-mono text-on-surface">
-                  {overdueQueue.bannerText}
+                  {locale === "ar"
+                    ? `مستحق المراجعة النهاردة (${overdueQueue.totalDueCount} مفاهيم)`
+                    : overdueQueue.bannerText}
                 </div>
                 <p className="text-xs font-mono text-on-surface-variant">
                   {overdueQueue.hasMore
-                    ? `Showing ${overdueQueue.dueTopics.length} of ${overdueQueue.totalDueCount} due topics to prevent overload`
+                    ? locale === "ar"
+                      ? `عرض ${overdueQueue.dueTopics.length} من أصل ${overdueQueue.totalDueCount} مفهوم لمنع التشتت`
+                      : `Showing ${overdueQueue.dueTopics.length} of ${overdueQueue.totalDueCount} due topics to prevent overload`
+                    : locale === "ar"
+                    ? "خلّص مراجعة المفاهيم المستحقة في التكرار المتباعد النهاردة"
                     : "Complete today's active spaced repetition queue"}
                 </p>
               </div>
@@ -156,7 +164,9 @@ export function TopicsTab({
 
                   {/* 1-5 Quick Rating Action Buttons */}
                   <div className="flex items-center justify-between gap-1 pt-1 border-t border-border-subtle/50 font-mono text-[10px]">
-                    <span className="text-text-muted">Quick Rate:</span>
+                    <span className="text-text-muted">
+                      {locale === "ar" ? "تقييم سريع:" : "Quick Rate:"}
+                    </span>
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((lvl) => (
                         <button
@@ -188,19 +198,19 @@ export function TopicsTab({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block">
-            Syllabus Topics
+            {locale === "ar" ? "مفاهيم المنهج" : "Syllabus Topics"}
           </span>
           <div className="text-2xl font-extrabold text-on-surface">{stats.totalTopics}</div>
         </div>
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-amber-300 uppercase tracking-wider block">
-            Reviews Due
+            {locale === "ar" ? "مستحق المراجعة" : "Reviews Due"}
           </span>
           <div className="text-2xl font-extrabold text-amber-400">{stats.dueCount}</div>
         </div>
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-emerald-400 uppercase tracking-wider block">
-            High Confidence (4-5)
+            {locale === "ar" ? "استيعاب عالي (4-5)" : "High Confidence (4-5)"}
           </span>
           <div className="text-2xl font-extrabold text-emerald-400">
             {stats.highConfidenceCount}
@@ -208,7 +218,7 @@ export function TopicsTab({
         </div>
         <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
           <span className="text-[10px] text-indigo-400 uppercase tracking-wider block">
-            Avg Confidence
+            {locale === "ar" ? "متوسط الاستيعاب" : "Avg Confidence"}
           </span>
           <div className="text-2xl font-extrabold text-indigo-300">
             {stats.averageConfidence} / 5
@@ -225,7 +235,7 @@ export function TopicsTab({
             onChange={(e) => setSelectedSubjectId(e.target.value)}
             className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
           >
-            <option value="all">All Subjects</option>
+            <option value="all">{locale === "ar" ? "كل المواد" : "All Subjects"}</option>
             {subjects.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -235,13 +245,13 @@ export function TopicsTab({
 
           {/* Search */}
           <div className="relative w-48 sm:w-56">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Search className={`w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 text-text-muted ${locale === "ar" ? "right-3" : "left-3"}`} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search topics..."
-              className="w-full pl-8 pr-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface placeholder:text-text-muted focus:outline-none"
+              placeholder={locale === "ar" ? "ابحث في المفاهيم..." : "Search topics..."}
+              className={`w-full py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface placeholder:text-text-muted focus:outline-none ${locale === "ar" ? "pr-8 pl-3" : "pl-8 pr-3"}`}
             />
           </div>
         </div>
@@ -253,15 +263,15 @@ export function TopicsTab({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container border border-border-subtle text-on-surface hover:bg-surface-container-high text-xs font-mono transition-all cursor-pointer"
           >
             <ListPlus className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Bulk Paste</span>
+            <span>{locale === "ar" ? "لصق جملة" : "Bulk Paste"}</span>
           </button>
 
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-500 text-surface text-xs font-mono font-bold uppercase hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-500 text-white text-xs font-mono font-bold uppercase hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Add Topic</span>
+            <span>{locale === "ar" ? "إضافة مفهوم" : "Add Topic"}</span>
           </button>
         </div>
       </div>
@@ -271,12 +281,12 @@ export function TopicsTab({
         <div className="p-12 rounded-2xl bg-surface-container/50 border border-border-subtle text-center space-y-2">
           <BookmarkCheck className="w-8 h-8 text-text-muted mx-auto" />
           <div className="text-sm font-mono font-bold text-on-surface">
-            No topics found
+            {locale === "ar" ? "مفيش مفاهيم متسجلة" : "No topics found"}
           </div>
           <p className="text-xs font-mono text-text-muted max-w-sm mx-auto">
             {searchQuery || selectedSubjectId !== "all"
-              ? "No syllabus topics match your active search or subject filter."
-              : "Import your syllabus topics or paste them line-by-line to begin tracking Leitner spaced repetition."}
+              ? locale === "ar" ? "مفيش مفاهيم مطابقة للبحث أو المادة المحددة." : "No syllabus topics match your active search or subject filter."
+              : locale === "ar" ? "أضف عناوين ومفاهيم المنهج أو الصقهم جملة واحدة عشان تتابع مراجعتهم بالتكرار المتباعد." : "Import your syllabus topics or paste them line-by-line to begin tracking Leitner spaced repetition."}
           </p>
         </div>
       ) : (
@@ -301,18 +311,18 @@ export function TopicsTab({
                         style={{ backgroundColor: sub?.color || "#6366F1" }}
                       />
                       <span className="text-[11px] font-mono font-semibold text-text-muted">
-                        {sub?.name || "Subject"}
+                        {sub?.name || (locale === "ar" ? "المادة" : "Subject")}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       {isDue ? (
                         <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300 uppercase font-bold">
-                          Due Today
+                          {locale === "ar" ? "مستحق النهاردة" : "Due Today"}
                         </span>
                       ) : (
                         <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-surface-container-high border border-border-subtle text-text-muted">
-                          {t.review_count} review(s)
+                          {t.review_count} {locale === "ar" ? "مراجعة" : "review(s)"}
                         </span>
                       )}
                     </div>
@@ -323,7 +333,6 @@ export function TopicsTab({
                     {t.name}
                   </h3>
 
-                  {/* Notes snippet */}
                   {t.notes && (
                     <p
                       dir="auto"
@@ -337,7 +346,9 @@ export function TopicsTab({
                 {/* Bottom Row: 1-5 Stars Rating + Actions */}
                 <div className="pt-2 border-t border-border-subtle/50 flex items-center justify-between gap-2 font-mono text-xs">
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-text-muted mr-1">Confidence:</span>
+                    <span className="text-[10px] text-text-muted mr-1">
+                      {locale === "ar" ? "مستوى الفهم:" : "Confidence:"}
+                    </span>
                     {[1, 2, 3, 4, 5].map((lvl) => (
                       <button
                         key={lvl}
@@ -361,14 +372,14 @@ export function TopicsTab({
                     <button
                       onClick={() => onOpenEditModal(t)}
                       className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
-                      title="Edit Topic"
+                      title={locale === "ar" ? "تعديل المفهوم" : "Edit Topic"}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => onDeleteTopic(t.id)}
                       className="p-1.5 rounded-lg text-text-muted hover:text-crimson-alert hover:bg-crimson-alert/10 transition-colors"
-                      title="Delete (8s Undo)"
+                      title={locale === "ar" ? "حذف (تراجع 8 ث)" : "Delete (8s Undo)"}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

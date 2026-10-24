@@ -105,7 +105,7 @@ export function FocusHistoryList({
           <span>Deleted &ldquo;{deletedSession.name}&rdquo;</span>
           <button
             onClick={handleUndo}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-charcoal-dark font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Undo2 className="w-3.5 h-3.5" />
             <span>Undo</span>
@@ -129,8 +129,10 @@ export function FocusHistoryList({
         <div className="space-y-2.5">
           {sessions.map((s) => {
             const timeStr = new Date(s.ended_at).toLocaleTimeString([], {
-              hour: "2-digit",
+              hour: "numeric",
               minute: "2-digit",
+              hour12: true,
+              timeZone: userTimezone,
             });
             const preset = FOCUS_PRESETS[s.mode] || FOCUS_PRESETS.sprint_50;
 
