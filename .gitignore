@@ -55,3 +55,6 @@ local.properties
 *.aab
 *.idsig
 
+
+.vercel
+.env*
