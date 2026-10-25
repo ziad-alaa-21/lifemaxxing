@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.lifemaxxing.app",
+      "sha256_cert_fingerprints": [
+        "04:61:58:F9:B2:51:30:0F:5F:42:81:74:0E:32:96:A7:E0:44:4F:BD:AD:2C:BC:4B:AB:75:CC:25:68:D1:92:3D"
+      ]
+    }
+  }
+]

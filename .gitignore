@@ -45,3 +45,13 @@ next-env.d.ts
 
 # agent config (contains API keys)
 .agents/mcp_config.json
+
+# android / bubblewrap twa / capacitor
+/android/
+*.keystore
+*.jks
+local.properties
+*.apk
+*.aab
+*.idsig
+
