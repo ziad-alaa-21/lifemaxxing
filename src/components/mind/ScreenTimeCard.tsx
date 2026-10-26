@@ -147,7 +147,7 @@ export function ScreenTimeCard({
   const breakdown = log ? calculateScreenTimeBreakdown(log) : null;
 
   return (
-    <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
+    <div className="stitch-card p-5 space-y-4">
       {/* Top Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2.5">
@@ -260,7 +260,7 @@ export function ScreenTimeCard({
 
       {/* MANUAL SCREEN TIME ENTRY MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-surface-dim/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
           <div className="w-full max-w-md bg-surface-container rounded-3xl border border-border-subtle shadow-2xl p-6 space-y-5 font-mono text-xs">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -278,7 +278,7 @@ export function ScreenTimeCard({
             </div>
 
             {errorMsg && (
-              <div className="p-3 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 text-[#F87171] text-xs">
+              <div className="p-3 rounded-xl bg-crimson-alert/10 border border-crimson-alert/30 text-crimson-alert text-xs">
                 {errorMsg}
               </div>
             )}
@@ -290,7 +290,7 @@ export function ScreenTimeCard({
                   {locale === "ar" ? "إجمالي وقت الشاشة" : "Total Screen Time"}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-container-low border border-border-subtle">
                     <input
                       type="number"
                       min={0}
@@ -302,7 +302,7 @@ export function ScreenTimeCard({
                     />
                     <span className="text-text-muted">{locale === "ar" ? "ساعات" : "hours"}</span>
                   </div>
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-container-low border border-border-subtle">
                     <input
                       type="number"
                       min={0}
@@ -328,7 +328,7 @@ export function ScreenTimeCard({
                   value={prodMinutes}
                   onChange={(e) => setProdMinutes(e.target.value)}
                   placeholder={locale === "ar" ? "مثال: 150" : "e.g. 150"}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
                 />
               </div>
 
@@ -343,7 +343,7 @@ export function ScreenTimeCard({
                   value={entMinutes}
                   onChange={(e) => setEntMinutes(e.target.value)}
                   placeholder={locale === "ar" ? "مثال: 60" : "e.g. 60"}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
                 />
               </div>
 
@@ -358,7 +358,7 @@ export function ScreenTimeCard({
                   value={pickups}
                   onChange={(e) => setPickups(e.target.value)}
                   placeholder={locale === "ar" ? "مثال: 45" : "e.g. 45"}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-secondary-cyan text-start"
                 />
               </div>
             </div>

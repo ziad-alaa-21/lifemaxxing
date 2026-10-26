@@ -18,7 +18,7 @@ export function MindScoreDial({ scoreData }: MindScoreDialProps) {
   const strokeDashoffset = 283 - (283 * scorePct) / 100;
 
   return (
-    <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle relative overflow-hidden space-y-4 font-mono">
+    <div className="stitch-card p-6 relative overflow-hidden space-y-4 font-mono">
       <div className="absolute top-0 right-0 w-64 h-64 bg-tertiary-purple/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -118,7 +118,7 @@ export function MindScoreDial({ scoreData }: MindScoreDialProps) {
             <div className="text-[10px] text-text-muted uppercase">
               {locale === "ar" ? "القراءة" : "Reading"}
             </div>
-            <div className="font-bold text-sky-400">
+            <div className="font-bold text-secondary-cyan">
               +{readingPts} {locale === "ar" ? "نقطة" : "pts"}
             </div>
           </div>

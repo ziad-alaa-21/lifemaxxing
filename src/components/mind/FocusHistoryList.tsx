@@ -83,7 +83,7 @@ export function FocusHistoryList({
 
   if (sessions.length === 0) {
     return (
-      <div className="p-8 rounded-3xl bg-surface-container border border-border-subtle text-center space-y-3 font-mono">
+      <div className="stitch-card p-8 text-center space-y-3 font-mono">
         <div className="w-12 h-12 mx-auto rounded-2xl bg-surface-container-high flex items-center justify-center text-text-muted">
           <Brain className="w-6 h-6" />
         </div>
@@ -113,7 +113,7 @@ export function FocusHistoryList({
         </div>
       )}
 
-      <div className="p-4 md:p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-3">
+      <div className="p-4 md:stitch-card p-6 space-y-3">
         <div className="flex items-center justify-between pb-2 border-b border-border-subtle text-xs">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-tertiary-purple" />
@@ -139,7 +139,7 @@ export function FocusHistoryList({
             return (
               <div
                 key={s.id}
-                className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
               >
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -158,7 +158,7 @@ export function FocusHistoryList({
 
                     {/* Status badge */}
                     {s.status === "ended_early" && (
-                      <span className="px-1.5 py-0.5 rounded-md text-[9px] bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                      <span className="px-1.5 py-0.5 rounded-md text-[9px] bg-amber-500/15 text-amber-700 border border-amber-500/30">
                         Ended Early
                       </span>
                     )}
@@ -207,7 +207,7 @@ export function FocusHistoryList({
 
                   <button
                     onClick={() => handleSoftDelete(s)}
-                    className="p-1.5 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-high transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-text-muted hover:text-crimson-alert hover:bg-surface-container-high transition-colors cursor-pointer"
                     title="Delete session"
                   >
                     <Trash2 className="w-4 h-4" />

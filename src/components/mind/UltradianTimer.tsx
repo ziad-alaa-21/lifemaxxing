@@ -346,7 +346,7 @@ export function UltradianTimer({
   const ringColor = isBreak ? "stroke-secondary-cyan" : "stroke-tertiary-purple";
 
   return (
-    <div className="p-6 md:p-8 rounded-3xl bg-surface-container border border-border-subtle relative overflow-hidden space-y-6">
+    <div className="p-6 md:stitch-card p-8 relative overflow-hidden space-y-6">
       {/* Ambient background glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-all duration-700"
@@ -416,7 +416,7 @@ export function UltradianTimer({
       {/* Top Header: Mode Switcher & Audio Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 font-mono relative z-10">
         {/* Mode Switcher (Default 50/10) */}
-        <div className="flex items-center gap-1.5 p-1 bg-surface-container-lowest rounded-2xl border border-border-subtle text-xs">
+        <div className="flex items-center gap-1.5 p-1 bg-surface-container-low rounded-2xl border border-border-subtle text-xs">
           {(["sprint_50", "ultradian_90", "pomodoro_25"] as FocusMode[]).map((m) => {
             const p = FOCUS_PRESETS[m];
             const isSelected = selectedMode === m;
@@ -426,7 +426,7 @@ export function UltradianTimer({
                 onClick={() => handleModeChange(m)}
                 className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-tertiary-purple text-on-primary shadow-[0_0_12px_rgba(167,139,250,0.3)]"
+                    ? "bg-tertiary-purple text-on-primary shadow-xs"
                     : "text-text-muted hover:text-on-surface"
                 }`}
               >
@@ -443,7 +443,7 @@ export function UltradianTimer({
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs transition-colors cursor-pointer ${
               chimeEnabled
                 ? "bg-surface-container-high border-border-subtle text-on-surface"
-                : "bg-surface-container-lowest border-border-subtle text-text-muted"
+                : "bg-surface-container-low border-border-subtle text-text-muted"
             }`}
             title="Configure Chime & Haptics"
           >
@@ -459,7 +459,7 @@ export function UltradianTimer({
 
       {/* Expandable Audio & Vibration Panel */}
       {showAudioControls && (
-        <div className="relative z-10 p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-3 font-mono text-xs animate-fade-in">
+        <div className="relative z-10 p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle space-y-3 font-mono text-xs animate-fade-in">
           <div className="flex items-center justify-between">
             <span className="text-text-muted">{locale === "ar" ? "صوت التنبيه:" : "Chime Sound:"}</span>
             <button
@@ -542,7 +542,7 @@ export function UltradianTimer({
                 className={`px-2.5 py-1 rounded-xl text-[11px] transition-all cursor-pointer shrink-0 border ${
                   taskCategory === cat
                     ? "bg-tertiary-purple/20 text-tertiary-purple border-tertiary-purple/40 font-bold"
-                    : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
+                    : "bg-surface-container-low text-text-muted border-border-subtle hover:text-on-surface"
                 }`}
               >
                 {displayCat}
@@ -619,7 +619,7 @@ export function UltradianTimer({
                   <span>{locale === "ar" ? "استراحة تجديد طاقة" : "Renewal Break"}</span>
                 </span>
               ) : phase === "paused" ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 border border-amber-500/30">
                   <Pause className="w-3 h-3" />
                   <span>{locale === "ar" ? "متوقف مؤقتًا" : "Paused"}</span>
                 </span>
@@ -706,7 +706,7 @@ export function UltradianTimer({
 
             <button
               onClick={handleFinishEarly}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-on-primary shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4 text-on-primary" />
               <span>{locale === "ar" ? "إنهاء الجلسة" : "Complete"}</span>
@@ -718,7 +718,7 @@ export function UltradianTimer({
           <>
             <button
               onClick={handleResume}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-on-primary shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm bg-tertiary-purple text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             >
               <Play className="w-4 h-4 fill-current text-on-primary" />
               <span>{locale === "ar" ? "استئناف" : "Resume"}</span>

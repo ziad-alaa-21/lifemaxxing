@@ -399,7 +399,7 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
   };
 
   return (
-    <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
+    <div className="stitch-card p-5 space-y-4">
       {/* Top Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2.5">
@@ -504,7 +504,7 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
 
       {/* MANAGE COMMITMENTS MODAL */}
       {isManageOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-surface-dim/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
           <div className="w-full max-w-md bg-surface-container rounded-3xl border border-border-subtle shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-4 sm:p-5 border-b border-border-subtle flex items-center justify-between bg-surface-container-low">
               <div>

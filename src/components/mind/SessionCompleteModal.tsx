@@ -164,7 +164,7 @@ export function SessionCompleteModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
       <div className="relative w-full max-w-lg bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5 animate-fade-in font-mono text-xs">
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
@@ -194,7 +194,7 @@ export function SessionCompleteModal({
 
         {/* Error notice */}
         {errorMsg && (
-          <div className="p-3 rounded-2xl bg-[#F87171]/10 border border-[#F87171]/30 text-[#F87171] flex items-center gap-2">
+          <div className="p-3 rounded-2xl bg-crimson-alert/10 border border-crimson-alert/30 text-crimson-alert flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
           </div>
@@ -225,8 +225,8 @@ export function SessionCompleteModal({
                     onClick={() => setTaskCategory(cat)}
                     className={`px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer border ${
                       taskCategory === cat
-                        ? "bg-tertiary-purple text-on-primary font-bold border-tertiary-purple shadow-[0_0_12px_rgba(167,139,250,0.3)]"
-                        : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
+                        ? "bg-tertiary-purple text-on-primary font-bold border-tertiary-purple shadow-xs"
+                        : "bg-surface-container-low text-text-muted border-border-subtle hover:text-on-surface"
                     }`}
                   >
                     {locale === "ar" ? (catLabels[cat] || cat) : cat}
@@ -253,7 +253,7 @@ export function SessionCompleteModal({
               value={taskName}
               onChange={(e) => setTaskName(e.target.value)}
               placeholder={locale === "ar" ? `مثال: جلسة ${taskCategory}` : `e.g. ${taskCategory} Sprint`}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple transition-colors text-start"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple transition-colors text-start"
             />
           </div>
 
@@ -266,7 +266,7 @@ export function SessionCompleteModal({
               <select
                 value={subjectId || ""}
                 onChange={(e) => setSubjectId(e.target.value || null)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface focus:outline-none focus:border-tertiary-purple text-start"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface focus:outline-none focus:border-tertiary-purple text-start"
               >
                 <option value="">{locale === "ar" ? "غير مربوط بمادة" : "No subject linked"}</option>
                 {subjects.map((sub) => (
@@ -288,7 +288,7 @@ export function SessionCompleteModal({
                 {rating ? `${rating} / 5` : (locale === "ar" ? "بدون تقييم" : "Unrated")}
               </span>
             </div>
-            <div className="flex items-center gap-2 p-2 bg-surface-container-lowest rounded-xl border border-border-subtle justify-center">
+            <div className="flex items-center gap-2 p-2 bg-surface-container-low rounded-xl border border-border-subtle justify-center">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -331,7 +331,7 @@ export function SessionCompleteModal({
                     className={`px-2.5 py-1.5 rounded-xl text-[11px] transition-all cursor-pointer border ${
                       isSelected
                         ? "bg-tertiary-purple/20 text-tertiary-purple border-tertiary-purple/40 font-bold"
-                        : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
+                        : "bg-surface-container-low text-text-muted border-border-subtle hover:text-on-surface"
                     }`}
                   >
                     {locale === "ar" ? (tagLabels[tag] || tag) : tag}
@@ -365,7 +365,7 @@ export function SessionCompleteModal({
                   }
                 }}
                 placeholder={locale === "ar" ? "+ أضف وسماً خاصاً..." : "+ Add custom tag..."}
-                className="flex-1 px-3 py-1.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface text-[11px] placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple text-start"
+                className="flex-1 px-3 py-1.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface text-[11px] placeholder:text-text-muted/60 focus:outline-none focus:border-tertiary-purple text-start"
               />
               <button
                 type="button"
@@ -387,7 +387,7 @@ export function SessionCompleteModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder={locale === "ar" ? "إيه اللي ساعدك تركز؟ وإيه الصعوبة اللي ظهرت؟" : "What worked? What resistance did you hit?"}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple transition-colors resize-none text-start"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple transition-colors resize-none text-start"
             />
           </div>
         </div>
@@ -403,7 +403,7 @@ export function SessionCompleteModal({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold bg-tertiary-purple text-on-primary shadow-[0_0_15px_rgba(167,139,250,0.3)] hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold bg-tertiary-purple text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />

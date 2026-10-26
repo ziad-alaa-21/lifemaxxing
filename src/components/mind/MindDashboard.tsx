@@ -448,11 +448,11 @@ export function MindDashboard() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-surface-container rounded-3xl p-6 border border-border-subtle relative overflow-hidden">
+      <div className="stitch-card p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-72 h-72 bg-tertiary-purple/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-tertiary-purple/10 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple shadow-[0_0_16px_rgba(167,139,250,0.2)]">
+            <div className="w-12 h-12 rounded-2xl bg-tertiary-purple/10 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple shadow-xs">
               <Brain className="w-6 h-6" />
             </div>
             <div>
@@ -503,7 +503,7 @@ export function MindDashboard() {
               onClick={() => setTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? "bg-tertiary-purple text-on-primary shadow-[0_0_16px_rgba(167,139,250,0.3)] font-bold"
+                  ? "bg-tertiary-purple text-on-primary shadow-xs font-bold"
                   : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
               }`}
             >
@@ -516,20 +516,20 @@ export function MindDashboard() {
 
       {/* Migration Pending Notice */}
       {schemaPending && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono space-y-1">
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 text-xs font-mono space-y-1">
           <div className="flex items-center gap-2 font-bold">
-            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
             <span>Database Tables Pending Migration</span>
           </div>
           <p className="text-text-muted leading-relaxed">
-            Run <code className="text-amber-200">supabase/migrations/007_mind_training_and_checkins.sql</code> and <code className="text-amber-200">008_mind_reading_and_screentime.sql</code> in your Supabase SQL editor.
+            Run <code className="text-amber-800">supabase/migrations/007_mind_training_and_checkins.sql</code> and <code className="text-amber-800">008_mind_reading_and_screentime.sql</code> in your Supabase SQL editor.
           </p>
         </div>
       )}
 
       {/* Error notice */}
       {errorMsg && (
-        <div className="p-3 rounded-2xl bg-[#F87171]/10 border border-[#F87171]/30 text-[#F87171] text-xs font-mono flex items-center gap-2">
+        <div className="p-3 rounded-2xl bg-crimson-alert/10 border border-crimson-alert/30 text-crimson-alert text-xs font-mono flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{errorMsg}</span>
         </div>
@@ -594,7 +594,7 @@ export function MindDashboard() {
           {/* Daily Metrics: Focus score, Deep Work, Sessions, Rating */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 font-mono">
             {/* Focus Score */}
-            <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1 relative overflow-hidden">
+            <div className="stitch-card p-4 space-y-1 relative overflow-hidden">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
                 <span>{locale === "ar" ? "درجة التركيز" : "Focus Score"}</span>
                 <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
@@ -615,7 +615,7 @@ export function MindDashboard() {
             </div>
 
             {/* Deep Work Time */}
-            <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
+            <div className="stitch-card p-4 space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
                 <span>{locale === "ar" ? "العمل العميق" : "Deep Work"}</span>
                 <Clock className="w-3.5 h-3.5 text-secondary-cyan" />
@@ -638,7 +638,7 @@ export function MindDashboard() {
             </div>
 
             {/* Sessions Done */}
-            <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
+            <div className="stitch-card p-4 space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
                 <span>{locale === "ar" ? "الجلسات" : "Sessions"}</span>
                 <Target className="w-3.5 h-3.5 text-primary-lime" />
@@ -655,7 +655,7 @@ export function MindDashboard() {
             </div>
 
             {/* Avg Rating */}
-            <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-1">
+            <div className="stitch-card p-4 space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
                 <span>{locale === "ar" ? "تقييم الجلسات" : "Session Rating"}</span>
                 <Star className="w-3.5 h-3.5 text-amber-core" />
@@ -687,7 +687,7 @@ export function MindDashboard() {
           {/* Row 1: Math Summary & Discipline Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Math Summary Card with Sparkline */}
-            <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-4 font-mono">
+            <div className="stitch-card p-5 space-y-4 font-mono">
               <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl bg-primary-lime/10 border border-primary-lime/30 flex items-center justify-center text-primary-lime">
@@ -783,7 +783,7 @@ export function MindDashboard() {
           </div>
 
           {/* Row 3: Daily State Check-in card */}
-          <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-3 font-mono">
+          <div className="stitch-card p-5 space-y-3 font-mono">
             <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
               <div className="flex items-center gap-2">
                 <Heart className="w-4 h-4 text-amber-core" />
@@ -906,7 +906,7 @@ export function MindDashboard() {
           />
         ) : (
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
+          <div className="stitch-card p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-subtle">
               <div>
                 <h2 className="text-base font-bold font-mono text-on-surface">Mental Math Arena</h2>
@@ -1016,7 +1016,7 @@ export function MindDashboard() {
           />
         ) : (
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-4 font-mono">
+          <div className="stitch-card p-6 space-y-4 font-mono">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div>
                 <h2 className="text-base font-bold text-on-surface">Mood & Energy Logs</h2>
@@ -1105,7 +1105,7 @@ export function MindDashboard() {
 
       {/* Settings Modal */}
       {isSettingsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-dim/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
           <div className="w-full max-w-md bg-surface-container rounded-3xl border border-border-subtle shadow-2xl p-6 space-y-5 font-mono text-xs">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -1133,7 +1133,7 @@ export function MindDashboard() {
                 value={tempGoalMinutes}
                 onChange={(e) => setTempGoalMinutes(e.target.value)}
                 placeholder="e.g. 180 (3 hours)"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple"
               />
             </div>
 
@@ -1153,8 +1153,8 @@ export function MindDashboard() {
                       onClick={() => setTempDefaultMode(m)}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         isSel
-                          ? "bg-tertiary-purple text-on-primary font-bold border-tertiary-purple shadow-[0_0_12px_rgba(167,139,250,0.3)]"
-                          : "bg-surface-container-lowest text-text-muted border-border-subtle hover:text-on-surface"
+                          ? "bg-tertiary-purple text-on-primary font-bold border-tertiary-purple shadow-xs"
+                          : "bg-surface-container-low text-text-muted border-border-subtle hover:text-on-surface"
                       }`}
                     >
                       <div className="text-xs">{p.badge}</div>
@@ -1166,7 +1166,7 @@ export function MindDashboard() {
             </div>
 
             {/* Audio Chime & Vibration */}
-            <div className="space-y-3 p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle">
+            <div className="space-y-3 p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Volume2 className="w-4 h-4 text-secondary-cyan" />

@@ -212,7 +212,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
   const progress = activeBook ? calculateBookProgress(activeBook) : null;
 
   return (
-    <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
+    <div className="stitch-card p-5 space-y-4">
       {/* Top Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2.5">
@@ -313,7 +313,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
 
       {/* LOG READING SESSION MODAL */}
       {isLogModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-surface-dim/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
           <div className="w-full max-w-md bg-surface-container rounded-3xl border border-border-subtle shadow-2xl p-6 space-y-5 font-mono text-xs">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -331,7 +331,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
             </div>
 
             {logError && (
-              <div className="p-3 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 text-[#F87171] text-xs">
+              <div className="p-3 rounded-xl bg-crimson-alert/10 border border-crimson-alert/30 text-crimson-alert text-xs">
                 {logError}
               </div>
             )}
@@ -348,7 +348,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                   value={logPages}
                   onChange={(e) => setLogPages(e.target.value)}
                   placeholder={locale === "ar" ? "مثال: 25" : "e.g. 25"}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
@@ -363,7 +363,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                   value={logMinutes}
                   onChange={(e) => setLogMinutes(e.target.value)}
                   placeholder={locale === "ar" ? "مثال: 35" : "e.g. 35"}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
@@ -376,7 +376,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                   onChange={(e) => setLogNotes(e.target.value)}
                   placeholder={locale === "ar" ? "اكتب ملاحظة أو اقتباس عجبك..." : "Notes, quote, or reflection..."}
                   rows={2}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple resize-none text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple resize-none text-start"
                 />
               </div>
             </div>
@@ -403,7 +403,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
 
       {/* ADD NEW BOOK MODAL */}
       {isNewBookModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-surface-dim/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
           <div className="w-full max-w-md bg-surface-container rounded-3xl border border-border-subtle shadow-2xl p-6 space-y-5 font-mono text-xs">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -430,7 +430,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder={locale === "ar" ? "مثال: العادات الذرية" : "e.g. Deep Work"}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
@@ -443,7 +443,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                   value={newAuthor}
                   onChange={(e) => setNewAuthor(e.target.value)}
                   placeholder={locale === "ar" ? "مثال: جيمس كلير" : "e.g. Cal Newport"}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                 />
               </div>
 
@@ -458,7 +458,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                     value={newTotalPages}
                     onChange={(e) => setNewTotalPages(e.target.value)}
                     placeholder={locale === "ar" ? "300" : "e.g. 300"}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                   />
                 </div>
                 <div>
@@ -471,7 +471,7 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
                     value={newStartPage}
                     onChange={(e) => setNewStartPage(e.target.value)}
                     placeholder="0"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface placeholder:text-text-muted focus:outline-none focus:border-tertiary-purple text-start"
                   />
                 </div>
               </div>

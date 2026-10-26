@@ -298,7 +298,7 @@ export function MathTrainerModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-surface-dim/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
       <div className="w-full max-w-md bg-surface-container rounded-3xl border border-border-subtle shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-border-subtle flex items-center justify-between bg-surface-container-low">
@@ -381,7 +381,7 @@ export function MathTrainerModal({
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold font-mono">{locale === "ar" ? "20 سؤال تركيز" : "20 Precision"}</span>
-                      <Target className="w-3.5 h-3.5 text-sky-400" />
+                      <Target className="w-3.5 h-3.5 text-secondary-cyan" />
                     </div>
                     <p className="text-[10px] text-on-surface-variant">
                       {locale === "ar" ? "نسبة الدقة وإجمالي الوقت" : "Accuracy % and total time"}
@@ -473,7 +473,7 @@ export function MathTrainerModal({
                 onClick={startSession}
                 className="w-full py-3.5 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-sm uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all"
               >
-                <Play className="w-4 h-4 fill-surface" />
+                <Play className="w-4 h-4 fill-current" />
                 <span>{locale === "ar" ? "ابدأ التدريب الذهني" : "Start Training"}</span>
               </button>
             </div>

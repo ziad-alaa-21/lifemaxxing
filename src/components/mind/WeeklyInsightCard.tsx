@@ -10,7 +10,7 @@ interface WeeklyInsightCardProps {
 
 export function WeeklyInsightCard({ insights }: WeeklyInsightCardProps) {
   return (
-    <div className="p-5 rounded-3xl bg-surface-container border border-border-subtle space-y-4 font-mono">
+    <div className="stitch-card p-5 space-y-4 font-mono">
       <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-amber-core/10 border border-amber-core/30 flex items-center justify-center text-amber-core">
