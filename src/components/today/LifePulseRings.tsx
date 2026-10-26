@@ -57,7 +57,7 @@ export function LifePulseRings({
           r={r}
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-surface-container-highest/40"
+          className="text-[#ECEEFA]"
           fill="none"
         />
         {/* Active progress */}
@@ -124,7 +124,7 @@ export function LifePulseRings({
 
   return (
     <>
-      <div className="p-5 rounded-2xl bg-surface-container border border-border-subtle flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Left: Interactive Concentric SVG */}
         <div className="relative shrink-0 flex items-center justify-center">
           <svg width={size} height={size} className="overflow-visible">
@@ -144,10 +144,10 @@ export function LifePulseRings({
 
           {/* Center Label */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
+            <span className="text-[11px] uppercase tracking-[0.06em] text-[#5B6270] font-medium">
               {locale === "ar" ? "نبض الإنجاز" : "Life Pulse"}
             </span>
-            <span className="text-sm font-mono font-bold text-on-surface">
+            <span className="text-base font-medium text-[#14161A] tabular-nums">
               {locale === "ar"
                 ? `${activeRingsCount} ${activeRingsCount === 1 ? "حلقة" : activeRingsCount === 2 ? "حلقتين" : "حلقات"}`
                 : `${activeRingsCount} ${activeRingsCount === 1 ? "Ring" : "Rings"}`}
@@ -161,7 +161,7 @@ export function LifePulseRings({
             <button
               key={ring.domain}
               onClick={() => setSelectedRing(ring)}
-              className="w-full p-3 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle hover:border-border-default transition-all flex items-center justify-between group cursor-pointer text-start"
+              className="w-full p-3.5 rounded-[14px] bg-[#F8F9FD] hover:bg-[#F3F4FB] border border-[#ECEEFA] hover:border-[#D5D9EC] transition-all flex items-center justify-between group cursor-pointer text-start"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span
@@ -169,13 +169,13 @@ export function LifePulseRings({
                   style={{ backgroundColor: ring.colorHex }}
                 />
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold font-mono text-on-surface flex items-center gap-1.5">
+                  <div className="text-sm font-medium text-[#14161A] flex items-center gap-1.5">
                     <span>{getDomainLabel(ring.domain, ring.label)}</span>
-                    <span className="text-[10px] text-text-muted font-normal">
+                    <span className="text-xs text-[#5B6270] font-normal">
                       ({getDomainSubtext(ring.domain)})
                     </span>
                   </div>
-                  <div className="text-[11px] text-text-muted truncate">
+                  <div className="text-xs text-[#5B6270] truncate mt-0.5">
                     {ring.components
                       .filter((c) => c.status !== "not_set_up")
                       .map(formatComponentSummary)
@@ -187,12 +187,12 @@ export function LifePulseRings({
               <div className="flex items-center gap-2 shrink-0">
                 <div className="text-end">
                   <span
-                    className="text-xs font-mono font-bold block"
+                    className="text-xs font-medium tabular-nums block"
                     style={{
                       color:
                         ring.ringPercent !== null
                           ? ring.colorHex
-                          : "var(--text-muted)",
+                          : "#5B6270",
                     }}
                   >
                     {locale === "ar" && ring.displayText === "MISSING TELEMETRY"
@@ -202,10 +202,10 @@ export function LifePulseRings({
                   {/* Delta vs yesterday ONLY when both days have data */}
                   {ring.deltaVsYesterday !== null && (
                     <span
-                      className={`text-[9px] font-mono flex items-center justify-end ${
+                      className={`text-[10px] font-medium tabular-nums flex items-center justify-end ${
                         ring.deltaVsYesterday >= 0
-                          ? "text-status-success"
-                          : "text-text-muted"
+                          ? "text-[#15803D]"
+                          : "text-[#5B6270]"
                       }`}
                     >
                       {ring.deltaVsYesterday >= 0 ? "+" : ""}
@@ -213,7 +213,7 @@ export function LifePulseRings({
                     </span>
                   )}
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-text-muted group-hover:text-on-surface transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
+                <ChevronRight className="w-4 h-4 text-[#5B6270] group-hover:text-[#14161A] transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
               </div>
             </button>
           ))}

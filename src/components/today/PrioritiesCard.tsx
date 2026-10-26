@@ -196,24 +196,24 @@ export function PrioritiesCard({
   };
 
   return (
-    <div className="p-5 rounded-2xl bg-surface-container border border-border-subtle space-y-4">
+    <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.08)] space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+      <div className="flex items-center justify-between pb-3.5 border-b border-[#ECEEFA]">
         <div className="flex items-center gap-2.5">
-          <CheckSquare className="w-4 h-4 text-primary-lime" />
-          <h3 className="text-xs font-mono uppercase tracking-wider text-on-surface font-semibold">
+          <CheckSquare className="w-4 h-4 text-[#14161A]" />
+          <h3 className="text-[15px] font-medium text-[#14161A]">
             {locale === "ar" ? "أولويات النهاردة" : "Today's Priorities"}
           </h3>
-          <span className="text-[11px] font-mono text-text-muted">
+          <span className="text-xs tabular-nums text-[#5B6270]">
             ({completedCount}/{priorities.length} {locale === "ar" ? "اتنفذوا" : "done"})
           </span>
         </div>
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-[11px] font-mono text-on-surface transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] bg-[#14161A] hover:bg-[#23272F] text-xs font-medium text-white transition-colors cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5 text-primary-lime" />
+          <Plus className="w-3.5 h-3.5 text-white" />
           <span>{locale === "ar" ? "أضف مهمة" : "Add Task"}</span>
         </button>
       </div>
@@ -221,14 +221,14 @@ export function PrioritiesCard({
       {/* List */}
       {priorities.length === 0 ? (
         <div className="py-6 text-center space-y-2">
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-[#5B6270]">
             {locale === "ar"
               ? "مفيش أولويات متسجلة للنهاردة لسه."
               : "No priorities scheduled for today."}
           </p>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="text-xs font-mono text-secondary-cyan hover:underline cursor-pointer"
+            className="text-xs font-medium text-[#1E3A9E] hover:underline cursor-pointer"
           >
             {locale === "ar" ? "+ حدد أول أولوياتك للنهاردة" : "+ Set your first priority"}
           </button>
@@ -241,23 +241,23 @@ export function PrioritiesCard({
             const getSourceIcon = () => {
               switch (item.source) {
                 case "workout_plan":
-                  return <Dumbbell className="w-3.5 h-3.5 text-secondary-cyan" />;
+                  return <Dumbbell className="w-3.5 h-3.5 text-[#1E3A9E]" />;
                 case "deadline":
-                  return <GraduationCap className="w-3.5 h-3.5 text-amber-core" />;
+                  return <GraduationCap className="w-3.5 h-3.5 text-[#9D174D]" />;
                 case "study_goal":
-                  return <Brain className="w-3.5 h-3.5 text-tertiary-purple" />;
+                  return <Brain className="w-3.5 h-3.5 text-[#5B21B6]" />;
                 default:
-                  return <CheckSquare className="w-3.5 h-3.5 text-text-muted" />;
+                  return <CheckSquare className="w-3.5 h-3.5 text-[#5B6270]" />;
               }
             };
 
             return (
               <div
                 key={item.id}
-                className={`p-3 rounded-xl border flex items-center justify-between gap-3 transition-colors ${
+                className={`p-3.5 rounded-[14px] border flex items-center justify-between gap-3 transition-colors ${
                   item.completed
-                    ? "bg-surface-container-low/60 border-border-subtle/60 text-text-muted"
-                    : "bg-surface-container-low border-border-subtle text-on-surface"
+                    ? "bg-[#F8F9FD] border-[#ECEEFA] text-[#5B6270]"
+                    : "bg-white border-[#E3E5F0] hover:border-[#CBD0E6] text-[#14161A] shadow-[0_2px_8px_rgba(40,50,120,0.04)]"
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -275,21 +275,21 @@ export function PrioritiesCard({
                     }
                   >
                     {item.completed ? (
-                      <CheckCircle2 className="w-4 h-4 text-status-success" />
+                      <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
                     ) : (
-                      <Square className="w-4 h-4 text-text-muted hover:text-on-surface" />
+                      <Square className="w-4 h-4 text-[#5B6270] hover:text-[#14161A]" />
                     )}
                   </button>
 
                   <div className="min-w-0 text-start">
                     <div
-                      className={`text-xs font-semibold truncate ${
-                        item.completed ? "line-through text-text-muted" : "text-on-surface"
+                      className={`text-xs font-medium truncate ${
+                        item.completed ? "line-through text-[#5B6270]" : "text-[#14161A]"
                       }`}
                     >
                       {item.title}
                     </div>
-                    <div className="flex items-center gap-2 mt-0.5 text-[10px] font-mono text-text-muted">
+                    <div className="flex items-center gap-2 mt-0.5 text-[11px] tabular-nums text-[#5B6270]">
                       <span className="flex items-center gap-1">
                         {getSourceIcon()}
                         <span className="capitalize">{getSourceLabel(item.source)}</span>
@@ -298,7 +298,7 @@ export function PrioritiesCard({
                         <span>• {item.estimate_minutes} {locale === "ar" ? "دقيقة" : "m"}</span>
                       )}
                       {item.auto_completed && (
-                        <span className="text-secondary-cyan font-semibold">
+                        <span className="text-[#1E3A9E] font-medium">
                           • {locale === "ar" ? "تم تلقائيًا" : "Auto-completed"}
                         </span>
                       )}
@@ -309,7 +309,7 @@ export function PrioritiesCard({
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="p-1.5 rounded text-text-muted hover:text-status-danger transition-colors cursor-pointer"
+                    className="p-1.5 rounded-[8px] text-[#5B6270] hover:text-[#DC2626] hover:bg-[#FEF2F2] transition-colors cursor-pointer"
                     title={locale === "ar" ? "حذف المهمة" : "Delete task"}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -326,10 +326,10 @@ export function PrioritiesCard({
         <div className="pt-2">
           <button
             onClick={handleCarryOver}
-            className="w-full py-2.5 px-3 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle flex items-center justify-between text-xs font-mono text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+            className="w-full py-2.5 px-3.5 rounded-[12px] bg-[#F8F9FD] hover:bg-[#F3F4FB] border border-[#E3E5F0] flex items-center justify-between text-xs font-medium text-[#5B6270] hover:text-[#14161A] transition-colors cursor-pointer"
           >
             <span>{locale === "ar" ? "ترحيل المهام المتبقية لبكرة" : "Carry over incomplete tasks to tomorrow"}</span>
-            <ArrowRight className="w-3.5 h-3.5 text-primary-lime rtl:rotate-180" />
+            <ArrowRight className="w-3.5 h-3.5 text-[#14161A] rtl:rotate-180" />
           </button>
         </div>
       )}
@@ -337,20 +337,20 @@ export function PrioritiesCard({
       {/* Add Priority Modal */}
       {isAddModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg-darkest/80 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#14161A]/40 backdrop-blur-sm"
           onClick={() => setIsAddModalOpen(false)}
         >
           <div
-            className="w-full max-w-sm bg-surface-container border border-border-subtle rounded-2xl p-5 shadow-2xl relative space-y-4"
+            className="w-full max-w-sm bg-white border border-[#E3E5F0] rounded-[24px] p-6 shadow-[0_24px_60px_rgba(20,22,26,0.18)] relative space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-              <h4 className="text-sm font-bold font-mono text-on-surface">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#ECEEFA]">
+              <h4 className="text-sm font-medium text-[#14161A]">
                 {locale === "ar" ? "أولوية يومية جديدة" : "New Daily Priority"}
               </h4>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="w-7 h-7 rounded-lg bg-surface-container-high border border-border-subtle flex items-center justify-center text-text-muted hover:text-on-surface cursor-pointer"
+                className="w-8 h-8 rounded-[10px] bg-[#F3F4FB] border border-[#E3E5F0] flex items-center justify-center text-[#5B6270] hover:text-[#14161A] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -358,7 +358,7 @@ export function PrioritiesCard({
 
             <form onSubmit={handleAdd} className="space-y-3.5">
               <div>
-                <label className="text-[11px] font-mono text-text-muted block mb-1">
+                <label className="text-xs font-medium text-[#5B6270] block mb-1.5">
                   {locale === "ar" ? "اسم المهمة" : "Task Title"}
                 </label>
                 <input
@@ -367,19 +367,19 @@ export function PrioritiesCard({
                   placeholder={locale === "ar" ? "مثال: مراجعة فيزياء أو جلسة تمرين بنش" : "e.g. Bench press progression session"}
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-border-subtle text-xs text-on-surface focus:outline-none focus:border-primary-lime/60 font-mono text-start"
+                  className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F8F9FD] border border-[#E3E5F0] text-xs text-[#14161A] focus:outline-none focus:border-[#2563EB] text-start"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-mono text-text-muted block mb-1">
+                  <label className="text-xs font-medium text-[#5B6270] block mb-1.5">
                     {locale === "ar" ? "المصدر" : "Source"}
                   </label>
                   <select
                     value={newSource}
                     onChange={(e) => setNewSource(e.target.value as PrioritySource)}
-                    className="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-border-subtle text-xs text-on-surface font-mono"
+                    className="w-full px-3 py-2.5 rounded-[12px] bg-[#F8F9FD] border border-[#E3E5F0] text-xs text-[#14161A]"
                   >
                     <option value="custom">{locale === "ar" ? "مهمة خاصة" : "Custom Task"}</option>
                     <option value="workout_plan">{locale === "ar" ? "خطة التمرين" : "Workout Plan"}</option>
@@ -389,13 +389,13 @@ export function PrioritiesCard({
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-mono text-text-muted block mb-1">
+                  <label className="text-xs font-medium text-[#5B6270] block mb-1.5">
                     {locale === "ar" ? "الوقت المقدر" : "Estimate"}
                   </label>
                   <select
                     value={newEstimate}
                     onChange={(e) => setNewEstimate(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-border-subtle text-xs text-on-surface font-mono"
+                    className="w-full px-3 py-2.5 rounded-[12px] bg-[#F8F9FD] border border-[#E3E5F0] text-xs text-[#14161A] tabular-nums"
                   >
                     <option value={15}>15 {locale === "ar" ? "دقيقة" : "min"}</option>
                     <option value={30}>30 {locale === "ar" ? "دقيقة" : "min"}</option>
@@ -410,14 +410,14 @@ export function PrioritiesCard({
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="flex-1 py-2 rounded-xl bg-surface-container-high text-xs font-mono text-text-muted hover:text-on-surface cursor-pointer"
+                  className="flex-1 py-2.5 rounded-[12px] bg-[#F3F4FB] border border-[#E3E5F0] text-xs font-medium text-[#5B6270] hover:text-[#14161A] cursor-pointer"
                 >
                   {locale === "ar" ? "إلغاء" : "Cancel"}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-2 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold hover:opacity-90 cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 rounded-[12px] bg-primary-lime text-on-primary text-xs font-medium hover:opacity-90 cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />

@@ -580,12 +580,12 @@ export function TodayView() {
   const completedPrioritiesCount = priorities.filter((p) => p.completed).length;
 
   return (
-    <div className="space-y-6 pb-12 max-w-lg mx-auto">
+    <div className="space-y-6 pb-12 max-w-6xl mx-auto">
       {/* 1. Date Header with Real Local Timezone */}
-      <div className="flex items-center justify-between p-4 bg-surface-container rounded-2xl border border-border-subtle">
+      <div className="flex items-center justify-between px-5 py-4 bg-white rounded-[20px] border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.06)]">
         <div className="flex items-center gap-2.5">
-          <Calendar className="w-4 h-4 text-primary-lime" />
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-on-surface">
+          <Calendar className="w-4 h-4 text-[#14161A]" />
+          <span className="text-sm font-medium tracking-tight text-[#14161A]">
             {formattedHeaderDate || (locale === "ar" ? "النهاردة" : "Today")}
           </span>
         </div>
@@ -594,7 +594,7 @@ export function TodayView() {
           {currentWeightKg && (
             <Link
               href="/body?tab=weight"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-high border border-border-subtle text-[11px] font-mono text-secondary-cyan hover:border-secondary-cyan/40 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E6EEFF] border border-[#2563EB]/20 text-xs font-medium text-[#1E3A9E] hover:bg-[#DCE7FF] transition-colors"
             >
               <Weight className="w-3.5 h-3.5" />
               <span>{currentWeightKg} {locale === "ar" ? "كيلو" : "kg"}</span>
@@ -603,7 +603,7 @@ export function TodayView() {
 
           <button
             onClick={() => loadDashboardData()}
-            className="p-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+            className="p-2 rounded-[10px] bg-[#F3F4FB] hover:bg-[#ECEEFA] border border-[#E3E5F0] text-[#5B6270] hover:text-[#14161A] transition-colors cursor-pointer"
             title={locale === "ar" ? "تحديث البيانات" : "Refresh dashboard"}
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
@@ -638,11 +638,11 @@ export function TodayView() {
 
       {/* 6. Modular Pillar Cards Grid (Error Isolated) */}
       <div className="space-y-4">
-        <div className="text-xs font-mono uppercase tracking-wider text-text-muted font-semibold px-1">
+        <div className="text-[13px] uppercase tracking-[0.06em] text-[#5B6270] font-medium px-1">
           {locale === "ar" ? "نظرة عامة على محاور اليوم" : "Pillar Telemetry Overview"}
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {isPillarActive("body") && (
             <TodayBodyCard
               latestWorkoutName={latestWorkout?.name || null}
