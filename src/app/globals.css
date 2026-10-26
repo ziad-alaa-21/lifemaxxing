@@ -1,15 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  /* Stitch Life Tracking System — Light Mode Tokens + Transitional Aliases */
-  --color-bg-darkest: #eceefa;
+  /* Stitch Life Tracking System — Light Mode Tokens */
   --color-surface: #f9f9ff;
   --color-surface-container-lowest: #ffffff;
   --color-surface-container: #ffffff;
   --color-surface-container-low: #f0f3ff;
   --color-surface-container-high: #e7eeff;
   --color-surface-container-highest: #dce2f3;
-  --color-surface-bright: #f9f9ff;
 
   --color-border-subtle: #e3e5f0;
   --color-border-medium: #c6c6cb;
@@ -20,12 +18,9 @@
   --color-text-muted: #5b6270;
 
   --color-on-primary: #ffffff;
-  --color-charcoal-dark: #ffffff;
-  --color-charcoal-darkest: #f3f4fb;
 
   --color-primary-lime: #14161a;
   --color-primary-lime-dim: #2a313d;
-  --color-primary-container: #1a1c20;
   --color-secondary-cyan: #2563eb;
   --color-tertiary-purple: #7c3aed;
   --color-amber-core: #db2777;
@@ -51,19 +46,6 @@
 
 :root {
   --font-active-plex: var(--font-plex-sans);
-  --bg-darkest: #eceefa;
-  --bg-surface: #f9f9ff;
-  --bg-surface-container: #ffffff;
-  --border-subtle: #e3e5f0;
-  --volt-lime: #14161a;
-  --volt-lime-glow: rgba(40, 50, 120, 0.08);
-  --on-primary: #ffffff;
-  --glass-surface-fill: rgba(255, 255, 255, 0.92);
-  --glass-bg-charcoal: rgba(255, 255, 255, 0.92);
-  --glass-lens-fill: #f0f3ff;
-  --glass-lens-border: #e3e5f0;
-  --glass-opaque-fallback: #ffffff;
-  --glass-tab-inactive: #5b6270;
 }
 
 /* Activate IBM Plex Sans Arabic ONLY when locale is Arabic */

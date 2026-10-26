@@ -54,7 +54,7 @@ const cases = [
   {
     name: "layout.tsx meta theme-color (viewport.themeColor) change passes",
     file: "src/app/layout.tsx",
-    mutate: (s) => s.replace(/themeColor:\s*"[^"]+"/, 'themeColor: "#F3F4FB"'),
+    mutate: (s) => s.replace(/themeColor:\s*"[^"]+"/, 'themeColor: "#ECEEFA"'),
     expect: 0,
   },
   {

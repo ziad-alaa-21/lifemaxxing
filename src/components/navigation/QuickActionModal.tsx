@@ -211,7 +211,7 @@ export function QuickActionModal({
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md bg-white border border-[#E3E5F0] rounded-t-[20px] sm:rounded-[20px] p-6 shadow-[0_12px_32px_rgba(40,50,120,0.12)] relative space-y-4"
+        className="w-full sm:max-w-md bg-white border border-[#E3E5F0] rounded-t-[20px] sm:rounded-[20px] p-6 shadow-md relative space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-3 border-b border-[#ECEEFA]">
@@ -386,7 +386,7 @@ export function QuickActionModal({
             onClick={() => setIsWeightOpen(false)}
           >
             <div
-              className="w-full max-w-xs bg-white border border-[#E3E5F0] rounded-[20px] p-5 shadow-[0_12px_32px_rgba(40,50,120,0.12)] space-y-4"
+              className="w-full max-w-xs bg-white border border-[#E3E5F0] rounded-[20px] p-5 shadow-md space-y-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between pb-2 border-b border-[#ECEEFA]">
@@ -434,7 +434,7 @@ export function QuickActionModal({
             onClick={() => setIsCheckinOpen(false)}
           >
             <div
-              className="w-full max-w-xs bg-white border border-[#E3E5F0] rounded-[20px] p-5 shadow-[0_12px_32px_rgba(40,50,120,0.12)] space-y-4"
+              className="w-full max-w-xs bg-white border border-[#E3E5F0] rounded-[20px] p-5 shadow-md space-y-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between pb-2 border-b border-[#ECEEFA]">

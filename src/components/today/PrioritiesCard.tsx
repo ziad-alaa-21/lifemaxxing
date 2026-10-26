@@ -196,7 +196,7 @@ export function PrioritiesCard({
   };
 
   return (
-    <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.08)] space-y-4">
+    <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-sm space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between pb-3.5 border-b border-[#ECEEFA]">
         <div className="flex items-center gap-2.5">

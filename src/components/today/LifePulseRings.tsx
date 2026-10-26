@@ -124,7 +124,7 @@ export function LifePulseRings({
 
   return (
     <>
-      <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Left: Interactive Concentric SVG */}
         <div className="relative shrink-0 flex items-center justify-center">
           <svg width={size} height={size} className="overflow-visible">

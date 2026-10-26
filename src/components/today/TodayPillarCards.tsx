@@ -64,7 +64,7 @@ export function TodayBodyCard({
   return (
     <Link
       href="/body?tab=logger"
-      className="bg-white border border-[#E3E5F0] hover:border-[#2563EB]/40 rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.08)] transition-all group relative overflow-hidden block space-y-3.5"
+      className="bg-white border border-[#E3E5F0] hover:border-[#2563EB]/40 rounded-[20px] p-6 shadow-sm transition-all group relative overflow-hidden block space-y-3.5"
     >
       <div className="flex items-center justify-between">
         <div className="w-10 h-10 rounded-[12px] bg-[linear-gradient(135deg,#2563EB_0%,#4338CA_100%)] flex items-center justify-center text-white shadow-sm">
@@ -186,7 +186,7 @@ export function TodayMindCard({
   return (
     <Link
       href="/mind"
-      className="bg-white border border-[#E3E5F0] hover:border-[#7C3AED]/40 rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.08)] transition-all group relative overflow-hidden block space-y-3.5"
+      className="bg-white border border-[#E3E5F0] hover:border-[#7C3AED]/40 rounded-[20px] p-6 shadow-sm transition-all group relative overflow-hidden block space-y-3.5"
     >
       <div className="flex items-center justify-between">
         <div className="w-10 h-10 rounded-[12px] bg-[linear-gradient(135deg,#7C3AED_0%,#A21CAF_100%)] flex items-center justify-center text-white shadow-sm">
@@ -313,7 +313,7 @@ export function TodaySchoolCard({
   return (
     <Link
       href="/school"
-      className="bg-white border border-[#E3E5F0] hover:border-[#DB2777]/40 rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.08)] transition-all group relative overflow-hidden block space-y-3.5"
+      className="bg-white border border-[#E3E5F0] hover:border-[#DB2777]/40 rounded-[20px] p-6 shadow-sm transition-all group relative overflow-hidden block space-y-3.5"
     >
       <div className="flex items-center justify-between">
         <div className="w-10 h-10 rounded-[12px] bg-[linear-gradient(135deg,#DB2777_0%,#C2410C_100%)] flex items-center justify-center text-white shadow-sm">

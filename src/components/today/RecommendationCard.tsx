@@ -28,7 +28,7 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
 
   return (
     <>
-      <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.08)] relative overflow-hidden space-y-3.5">
+      <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-sm relative overflow-hidden space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div
