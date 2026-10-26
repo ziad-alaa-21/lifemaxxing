@@ -96,7 +96,7 @@ export function ManualFoodModal({
     };
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md">
         <div className="relative w-full max-w-md bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl">
           <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
             <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export function ManualFoodModal({
           </div>
 
           {errorMsg && (
-            <div className="p-3 mb-4 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-2.5 text-[#F87171] text-xs font-mono">
+            <div className="p-3 mb-4 rounded-xl bg-status-danger/10 border border-status-danger/30 flex items-start gap-2.5 text-status-danger text-xs font-mono">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>

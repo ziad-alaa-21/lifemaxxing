@@ -328,7 +328,7 @@ export function NutritionDashboard() {
     <div className="space-y-6">
       {/* Error Banner */}
       {errorMsg && (
-        <div className="p-4 rounded-2xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-3 text-xs font-mono text-[#F87171]">
+        <div className="p-4 rounded-2xl bg-status-danger/10 border border-status-danger/30 flex items-start gap-3 text-xs font-mono text-status-danger">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <div className="font-bold">{locale === "ar" ? "تنبيه النظام" : "Schema Notice"}</div>
@@ -360,7 +360,7 @@ export function NutritionDashboard() {
       {/* Energy & Macro Gauge Card */}
       {targetCals === null ? (
         /* Honest Unconfigured State */
-        <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle text-center space-y-3">
+        <div className="stitch-card p-6 text-center space-y-3">
           <div className="w-12 h-12 mx-auto rounded-2xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan">
             <Flame className="w-6 h-6" />
           </div>
@@ -374,14 +374,14 @@ export function NutritionDashboard() {
           </p>
           <button
             onClick={() => setIsSettingsModalOpen(true)}
-            className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             {locale === "ar" ? "حدد أهدافك دلوقتي" : "Configure Targets Now"}
           </button>
         </div>
       ) : (
         /* Configured Energy Telemetry */
-        <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-6">
+        <div className="stitch-card p-6 space-y-6">
           <div className="flex items-start justify-between font-mono">
             <div>
               <div className="text-[11px] uppercase tracking-wider text-text-muted">
@@ -409,7 +409,7 @@ export function NutritionDashboard() {
                 className={`text-2xl font-bold mt-1 ${
                   caloriesRemaining !== null && caloriesRemaining >= 0
                     ? "text-secondary-cyan"
-                    : "text-[#F87171]"
+                    : "text-status-danger"
                 }`}
               >
                 {caloriesRemaining !== null ? Math.abs(caloriesRemaining) : 0} {locale === "ar" ? "سعرة" : "kcal"}

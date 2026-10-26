@@ -305,7 +305,7 @@ export function SavedMealsDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md">
       <div className="relative w-full max-w-lg bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
@@ -433,7 +433,7 @@ export function SavedMealsDrawer({
             <button
               onClick={handleLogSavedMeal}
               disabled={logging}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
             >
               {logging ? (
                 <>
@@ -468,7 +468,7 @@ export function SavedMealsDrawer({
             </div>
 
             {createError && (
-              <div className="p-3 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 text-xs font-mono text-[#F87171] flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-status-danger/10 border border-status-danger/30 text-xs font-mono text-status-danger flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{createError}</span>
               </div>
@@ -543,7 +543,7 @@ export function SavedMealsDrawer({
                       {newItems.length > 1 && (
                         <button
                           onClick={() => setNewItems(newItems.filter((_, i) => i !== idx))}
-                          className="p-1 text-text-muted hover:text-[#F87171] cursor-pointer"
+                          className="p-1 text-text-muted hover:text-status-danger cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -719,7 +719,7 @@ export function SavedMealsDrawer({
 
                       <button
                         onClick={() => handleSoftDeleteTemplate(meal)}
-                        className="p-1.5 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-lowest transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-text-muted hover:text-status-danger hover:bg-surface-container-lowest transition-colors cursor-pointer"
                         title={locale === "ar" ? "مسح القالب" : "Delete Template"}
                       >
                         <Trash2 className="w-4 h-4" />

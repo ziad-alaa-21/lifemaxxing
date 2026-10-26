@@ -324,7 +324,7 @@ export function SleepDashboard() {
   if (loading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-3 font-mono">
-        <Loader2 className="w-8 h-8 text-[#7DD3FC] animate-spin" />
+        <Loader2 className="w-8 h-8 text-secondary-cyan animate-spin" />
         <p className="text-xs text-text-muted">
           {locale === "ar" ? "بنحمّل قياسات النوم والريتم اليومي..." : "Loading sleep & circadian telemetry..."}
         </p>
@@ -335,9 +335,9 @@ export function SleepDashboard() {
   return (
     <div className="space-y-6 animate-fade-in font-mono">
       {/* Top Banner & Action Bar */}
-      <div className="bg-surface-container rounded-3xl p-6 border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="stitch-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#7DD3FC]/10 border border-[#7DD3FC]/20 flex items-center justify-center text-[#7DD3FC] shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-secondary-cyan/10 border border-secondary-cyan/20 flex items-center justify-center text-secondary-cyan shrink-0">
             <Moon className="w-6 h-6" />
           </div>
           <div>
@@ -365,7 +365,7 @@ export function SleepDashboard() {
               setEditingEntry(null);
               setIsLogModalOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#7DD3FC] hover:bg-[#7DD3FC]/90 text-on-primary font-bold text-xs shadow-[0_0_15px_rgba(125,211,252,0.3)] transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary-cyan hover:bg-secondary-cyan/90 text-on-primary font-bold text-xs shadow-xs transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>{locale === "ar" ? "سجل نومك" : "LOG SLEEP"}</span>
@@ -386,7 +386,7 @@ export function SleepDashboard() {
 
       {/* Undo Banner */}
       {showUndoBanner && lastDeletedEntry && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-charcoal-dark border border-border-subtle shadow-2xl rounded-2xl px-5 py-3 flex items-center gap-4 animate-slide-up">
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-surface-container border border-border-subtle shadow-2xl rounded-2xl px-5 py-3 flex items-center gap-4 animate-slide-up">
           <span className="text-xs text-on-surface font-mono">
             {locale === "ar"
               ? `تم مسح تسجيل النوم ليوم ${lastDeletedEntry.sleep_date}.`
@@ -394,7 +394,7 @@ export function SleepDashboard() {
           </span>
           <button
             onClick={handleUndoDelete}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#7DD3FC] text-on-primary text-xs font-bold hover:bg-[#7DD3FC]/90 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-secondary-cyan text-on-primary text-xs font-bold hover:bg-secondary-cyan/90 transition-all cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
@@ -405,7 +405,7 @@ export function SleepDashboard() {
       {/* Primary Telemetry Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Last Night Sleep Score */}
-        <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
+        <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
               {locale === "ar" ? "آخر جودة نوم" : "Latest Sleep Score"}
@@ -442,12 +442,12 @@ export function SleepDashboard() {
         </div>
 
         {/* Card 2: 7-Day Average Duration */}
-        <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
+        <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
               {locale === "ar" ? "متوسط المدة (٧ أيام)" : "7-Day Avg Duration"}
             </span>
-            <Clock className="w-4 h-4 text-[#7DD3FC]" />
+            <Clock className="w-4 h-4 text-secondary-cyan" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-on-surface">
@@ -462,7 +462,7 @@ export function SleepDashboard() {
         </div>
 
         {/* Card 3: Circadian Midpoint Consistency */}
-        <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
+        <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
               {locale === "ar" ? "ثبات منتصف النوم" : "Midpoint Stability"}
@@ -472,8 +472,8 @@ export function SleepDashboard() {
                 midpoint.stability === "Consistent"
                   ? "text-primary-lime border-primary-lime/30 bg-primary-lime/10"
                   : midpoint.stability === "Moderate"
-                  ? "text-[#7DD3FC] border-[#7DD3FC]/30 bg-[#7DD3FC]/10"
-                  : "text-[#F87171] border-[#F87171]/30 bg-[#F87171]/10"
+                  ? "text-secondary-cyan border-secondary-cyan/30 bg-secondary-cyan/10"
+                  : "text-status-danger border-status-danger/30 bg-status-danger/10"
               }`}
             >
               {midpoint.stability === "Consistent"
@@ -496,7 +496,7 @@ export function SleepDashboard() {
         </div>
 
         {/* Card 4: Daytime Naps Volume */}
-        <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-2">
+        <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
               {locale === "ar" ? "قيلولات الـ ٧ أيام" : "7-Day Nap Volume"}
@@ -528,7 +528,7 @@ export function SleepDashboard() {
       <SleepTrendChart entries={entries} targetHours={sleepTargetHours ?? undefined} />
 
       {/* Recorded History List */}
-      <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
+      <div className="stitch-card p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-on-surface">
             {locale === "ar"
@@ -658,10 +658,10 @@ export function SleepDashboard() {
 
       {/* Settings Modal */}
       {isSettingsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md animate-fade-in">
-          <div className="bg-surface-container rounded-3xl p-6 border border-border-subtle w-full max-w-sm space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-fade-in">
+          <div className="stitch-card p-6 w-full max-w-sm space-y-4 shadow-2xl">
             <h3 className="text-sm font-bold text-on-surface flex items-center gap-2">
-              <SettingsIcon className="w-4 h-4 text-[#7DD3FC]" />
+              <SettingsIcon className="w-4 h-4 text-secondary-cyan" />
               <span>{locale === "ar" ? "أهداف النوم ومسار اليوم" : "Sleep & Circadian Targets"}</span>
             </h3>
 
@@ -677,7 +677,7 @@ export function SleepDashboard() {
                   max="12"
                   value={sleepTargetHours ?? ""}
                   onChange={(e) => setSleepTargetHours(parseFloat(e.target.value) || 8.0)}
-                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-secondary-cyan"
                 />
               </div>
 
@@ -692,7 +692,7 @@ export function SleepDashboard() {
                   max="14"
                   value={caffeineCutoffHours ?? ""}
                   onChange={(e) => setCaffeineCutoffHours(parseInt(e.target.value) || 10)}
-                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-secondary-cyan"
                 />
               </div>
 
@@ -707,7 +707,7 @@ export function SleepDashboard() {
                   max="180"
                   value={screenCutoffMinutes ?? ""}
                   onChange={(e) => setScreenCutoffMinutes(parseInt(e.target.value) || 60)}
-                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-secondary-cyan"
                 />
               </div>
 
@@ -720,7 +720,7 @@ export function SleepDashboard() {
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                   placeholder="e.g. UTC or America/New_York"
-                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                  className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:outline-none focus:border-secondary-cyan"
                 />
               </div>
 
@@ -734,7 +734,7 @@ export function SleepDashboard() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#7DD3FC] text-on-primary font-bold hover:bg-[#7DD3FC]/90 cursor-pointer shadow-xs"
+                  className="px-4 py-2 rounded-xl bg-secondary-cyan text-on-primary font-bold hover:bg-secondary-cyan/90 cursor-pointer shadow-xs"
                 >
                   {locale === "ar" ? "حفظ الإعدادات" : "Save Settings"}
                 </button>

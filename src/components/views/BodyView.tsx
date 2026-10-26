@@ -112,7 +112,7 @@ function BodyViewContent() {
     <div className="space-y-6">
       {/* Top Navigation Tabs */}
       <div className="relative">
-        <div ref={tabsContainerRef} className="flex items-center gap-1.5 p-1.5 bg-surface-container rounded-2xl border border-border-subtle overflow-x-auto no-scrollbar scroll-smooth">
+        <div ref={tabsContainerRef} className="flex items-center gap-1.5 p-1.5 bg-surface-container rounded-2xl border border-border-subtle shadow-xs overflow-x-auto no-scrollbar scroll-smooth">
           <button
             data-tab="logger"
             onClick={() => switchTab("logger")}
@@ -144,7 +144,7 @@ function BodyViewContent() {
             onClick={() => switchTab("sleep")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === "sleep"
-                ? "bg-[#7DD3FC] text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                ? "bg-secondary-cyan text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >
@@ -242,7 +242,7 @@ function BodyViewContent() {
       {activeTab === "catalog" && (
         <div className="space-y-5">
           {/* Catalog Top Filter */}
-          <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
+          <div className="stitch-card p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="text-start">
                 <h3 className="text-base font-bold font-mono text-on-surface">
@@ -324,7 +324,7 @@ function BodyViewContent() {
               {filteredExercises.map((ex) => (
                 <div
                   key={ex.id}
-                  className="bg-surface-container border border-border-subtle hover:border-secondary-cyan/30 rounded-xl p-4 transition-all space-y-3"
+                  className="stitch-card hover:border-secondary-cyan/30 p-4 transition-all space-y-3"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="text-start">

@@ -131,12 +131,12 @@ export function SleepLogModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-surface-container rounded-3xl p-6 border border-border-subtle w-full max-w-md space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-fade-in">
+      <div className="stitch-card p-6 w-full max-w-md space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#7DD3FC]/10 border border-[#7DD3FC]/20 flex items-center justify-center text-[#7DD3FC]">
+            <div className="w-8 h-8 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/20 flex items-center justify-center text-secondary-cyan">
               <Moon className="w-4 h-4" />
             </div>
             <div>
@@ -174,7 +174,7 @@ export function SleepLogModal({
           {!editingEntry && (
             <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/80 border border-border-subtle">
               <div className="flex items-center gap-2 text-xs text-text-muted">
-                <Zap className="w-3.5 h-3.5 text-[#7DD3FC]" />
+                <Zap className="w-3.5 h-3.5 text-secondary-cyan" />
                 <span>
                   {locale === "ar" ? "إدخال سريع:" : "Fast entry:"} {formatTimeTo12h(typical.typicalBedtime, { locale })} &rarr; {formatTimeTo12h(typical.typicalWakeTime, { locale })}
                 </span>
@@ -182,7 +182,7 @@ export function SleepLogModal({
               <button
                 type="button"
                 onClick={handleFastPrefill}
-                className="px-2.5 py-1 rounded-lg bg-[#7DD3FC]/10 hover:bg-[#7DD3FC]/20 text-[#7DD3FC] border border-[#7DD3FC]/30 text-xs font-bold transition-all cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-secondary-cyan/10 hover:bg-secondary-cyan/20 text-secondary-cyan border border-secondary-cyan/30 text-xs font-bold transition-all cursor-pointer"
               >
                 {locale === "ar" ? "زي العادة" : "Same as usual"}
               </button>
@@ -200,7 +200,7 @@ export function SleepLogModal({
               value={sleepDate}
               onChange={(e) => setSleepDate(e.target.value)}
               required
-              className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+              className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-secondary-cyan"
             />
           </div>
 
@@ -208,7 +208,7 @@ export function SleepLogModal({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-text-muted flex items-center gap-1 text-start">
-                <Moon className="w-3 h-3 text-[#7DD3FC]" />
+                <Moon className="w-3 h-3 text-secondary-cyan" />
                 <span>{locale === "ar" ? "وقت النوم" : "Bedtime"}</span>
               </label>
               <input
@@ -216,7 +216,7 @@ export function SleepLogModal({
                 value={bedtime}
                 onChange={(e) => setBedtime(e.target.value)}
                 required
-                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-secondary-cyan"
               />
             </div>
             <div className="space-y-1.5">
@@ -229,7 +229,7 @@ export function SleepLogModal({
                 value={wakeTime}
                 onChange={(e) => setWakeTime(e.target.value)}
                 required
-                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-secondary-cyan"
               />
             </div>
           </div>
@@ -239,7 +239,7 @@ export function SleepLogModal({
             <span className="text-text-muted">
               {locale === "ar" ? "مدة النوم المحسوبة:" : "Calculated Sleep Duration:"}
             </span>
-            <span className={`font-bold ${durationCheck.isValid ? "text-[#7DD3FC]" : "text-crimson-alert"}`}>
+            <span className={`font-bold ${durationCheck.isValid ? "text-secondary-cyan" : "text-crimson-alert"}`}>
               {durationCheck.durationFormatted}
             </span>
           </div>
@@ -257,7 +257,7 @@ export function SleepLogModal({
                   onClick={() => setQualityRating(star)}
                   className={`flex-1 py-2 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
                     (qualityRating || 0) >= star
-                      ? "bg-[#7DD3FC]/15 border-[#7DD3FC] text-[#7DD3FC]"
+                      ? "bg-secondary-cyan/15 border-secondary-cyan text-secondary-cyan"
                       : "bg-surface-container-highest border-border-subtle text-text-muted hover:text-on-surface"
                   }`}
                 >
@@ -276,7 +276,7 @@ export function SleepLogModal({
               <select
                 value={awakenings}
                 onChange={(e) => setAwakenings(Number(e.target.value))}
-                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-secondary-cyan"
               >
                 <option value={0}>{locale === "ar" ? "ولا مرة (نوم متواصل)" : "0 (Continuous)"}</option>
                 <option value={1}>{locale === "ar" ? "مرة واحدة" : "1 awakening"}</option>
@@ -297,7 +297,7 @@ export function SleepLogModal({
                 value={napMinutes || ""}
                 onChange={(e) => setNapMinutes(Math.max(0, parseInt(e.target.value) || 0))}
                 placeholder="0"
-                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+                className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-secondary-cyan"
               />
             </div>
           </div>
@@ -312,7 +312,7 @@ export function SleepLogModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder={locale === "ar" ? "مثلاً: مغنيسيوم، أوضة ساقعة، عشا خفيف" : "e.g. Magnesium taken, cold room, late dinner"}
-              className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2 text-xs text-on-surface focus:outline-none focus:border-[#7DD3FC]"
+              className="w-full bg-surface-container-highest border border-border-subtle rounded-xl px-3.5 py-2 text-xs text-on-surface focus:outline-none focus:border-secondary-cyan"
             />
           </div>
 
@@ -329,7 +329,7 @@ export function SleepLogModal({
             <button
               type="submit"
               disabled={saving || !durationCheck.isValid}
-              className="px-5 py-2.5 rounded-xl bg-[#7DD3FC] hover:bg-[#7DD3FC]/90 text-on-primary font-bold text-xs transition-all shadow-[0_0_15px_rgba(125,211,252,0.3)] disabled:opacity-50 cursor-pointer flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-secondary-cyan hover:bg-secondary-cyan/90 text-on-primary font-bold text-xs transition-all shadow-xs disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
               {saving
                 ? locale === "ar"

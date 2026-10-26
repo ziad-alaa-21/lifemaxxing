@@ -83,7 +83,7 @@ export function WeeklyAnalyticsCard({
   // If targets are unconfigured
   if (!analytics.hasTargets) {
     return (
-      <div className="p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-4">
+      <div className="stitch-card p-6 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle font-mono">
           <div className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-secondary-cyan" />
@@ -119,7 +119,7 @@ export function WeeklyAnalyticsCard({
   const maxBarCals = Math.max(targetCals * 1.3, ...daysData.map((d) => d.calories), 1000);
 
   return (
-    <div className="p-5 md:p-6 rounded-3xl bg-surface-container border border-border-subtle space-y-5">
+    <div className="p-5 md:stitch-card p-6 space-y-5">
       {/* Header & Score Visibility Toggle */}
       <div className="flex items-center justify-between pb-3 border-b border-border-subtle font-mono">
         <div className="flex items-center gap-2">

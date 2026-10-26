@@ -34,11 +34,11 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
   const maxDuration = Math.max(600, ...chronEntries.map((e) => e.duration_minutes));
 
   return (
-    <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
+    <div className="stitch-card p-6 space-y-4">
       {/* Header with Range Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#7DD3FC]/10 border border-[#7DD3FC]/20 flex items-center justify-center text-[#7DD3FC]">
+          <div className="w-8 h-8 rounded-lg bg-secondary-cyan/10 border border-secondary-cyan/20 flex items-center justify-center text-secondary-cyan">
             <Moon className="w-4 h-4" />
           </div>
           <div>
@@ -61,7 +61,7 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
               onClick={() => setRange(r)}
               className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                 range === r
-                  ? "bg-[#7DD3FC] text-on-primary shadow-[0_0_10px_rgba(125,211,252,0.3)]"
+                  ? "bg-secondary-cyan text-on-primary shadow-xs"
                   : "text-text-muted hover:text-on-surface"
               }`}
             >
@@ -131,7 +131,7 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
                 <span>{locale === "ar" ? "ممتاز (≥85)" : "Strong (\u226585)"}</span>
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#7DD3FC]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-secondary-cyan" />
                 <span>{locale === "ar" ? "جيد (50-84)" : "Good (50-84)"}</span>
               </span>
               <span className="flex items-center gap-1">

@@ -141,7 +141,7 @@ export function HydrationCard({
   };
 
   return (
-    <div className="bg-surface-container border border-border-subtle rounded-3xl p-5 space-y-4">
+    <div className="stitch-card p-6 space-y-4">
       {/* Undo Toast */}
       {deletedEntry && (
         <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
@@ -214,7 +214,7 @@ export function HydrationCard({
           {/* Linear Progress Bar */}
           <div className="w-full h-2.5 bg-surface-container-lowest rounded-full overflow-hidden border border-border-subtle">
             <div
-              className="h-full bg-secondary-cyan rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(93,230,255,0.4)]"
+              className="h-full bg-secondary-cyan rounded-full transition-all duration-500 shadow-xs"
               style={{ width: `${waterPercent}%` }}
             />
           </div>
@@ -380,7 +380,7 @@ export function HydrationCard({
                   </div>
                   <button
                     onClick={() => handleSoftDelete(e)}
-                    className="p-1 rounded text-text-muted hover:text-[#F87171] transition-colors cursor-pointer"
+                    className="p-1 rounded text-text-muted hover:text-status-danger transition-colors cursor-pointer"
                     title={locale === "ar" ? "مسح" : "Delete"}
                   >
                     <Trash2 className="w-3.5 h-3.5" />

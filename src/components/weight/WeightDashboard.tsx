@@ -466,11 +466,11 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
       )}
 
       {/* Top Banner */}
-      <div className="bg-surface-container rounded-2xl p-6 border border-border-subtle relative overflow-hidden">
+      <div className="stitch-card p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-secondary-cyan/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan shadow-[0_0_16px_rgba(56,189,248,0.2)]">
+            <div className="w-12 h-12 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan shadow-xs">
               <Weight className="w-6 h-6" />
             </div>
             <div>
@@ -660,7 +660,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
           </div>
 
           {/* Timeline Chart */}
-          <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
+          <div className="stitch-card p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-bold font-mono text-on-surface">
@@ -743,7 +743,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                     {targetWeight && (
                       <ReferenceLine
                         y={targetWeight}
-                        stroke="#38BDF8"
+                        stroke="#7C3AED"
                         strokeDasharray="4 4"
                         label={{
                           value: locale === "ar" ? `الهدف: ${targetWeight} كجم` : `Target: ${targetWeight}kg`,
@@ -758,7 +758,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                     <Line
                       type="monotone"
                       dataKey="rawWeight"
-                      stroke="#4B5563"
+                      stroke="#94A3B8"
                       strokeWidth={1}
                       strokeDasharray="3 3"
                       dot={{ fill: "#9CA3AF", r: 3 }}
@@ -768,7 +768,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                     <Line
                       type="monotone"
                       dataKey="movingAvg"
-                      stroke="#C6FF3D"
+                      stroke="#2563EB"
                       strokeWidth={2.5}
                       dot={false}
                       isAnimationActive={false}
@@ -863,7 +863,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
       {/* Log Weigh-In Modal */}
       {isLogModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -944,7 +944,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
       {/* Edit Weigh-In Modal */}
       {editingEntry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -1011,7 +1011,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
       {/* Goal Settings Modal */}
       {isGoalModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <div className="flex items-center gap-2">

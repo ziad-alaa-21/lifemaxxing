@@ -180,7 +180,7 @@ export function ConfirmFoodModal({
         );
       case "medium":
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#7DD3FC]/10 text-[#7DD3FC] border border-[#7DD3FC]/30">
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-secondary-cyan/10 text-secondary-cyan border border-secondary-cyan/30">
             {locale === "ar" ? "تقديري" : "Estimated"}
           </span>
         );
@@ -192,7 +192,7 @@ export function ConfirmFoodModal({
         );
       case "could_not_estimate":
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/30">
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-status-danger/10 text-status-danger border border-status-danger/30">
             {locale === "ar" ? "غير محدد" : "Could Not Estimate"}
           </span>
         );
@@ -207,7 +207,7 @@ export function ConfirmFoodModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md">
       <div className="relative w-full max-w-lg bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
           <div className="flex items-center gap-2">
@@ -286,7 +286,7 @@ export function ConfirmFoodModal({
         </div>
 
         {parseError && (
-          <div className="p-3 my-4 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-2.5 text-[#F87171] text-xs font-mono">
+          <div className="p-3 my-4 rounded-xl bg-status-danger/10 border border-status-danger/30 flex items-start gap-2.5 text-status-danger text-xs font-mono">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>{parseError}</span>
           </div>
@@ -326,7 +326,7 @@ export function ConfirmFoodModal({
 
                     <button
                       onClick={() => removeItem(idx)}
-                      className="p-1 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-lowest transition-colors cursor-pointer"
+                      className="p-1 rounded-lg text-text-muted hover:text-status-danger hover:bg-surface-container-lowest transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -366,9 +366,9 @@ export function ConfirmFoodModal({
                               e.target.value ? parseInt(e.target.value) : null
                             )
                           }
-                          className="w-16 px-2 py-1 rounded-lg bg-surface-container-lowest border border-[#F87171]/40 font-mono text-xs text-center text-on-surface focus:outline-none"
+                          className="w-16 px-2 py-1 rounded-lg bg-surface-container-lowest border border-status-danger/40 font-mono text-xs text-center text-on-surface focus:outline-none"
                         />
-                        <span className="text-[10px] font-mono text-[#F87171]">
+                        <span className="text-[10px] font-mono text-status-danger">
                           {locale === "ar" ? "أدخل السعرات" : "Enter kcal"}
                         </span>
                       </div>
@@ -410,7 +410,7 @@ export function ConfirmFoodModal({
 
             {/* Error above confirm button */}
             {parseError && (
-              <div className="p-3 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-2.5 text-[#F87171] text-xs font-mono">
+              <div className="p-3 rounded-xl bg-status-danger/10 border border-status-danger/30 flex items-start gap-2.5 text-status-danger text-xs font-mono">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <span>{parseError}</span>
               </div>
@@ -421,7 +421,7 @@ export function ConfirmFoodModal({
               <button
                 onClick={handleConfirmAndSave}
                 disabled={saving}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-xs hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
               >
                 {saving ? (
                   <>

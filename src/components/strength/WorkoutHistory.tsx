@@ -125,9 +125,9 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="stitch-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan shadow-[0_0_16px_rgba(93,230,255,0.2)]">
+          <div className="w-12 h-12 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan shadow-xs">
             <History className="w-6 h-6" />
           </div>
           <div>

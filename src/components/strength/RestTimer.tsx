@@ -156,10 +156,10 @@ export function RestTimer({
   };
 
   return (
-    <div className={`fixed bottom-24 lg:bottom-6 z-50 w-80 bg-surface-container border border-ice-blue/40 rounded-2xl p-4 shadow-2xl animate-slide-up backdrop-blur-xl ${locale === "ar" ? "left-4" : "right-4"}`}>
+    <div className={`fixed bottom-24 lg:bottom-6 z-50 w-80 bg-surface-container border border-secondary-cyan/30 rounded-2xl p-4 shadow-2xl animate-slide-up backdrop-blur-xl ${locale === "ar" ? "left-4" : "right-4"}`}>
       <div className="flex items-center justify-between pb-2 border-b border-border-subtle mb-3">
         <div className="flex items-center gap-2">
-          <Timer className="w-4 h-4 text-ice-blue" />
+          <Timer className="w-4 h-4 text-secondary-cyan" />
           <span className="text-xs font-mono font-bold uppercase tracking-wider text-on-surface">
             {locale === "ar" ? "فترة الراحة" : "Rest Interval"}
           </span>
@@ -174,13 +174,13 @@ export function RestTimer({
 
       {/* Timer Display */}
       <div className="flex items-center justify-between my-2 px-2" dir="ltr">
-        <div className="text-3xl font-bold font-mono text-ice-blue tracking-tight">
+        <div className="text-3xl font-bold font-mono text-secondary-cyan tracking-tight">
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </div>
         <div className="flex items-center gap-1.5">
           <button
             onClick={togglePause}
-            className="w-8 h-8 rounded-lg bg-ice-blue/15 hover:bg-ice-blue/25 text-ice-blue flex items-center justify-center transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-lg bg-secondary-cyan/15 hover:bg-secondary-cyan/25 text-secondary-cyan flex items-center justify-center transition-colors cursor-pointer"
             title={isRunning ? (locale === "ar" ? "إيقاف مؤقت" : "Pause") : (locale === "ar" ? "استئناف" : "Resume")}
           >
             {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -198,7 +198,7 @@ export function RestTimer({
       {/* Progress Bar */}
       <div className="w-full h-1.5 bg-surface-container-low rounded-full overflow-hidden my-3">
         <div
-          className="h-full bg-ice-blue transition-all duration-300 ease-linear rounded-full"
+          className="h-full bg-secondary-cyan transition-all duration-300 ease-linear rounded-full"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
@@ -211,7 +211,7 @@ export function RestTimer({
             onClick={() => setPreset(s)}
             className={`py-1 text-[11px] font-mono rounded-md border transition-all cursor-pointer ${
               totalSeconds === s
-                ? "bg-ice-blue/20 text-ice-blue border-ice-blue/40 font-bold"
+                ? "bg-secondary-cyan/15 text-secondary-cyan border-secondary-cyan/30 font-bold"
                 : "bg-surface-container-low text-text-muted border-border-subtle hover:text-on-surface"
             }`}
           >

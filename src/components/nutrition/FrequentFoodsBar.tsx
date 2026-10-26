@@ -238,7 +238,7 @@ export function FrequentFoodsBar({
     <div className="space-y-2">
       {/* Undo Toast */}
       {loggedToast && (
-        <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in shadow-lg">
+        <div className="p-3 rounded-2xl bg-surface-container border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in shadow-sm">
           <div className="flex items-center gap-2">
             <Check className="w-3.5 h-3.5 text-primary-lime" />
             <span>

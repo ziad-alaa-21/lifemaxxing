@@ -164,7 +164,7 @@ export function TargetSettingsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-dark/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md">
       <div className="relative w-full max-w-lg bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
           <div className="flex items-center gap-2">
@@ -206,7 +206,7 @@ export function TargetSettingsModal({
         </div>
 
         {errorMsg && (
-          <div className="p-3 mb-4 rounded-xl bg-[#F87171]/10 border border-[#F87171]/30 flex items-start gap-2.5 text-[#F87171] text-xs font-mono">
+          <div className="p-3 mb-4 rounded-xl bg-status-danger/10 border border-status-danger/30 flex items-start gap-2.5 text-status-danger text-xs font-mono">
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>{errorMsg}</span>
           </div>
@@ -323,7 +323,7 @@ export function TargetSettingsModal({
                     {locale === "ar" ? "معاينة الأهداف المحسوبة" : "Estimated Target Preview"}
                   </span>
                   {preview.targets.calorieFloorApplied && (
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-[#F87171]/20 text-[#F87171] border border-[#F87171]/30">
+                    <span className="px-2 py-0.5 rounded text-[10px] bg-status-danger/15 text-status-danger border border-status-danger/30">
                       {locale === "ar"
                         ? `تم تطبيق الحد الأدنى الأمان (${getCalorieFloor(sex || null)} سعرة)`
                         : `Floor Applied (${getCalorieFloor(sex || null)} kcal min)`}
@@ -465,7 +465,7 @@ export function TargetSettingsModal({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-[0_0_15px_rgba(93,230,255,0.25)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-xs hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
           >
             <Check className="w-4 h-4" />
             <span>

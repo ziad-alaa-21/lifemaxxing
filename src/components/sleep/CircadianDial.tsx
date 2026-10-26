@@ -99,10 +99,10 @@ export function CircadianDial({
   ];
 
   return (
-    <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle space-y-4">
+    <div className="stitch-card p-6 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#7DD3FC]/10 border border-[#7DD3FC]/20 flex items-center justify-center text-[#7DD3FC]">
+          <div className="w-8 h-8 rounded-lg bg-secondary-cyan/10 border border-secondary-cyan/20 flex items-center justify-center text-secondary-cyan">
             <Sun className="w-4 h-4" />
           </div>
           <div>
@@ -136,12 +136,12 @@ export function CircadianDial({
         <div className="h-3 w-full rounded-full bg-surface-container-highest relative overflow-hidden border border-border-subtle">
           {/* Target sleep zone */}
           <div
-            className="absolute top-0 bottom-0 bg-[#7DD3FC]/25"
+            className="absolute top-0 bottom-0 bg-secondary-cyan/20"
             style={{ left: "0%", width: "29.1%" }}
             title="Rest Window"
           />
           <div
-            className="absolute top-0 bottom-0 bg-[#7DD3FC]/25"
+            className="absolute top-0 bottom-0 bg-secondary-cyan/20"
             style={{ left: "95.8%", width: "4.2%" }}
             title="Rest Window"
           />
@@ -158,7 +158,7 @@ export function CircadianDial({
           className="absolute top-3 -translate-x-1/2 flex flex-col items-center pointer-events-none transition-all duration-500 z-10"
           style={{ left: `${currentPercent}%` }}
         >
-          <div className="w-2.5 h-2.5 rounded-full bg-primary-lime shadow-[0_0_8px_#C6FF3D]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary-lime shadow-xs" />
           <div className="w-0.5 h-4 bg-primary-lime" />
         </div>
 
@@ -189,7 +189,7 @@ export function CircadianDial({
                   <span className="text-xs font-bold font-mono text-on-surface truncate">
                     {lm.title}
                   </span>
-                  <span className="text-[10px] font-mono text-[#7DD3FC] ml-1 shrink-0">
+                  <span className="text-[10px] font-mono text-secondary-cyan ml-1 shrink-0">
                     {lm.time}
                   </span>
                 </div>

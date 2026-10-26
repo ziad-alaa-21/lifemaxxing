@@ -334,10 +334,10 @@ export function RankStandardsMatrix() {
       )}
 
       {/* Header Banner with Overall Strength Rank */}
-      <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle relative overflow-hidden space-y-4">
+      <div className="stitch-card p-6 relative overflow-hidden space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-rank-gold/15 border border-rank-gold/30 flex items-center justify-center text-rank-gold shadow-[0_0_20px_rgba(255,215,0,0.15)]">
+            <div className="w-12 h-12 rounded-xl bg-rank-gold/15 border border-rank-gold/30 flex items-center justify-center text-rank-gold shadow-xs">
               <Award className="w-6 h-6" />
             </div>
             <div>
@@ -443,7 +443,7 @@ export function RankStandardsMatrix() {
               <div className="h-64 sm:h-72 w-full my-3 flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-                    <PolarGrid stroke="rgba(255, 255, 255, 0.08)" />
+                    <PolarGrid stroke="#E3E5F0" />
                     <PolarAngleAxis
                       dataKey="lift"
                       tick={{ fill: "#94A3B8", fontSize: 11, fontFamily: "monospace" }}
@@ -457,15 +457,15 @@ export function RankStandardsMatrix() {
                     <Radar
                       name={locale === "ar" ? "نسبتك الحالية" : "Your Ratio"}
                       dataKey="userRatio"
-                      stroke="#C6FF3D"
-                      fill="#C6FF3D"
+                      stroke="#2563EB"
+                      fill="#2563EB"
                       fillOpacity={0.4}
                     />
                     <Radar
                       name={locale === "ar" ? "المستوى الذهبي" : "Gold Standard"}
                       dataKey="gold"
-                      stroke="#FFD700"
-                      fill="#FFD700"
+                      stroke="#F5B301"
+                      fill="#F5B301"
                       fillOpacity={0.08}
                       strokeDasharray="3 3"
                     />
@@ -572,7 +572,7 @@ export function RankStandardsMatrix() {
                       </div>
                       <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-primary-lime rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(198,255,61,0.4)]"
+                          className="h-full bg-primary-lime rounded-full transition-all duration-500 shadow-xs"
                           style={{ width: `${activeLift.progressPercent}%` }}
                         />
                       </div>
@@ -644,7 +644,7 @@ export function RankStandardsMatrix() {
                 onClick={() => setSelectedLift(lift.id)}
                 className={`bg-surface-container rounded-2xl p-4 border transition-all cursor-pointer space-y-3 ${
                   selectedLift === lift.id
-                    ? "border-primary-lime ring-1 ring-primary-lime/30 shadow-[0_0_20px_rgba(198,255,61,0.15)]"
+                    ? "border-primary-lime ring-1 ring-primary-lime/30 shadow-xs"
                     : "border-border-subtle hover:border-secondary-cyan/40"
                 }`}
               >

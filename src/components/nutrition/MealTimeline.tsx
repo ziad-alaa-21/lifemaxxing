@@ -149,7 +149,7 @@ export function MealTimeline({
         );
       case "medium":
         return (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#7DD3FC]/10 text-[#7DD3FC] border border-[#7DD3FC]/20">
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-secondary-cyan/10 text-secondary-cyan border border-secondary-cyan/20">
             {locale === "ar" ? "تقديري" : "Estimated"}
           </span>
         );
@@ -161,7 +161,7 @@ export function MealTimeline({
         );
       case "could_not_estimate":
         return (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/20">
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-status-danger/10 text-status-danger border border-status-danger/20">
             {locale === "ar" ? "يدوي" : "Manual"}
           </span>
         );
@@ -170,7 +170,7 @@ export function MealTimeline({
 
   if (meals.length === 0) {
     return (
-      <div className="p-8 rounded-3xl bg-surface-container border border-border-subtle text-center space-y-3">
+      <div className="stitch-card p-8 text-center space-y-3">
         <div className="w-12 h-12 mx-auto rounded-2xl bg-surface-container-high flex items-center justify-center text-text-muted">
           <Utensils className="w-6 h-6" />
         </div>
@@ -216,7 +216,7 @@ export function MealTimeline({
         return (
           <div
             key={type}
-            className="p-4 rounded-3xl bg-surface-container border border-border-subtle space-y-3"
+            className="stitch-card p-5 space-y-3"
           >
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-border-subtle font-mono">
@@ -340,7 +340,7 @@ export function MealTimeline({
 
                       <button
                         onClick={() => handleSoftDelete(meal)}
-                        className="p-1.5 rounded-lg text-text-muted hover:text-[#F87171] hover:bg-surface-container-high transition-colors"
+                        className="p-1.5 rounded-lg text-text-muted hover:text-status-danger hover:bg-surface-container-high transition-colors"
                         title={locale === "ar" ? "مسح الوجبة" : "Delete meal entry"}
                       >
                         <Trash2 className="w-4 h-4" />
