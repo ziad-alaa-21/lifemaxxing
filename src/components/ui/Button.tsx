@@ -1,10 +1,5 @@
 import React, { forwardRef } from "react";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { cn } from "@/lib/design/tokens";
 
 export type ButtonVariant =
   | "primary"
@@ -39,32 +34,32 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseClasses =
-      "inline-flex items-center justify-center font-mono font-bold tracking-wider uppercase transition-all select-none cursor-pointer";
+      "inline-flex items-center justify-center font-sans font-medium tracking-normal rounded-[12px] transition-all select-none cursor-pointer active:scale-[0.99]";
 
     const variantClasses: Record<ButtonVariant, string> = {
       primary:
-        "bg-primary-lime text-on-primary hover:bg-primary-lime-dim shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed",
+        "bg-[#14161A] text-white hover:bg-[#2A313D] shadow-[0_4px_12px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white disabled:bg-[#E2E8F9] disabled:text-[#5B6270] disabled:shadow-none disabled:cursor-not-allowed",
       secondary:
-        "bg-surface-container hover:bg-surface-container-high text-on-surface border border-border-subtle shadow-xs [&_svg]:stroke-current disabled:bg-surface-container-low disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed",
+        "bg-white hover:bg-[#F0F3FF] text-[#14161A] border border-[#E3E5F0] shadow-[0_2px_8px_rgba(40,50,120,0.04)] [&_svg]:stroke-current disabled:bg-[#F0F3FF] disabled:text-[#5B6270] disabled:shadow-none disabled:cursor-not-allowed",
       cyan:
-        "bg-secondary-cyan text-on-primary hover:brightness-110 shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed",
+        "bg-[#2563EB] text-white hover:bg-[#1D4ED8] shadow-[0_4px_12px_rgba(37,99,235,0.18)] [&_svg]:stroke-current [&_svg]:text-white disabled:bg-[#E2E8F9] disabled:text-[#5B6270] disabled:shadow-none disabled:cursor-not-allowed",
       amber:
-        "bg-amber-400 text-on-primary hover:bg-amber-500 shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed",
+        "bg-[#DB2777] text-white hover:bg-[#BE185D] shadow-[0_4px_12px_rgba(219,39,119,0.18)] [&_svg]:stroke-current [&_svg]:text-white disabled:bg-[#E2E8F9] disabled:text-[#5B6270] disabled:shadow-none disabled:cursor-not-allowed",
       indigo:
-        "bg-indigo-500 text-white hover:bg-indigo-400 shadow-xs [&_svg]:stroke-current [&_svg]:text-white disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed",
+        "bg-[#7C3AED] text-white hover:bg-[#6D28D9] shadow-[0_4px_12px_rgba(124,58,237,0.18)] [&_svg]:stroke-current [&_svg]:text-white disabled:bg-[#E2E8F9] disabled:text-[#5B6270] disabled:shadow-none disabled:cursor-not-allowed",
       outline:
-        "bg-transparent border border-border-subtle hover:border-border-medium hover:bg-surface-container text-on-surface [&_svg]:stroke-current disabled:opacity-50 disabled:cursor-not-allowed",
+        "bg-white border border-[#E3E5F0] hover:bg-[#F0F3FF] text-[#14161A] [&_svg]:stroke-current disabled:opacity-50 disabled:cursor-not-allowed",
       ghost:
-        "bg-transparent hover:bg-surface-container-high text-text-muted hover:text-on-surface [&_svg]:stroke-current disabled:opacity-50 disabled:cursor-not-allowed",
+        "bg-transparent hover:bg-[#F0F3FF] text-[#5B6270] hover:text-[#14161A] [&_svg]:stroke-current disabled:opacity-50 disabled:cursor-not-allowed",
       danger:
-        "bg-crimson-alert text-white hover:brightness-110 shadow-xs [&_svg]:stroke-current disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed",
+        "bg-[#BA1A1A] text-white hover:opacity-90 shadow-xs [&_svg]:stroke-current disabled:bg-[#E2E8F9] disabled:text-[#5B6270] disabled:shadow-none disabled:cursor-not-allowed",
     };
 
     const sizeClasses: Record<ButtonSize, string> = {
-      xs: "text-[10px] px-2.5 py-1 rounded-lg gap-1.5",
-      sm: "text-xs px-3.5 py-1.5 rounded-xl gap-2",
-      md: "text-xs px-4 py-2 rounded-xl gap-2",
-      lg: "text-sm px-5 py-2.5 rounded-2xl gap-2.5",
+      xs: "text-[12px] leading-[16px] px-3 py-1.5 rounded-[12px] gap-1.5",
+      sm: "text-[12px] leading-[16px] px-3.5 py-2 rounded-[12px] gap-2",
+      md: "text-[14px] leading-[20px] px-[18px] py-[10px] rounded-[12px] gap-2",
+      lg: "text-[16px] leading-[24px] px-5 py-3 rounded-[12px] gap-2.5",
     };
 
     return (

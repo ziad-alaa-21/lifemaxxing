@@ -1,10 +1,5 @@
 import React from "react";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { cn } from "@/lib/design/tokens";
 
 export type TabColor = "lime" | "cyan" | "gold" | "sky" | "amber";
 
@@ -23,20 +18,20 @@ export function Tab({
   ...props
 }: TabProps) {
   const activeStyles: Record<TabColor, string> = {
-    lime: "bg-primary-lime text-on-primary shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary",
-    cyan: "bg-secondary-cyan text-on-primary shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary",
-    gold: "bg-rank-gold text-on-primary shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary",
-    sky: "bg-[#7DD3FC] text-on-primary shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary",
-    amber: "bg-amber-400 text-on-primary shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary",
+    lime: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
+    cyan: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
+    gold: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
+    sky: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
+    amber: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
   };
 
   return (
     <button
       className={cn(
-        "flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 select-none",
+        "flex items-center gap-2 h-8 px-3.5 rounded-full font-sans text-[12px] leading-[16px] font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 select-none",
         active
-          ? cn(activeStyles[color], "font-bold")
-          : "text-text-muted hover:text-on-surface hover:bg-surface-container-high [&_svg]:stroke-current",
+          ? activeStyles[color]
+          : "bg-white text-[#5B6270] border border-[#E3E5F0] hover:text-[#14161A] hover:bg-[#F0F3FF] [&_svg]:stroke-current",
         className
       )}
       {...props}
