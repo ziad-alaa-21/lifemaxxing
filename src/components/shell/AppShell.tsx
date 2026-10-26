@@ -19,7 +19,7 @@ export function AppShell({ userEmail, userId, children }: AppShellProps) {
 
   return (
     <UserModulesProvider userId={userId}>
-      <div className="flex h-screen w-full bg-surface text-on-surface overflow-hidden">
+      <div className="flex h-screen w-full stitch-canvas text-[#14161A] overflow-hidden">
         {/* Desktop Sidebar (>= 1024px) */}
         <Sidebar userEmail={userEmail} userId={userId} />
 
@@ -30,7 +30,7 @@ export function AppShell({ userEmail, userId, children }: AppShellProps) {
 
           {/* Scrollable Page Content */}
           <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 pb-32 lg:pb-10">
-            <div className="max-w-5xl mx-auto w-full">{children}</div>
+            <div className="max-w-[1280px] mx-auto w-full">{children}</div>
           </main>
         </div>
 

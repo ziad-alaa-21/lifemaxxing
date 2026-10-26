@@ -35,29 +35,29 @@ export function Header({ onOpenQuickAction }: HeaderProps) {
   const meta = getMeta();
 
   return (
-    <header className="sticky top-0 z-30 bg-surface/85 backdrop-blur-xl border-b border-border-subtle pt-safe">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.06)] pt-safe">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
         {/* Left: Title & context */}
         <div>
-          <h1 className="text-base sm:text-lg font-bold font-mono tracking-tight text-on-surface">
+          <h1 className="text-[20px] leading-[28px] font-medium text-[#14161A]">
             {meta.title}
           </h1>
-          <p className="text-xs text-text-muted hidden sm:block">
+          <p className="text-[12px] leading-[16px] text-[#5B6270] hidden sm:block">
             {meta.subtitle}
           </p>
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           {/* Language quick switcher */}
           <button
             onClick={() => setLocale(locale === "en" ? "ar" : "en")}
             aria-label={locale === "en" ? "تبديل إلى العربية (المصرية)" : "Switch to English"}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface hover:text-primary-lime transition-all cursor-pointer shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-[12px] bg-white hover:bg-[#F0F3FF] border border-[#E3E5F0] text-[12px] leading-[16px] font-medium text-[#14161A] transition-colors cursor-pointer shadow-[0_2px_8px_rgba(40,50,120,0.04)]"
             title={locale === "en" ? "العربية (مصري)" : "English"}
           >
-            <Languages className="w-3.5 h-3.5 text-primary-lime" />
-            <span className="font-bold text-[11px] uppercase tracking-wider">
+            <Languages className="w-4 h-4 text-[#2563EB]" />
+            <span className="font-medium text-[12px]">
               {locale === "en" ? "عربي" : "EN"}
             </span>
           </button>
@@ -65,9 +65,9 @@ export function Header({ onOpenQuickAction }: HeaderProps) {
           {/* Fast Action trigger */}
           <button
             onClick={onOpenQuickAction}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary-lime text-on-primary text-xs font-semibold uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs transition-all cursor-pointer"
+            className="flex items-center gap-2 px-[18px] py-[10px] rounded-[12px] bg-[#14161A] text-white text-[14px] leading-[20px] font-medium hover:bg-[#2A313D] shadow-[0_4px_12px_rgba(20,22,26,0.15)] transition-colors cursor-pointer"
           >
-            <Plus className="w-4 h-4 stroke-[2.5] text-on-primary stroke-current" />
+            <Plus className="w-4 h-4 stroke-[2] text-white stroke-current" />
             <span className="hidden sm:inline">{dict.nav.fastAction}</span>
           </button>
         </div>

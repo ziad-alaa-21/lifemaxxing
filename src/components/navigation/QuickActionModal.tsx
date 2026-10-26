@@ -207,42 +207,42 @@ export function QuickActionModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-bg-darkest/80 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#14161A]/35 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md bg-surface-container border border-border-subtle rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl relative space-y-4"
+        className="w-full sm:max-w-md bg-white border border-[#E3E5F0] rounded-t-[20px] sm:rounded-[20px] p-6 shadow-[0_12px_32px_rgba(40,50,120,0.12)] relative space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+        <div className="flex items-center justify-between pb-3 border-b border-[#ECEEFA]">
           <div>
-            <h2 className="text-base font-bold font-mono text-on-surface">
+            <h2 className="text-[20px] leading-[28px] font-medium text-[#14161A]">
               {dict.quickAction.title}
             </h2>
-            <p className="text-xs text-text-muted">{dict.quickAction.subtitle}</p>
+            <p className="text-[12px] leading-[16px] text-[#5B6270]">{dict.quickAction.subtitle}</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-surface-container-high border border-border-subtle flex items-center justify-center text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-[12px] bg-[#F0F3FF] border border-[#E3E5F0] flex items-center justify-center text-[#5B6270] hover:text-[#14161A] transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Short List of Quick Actions (Filtered by active modules) */}
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 gap-3">
           {/* Action 1: Water */}
           <button
             onClick={handleLogWater}
-            className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+            className="p-4 rounded-[12px] bg-[#F9F9FF] hover:bg-[#F0F3FF] border border-[#E3E5F0] text-start transition-all cursor-pointer group"
           >
-            <div className="w-8 h-8 rounded-lg bg-secondary-cyan/15 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan mb-2">
+            <div className="w-8 h-8 rounded-[12px] bg-[#E6EEFF] flex items-center justify-center text-[#1E3A9E] mb-2">
               <Droplets className="w-4 h-4" />
             </div>
-            <div className="text-xs font-semibold text-on-surface group-hover:text-secondary-cyan transition-colors">
+            <div className="text-[14px] leading-[20px] font-medium text-[#14161A] group-hover:text-[#1E3A9E] transition-colors">
               {dict.quickAction.logWater}
             </div>
-            <div className="text-[10px] font-mono text-text-muted mt-0.5">
+            <div className="text-[12px] leading-[16px] text-[#5B6270] mt-0.5">
               +{waterIncrement} {locale === "ar" ? "مل (من الإعدادات)" : "ml (from settings)"}
             </div>
           </button>
@@ -250,15 +250,15 @@ export function QuickActionModal({
           {/* Action 2: Caffeine */}
           <button
             onClick={handleLogCaffeine}
-            className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+            className="p-4 rounded-[12px] bg-[#F9F9FF] hover:bg-[#F0F3FF] border border-[#E3E5F0] text-start transition-all cursor-pointer group"
           >
-            <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-2">
+            <div className="w-8 h-8 rounded-[12px] bg-[#E6EEFF] flex items-center justify-center text-[#1E3A9E] mb-2">
               <Coffee className="w-4 h-4" />
             </div>
-            <div className="text-xs font-semibold text-on-surface group-hover:text-amber-400 transition-colors">
+            <div className="text-[14px] leading-[20px] font-medium text-[#14161A] group-hover:text-[#1E3A9E] transition-colors">
               {dict.quickAction.logCaffeine}
             </div>
-            <div className="text-[10px] font-mono text-text-muted mt-0.5">
+            <div className="text-[12px] leading-[16px] text-[#5B6270] mt-0.5">
               +{caffeineIncrement} {locale === "ar" ? "مجم (من الإعدادات)" : "mg (from settings)"}
             </div>
           </button>
@@ -267,15 +267,15 @@ export function QuickActionModal({
           {isModuleActive("module_weight") && (
             <button
               onClick={() => setIsWeightOpen(true)}
-              className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+              className="p-4 rounded-[12px] bg-[#F9F9FF] hover:bg-[#F0F3FF] border border-[#E3E5F0] text-start transition-all cursor-pointer group"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary-lime/15 border border-primary-lime/30 flex items-center justify-center text-primary-lime mb-2">
+              <div className="w-8 h-8 rounded-[12px] bg-[#E6EEFF] flex items-center justify-center text-[#1E3A9E] mb-2">
                 <Scale className="w-4 h-4" />
               </div>
-              <div className="text-xs font-semibold text-on-surface group-hover:text-primary-lime transition-colors">
+              <div className="text-[14px] leading-[20px] font-medium text-[#14161A] group-hover:text-[#1E3A9E] transition-colors">
                 {dict.quickAction.logWeight}
               </div>
-              <div className="text-[10px] font-mono text-text-muted mt-0.5">
+              <div className="text-[12px] leading-[16px] text-[#5B6270] mt-0.5">
                 {dict.quickAction.logWeightDesc}
               </div>
             </button>
@@ -288,15 +288,15 @@ export function QuickActionModal({
                 router.push("/mind?tab=focus");
                 onClose();
               }}
-              className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+              className="p-4 rounded-[12px] bg-[#F9F9FF] hover:bg-[#F0F3FF] border border-[#E3E5F0] text-start transition-all cursor-pointer group"
             >
-              <div className="w-8 h-8 rounded-lg bg-tertiary-purple/15 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple mb-2">
+              <div className="w-8 h-8 rounded-[12px] bg-[#F1E8FF] flex items-center justify-center text-[#5B21B6] mb-2">
                 <Timer className="w-4 h-4" />
               </div>
-              <div className="text-xs font-semibold text-on-surface group-hover:text-tertiary-purple transition-colors">
+              <div className="text-[14px] leading-[20px] font-medium text-[#14161A] group-hover:text-[#5B21B6] transition-colors">
                 {dict.quickAction.focusTimer}
               </div>
-              <div className="text-[10px] font-mono text-text-muted mt-0.5">
+              <div className="text-[12px] leading-[16px] text-[#5B6270] mt-0.5">
                 {dict.quickAction.focusTimerDesc}
               </div>
             </button>
@@ -306,15 +306,15 @@ export function QuickActionModal({
           {isModuleActive("module_checkins") && (
             <button
               onClick={() => setIsCheckinOpen(true)}
-              className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+              className="p-4 rounded-[12px] bg-[#F9F9FF] hover:bg-[#F0F3FF] border border-[#E3E5F0] text-start transition-all cursor-pointer group"
             >
-              <div className="w-8 h-8 rounded-lg bg-secondary-cyan/15 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan mb-2">
+              <div className="w-8 h-8 rounded-[12px] bg-[#F1E8FF] flex items-center justify-center text-[#5B21B6] mb-2">
                 <Smile className="w-4 h-4" />
               </div>
-              <div className="text-xs font-semibold text-on-surface group-hover:text-secondary-cyan transition-colors">
+              <div className="text-[14px] leading-[20px] font-medium text-[#14161A] group-hover:text-[#5B21B6] transition-colors">
                 {dict.quickAction.stateCheckin}
               </div>
-              <div className="text-[10px] font-mono text-text-muted mt-0.5">
+              <div className="text-[12px] leading-[16px] text-[#5B6270] mt-0.5">
                 {dict.quickAction.stateCheckinDesc}
               </div>
             </button>
@@ -327,15 +327,15 @@ export function QuickActionModal({
                 router.push("/body?tab=nutrition");
                 onClose();
               }}
-              className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group"
+              className="p-4 rounded-[12px] bg-[#F9F9FF] hover:bg-[#F0F3FF] border border-[#E3E5F0] text-start transition-all cursor-pointer group"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary-lime/15 border border-primary-lime/30 flex items-center justify-center text-primary-lime mb-2">
+              <div className="w-8 h-8 rounded-[12px] bg-[#E6EEFF] flex items-center justify-center text-[#1E3A9E] mb-2">
                 <Utensils className="w-4 h-4" />
               </div>
-              <div className="text-xs font-semibold text-on-surface group-hover:text-primary-lime transition-colors">
+              <div className="text-[14px] leading-[20px] font-medium text-[#14161A] group-hover:text-[#1E3A9E] transition-colors">
                 {dict.quickAction.logMeal}
               </div>
-              <div className="text-[10px] font-mono text-text-muted mt-0.5">
+              <div className="text-[12px] leading-[16px] text-[#5B6270] mt-0.5">
                 {dict.quickAction.logMealDesc}
               </div>
             </button>
@@ -348,16 +348,16 @@ export function QuickActionModal({
                 router.push("/school?tab=plan");
                 onClose();
               }}
-              className="col-span-2 p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-border-subtle text-start transition-all cursor-pointer group flex items-center gap-3"
+              className="col-span-2 p-4 rounded-[12px] bg-[#F9F9FF] hover:bg-[#F0F3FF] border border-[#E3E5F0] text-start transition-all cursor-pointer group flex items-center gap-3"
             >
-              <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+              <div className="w-8 h-8 rounded-[12px] bg-[#FDE7F1] flex items-center justify-center text-[#9D174D] shrink-0">
                 <GraduationCap className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-xs font-semibold text-on-surface group-hover:text-amber-400 transition-colors">
+                <div className="text-[14px] leading-[20px] font-medium text-[#14161A] group-hover:text-[#9D174D] transition-colors">
                   {dict.quickAction.addDeadline}
                 </div>
-                <div className="text-[10px] font-mono text-text-muted">
+                <div className="text-[12px] leading-[16px] text-[#5B6270]">
                   {dict.quickAction.addDeadlineDesc}
                 </div>
               </div>
@@ -367,11 +367,11 @@ export function QuickActionModal({
 
         {/* 5-second Undo Toast */}
         {undoToast && (
-          <div className="p-3 rounded-xl bg-surface-container-highest border border-primary-lime/40 flex items-center justify-between text-xs font-mono shadow-xl animate-fade-in">
-            <span className="text-on-surface">{undoToast.message}</span>
+          <div className="p-3.5 rounded-[12px] bg-[#F0F3FF] border border-[#E3E5F0] flex items-center justify-between text-[14px] leading-[20px] shadow-sm animate-fade-in">
+            <span className="text-[#14161A]">{undoToast.message}</span>
             <button
               onClick={handleExecuteUndo}
-              className="flex items-center gap-1 text-primary-lime hover:underline font-bold cursor-pointer"
+              className="flex items-center gap-1 text-[#2563EB] hover:underline font-medium cursor-pointer"
             >
               <Undo2 className="w-3.5 h-3.5" />
               <span>{locale === "ar" ? "تراجع (5ث)" : "Undo (5s)"}</span>
@@ -382,20 +382,20 @@ export function QuickActionModal({
         {/* Sub-Modal: Log Weight */}
         {isWeightOpen && (
           <div
-            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-bg-darkest/90"
+            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-[#14161A]/40"
             onClick={() => setIsWeightOpen(false)}
           >
             <div
-              className="w-full max-w-xs bg-surface-container border border-border-subtle rounded-2xl p-5 space-y-4"
+              className="w-full max-w-xs bg-white border border-[#E3E5F0] rounded-[20px] p-5 shadow-[0_12px_32px_rgba(40,50,120,0.12)] space-y-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
-                <span className="text-xs font-mono font-bold text-on-surface">
+              <div className="flex items-center justify-between pb-2 border-b border-[#ECEEFA]">
+                <span className="text-[16px] leading-[24px] font-medium text-[#14161A]">
                   {dict.quickAction.weightModalTitle}
                 </span>
                 <button
                   onClick={() => setIsWeightOpen(false)}
-                  className="text-text-muted hover:text-on-surface cursor-pointer"
+                  className="text-[#5B6270] hover:text-[#14161A] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -403,7 +403,7 @@ export function QuickActionModal({
 
               <form onSubmit={handleSaveWeight} className="space-y-3">
                 <div>
-                  <label className="text-[11px] font-mono text-text-muted block mb-1">
+                  <label className="text-[12px] leading-[16px] font-medium text-[#5B6270] block mb-1">
                     {locale === "ar" ? "الوزن (كيلو)" : "Weight (kg)"}
                   </label>
                   <input
@@ -413,12 +413,12 @@ export function QuickActionModal({
                     placeholder={dict.quickAction.weightPlaceholder}
                     value={weightInput}
                     onChange={(e) => setWeightInput(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-border-subtle text-sm text-on-surface font-mono focus:outline-none focus:border-secondary-cyan"
+                    className="w-full h-11 px-4 rounded-[12px] bg-white border border-[#E3E5F0] text-[14px] text-[#14161A] placeholder:text-[#5B6270] focus:outline-none focus:border-[#14161A]"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-2 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold hover:opacity-90 cursor-pointer"
+                  className="w-full py-2.5 rounded-[12px] bg-[#14161A] text-white text-[14px] font-medium hover:bg-[#2A313D] cursor-pointer"
                 >
                   {dict.quickAction.saveWeight}
                 </button>
@@ -430,30 +430,30 @@ export function QuickActionModal({
         {/* Sub-Modal: State Check-in */}
         {isCheckinOpen && (
           <div
-            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-bg-darkest/90"
+            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-[#14161A]/40"
             onClick={() => setIsCheckinOpen(false)}
           >
             <div
-              className="w-full max-w-xs bg-surface-container border border-border-subtle rounded-2xl p-5 space-y-4"
+              className="w-full max-w-xs bg-white border border-[#E3E5F0] rounded-[20px] p-5 shadow-[0_12px_32px_rgba(40,50,120,0.12)] space-y-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
-                <span className="text-xs font-mono font-bold text-on-surface">
+              <div className="flex items-center justify-between pb-2 border-b border-[#ECEEFA]">
+                <span className="text-[16px] leading-[24px] font-medium text-[#14161A]">
                   {dict.quickAction.checkinTitle}
                 </span>
                 <button
                   onClick={() => setIsCheckinOpen(false)}
-                  className="text-text-muted hover:text-on-surface cursor-pointer"
+                  className="text-[#5B6270] hover:text-[#14161A] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <form onSubmit={handleSaveCheckin} className="space-y-4 text-xs font-mono">
+              <form onSubmit={handleSaveCheckin} className="space-y-4 text-[14px]">
                 <div>
-                  <div className="flex justify-between text-text-muted mb-1">
+                  <div className="flex justify-between text-[#5B6270] mb-1">
                     <span>{dict.quickAction.moodLabel}</span>
-                    <span className="text-on-surface font-bold">{moodRating}/5</span>
+                    <span className="text-[#14161A] font-medium">{moodRating}/5</span>
                   </div>
                   <input
                     type="range"
@@ -461,14 +461,14 @@ export function QuickActionModal({
                     max="5"
                     value={moodRating}
                     onChange={(e) => setMoodRating(Number(e.target.value))}
-                    className="w-full accent-secondary-cyan"
+                    className="w-full accent-[#7C3AED]"
                   />
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-text-muted mb-1">
+                  <div className="flex justify-between text-[#5B6270] mb-1">
                     <span>{dict.quickAction.energyLabel}</span>
-                    <span className="text-on-surface font-bold">{energyRating}/5</span>
+                    <span className="text-[#14161A] font-medium">{energyRating}/5</span>
                   </div>
                   <input
                     type="range"
@@ -476,13 +476,13 @@ export function QuickActionModal({
                     max="5"
                     value={energyRating}
                     onChange={(e) => setEnergyRating(Number(e.target.value))}
-                    className="w-full accent-amber-core"
+                    className="w-full accent-[#2563EB]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold hover:opacity-90 cursor-pointer"
+                  className="w-full py-2.5 rounded-[12px] bg-[#14161A] text-white text-[14px] font-medium hover:bg-[#2A313D] cursor-pointer"
                 >
                   {dict.quickAction.saveCheckin}
                 </button>
