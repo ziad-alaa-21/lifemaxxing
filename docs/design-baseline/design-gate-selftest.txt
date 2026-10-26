@@ -1,0 +1,15 @@
+﻿PASS  className-only change in a data component passes (gate exit 0, expected 0)
+PASS  changing a Supabase table name fails (gate exit 1, expected 1)
+PASS  service worker non-version change (SHELL_ASSETS) fails (gate exit 1, expected 1)
+PASS  service worker STATIC_CACHE_NAME change fails (gate exit 1, expected 1)
+PASS  service worker CACHE_VERSION constant bump passes (gate exit 0, expected 0)
+PASS  manifest.json theme_color and background_color change passes (gate exit 0, expected 0)
+PASS  manifest.json non-color change (start_url) fails (gate exit 1, expected 1)
+PASS  layout.tsx meta theme-color (viewport.themeColor) change passes (gate exit 0, expected 0)
+PASS  layout.tsx non-themeColor metadata change fails (gate exit 1, expected 1)
+PASS  editing authConfig fails (gate exit 1, expected 1)
+PASS  changing an aria-label fails (gate exit 1, expected 1)
+PASS  removing an aria-label fails (gate exit 1, expected 1)
+PASS  changing a hook/state line fails (gate exit 1, expected 1)
+
+All self-test cases passed

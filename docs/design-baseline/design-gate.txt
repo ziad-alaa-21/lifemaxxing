@@ -1,0 +1,35 @@
+﻿check-design-only: comparing working tree against pre-redesign
+
+HARD-PROTECTED (any change fails):
+  src/app/api/**
+  src/app/auth/**
+  src/middleware.ts
+  src/proxy.ts
+  src/lib/**
+  src/hooks/**
+  supabase/**
+  next.config.ts
+  package.json
+  package-lock.json
+  public/.well-known/**
+  .env*
+  scripts/test-auth-modes.mjs
+  scripts/check-contrast-regression.js
+  scripts/verify-arabic-i18n.js
+  scripts/verify-contrast-and-capture.js
+  scripts/capture-liquid-glass.js
+  docs/AUTH_MODES.md
+STYLING ALLOWLIST inside src/lib (may change):
+  src/lib/design/**
+LOGIC ALLOWLIST (non-JSX code may change; JSX contract still enforced):
+  src/lib/design/**
+  src/components/ui/**
+  src/app/dev/**
+Non-visual edits allowed (exactly two):
+  1. Theme colors: public/manifest.json (theme_color, background_color) + src/app/layout.tsx (viewport.themeColor)
+  2. Service worker cache version constant: public/sw.js (const CACHE_VERSION = '...' only)
+Other rules: no deleted files; new src files must not access data.
+
+Changed files vs pre-redesign: 12
+
+PASS: only design-surface changes detected.
