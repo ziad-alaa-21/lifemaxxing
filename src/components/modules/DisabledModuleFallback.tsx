@@ -58,7 +58,7 @@ export function DisabledModuleFallback({
   return (
     <div
       id={`disabled-fallback-${moduleKey}`}
-      className="p-8 sm:p-12 rounded-3xl bg-surface-container/40 border border-border-subtle max-w-xl mx-auto my-8 text-center relative overflow-hidden"
+      className="stitch-card p-8 sm:p-12 max-w-xl mx-auto my-8 text-center relative overflow-hidden"
     >
       <div className="absolute top-0 right-0 w-48 h-48 bg-primary-lime/5 rounded-full blur-3xl pointer-events-none" />
 

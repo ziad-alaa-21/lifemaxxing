@@ -133,7 +133,7 @@ export function PreferencesTab({
   return (
     <form onSubmit={handleSavePreferences} className="space-y-6">
       {/* Units & Localization */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <Globe className="w-4 h-4 text-primary-lime" />
           <h3 className="text-sm font-bold font-mono text-on-surface">Units & Localization</h3>
@@ -219,7 +219,7 @@ export function PreferencesTab({
       </div>
 
       {/* Focus Timer & Feedback Preferences */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <Sliders className="w-4 h-4 text-tertiary-purple" />
           <h3 className="text-sm font-bold font-mono text-on-surface">Feedback & Timer Presets</h3>

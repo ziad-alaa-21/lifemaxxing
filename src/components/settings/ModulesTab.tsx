@@ -207,7 +207,7 @@ export function ModulesTab() {
   return (
     <div className="space-y-6">
       {/* Overview Card */}
-      <div className="p-6 rounded-2xl bg-surface-container border border-border-subtle relative overflow-hidden">
+      <div className="stitch-card p-6 relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">

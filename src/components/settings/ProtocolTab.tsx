@@ -192,7 +192,7 @@ export function ProtocolTab({
   return (
     <form onSubmit={handleSaveProtocol} className="space-y-6">
       {/* Biometrics & Goals Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <Scale className="w-4 h-4 text-primary-lime" />
           <h3 className="text-sm font-bold font-mono text-on-surface">
@@ -321,7 +321,7 @@ export function ProtocolTab({
       </div>
 
       {/* Nutrition Targets Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
             <Flame className="w-4 h-4 text-amber-core" />
@@ -427,7 +427,7 @@ export function ProtocolTab({
       </div>
 
       {/* Circadian & Sleep Targets Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
             <Moon className="w-4 h-4 text-tertiary-purple" />
@@ -533,7 +533,7 @@ export function ProtocolTab({
       </div>
 
       {/* Mind / Focus Target Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <Brain className="w-4 h-4 text-primary-lime" />
           <h3 className="text-sm font-bold font-mono text-on-surface">

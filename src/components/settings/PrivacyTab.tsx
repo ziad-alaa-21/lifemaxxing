@@ -18,7 +18,7 @@ export function PrivacyTab() {
   return (
     <div className="space-y-6">
       {/* Privacy Policy Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <ShieldCheck className="w-4 h-4 text-emerald-success" />
           <h3 className="text-sm font-bold font-mono text-on-surface">
@@ -137,7 +137,7 @@ export function PrivacyTab() {
       </div>
 
       {/* Terms of Service Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <FileText className="w-4 h-4 text-tertiary-purple" />
           <h3 className="text-sm font-bold font-mono text-on-surface">

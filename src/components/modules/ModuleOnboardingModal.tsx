@@ -128,7 +128,7 @@ export function ModuleOnboardingModal() {
         onClick={() => toggleKey(key)}
         className={`w-full text-start p-3.5 rounded-2xl border transition-all flex items-start gap-3 select-none ${
           isChecked
-            ? "bg-surface-container-highest/80 border-primary-lime/60 shadow-[0_0_12px_rgba(198,255,61,0.12)] ring-1 ring-primary-lime/30"
+            ? "bg-surface-container-highest/80 border-primary-lime/60 shadow-xs ring-1 ring-primary-lime/30"
             : "bg-surface-container/60 border-border-subtle hover:border-border-medium hover:bg-surface-container"
         }`}
       >
@@ -172,7 +172,7 @@ export function ModuleOnboardingModal() {
   return (
     <div
       id="onboarding-modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto"
     >
       <div className="w-full max-w-xl bg-surface border border-border-medium rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}

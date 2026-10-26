@@ -7,8 +7,8 @@ import { WifiOff, RefreshCw, AlertTriangle, ArrowLeft } from "lucide-react";
 export default function OfflinePage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-surface text-on-surface">
-      <div className="w-full max-w-md p-6 sm:p-8 bg-surface-container rounded-2xl border border-border-subtle shadow-2xl text-center space-y-5">
-        <div className="w-14 h-14 rounded-2xl bg-amber-core/10 border border-amber-core/30 flex items-center justify-center text-amber-core mx-auto shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+      <div className="w-full max-w-md p-6 sm:p-8 stitch-card shadow-2xl text-center space-y-5">
+        <div className="w-14 h-14 rounded-2xl bg-amber-core/10 border border-amber-core/30 flex items-center justify-center text-amber-core mx-auto shadow-xs">
           <WifiOff className="w-7 h-7" />
         </div>
 

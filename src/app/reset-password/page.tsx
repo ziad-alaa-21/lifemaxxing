@@ -261,7 +261,7 @@ export function ResetPasswordForm({
 
       <div className="w-full max-w-md bg-surface-container border border-border-subtle rounded-3xl p-6 sm:p-8 relative z-10 shadow-2xl backdrop-blur-sm">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-surface-container-high border border-primary-lime/30 text-primary-lime mb-4 shadow-[0_0_24px_rgba(198,255,61,0.25)]">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-surface-container-high border border-primary-lime/30 text-primary-lime mb-4 shadow-xs">
             <KeyRound className="w-7 h-7 text-primary-lime" />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-on-surface">

@@ -153,7 +153,7 @@ export function SettingsView({
 
       {/* Tab Content */}
       {loading ? (
-        <div className="p-12 bg-surface-container rounded-2xl border border-border-subtle flex flex-col items-center justify-center gap-3">
+        <div className="p-12 stitch-card flex flex-col items-center justify-center gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
           <span className="text-xs font-mono text-text-muted">
             {locale === "ar" ? "جارٍ تحميل الإعدادات..." : "Loading settings..."}

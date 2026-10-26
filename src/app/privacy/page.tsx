@@ -22,7 +22,7 @@ export default function PrivacyPage() {
         </Link>
       </div>
 
-      <div className="p-6 sm:p-10 rounded-3xl bg-surface-container border border-border-subtle shadow-2xl space-y-10">
+      <div className="stitch-card p-6 sm:p-10 space-y-10">
         {/* Header */}
         <div className="flex items-center gap-4 pb-6 border-b border-border-subtle">
           <div className="p-3.5 rounded-2xl bg-surface-container-high text-primary-lime border border-primary-lime/20 shadow-md">

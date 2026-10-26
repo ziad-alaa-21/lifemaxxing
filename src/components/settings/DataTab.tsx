@@ -276,7 +276,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
   return (
     <div className="space-y-6">
       {/* Dynamic Data Export Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
             <Database className="w-4 h-4 text-primary-lime" />
@@ -411,7 +411,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
       </div>
 
       {/* Compliance & Policy Links */}
-      <div className="p-4 bg-surface-container rounded-2xl border border-border-subtle flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-on-surface-variant">
+      <div className="stitch-card p-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-on-surface-variant">
         <span>{locale === "ar" ? "وثائق الخصوصية والشروط القانونية:" : "Legal & Privacy Documentation:"}</span>
         <div className="flex items-center gap-4">
           <Link href="/privacy" className="text-primary-lime underline hover:text-primary-lime-dim">
@@ -425,7 +425,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
 
       {/* Modal: Delete Data */}
       {isDeleteDataModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-amber-core/30 max-w-md w-full space-y-4">
             <div className="flex items-center gap-2 text-amber-core">
               <AlertTriangle className="w-5 h-5 shrink-0" />
@@ -451,7 +451,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
                 <button
                   type="button"
                   onClick={handleReauthGoogle}
-                  className="w-full py-2.5 px-3 bg-white hover:bg-slate-100 text-slate-900 font-medium text-xs rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                  className="w-full py-2.5 px-3 bg-white hover:bg-slate-50 text-slate-900 border border-border-medium font-medium text-xs rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   <span>{locale === "ar" ? "التحقق عبر Google الآن" : "Verify with Google Now"}</span>
                 </button>
@@ -552,7 +552,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
 
       {/* Modal: Delete Account */}
       {isDeleteAccountModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-crimson-alert/40 max-w-md w-full space-y-4">
             <div className="flex items-center gap-2 text-crimson-alert">
               <ShieldAlert className="w-5 h-5 shrink-0" />
@@ -584,7 +584,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
                 <button
                   type="button"
                   onClick={handleReauthGoogle}
-                  className="w-full py-2.5 px-3 bg-white hover:bg-slate-100 text-slate-900 font-medium text-xs rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                  className="w-full py-2.5 px-3 bg-white hover:bg-slate-50 text-slate-900 border border-border-medium font-medium text-xs rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   <span>{locale === "ar" ? "التحقق عبر Google الآن" : "Verify with Google Now"}</span>
                 </button>

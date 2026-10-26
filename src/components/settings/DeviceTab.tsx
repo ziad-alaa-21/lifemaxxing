@@ -103,7 +103,7 @@ export function DeviceTab() {
   return (
     <div className="space-y-6">
       {/* PWA Installation Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
             <Smartphone className="w-4 h-4 text-primary-lime" />
@@ -164,7 +164,7 @@ export function DeviceTab() {
       </div>
 
       {/* App Version & Sync Metadata */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <HardDrive className="w-4 h-4 text-tertiary-purple" />
           <h3 className="text-sm font-bold font-mono text-on-surface">
@@ -238,7 +238,7 @@ export function DeviceTab() {
       </div>
 
       {/* Service Worker Privacy Audit Confirmation */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-3">
+      <div className="stitch-card p-5 space-y-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-success" />
           <h3 className="text-xs font-bold font-mono text-on-surface">
@@ -260,7 +260,7 @@ export function DeviceTab() {
 
       {/* Active Session Warning Modal */}
       {showWarningModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-border-subtle max-w-md w-full space-y-4">
             <div className="flex items-center gap-2 text-amber-core">
               <AlertTriangle className="w-5 h-5 shrink-0" />

@@ -204,7 +204,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
   return (
     <div className="space-y-6">
       {/* Account Identity Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
           <User className="w-4 h-4 text-primary-lime" />
           <h3 className="text-sm font-bold font-mono text-on-surface">
@@ -283,7 +283,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
       </div>
 
       {/* Sign Out Card */}
-      <div className="p-5 bg-surface-container rounded-2xl border border-border-subtle flex items-center justify-between">
+      <div className="stitch-card p-5 flex items-center justify-between">
         <div>
           <h4 className="text-xs font-bold font-mono text-on-surface">
             {locale === "ar" ? "إنهاء الجلسة الحالية" : "End Current Session"}
@@ -306,7 +306,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
 
       {/* Password Modal */}
       {!googleOnlyAccount && isPasswordModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-border-subtle max-w-md w-full space-y-4">
             <h3 className="text-sm font-bold font-mono text-on-surface">
               {locale === "ar" ? "تغيير كلمة السر" : "Change Password"}
@@ -404,7 +404,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
 
       {/* Email Modal */}
       {!googleOnlyAccount && isEmailModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-border-subtle max-w-md w-full space-y-4">
             <h3 className="text-sm font-bold font-mono text-on-surface">
               {locale === "ar" ? "تغيير البريد الإلكتروني" : "Change Email"}
