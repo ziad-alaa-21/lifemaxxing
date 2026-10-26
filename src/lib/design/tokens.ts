@@ -5,6 +5,62 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const REDUCE_BLUR_STORAGE_KEY = "life_reduce_blur";
+
+export function applyReduceBlurPreference(reduceBlur: boolean): void {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  if (reduceBlur) {
+    root.dataset.reduceBlur = "true";
+    root.classList.add("no-blur");
+  } else {
+    delete root.dataset.reduceBlur;
+    root.classList.remove("no-blur");
+  }
+}
+
+export function getReduceBlurPreference(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(REDUCE_BLUR_STORAGE_KEY) === "1";
+  } catch {
+    return document.documentElement.dataset.reduceBlur === "true";
+  }
+}
+
+export function setReduceBlurPreference(reduceBlur: boolean): void {
+  if (typeof window !== "undefined") {
+    try {
+      if (reduceBlur) {
+        window.localStorage.setItem(REDUCE_BLUR_STORAGE_KEY, "1");
+      } else {
+        window.localStorage.removeItem(REDUCE_BLUR_STORAGE_KEY);
+      }
+    } catch {
+      // Ignore storage access errors in restricted webviews
+    }
+  }
+  applyReduceBlurPreference(reduceBlur);
+}
+
+if (typeof window !== "undefined") {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const param = params.get("noBlur");
+    if (param === "1" || param === "true") {
+      setReduceBlurPreference(true);
+    } else if (param === "0" || param === "false") {
+      setReduceBlurPreference(false);
+    } else if (getReduceBlurPreference()) {
+      applyReduceBlurPreference(true);
+    }
+    (window as Window & { __setReduceBlur?: (reduce: boolean) => void }).__setReduceBlur =
+      setReduceBlurPreference;
+  } catch {
+    // No-op if URLSearchParams/localStorage unavailable
+  }
+}
+
 export type DomainKey = "body" | "mind" | "school";
 
 export const DESIGN_TOKENS = {

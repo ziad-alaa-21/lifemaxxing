@@ -3,11 +3,24 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button, Badge, Tab, Card, Input, ProgressBar } from "@/components/ui";
+import {
+  getReduceBlurPreference,
+  setReduceBlurPreference,
+} from "@/lib/design/tokens";
 import { useI18n } from "@/lib/i18n/I18nContext";
 
 export default function DesignSystemPreviewPage() {
   const [activeTab, setActiveTab] = useState<"body" | "mind" | "school">("body");
+  const [reduceBlur, setReduceBlur] = useState<boolean>(() =>
+    getReduceBlurPreference()
+  );
   const { locale, setLocale } = useI18n();
+
+  const handleToggleBlur = () => {
+    const next = !reduceBlur;
+    setReduceBlur(next);
+    setReduceBlurPreference(next);
+  };
 
   return (
     <div className="min-h-screen stitch-canvas text-[#14161A]">
@@ -20,6 +33,13 @@ export default function DesignSystemPreviewPage() {
             <Badge variant="body">Stitch light theme</Badge>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleToggleBlur}
+            >
+              {reduceBlur ? "Backdrop blur: Off" : "Backdrop blur: On"}
+            </Button>
             <Button
               variant="secondary"
               size="sm"

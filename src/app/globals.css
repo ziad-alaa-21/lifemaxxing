@@ -97,19 +97,54 @@ body {
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .liquid-glass-bar {
-    background-color: #ffffff !important;
+  .liquid-glass-bar,
+  [class*="backdrop-blur"] {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+  .liquid-glass-bar,
+  header[class*="backdrop-blur"],
+  aside[class*="backdrop-blur"] {
+    background-color: #ffffff !important;
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .liquid-glass-bar {
-    background-color: #ffffff !important;
+  .liquid-glass-bar,
+  [class*="backdrop-blur"] {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
+  .liquid-glass-bar,
+  header[class*="backdrop-blur"],
+  aside[class*="backdrop-blur"] {
+    background-color: #ffffff !important;
+  }
+  div.fixed.inset-0[class*="backdrop-blur"] {
+    background-color: rgba(20, 22, 26, 0.48) !important;
+  }
+}
+
+html[data-reduce-blur="true"] .liquid-glass-bar,
+html[data-reduce-blur="true"] [class*="backdrop-blur"],
+html.no-blur .liquid-glass-bar,
+html.no-blur [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-reduce-blur="true"] .liquid-glass-bar,
+html[data-reduce-blur="true"] header[class*="backdrop-blur"],
+html[data-reduce-blur="true"] aside[class*="backdrop-blur"],
+html.no-blur .liquid-glass-bar,
+html.no-blur header[class*="backdrop-blur"],
+html.no-blur aside[class*="backdrop-blur"] {
+  background-color: #ffffff !important;
+}
+
+html[data-reduce-blur="true"] div.fixed.inset-0[class*="backdrop-blur"],
+html.no-blur div.fixed.inset-0[class*="backdrop-blur"] {
+  background-color: rgba(20, 22, 26, 0.48) !important;
 }
 
 .scrollbar-none::-webkit-scrollbar,
