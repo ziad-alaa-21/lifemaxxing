@@ -18,7 +18,7 @@ export function AcademicInsightsCard({
 
   if (insights.length === 0) {
     return (
-      <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm">
+      <div className="stitch-card p-5">
         <h3 className="text-sm font-bold text-on-surface mb-1">
           {locale === "ar" ? "رؤى وملاحظات أكاديمية" : "Academic Insights"}
         </h3>
@@ -32,7 +32,7 @@ export function AcademicInsightsCard({
   }
 
   return (
-    <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm space-y-3">
+    <div className="stitch-card p-5 space-y-3">
       <div className="flex items-center justify-between pb-1 border-b border-border-subtle/50">
         <div>
           <h3 className="text-sm font-bold text-on-surface">
@@ -44,7 +44,7 @@ export function AcademicInsightsCard({
               : "Telemetry-driven suggestions based on your logged sessions and topics"}
           </p>
         </div>
-        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-amber-300 border border-border-subtle">
+        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-amber-700 border border-border-subtle">
           {locale === "ar" ? `${insights.length} ملاحظة` : `${insights.length} note${insights.length === 1 ? "" : "s"}`}
         </span>
       </div>
@@ -90,7 +90,7 @@ export function AcademicInsightsCard({
                 <button
                   type="button"
                   onClick={() => onNavigateTab(item.actionTab)}
-                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 transition-colors cursor-pointer"
+                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 transition-colors cursor-pointer"
                 >
                   {item.actionText} →
                 </button>

@@ -89,10 +89,10 @@ export function WeeklyTargetCard({
   };
 
   return (
-    <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm">
+    <div className="stitch-card p-5">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
@@ -115,7 +115,7 @@ export function WeeklyTargetCard({
               setTargetHoursInput(weeklyTargetMinutes ? (weeklyTargetMinutes / 60).toString() : "");
               setIsEditing(true);
             }}
-            className="text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors px-2.5 py-1 rounded-lg hover:bg-amber-500/10 cursor-pointer"
+            className="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors px-2.5 py-1 rounded-lg hover:bg-amber-500/10 cursor-pointer"
           >
             {weeklyTargetMinutes
               ? locale === "ar"
@@ -203,7 +203,7 @@ export function WeeklyTargetCard({
               <span className="text-base font-bold text-on-surface">{progress.completedHoursFormatted}</span>
               <span className="text-text-muted"> / {progress.targetHoursFormatted}</span>
             </div>
-            <div className="font-semibold text-amber-400">
+            <div className="font-semibold text-amber-600">
               {progress.isCompleted
                 ? locale === "ar"
                   ? "حققت الهدف بالكامل! 🎉"

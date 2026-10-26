@@ -104,7 +104,7 @@ export function SubjectDetailModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-bg-darkest/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
       <div
         className="w-full max-w-2xl bg-surface-container border border-border-subtle rounded-2xl shadow-2xl max-h-[92vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -140,7 +140,7 @@ export function SubjectDetailModal({
                     }`}
                 {subject.target_grade !== null &&
                   subject.target_grade !== undefined && (
-                    <span className="text-emerald-400 ml-2">
+                    <span className="text-emerald-600 ml-2">
                       • {locale === "ar" ? "المستهدف:" : "Target:"} {subject.target_grade}%
                     </span>
                   )}
@@ -153,9 +153,9 @@ export function SubjectDetailModal({
             <button
               onClick={() => onOpenStudySession(subject)}
               title={locale === "ar" ? "بدء جلسة مذاكرة (مؤقت التركيز)" : "Start Study Session (Focus Timer)"}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-medium hover:bg-amber-500/20 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 text-xs font-mono font-medium hover:bg-amber-500/20 transition-all cursor-pointer"
             >
-              <Play className="w-3.5 h-3.5 fill-amber-300" />
+              <Play className="w-3.5 h-3.5 fill-amber-700" />
               <span className="hidden sm:inline">{locale === "ar" ? "مذاكرة" : "Study"}</span>
             </button>
 
@@ -191,7 +191,7 @@ export function SubjectDetailModal({
                     : "—"}
                 </span>
                 {averageStats.isWeighted && (
-                  <span className="text-[11px] font-mono text-amber-400">
+                  <span className="text-[11px] font-mono text-amber-600">
                     {locale === "ar" ? "موزون بالأوزان" : "Weighted"}
                   </span>
                 )}
@@ -214,7 +214,7 @@ export function SubjectDetailModal({
                   {locale === "ar" ? "توقعات تحقيق الهدف" : "Target Projection"}
                 </span>
                 {subject.target_grade && (
-                  <span className="text-[11px] font-mono text-emerald-400">
+                  <span className="text-[11px] font-mono text-emerald-600">
                     {locale === "ar" ? "المستهدف:" : "Goal:"} {subject.target_grade}%
                   </span>
                 )}
@@ -249,7 +249,7 @@ export function SubjectDetailModal({
               </div>
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div className="p-3 rounded-lg bg-surface-container border border-border-subtle">
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-amber-400">
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-amber-600">
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                     <span>
                       {locale === "ar"
@@ -262,7 +262,7 @@ export function SubjectDetailModal({
                   </div>
                 </div>
                 <div className="p-3 rounded-lg bg-surface-container border border-border-subtle">
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-indigo-400">
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-indigo-600">
                     <span className="w-2.5 h-2.5 rotate-45 bg-indigo-400" />
                     <span>
                       {locale === "ar"
@@ -322,12 +322,12 @@ export function SubjectDetailModal({
                           onClick={() =>
                             onToggleDeadlineComplete(dl.id, !dl.completed)
                           }
-                          className="text-text-muted hover:text-amber-400 transition-colors"
+                          className="text-text-muted hover:text-amber-600 transition-colors"
                         >
                           <CheckCircle2
                             className={`w-4 h-4 ${
                               dl.completed
-                                ? "text-emerald-400 fill-emerald-400/20"
+                                ? "text-emerald-600 fill-emerald-400/20"
                                 : "text-text-muted"
                             }`}
                           />
@@ -365,7 +365,7 @@ export function SubjectDetailModal({
               </span>
               <button
                 onClick={() => onOpenAddGrade(subject.id)}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 text-xs font-mono hover:bg-amber-500/20 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-700 border border-amber-500/20 text-xs font-mono hover:bg-amber-500/20 transition-all cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>{locale === "ar" ? "إضافة درجة" : "Add Grade"}</span>
@@ -374,7 +374,7 @@ export function SubjectDetailModal({
 
             {subjectGrades.length === 0 ? (
               <div className="p-6 rounded-xl bg-surface-container/40 border border-border-subtle text-center space-y-2">
-                <Award className="w-8 h-8 text-amber-400/40 mx-auto" />
+                <Award className="w-8 h-8 text-amber-600/40 mx-auto" />
                 <p className="text-xs font-mono text-on-surface-variant">
                   {locale === "ar"
                     ? `لا توجد تقييمات مسجلة لمادة ${subject.name}`
@@ -382,7 +382,7 @@ export function SubjectDetailModal({
                 </p>
                 <button
                   onClick={() => onOpenAddGrade(subject.id)}
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-amber-400 hover:underline pt-1"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono text-amber-600 hover:underline pt-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>
@@ -426,8 +426,8 @@ export function SubjectDetailModal({
                             <span
                               className={`text-[9px] font-mono px-1.5 py-0.2 rounded uppercase ${
                                 isQuiz
-                                  ? "bg-amber-400/10 text-amber-300"
-                                  : "bg-indigo-400/10 text-indigo-300"
+                                  ? "bg-amber-400/10 text-amber-700"
+                                  : "bg-indigo-400/10 text-indigo-700"
                               }`}
                             >
                               {isQuiz
@@ -525,9 +525,9 @@ export function SubjectDetailModal({
 
         {/* Delete Safeguard Confirmation Modal */}
         {deleteSafeguardModal && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-bg-darkest/90 backdrop-blur-md">
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
             <div className="w-full max-w-md bg-surface-container border border-border-medium rounded-2xl p-6 shadow-2xl space-y-4">
-              <div className="flex items-center gap-3 text-amber-400">
+              <div className="flex items-center gap-3 text-amber-600">
                 <AlertTriangle className="w-6 h-6 shrink-0" />
                 <h3 className="text-base font-bold font-mono text-on-surface">
                   {locale === "ar" ? "المادة دي مسجل ليها درجات سابقة" : "Subject Has Recorded Grades"}

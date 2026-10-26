@@ -112,14 +112,14 @@ export function TimetableGrid({
     <div className="space-y-4">
       {/* Next Class Today Banner */}
       {nextClassInfo && (
-        <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle flex items-center justify-between">
+        <div className="stitch-card p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-300 font-bold text-sm">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-700 font-bold text-sm">
               ⏳
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">
+                <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">
                   {locale === "ar" ? "المحاضرة / الحصة القادمة النهاردة" : "Next Class Today"}
                 </span>
                 <span className="text-[11px] text-text-muted">
@@ -172,7 +172,7 @@ export function TimetableGrid({
               onClick={() => setSelectedDay(d.value)}
               className={`flex-1 min-w-[56px] py-2 px-1 rounded-xl text-center border transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-amber-500/20 border-amber-500/60 text-amber-300 font-bold shadow-sm"
+                  ? "bg-amber-500/20 border-amber-500/60 text-amber-700 font-bold shadow-sm"
                   : "bg-surface-container border-border-subtle/50 text-text-muted hover:text-on-surface"
               }`}
             >
@@ -196,7 +196,7 @@ export function TimetableGrid({
             </p>
             <button
               onClick={() => handleOpenAdd(selectedDay)}
-              className="text-xs text-amber-400 hover:underline font-medium cursor-pointer"
+              className="text-xs text-amber-600 hover:underline font-medium cursor-pointer"
             >
               {locale === "ar"
                 ? `+ إضافة حصة ليوم ${currentDayObj.label}`
@@ -239,7 +239,7 @@ export function TimetableGrid({
                 <div className="flex items-center gap-1 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleOpenEdit(item)}
-                    className="p-1.5 text-text-muted hover:text-amber-300 hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-text-muted hover:text-amber-700 hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer"
                     title={locale === "ar" ? "تعديل الحصة" : "Edit Session"}
                   >
                     ✏️

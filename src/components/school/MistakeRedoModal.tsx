@@ -76,7 +76,7 @@ export function MistakeRedoModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-bg-darkest/85 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
       <div
         className="w-full max-w-xl bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -97,7 +97,7 @@ export function MistakeRedoModal({
                   {locale === "ar" ? `إعادة حل: ${mistake.topic}` : `Redo: ${mistake.topic}`}
                 </h3>
                 {subject && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high border border-border-subtle text-amber-300">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high border border-border-subtle text-amber-700">
                     {subject.name}
                   </span>
                 )}
@@ -130,7 +130,7 @@ export function MistakeRedoModal({
         <div className="p-4 rounded-xl bg-surface-container-high/60 border border-border-subtle space-y-2">
           <div className="flex items-center justify-between text-xs font-mono text-on-surface-variant font-semibold uppercase tracking-wider">
             <div className="flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-amber-400" />
+              <HelpCircle className="w-4 h-4 text-amber-600" />
               <span>{locale === "ar" ? "نص المسألة أو سياق السؤال" : "Problem Statement / Context"}</span>
             </div>
             {mistake.redo_history && mistake.redo_history.length > 0 && (
@@ -173,7 +173,7 @@ export function MistakeRedoModal({
             />
             <button
               onClick={() => setRevealed(true)}
-              className="w-full py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-semibold uppercase flex items-center justify-center gap-2 hover:bg-amber-500/25 transition-all cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 text-xs font-mono font-semibold uppercase flex items-center justify-center gap-2 hover:bg-amber-500/25 transition-all cursor-pointer"
             >
               <Eye className="w-4 h-4" />
               <span>{locale === "ar" ? "أظهر الحل الصح وقارن حلك" : "Reveal Correct Solution & Compare"}</span>
@@ -208,7 +208,7 @@ export function MistakeRedoModal({
 
             {/* The Correct Solution */}
             <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 space-y-1">
-              <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">
+              <span className="text-[11px] font-mono text-emerald-600 font-bold uppercase tracking-wider block">
                 {locale === "ar" ? "الحل النموذجي المعتمد" : "Verified Correct Solution"}
               </span>
               <p
@@ -234,7 +234,7 @@ export function MistakeRedoModal({
                   type="button"
                   disabled={submitting}
                   onClick={() => handleRedoResult("wrong")}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-xs font-mono text-rose-300 hover:bg-rose-500/20 transition-all cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-xs font-mono text-rose-700 hover:bg-rose-500/20 transition-all cursor-pointer disabled:opacity-50"
                 >
                   {submitting ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -247,7 +247,7 @@ export function MistakeRedoModal({
                   type="button"
                   disabled={submitting}
                   onClick={() => handleRedoResult("correct")}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-emerald-400 transition-all cursor-pointer shadow-[0_0_16px_rgba(16,185,129,0.25)] disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-emerald-400 transition-all cursor-pointer shadow-xs disabled:opacity-50"
                 >
                   {submitting ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />

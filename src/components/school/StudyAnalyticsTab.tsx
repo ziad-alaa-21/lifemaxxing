@@ -54,7 +54,7 @@ export function StudyAnalyticsTab({
       />
 
       {/* 2. Subject Study Hours Breakdown */}
-      <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm space-y-4">
+      <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center justify-between pb-1 border-b border-border-subtle/50">
           <div>
             <h3 className="text-sm font-bold text-on-surface">

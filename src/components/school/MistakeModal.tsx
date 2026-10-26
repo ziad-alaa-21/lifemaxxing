@@ -199,7 +199,7 @@ export function MistakeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-bg-darkest/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
       <div
         className="w-full max-w-xl bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-5 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -207,7 +207,7 @@ export function MistakeModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600">
               <BookX className="w-4 h-4" />
             </div>
             <div>
@@ -389,7 +389,7 @@ export function MistakeModal({
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary font-semibold hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary font-semibold hover:bg-amber-400 shadow-xs transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? (
                 <>

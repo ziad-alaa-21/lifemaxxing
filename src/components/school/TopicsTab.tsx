@@ -100,7 +100,7 @@ export function TopicsTab({
         <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-500/15 via-surface-container to-indigo-500/5 border border-indigo-500/30 space-y-3 shadow-lg">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-600 shrink-0">
                 <Clock className="w-4 h-4 animate-pulse" />
               </div>
               <div>
@@ -154,7 +154,7 @@ export function TopicsTab({
                           key={s}
                           className={`w-3 h-3 ${
                             s <= item.confidence
-                              ? "fill-amber-400 text-amber-400"
+                              ? "fill-amber-400 text-amber-600"
                               : "text-text-muted/30"
                           }`}
                         />
@@ -175,10 +175,10 @@ export function TopicsTab({
                           onClick={() => handleRate(item.id, lvl)}
                           className={`px-2 py-0.5 rounded border transition-all cursor-pointer ${
                             lvl >= 4
-                              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20"
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 hover:bg-emerald-500/20"
                               : lvl === 3
-                              ? "bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20"
-                              : "bg-rose-500/10 border-rose-500/30 text-rose-300 hover:bg-rose-500/20"
+                              ? "bg-amber-500/10 border-amber-500/30 text-amber-700 hover:bg-amber-500/20"
+                              : "bg-rose-500/10 border-rose-500/30 text-rose-700 hover:bg-rose-500/20"
                           } disabled:opacity-40`}
                           title={`Rate ${lvl}`}
                         >
@@ -196,31 +196,31 @@ export function TopicsTab({
 
       {/* Analytics Breakdown Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
           <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block">
             {locale === "ar" ? "مفاهيم المنهج" : "Syllabus Topics"}
           </span>
           <div className="text-2xl font-extrabold text-on-surface">{stats.totalTopics}</div>
         </div>
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
-          <span className="text-[10px] text-amber-300 uppercase tracking-wider block">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
+          <span className="text-[10px] text-amber-700 uppercase tracking-wider block">
             {locale === "ar" ? "مستحق المراجعة" : "Reviews Due"}
           </span>
-          <div className="text-2xl font-extrabold text-amber-400">{stats.dueCount}</div>
+          <div className="text-2xl font-extrabold text-amber-600">{stats.dueCount}</div>
         </div>
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
-          <span className="text-[10px] text-emerald-400 uppercase tracking-wider block">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
+          <span className="text-[10px] text-emerald-600 uppercase tracking-wider block">
             {locale === "ar" ? "استيعاب عالي (4-5)" : "High Confidence (4-5)"}
           </span>
-          <div className="text-2xl font-extrabold text-emerald-400">
+          <div className="text-2xl font-extrabold text-emerald-600">
             {stats.highConfidenceCount}
           </div>
         </div>
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
-          <span className="text-[10px] text-indigo-400 uppercase tracking-wider block">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
+          <span className="text-[10px] text-indigo-600 uppercase tracking-wider block">
             {locale === "ar" ? "متوسط الاستيعاب" : "Avg Confidence"}
           </span>
-          <div className="text-2xl font-extrabold text-indigo-300">
+          <div className="text-2xl font-extrabold text-indigo-700">
             {stats.averageConfidence} / 5
           </div>
         </div>
@@ -262,13 +262,13 @@ export function TopicsTab({
             onClick={onOpenBulkModal}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container border border-border-subtle text-on-surface hover:bg-surface-container-high text-xs font-mono transition-all cursor-pointer"
           >
-            <ListPlus className="w-3.5 h-3.5 text-indigo-400" />
+            <ListPlus className="w-3.5 h-3.5 text-indigo-600" />
             <span>{locale === "ar" ? "لصق جملة" : "Bulk Paste"}</span>
           </button>
 
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-500 text-white text-xs font-mono font-bold uppercase hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-500 text-white text-xs font-mono font-bold uppercase hover:bg-indigo-400 shadow-xs transition-all cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>{locale === "ar" ? "إضافة مفهوم" : "Add Topic"}</span>
@@ -300,7 +300,7 @@ export function TopicsTab({
             return (
               <div
                 key={t.id}
-                className="p-4 rounded-2xl bg-surface-container border border-border-subtle hover:border-border-medium transition-all space-y-3 shadow-xs flex flex-col justify-between"
+                className="stitch-card p-4 hover:border-border-medium transition-all space-y-3 shadow-xs flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   {/* Subject Tag + Due Badge */}
@@ -317,7 +317,7 @@ export function TopicsTab({
 
                     <div className="flex items-center gap-1.5">
                       {isDue ? (
-                        <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300 uppercase font-bold">
+                        <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-700 uppercase font-bold">
                           {locale === "ar" ? "مستحق النهاردة" : "Due Today"}
                         </span>
                       ) : (
@@ -355,7 +355,7 @@ export function TopicsTab({
                         disabled={isBusy}
                         onClick={() => handleRate(t.id, lvl)}
                         className={`p-1 rounded transition-all cursor-pointer disabled:opacity-40 hover:scale-110 ${
-                          lvl <= t.confidence ? "text-amber-400" : "text-text-muted/30"
+                          lvl <= t.confidence ? "text-amber-600" : "text-text-muted/30"
                         }`}
                         title={`Rate confidence ${lvl}/5`}
                       >

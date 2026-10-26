@@ -140,7 +140,7 @@ export function MistakesTab({
       {dueTodayCount > 0 && (
         <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-surface-container to-amber-500/5 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-600 shrink-0">
               <RotateCcw className="w-5 h-5 animate-pulse" />
             </div>
             <div>
@@ -167,36 +167,36 @@ export function MistakesTab({
 
       {/* Analytics Breakdown Card */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
           <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block">
             {locale === "ar" ? "إجمالي الأخطاء" : "Total Cataloged"}
           </span>
           <div className="text-2xl font-extrabold text-on-surface">{stats.totalCount}</div>
         </div>
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
-          <span className="text-[10px] text-amber-300 uppercase tracking-wider block">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
+          <span className="text-[10px] text-amber-700 uppercase tracking-wider block">
             {locale === "ar" ? "محتاج إعادة حل" : "Needs Redo"}
           </span>
-          <div className="text-2xl font-extrabold text-amber-400">{stats.openCount}</div>
+          <div className="text-2xl font-extrabold text-amber-600">{stats.openCount}</div>
         </div>
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
-          <span className="text-[10px] text-emerald-400 uppercase tracking-wider block">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
+          <span className="text-[10px] text-emerald-600 uppercase tracking-wider block">
             {locale === "ar" ? "تم الحل والإتقان" : "Redone & Resolved"}
           </span>
-          <div className="text-2xl font-extrabold text-emerald-400">{stats.resolvedCount}</div>
+          <div className="text-2xl font-extrabold text-emerald-600">{stats.resolvedCount}</div>
         </div>
-        <div className="p-3.5 rounded-xl bg-surface-container border border-border-subtle font-mono space-y-1">
-          <span className="text-[10px] text-indigo-400 uppercase tracking-wider block">
+        <div className="stitch-card p-3.5 font-mono space-y-1">
+          <span className="text-[10px] text-indigo-600 uppercase tracking-wider block">
             {locale === "ar" ? "نسبة التغلب ع الأخطاء" : "Resolution Rate"}
           </span>
-          <div className="text-2xl font-extrabold text-indigo-300">
+          <div className="text-2xl font-extrabold text-indigo-700">
             {stats.resolutionRatePct}%
           </div>
         </div>
       </div>
 
       {/* Cause Taxonomy Breakdown Pill Bar */}
-      <div className="p-4 rounded-xl bg-surface-container border border-border-subtle space-y-2">
+      <div className="stitch-card p-4 space-y-2">
         <div className="flex items-center justify-between text-xs font-mono text-on-surface-variant">
           <span className="uppercase tracking-wider font-semibold">
             {locale === "ar" ? "توزيع أسباب الأخطاء" : "Root Cause Distribution"}
@@ -258,7 +258,7 @@ export function MistakesTab({
                 onClick={() => setSelectedStatus(t.id)}
                 className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   selectedStatus === t.id
-                    ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 shadow-xs"
+                    ? "bg-amber-500/20 text-amber-700 font-bold border border-amber-500/30 shadow-xs"
                     : "text-text-muted hover:text-on-surface"
                 }`}
               >
@@ -297,7 +297,7 @@ export function MistakesTab({
 
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer shrink-0"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-xs transition-all cursor-pointer shrink-0"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>{locale === "ar" ? "سجل خطأ" : "Log Mistake"}</span>
@@ -330,7 +330,7 @@ export function MistakesTab({
             return (
               <div
                 key={m.id}
-                className="p-4 rounded-2xl bg-surface-container border border-border-subtle hover:border-border-medium transition-all space-y-3 shadow-xs"
+                className="stitch-card p-4 hover:border-border-medium transition-all space-y-3 shadow-xs"
               >
                 {/* Header: Subject + Topic + Cause + Status Badge */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border-subtle/60">
@@ -355,7 +355,7 @@ export function MistakesTab({
                       {getCauseLabel(m.cause)}
                     </span>
                     {isResolved ? (
-                      <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 uppercase font-bold flex items-center gap-1">
+                      <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 uppercase font-bold flex items-center gap-1">
                         <Check className="w-2.5 h-2.5 stroke-[3]" />
                         {locale === "ar" ? "تم الإتقان" : "Resolved"}
                       </span>
@@ -363,7 +363,7 @@ export function MistakesTab({
                       <span
                         className={`text-[9px] font-mono px-2 py-0.5 rounded border uppercase font-bold ${
                           isDueToday
-                            ? "bg-amber-500/15 border-amber-500/30 text-amber-300"
+                            ? "bg-amber-500/15 border-amber-500/30 text-amber-700"
                             : "bg-surface-container-high border-border-subtle text-text-muted"
                         }`}
                       >
@@ -404,7 +404,7 @@ export function MistakesTab({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onOpenRedoModal(m)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold hover:bg-amber-500/25 transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 text-xs font-mono font-bold hover:bg-amber-500/25 transition-all cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>{locale === "ar" ? "حل تاني" : "Practice Redo"}</span>

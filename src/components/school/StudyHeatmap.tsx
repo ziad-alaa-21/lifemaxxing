@@ -29,7 +29,7 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
   });
 
   return (
-    <div className="bg-surface-container rounded-2xl p-5 border border-border-subtle shadow-sm space-y-3">
+    <div className="stitch-card p-5 space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
         <div>
@@ -43,7 +43,7 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+          <span className="text-xs font-semibold text-amber-600 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
             🔥 {heatmapData.consistencySummary}
           </span>
         </div>
@@ -93,7 +93,7 @@ export function StudyHeatmap({ heatmapData, firstDayOfWeek = 0 }: StudyHeatmapPr
             <div className="flex items-center gap-2">
               <span className="font-semibold text-on-surface">{activeCell.dateStr}</span>
               <span className="text-text-muted">•</span>
-              <span className="text-amber-300 font-bold">
+              <span className="text-amber-700 font-bold">
                 {activeCell.actualMinutes > 0
                   ? locale === "ar"
                     ? `${activeCell.actualMinutes} دقيقة مذاكرة`

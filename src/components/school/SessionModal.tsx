@@ -207,7 +207,7 @@ export function SessionModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
       <div
         className="bg-surface-container w-full max-w-md rounded-2xl border border-border-subtle p-5 shadow-2xl space-y-4"
         onClick={(e) => e.stopPropagation()}
@@ -299,7 +299,7 @@ export function SessionModal({
 
           {/* Advisory Collision Warning */}
           {advisoryConflict && (
-            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2">
+            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 text-xs flex items-start gap-2">
               <span className="text-base leading-none">⚠️</span>
               <div>
                 <span className="font-semibold">
@@ -307,13 +307,13 @@ export function SessionModal({
                 </span>{" "}
                 {locale === "ar" ? (
                   <>
-                    في تعارض مع <span className="font-medium text-amber-200">{advisoryConflict.subjectName}</span> (
+                    في تعارض مع <span className="font-medium text-amber-800">{advisoryConflict.subjectName}</span> (
                     {formatTimeRange12h(advisoryConflict.start, advisoryConflict.end, { locale })}). تقدر تكمل الحفظ لو ده مقصود.
                   </>
                 ) : (
                   <>
                     Overlaps with{" "}
-                    <span className="font-medium text-amber-200">{advisoryConflict.subjectName}</span> (
+                    <span className="font-medium text-amber-800">{advisoryConflict.subjectName}</span> (
                     {formatTimeRange12h(advisoryConflict.start, advisoryConflict.end, { locale })}). You can still save if intentional.
                   </>
                 )}

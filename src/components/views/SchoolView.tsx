@@ -948,7 +948,7 @@ export function SchoolView() {
     <div className="space-y-6 max-w-5xl mx-auto pb-16 font-sans">
       {/* Offline Write Warning Banner */}
       {isBlocked && (
-        <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-xl flex items-center justify-between gap-3 text-amber-300 text-xs font-mono">
+        <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-xl flex items-center justify-between gap-3 text-amber-700 text-xs font-mono">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>
@@ -985,11 +985,11 @@ export function SchoolView() {
       )}
 
       {/* Top Academic Header Banner */}
-      <div className="bg-surface-container rounded-2xl p-5 sm:p-6 border border-border-subtle relative overflow-hidden">
+      <div className="stitch-card p-5 sm:p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.2)]">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 shadow-xs">
               <GraduationCap className="w-6 h-6" />
             </div>
             <div>
@@ -997,7 +997,7 @@ export function SchoolView() {
                 <h1 className="text-xl font-bold font-mono text-on-surface">
                   {locale === "ar" ? "محرك الدراسة والتحصيل" : "School Engine"}
                 </h1>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high text-amber-300 border border-amber-500/20">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high text-amber-700 border border-amber-500/20">
                   {locale === "ar" ? "المرحلة 8" : "Stage 8"}
                 </span>
               </div>
@@ -1015,7 +1015,7 @@ export function SchoolView() {
                 setEditingSubject(null);
                 setIsSubjectModalOpen(true);
               }}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>{dict.school.addSubject}</span>
@@ -1030,7 +1030,7 @@ export function SchoolView() {
           onClick={() => handleTabChange("overview")}
           className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
             activeTab === "overview"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold shadow-sm"
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
               : "text-text-muted hover:text-on-surface"
           }`}
         >
@@ -1040,7 +1040,7 @@ export function SchoolView() {
           onClick={() => handleTabChange("grades")}
           className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
             activeTab === "grades"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold shadow-sm"
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
               : "text-text-muted hover:text-on-surface"
           }`}
         >
@@ -1050,7 +1050,7 @@ export function SchoolView() {
           onClick={() => handleTabChange("plan")}
           className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
             activeTab === "plan"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold shadow-sm"
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
               : "text-text-muted hover:text-on-surface"
           }`}
         >
@@ -1060,7 +1060,7 @@ export function SchoolView() {
           onClick={() => handleTabChange("practice")}
           className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap flex items-center justify-center gap-1.5 cursor-pointer ${
             activeTab === "practice"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold shadow-sm"
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
               : "text-text-muted hover:text-on-surface"
           }`}
         >
@@ -1073,7 +1073,7 @@ export function SchoolView() {
           onClick={() => handleTabChange("timetable")}
           className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
             activeTab === "timetable"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold shadow-sm"
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
               : "text-text-muted hover:text-on-surface"
           }`}
         >
@@ -1083,7 +1083,7 @@ export function SchoolView() {
           onClick={() => handleTabChange("stats")}
           className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
             activeTab === "stats"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold shadow-sm"
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
               : "text-text-muted hover:text-on-surface"
           }`}
         >
@@ -1102,7 +1102,7 @@ export function SchoolView() {
       {/* Loading Skeleton */}
       {loading && (
         <div className="p-16 flex flex-col items-center justify-center text-on-surface-variant gap-3">
-          <Loader2 className="w-7 h-7 animate-spin text-amber-400" />
+          <Loader2 className="w-7 h-7 animate-spin text-amber-600" />
           <span className="text-xs font-mono">
             {locale === "ar" ? "جاري تحميل السجلات الدراسية..." : "Loading academic records..."}
           </span>
@@ -1118,7 +1118,7 @@ export function SchoolView() {
           {duePracticeTotal > 0 && (
             <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-surface-container to-indigo-500/15 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-600 shrink-0">
                   <Flame className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
@@ -1164,7 +1164,7 @@ export function SchoolView() {
           {/* Top Metric Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             {/* Average Across Subjects Card */}
-            <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2">
+            <div className="stitch-card p-4 space-y-2">
               <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
                 {locale === "ar" ? "المعدل التراكمي للمواد (غير موزون)" : "Average across subjects (unweighted)"}
               </span>
@@ -1174,7 +1174,7 @@ export function SchoolView() {
                     ? `${overallStats.overallAveragePct}%`
                     : "—"}
                 </span>
-                <span className="text-xs font-mono text-amber-400">
+                <span className="text-xs font-mono text-amber-600">
                   {overallStats.gradedSubjectsCount} {locale === "ar" ? "مادة مقيمة" : "Graded Subjects"}
                 </span>
               </div>
@@ -1186,7 +1186,7 @@ export function SchoolView() {
             </div>
 
             {/* Nearest Deadline Card */}
-            <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2">
+            <div className="stitch-card p-4 space-y-2">
               <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
                 {locale === "ar" ? "أقرب موعد تسليم" : "Upcoming Deadline"}
               </span>
@@ -1196,7 +1196,7 @@ export function SchoolView() {
                     {nearestDl.title}
                   </div>
                   <div className="flex items-center gap-2 text-xs font-mono">
-                    <span className="px-2 py-0.5 rounded bg-surface-container-high text-amber-300 font-semibold border border-amber-500/20 uppercase text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-surface-container-high text-amber-700 font-semibold border border-amber-500/20 uppercase text-[10px]">
                       {nearestDl.type}
                     </span>
                     <span className="text-text-muted">
@@ -1212,7 +1212,7 @@ export function SchoolView() {
             </div>
 
             {/* Practice Retention Quick Card */}
-            <div className="p-4 rounded-2xl bg-surface-container border border-border-subtle space-y-2">
+            <div className="stitch-card p-4 space-y-2">
               <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
                 {locale === "ar" ? "مركز التكرار والتثبيت" : "Practice Retention Hub"}
               </span>
@@ -1220,14 +1220,14 @@ export function SchoolView() {
                 <span className="text-3xl font-extrabold font-mono text-on-surface">
                   {mistakes.length}
                 </span>
-                <span className="text-xs font-mono text-amber-400">
+                <span className="text-xs font-mono text-amber-600">
                   {locale === "ar" ? "أخطاء" : "Mistakes"}
                 </span>
                 <span className="text-text-muted font-mono">•</span>
                 <span className="text-3xl font-extrabold font-mono text-on-surface">
                   {topics.length}
                 </span>
-                <span className="text-xs font-mono text-indigo-400">
+                <span className="text-xs font-mono text-indigo-600">
                   {locale === "ar" ? "مفاهيم" : "Topics"}
                 </span>
               </div>
@@ -1252,7 +1252,7 @@ export function SchoolView() {
                   setEditingSubject(null);
                   setIsSubjectModalOpen(true);
                 }}
-                className="text-xs font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+                className="text-xs font-mono text-amber-600 hover:text-amber-700 flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>{locale === "ar" ? "مادة جديدة" : "New Subject"}</span>
@@ -1271,7 +1271,7 @@ export function SchoolView() {
                   <div
                     key={sub.id}
                     onClick={() => setDetailSubject(sub)}
-                    className="p-4 rounded-2xl bg-surface-container border border-border-subtle hover:border-border-medium transition-all cursor-pointer space-y-3 shadow-xs"
+                    className="stitch-card p-4 hover:border-border-medium transition-all cursor-pointer space-y-3 shadow-xs"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2.5">
@@ -1317,9 +1317,9 @@ export function SchoolView() {
                           e.stopPropagation();
                           setStudySubject(sub);
                         }}
-                        className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high text-amber-300 hover:bg-amber-500/20 transition-colors"
+                        className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high text-amber-700 hover:bg-amber-500/20 transition-colors"
                       >
-                        <Play className="w-3 h-3 fill-amber-300" />
+                        <Play className="w-3 h-3 fill-amber-700" />
                         <span>{locale === "ar" ? "ذاكر" : "Study"}</span>
                       </button>
                     </div>
@@ -1330,7 +1330,7 @@ export function SchoolView() {
           </div>
 
           {/* Trend Chart Preview */}
-          <div className="p-5 rounded-2xl bg-surface-container border border-border-subtle space-y-4">
+          <div className="stitch-card p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold font-mono text-on-surface">
@@ -1385,7 +1385,7 @@ export function SchoolView() {
                 setPreselectedGradeSubjectId("");
                 setIsGradeModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{locale === "ar" ? "سجل درجة" : "Record Grade"}</span>
@@ -1409,7 +1409,7 @@ export function SchoolView() {
                 return (
                   <div
                     key={g.id}
-                    className="p-3.5 rounded-xl bg-surface-container border border-border-subtle flex items-center justify-between gap-3 font-mono text-xs"
+                    className="stitch-card p-3.5 flex items-center justify-between gap-3 font-mono text-xs"
                   >
                     <div className="flex items-center gap-3">
                       <span
@@ -1422,8 +1422,8 @@ export function SchoolView() {
                           <span
                             className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold ${
                               g.type === "quiz"
-                                ? "bg-amber-400/20 text-amber-300"
-                                : "bg-indigo-400/20 text-indigo-300"
+                                ? "bg-amber-400/20 text-amber-700"
+                                : "bg-indigo-400/20 text-indigo-700"
                             }`}
                           >
                             {g.type === "quiz"
@@ -1497,7 +1497,7 @@ export function SchoolView() {
                 setPreselectedDeadlineSubjectId("");
                 setIsDeadlineModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{locale === "ar" ? "إضافة موعد تسليم" : "Add Deadline"}</span>
@@ -1534,7 +1534,7 @@ export function SchoolView() {
                         >
                           {d.title}
                         </span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-surface-container-high text-amber-300 uppercase font-semibold border border-border-subtle">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-surface-container-high text-amber-700 uppercase font-semibold border border-border-subtle">
                           {d.type}
                         </span>
                       </div>
@@ -1583,7 +1583,7 @@ export function SchoolView() {
               onClick={() => setPracticeSubTab("mistakes")}
               className={`flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 practiceSubTab === "mistakes"
-                  ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 shadow-xs"
+                  ? "bg-amber-500/20 text-amber-700 font-bold border border-amber-500/30 shadow-xs"
                   : "text-text-muted hover:text-on-surface"
               }`}
             >
@@ -1596,7 +1596,7 @@ export function SchoolView() {
               onClick={() => setPracticeSubTab("topics")}
               className={`flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 practiceSubTab === "topics"
-                  ? "bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 shadow-xs"
+                  ? "bg-indigo-500/20 text-indigo-700 font-bold border border-indigo-500/30 shadow-xs"
                   : "text-text-muted hover:text-on-surface"
               }`}
             >
@@ -1825,7 +1825,7 @@ export function SchoolView() {
 
       {/* 9. Study Session Modal (Focus Timer Link Reuse) */}
       {studySubject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-bg-darkest/90 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
           <div
             className="w-full max-w-lg bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}

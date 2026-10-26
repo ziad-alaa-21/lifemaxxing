@@ -126,14 +126,14 @@ export function SubjectModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg-darkest/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
       <div
         className="w-full max-w-md bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
-            <Bookmark className="w-5 h-5 text-amber-400" />
+            <Bookmark className="w-5 h-5 text-amber-600" />
             <h3 className="text-base font-bold font-mono text-on-surface">
               {locale === "ar"
                 ? initialSubject ? "تعديل بيانات المادة" : "إضافة مادة جديدة"
@@ -249,7 +249,7 @@ export function SubjectModal({
             <button
               type="submit"
               disabled={saving || isBlocked}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-xs transition-all cursor-pointer"
             >
               {saving ? (
                 <>

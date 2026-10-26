@@ -171,7 +171,7 @@ export function GradeTrendChart({
                   y1={y}
                   x2={width - padRight}
                   y2={y}
-                  stroke="rgba(255, 255, 255, 0.07)"
+                  stroke="#E3E5F0"
                   strokeWidth="1"
                 />
                 <text
@@ -236,7 +236,7 @@ export function GradeTrendChart({
                     cy={pt.y}
                     r={isHovered ? 6 : 4.5}
                     fill="#F59E0B"
-                    stroke="#18181B"
+                    stroke="#FFFFFF"
                     strokeWidth="1.5"
                     className="transition-all duration-150"
                   />
@@ -250,7 +250,7 @@ export function GradeTrendChart({
                       ${pt.x - (isHovered ? 7 : 5.5)},${pt.y}
                     `}
                     fill="#818CF8"
-                    stroke="#18181B"
+                    stroke="#FFFFFF"
                     strokeWidth="1.5"
                     className="transition-all duration-150"
                   />
@@ -273,8 +273,8 @@ export function GradeTrendChart({
               <span
                 className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
                   hoveredGrade.grade.type === "quiz"
-                    ? "bg-amber-400/20 text-amber-300"
-                    : "bg-indigo-400/20 text-indigo-300"
+                    ? "bg-amber-400/20 text-amber-700"
+                    : "bg-indigo-400/20 text-indigo-700"
                 }`}
               >
                 {hoveredGrade.grade.type === "quiz"
@@ -292,7 +292,7 @@ export function GradeTrendChart({
             <div className="text-xs font-bold text-on-surface mt-1 truncate max-w-[180px]">
               {hoveredGrade.grade.title}
             </div>
-            <div className="text-xs text-amber-400 font-semibold mt-0.5">
+            <div className="text-xs text-amber-600 font-semibold mt-0.5">
               {hoveredGrade.pct}%{" "}
               <span className="text-[10px] text-on-surface-variant font-normal">
                 ({hoveredGrade.grade.mark_achieved} / {hoveredGrade.grade.mark_total})

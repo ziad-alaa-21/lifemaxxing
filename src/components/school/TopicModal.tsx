@@ -126,7 +126,7 @@ export function TopicModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-bg-darkest/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
       <div
         className="w-full max-w-lg bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-5"
         onClick={(e) => e.stopPropagation()}
@@ -134,7 +134,7 @@ export function TopicModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-600">
               <BookmarkCheck className="w-4 h-4" />
             </div>
             <div>
@@ -224,7 +224,7 @@ export function TopicModal({
                     onClick={() => setConfidence(lvl)}
                     className={`flex-1 py-2 px-1 rounded-lg border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
                       isSelected
-                        ? "bg-amber-500/20 border-amber-500/50 text-amber-300 font-bold shadow-sm"
+                        ? "bg-amber-500/20 border-amber-500/50 text-amber-700 font-bold shadow-sm"
                         : "bg-surface-container border-border-subtle text-text-muted hover:text-on-surface hover:border-border-medium"
                     }`}
                   >
@@ -232,7 +232,7 @@ export function TopicModal({
                       <Star
                         className={`w-3.5 h-3.5 ${
                           lvl <= confidence
-                            ? "fill-amber-400 text-amber-400"
+                            ? "fill-amber-400 text-amber-600"
                             : "text-text-muted/40"
                         }`}
                       />
@@ -280,7 +280,7 @@ export function TopicModal({
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-400 shadow-[0_0_16px_rgba(99,102,241,0.25)] transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-400 shadow-xs transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? (
                 <>

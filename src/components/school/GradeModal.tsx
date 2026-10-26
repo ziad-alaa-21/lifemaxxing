@@ -164,14 +164,14 @@ export function GradeModal({
       : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg-darkest/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
       <div
         className="w-full max-w-md bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
-            <Award className="w-5 h-5 text-amber-400" />
+            <Award className="w-5 h-5 text-amber-600" />
             <h3 className="text-base font-bold font-mono text-on-surface">
               {locale === "ar"
                 ? initialGrade ? "تعديل الدرجة" : "تسجيل درجة جديدة"
@@ -227,7 +227,7 @@ export function GradeModal({
                 onClick={() => setType("quiz")}
                 className={`py-2 px-3 rounded-xl border text-xs font-mono flex items-center justify-center gap-2 transition-all ${
                   type === "quiz"
-                    ? "border-amber-400 bg-amber-400/10 text-amber-300 font-semibold shadow-sm"
+                    ? "border-amber-400 bg-amber-400/10 text-amber-700 font-semibold shadow-sm"
                     : "border-border-subtle bg-surface-container-low text-text-muted hover:border-border-medium"
                 }`}
               >
@@ -239,7 +239,7 @@ export function GradeModal({
                 onClick={() => setType("big_exam")}
                 className={`py-2 px-3 rounded-xl border text-xs font-mono flex items-center justify-center gap-2 transition-all ${
                   type === "big_exam"
-                    ? "border-indigo-400 bg-indigo-400/10 text-indigo-300 font-semibold shadow-sm"
+                    ? "border-indigo-400 bg-indigo-400/10 text-indigo-700 font-semibold shadow-sm"
                     : "border-border-subtle bg-surface-container-low text-text-muted hover:border-border-medium"
                 }`}
               >
@@ -308,9 +308,9 @@ export function GradeModal({
               <span
                 className={`font-bold ${
                   computedPct >= 80
-                    ? "text-emerald-400"
+                    ? "text-emerald-600"
                     : computedPct >= 60
-                    ? "text-amber-400"
+                    ? "text-amber-600"
                     : "text-crimson-alert"
                 }`}
               >
@@ -381,7 +381,7 @@ export function GradeModal({
             <button
               type="submit"
               disabled={saving || isBlocked}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-xs transition-all cursor-pointer"
             >
               {saving ? (
                 <>
