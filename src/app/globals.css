@@ -1,85 +1,213 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-darkest: #07090c;
-  --color-surface: #0f1419;
-  --color-surface-container: #1b2025;
-  --color-surface-container-low: #171c21;
-  --color-surface-container-high: #252a30;
-  --color-surface-container-highest: #30353a;
-  --color-surface-bright: #353a3f;
+  /* Stitch Life Tracking System — Light Mode Tokens */
+  --color-canvas-start: #f3f4fb;
+  --color-canvas-end: #eceefa;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface: #f9f9ff;
+  --color-surface-dim: #d3daeb;
+  --color-surface-bright: #f9f9ff;
+  --color-surface-container-low: #f0f3ff;
+  --color-surface-container: #ffffff;
+  --color-surface-container-high: #e7eeff;
+  --color-surface-container-highest: #dce2f3;
+  --color-surface-variant: #dce2f3;
 
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-medium: rgba(255, 255, 255, 0.14);
-  --color-border-focus: #c6ff3d;
+  --color-ink: #14161a;
+  --color-slate: #5b6270;
+  --color-card-border: #e3e5f0;
+  --color-divider: #eceefa;
 
-  --color-on-surface: #dee3e9;
-  --color-on-surface-variant: #c3c9ae;
-  --color-text-muted: #64748b;
+  --color-primary: #14161a;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1a1c20;
+  --color-on-primary-container: #828489;
 
-  /* Contrast tokens for text/icons on high-opacity and solid accents */
-  --color-on-primary: #0a0a0f;
-  --color-charcoal-dark: #0a0a0f;
-  --color-charcoal-darkest: #07090c;
+  --color-secondary: #2563eb;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #316bf3;
+  --color-secondary-fixed: #dbe1ff;
+  --color-on-secondary-fixed: #00174b;
 
-  --color-primary-lime: #c6ff3d;
-  --color-primary-lime-dim: #a2d801;
-  --color-primary-container: #bdf532;
-  --color-secondary-cyan: #5de6ff;
-  --color-tertiary-purple: #a78bfa;
-  --color-amber-core: #f59e0b;
-  --color-crimson-alert: #ef4444;
-  --color-emerald-success: #10b981;
+  --color-tertiary: #7c3aed;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-fixed: #eaddff;
+  --color-on-tertiary-fixed: #25005a;
 
-  /* Functional status tokens */
-  --color-ice-blue: #38bdf8;
-  --color-status-success: #34d399;
-  --color-status-negative: #f87171;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
 
-  /* Strength standards rank tiers */
-  --color-rank-bronze: #cd7f32;
-  --color-rank-silver: #c0c0c0;
-  --color-rank-gold: #ffd700;
-  --color-rank-platinum: #7dd3fc;
-  --color-rank-diamond: #a5f3fc;
-  --color-rank-olympian: #c084fc;
-  --color-rank-mr-olympia: #ff6b4a;
+  --color-outline: #76777b;
+  --color-outline-variant: #c6c6cb;
 
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-mono), monospace;
+  /* Domain Chip & Accent Tokens */
+  --color-body-chip-bg: #e6eeff;
+  --color-body-chip-text: #1e3a9e;
+  --color-mind-chip-bg: #f1e8ff;
+  --color-mind-chip-text: #5b21b6;
+  --color-school-chip-bg: #fde7f1;
+  --color-school-chip-text: #9d174d;
+  --color-record-bg: #f5b301;
+  --color-record-text: #4a3400;
+
+  /* Transitional Aliases (mapped to Stitch Light Palette for Stages 1-8; removed in Stage 9) */
+  --color-bg-darkest: #eceefa;
+  --color-border-subtle: #e3e5f0;
+  --color-border-medium: #c6c6cb;
+  --color-border-focus: #14161a;
+
+  --color-on-surface: #14161a;
+  --color-on-surface-variant: #5b6270;
+  --color-text-muted: #5b6270;
+
+  --color-charcoal-dark: #ffffff;
+  --color-charcoal-darkest: #f3f4fb;
+
+  --color-primary-lime: #14161a;
+  --color-primary-lime-dim: #2a313d;
+  --color-secondary-cyan: #2563eb;
+  --color-tertiary-purple: #7c3aed;
+  --color-amber-core: #db2777;
+  --color-crimson-alert: #ba1a1a;
+  --color-emerald-success: #15803d;
+
+  --color-ice-blue: #2563eb;
+  --color-status-success: #15803d;
+  --color-status-negative: #ba1a1a;
+
+  /* Strength standards rank tiers (light-mode readable) */
+  --color-rank-bronze: #9a3412;
+  --color-rank-silver: #334155;
+  --color-rank-gold: #f5b301;
+  --color-rank-platinum: #1e3a9e;
+  --color-rank-diamond: #0369a1;
+  --color-rank-olympian: #5b21b6;
+  --color-rank-mr-olympia: #9d174d;
+
+  /* Font stacks: both sans and mono resolve to IBM Plex Sans (no monospaced counters) */
+  --font-sans: var(--font-active-plex), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-active-plex), system-ui, -apple-system, sans-serif;
 }
 
 :root {
-  --bg-darkest: #07090c;
-  --bg-surface: #0f1419;
-  --bg-surface-container: #1b2025;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --volt-lime: #c6ff3d;
-  --volt-lime-glow: rgba(198, 255, 61, 0.22);
-  --on-primary: #0a0a0f;
+  /* English default: only Latin IBM Plex Sans is referenced so Arabic font is not downloaded */
+  --font-active-plex: var(--font-plex-sans);
 
-  /* Liquid Glass Navigation Tokens */
-  --glass-surface-fill: rgba(255, 255, 255, 0.06);
-  --glass-bg-charcoal: rgba(18, 22, 28, 0.82);
-  --glass-lens-fill: rgba(255, 255, 255, 0.10);
-  --glass-lens-border: rgba(198, 255, 61, 0.35);
-  --glass-opaque-fallback: #1b2025;
-  --glass-tab-inactive: #94a3b8;
+  --canvas-wash: linear-gradient(135deg, #f3f4fb 0%, #eceefa 100%);
+  --card-surface: #ffffff;
+  --card-stroke: #e3e5f0;
+  --divider-stroke: #eceefa;
+  --ink-primary: #14161a;
+  --slate-secondary: #5b6270;
+  --shadow-level-1: 0 8px 24px rgba(40, 50, 120, 0.08);
+  --shadow-level-2: 0 12px 32px rgba(40, 50, 120, 0.12);
+
+  /* Domain Gradients */
+  --gradient-body: linear-gradient(135deg, #2563eb 0%, #4338ca 100%);
+  --gradient-mind: linear-gradient(135deg, #7c3aed 0%, #a21caf 100%);
+  --gradient-school: linear-gradient(135deg, #db2777 0%, #c2410c 100%);
+
+  /* Legacy CSS variable aliases */
+  --bg-darkest: #eceefa;
+  --bg-surface: #f9f9ff;
+  --bg-surface-container: #ffffff;
+  --border-subtle: #e3e5f0;
+  --volt-lime: #14161a;
+  --volt-lime-glow: rgba(40, 50, 120, 0.08);
+  --on-primary: #ffffff;
+  --glass-surface-fill: rgba(255, 255, 255, 0.92);
+  --glass-bg-charcoal: rgba(255, 255, 255, 0.92);
+  --glass-lens-fill: #f0f3ff;
+  --glass-lens-border: #e3e5f0;
+  --glass-opaque-fallback: #ffffff;
+  --glass-tab-inactive: #5b6270;
 }
 
-/* Liquid Glass Navigation Bar */
+/* Activate IBM Plex Sans Arabic ONLY when locale is Arabic */
+html[lang="ar"],
+html[dir="rtl"] {
+  --font-active-plex: var(--font-plex-arabic), var(--font-plex-sans);
+}
+
+* {
+  box-sizing: border-box;
+  letter-spacing: 0px;
+}
+
+html,
+body {
+  background: linear-gradient(135deg, #f3f4fb 0%, #eceefa 100%);
+  background-color: #f3f4fb;
+  color: #14161a;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-active-plex), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enforce sentence-case guardrails across UI labels and buttons */
+.uppercase {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Stitch Surface & Card Helpers */
+.stitch-canvas {
+  background: linear-gradient(135deg, #f3f4fb 0%, #eceefa 100%);
+}
+
+.stitch-card {
+  background-color: #ffffff;
+  border: 1px solid #e3e5f0;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(40, 50, 120, 0.08);
+}
+
+.stitch-overlay {
+  background-color: #ffffff;
+  border: 1px solid #e3e5f0;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(40, 50, 120, 0.12);
+}
+
+.hero-body {
+  background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(40, 50, 120, 0.08);
+}
+
+.hero-mind {
+  background: linear-gradient(135deg, #7c3aed 0%, #a21caf 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(40, 50, 120, 0.08);
+}
+
+.hero-school {
+  background: linear-gradient(135deg, #db2777 0%, #c2410c 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(40, 50, 120, 0.08);
+}
+
+/* Navigation bar surface */
 .liquid-glass-bar {
-  background-color: var(--glass-bg-charcoal);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 8px 32px rgba(0, 0, 0, 0.35);
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #e3e5f0;
+  box-shadow: 0 8px 24px rgba(40, 50, 120, 0.08);
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .liquid-glass-bar {
-    background-color: var(--glass-opaque-fallback) !important;
+    background-color: #ffffff !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
@@ -87,7 +215,7 @@
 
 @media (prefers-reduced-transparency: reduce) {
   .liquid-glass-bar {
-    background-color: var(--glass-opaque-fallback) !important;
+    background-color: #ffffff !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
@@ -104,22 +232,6 @@
   scrollbar-width: none;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  background-color: var(--bg-surface);
-  color: #dee3e9;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 /* Safe areas for mobile PWA */
 .pb-safe {
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
@@ -129,77 +241,77 @@ body {
   padding-top: max(env(safe-area-inset-top, 0px), 12px);
 }
 
-/* Custom scrollbars */
+/* Custom scrollbars (Light Mode) */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f1419;
+  background: #f3f4fb;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #252a30;
+  background: #d3daeb;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #30353a;
+  background: #b4c5ff;
 }
 
-/* Academic Session Type Theme Tokens */
+/* Academic Session Type Theme Tokens (Light Mode Tints) */
 .session-lecture {
-  color: #a5b4fc;
-  background-color: rgba(99, 102, 241, 0.12);
-  border-color: rgba(99, 102, 241, 0.3);
+  color: #1e3a9e;
+  background-color: #e6eeff;
+  border-color: #b4c5ff;
 }
 
 .session-lab {
-  color: #7dd3fc;
-  background-color: rgba(14, 165, 233, 0.12);
-  border-color: rgba(14, 165, 233, 0.3);
+  color: #5b21b6;
+  background-color: #f1e8ff;
+  border-color: #d2bbff;
 }
 
 .session-section {
-  color: #fcd34d;
-  background-color: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.3);
+  color: #9d174d;
+  background-color: #fde7f1;
+  border-color: #fbcfe8;
 }
 
 .session-seminar {
-  color: #d8b4fe;
-  background-color: rgba(168, 85, 247, 0.12);
-  border-color: rgba(168, 85, 247, 0.3);
+  color: #4a3400;
+  background-color: #fef3c7;
+  border-color: #f5b301;
 }
 
-/* Study Activity Heatmap Theme Tokens */
+/* Study Activity Heatmap Theme Tokens (School Domain Rose-Orange Scale) */
 .heatmap-cell-0 {
-  background-color: rgba(37, 42, 48, 0.45);
-  border-color: rgba(255, 255, 255, 0.06);
+  background-color: #f0f3ff;
+  border-color: #e3e5f0;
+  color: #5b6270;
 }
 
 .heatmap-cell-1 {
-  background-color: rgba(245, 158, 11, 0.18);
-  border-color: rgba(245, 158, 11, 0.35);
-  color: #fde68a;
+  background-color: #fde7f1;
+  border-color: #f9a8d4;
+  color: #9d174d;
 }
 
 .heatmap-cell-2 {
-  background-color: rgba(245, 158, 11, 0.4);
-  border-color: rgba(245, 158, 11, 0.55);
-  color: #fef3c7;
+  background-color: #fbcfe8;
+  border-color: #f472b6;
+  color: #831843;
 }
 
 .heatmap-cell-3 {
-  background-color: rgba(245, 158, 11, 0.7);
-  border-color: #fbbf24;
-  color: #0f1419;
+  background-color: #db2777;
+  border-color: #be185d;
+  color: #ffffff;
 }
 
 .heatmap-cell-4 {
-  background-color: #fbbf24;
-  border-color: #fde68a;
-  color: #0f1419;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+  background: linear-gradient(135deg, #db2777 0%, #c2410c 100%);
+  border-color: #9d174d;
+  color: #ffffff;
 }

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'life-v2.0.1';
+const CACHE_VERSION = 'life-v3.0.0';
 const STATIC_CACHE_NAME = `life-static-${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [

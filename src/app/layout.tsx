@@ -1,20 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { ibmPlexSans, ibmPlexSansArabic } from "@/lib/design/fonts";
 import "./globals.css";
 import { PWAProvider } from "@/components/pwa/PWAProvider";
 import { I18nProvider } from "@/lib/i18n/I18nContext";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Life",
@@ -36,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0F1419",
+  themeColor: "#F3F4FB",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -52,9 +40,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
+      className={`${ibmPlexSans.variable} ${ibmPlexSansArabic.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-surface text-on-surface flex flex-col font-sans selection:bg-primary-lime/20 selection:text-primary-lime">
+      <body className="min-h-full bg-surface text-on-surface flex flex-col font-sans selection:bg-[#E6EEFF] selection:text-[#1E3A9E]">
         <I18nProvider>
           <PWAProvider>{children}</PWAProvider>
         </I18nProvider>

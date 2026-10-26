@@ -135,7 +135,7 @@ export function ModuleOnboardingModal() {
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
             isChecked
-              ? "bg-primary-lime text-surface font-bold"
+              ? "bg-primary-lime text-on-primary font-medium"
               : "bg-surface-container-high text-on-surface-variant"
           }`}
         >
@@ -145,8 +145,8 @@ export function ModuleOnboardingModal() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <h4
-              className={`text-sm font-semibold tracking-tight ${
-                isChecked ? "text-primary-lime" : "text-on-surface"
+              className={`text-sm font-medium ${
+                isChecked ? "text-on-surface" : "text-on-surface"
               }`}
             >
               {isAr ? def.labelAr : def.labelEn}
@@ -154,7 +154,7 @@ export function ModuleOnboardingModal() {
             <div
               className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
                 isChecked
-                  ? "bg-primary-lime border-primary-lime text-surface"
+                  ? "bg-primary-lime border-primary-lime text-on-primary"
                   : "border-border-medium bg-surface-container"
               }`}
             >
@@ -280,9 +280,9 @@ export function ModuleOnboardingModal() {
             id="onboarding-submit-button"
             disabled={selected.length === 0 || isSubmitting}
             onClick={handleSubmit}
-            className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold tracking-wide transition-all flex items-center gap-2 ${
+            className={`px-5 py-2.5 rounded-[12px] text-sm font-medium transition-all flex items-center gap-2 ${
               selected.length > 0 && !isSubmitting
-                ? "bg-primary-lime text-surface hover:brightness-110 shadow-md active:scale-95 cursor-pointer"
+                ? "bg-primary-lime text-on-primary hover:opacity-90 shadow-xs active:scale-[0.98] cursor-pointer"
                 : "bg-surface-container-highest text-text-muted cursor-not-allowed border border-border-subtle"
             }`}
           >

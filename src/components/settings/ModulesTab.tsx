@@ -184,7 +184,7 @@ export function ModulesTab() {
           disabled={isUpdating}
           onClick={() => handleToggle(key)}
           className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-lime/40 disabled:opacity-50 ${
-            active ? "bg-primary-lime" : "bg-surface-container-highest"
+            active ? "bg-primary-lime text-on-primary" : "bg-surface-container-highest"
           }`}
         >
           {isUpdating ? (

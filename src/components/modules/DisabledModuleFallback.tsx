@@ -88,12 +88,12 @@ export function DisabledModuleFallback({
           id={`enable-module-btn-${moduleKey}`}
           disabled={isEnabling}
           onClick={handleEnable}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary-lime text-surface font-mono text-xs font-bold tracking-wide hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-[12px] bg-primary-lime text-on-primary text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
         >
           {isEnabling ? (
-            <Loader2 className="w-4 h-4 animate-spin text-surface" />
+            <Loader2 className="w-4 h-4 animate-spin text-on-primary" />
           ) : (
-            <Power className="w-4 h-4 text-surface" />
+            <Power className="w-4 h-4 text-on-primary" />
           )}
           <span>{isAr ? "تشغيل القسم ده" : "Turn On Module"}</span>
         </button>
