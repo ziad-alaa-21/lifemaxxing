@@ -192,7 +192,7 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     >
       {/* Global Offline Warning Bar */}
       {!isOnline && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-core text-on-primary px-4 py-2 text-xs font-mono flex items-center justify-center gap-2 shadow-sm backdrop-blur-md">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-core text-on-primary px-4 py-2 text-xs font-mono flex items-center justify-center gap-2 shadow-sm">
           <WifiOff className="w-4 h-4 shrink-0 stroke-[2.5]" />
           <span className="font-bold">Offline Mode:</span>
           <span>Read-only cache active. Saving and modifications are temporarily blocked.</span>

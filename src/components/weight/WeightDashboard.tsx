@@ -863,7 +863,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
       {/* Log Weigh-In Modal */}
       {isLogModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 animate-in fade-in duration-200">
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -944,7 +944,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
       {/* Edit Weigh-In Modal */}
       {editingEntry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 animate-in fade-in duration-200">
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -1011,7 +1011,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
 
       {/* Goal Settings Modal */}
       {isGoalModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 animate-in fade-in duration-200">
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <div className="flex items-center gap-2">

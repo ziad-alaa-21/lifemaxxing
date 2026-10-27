@@ -131,7 +131,7 @@ export function SleepLogModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 animate-fade-in">
       <div className="stitch-card p-6 w-full max-w-md space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-border-subtle">

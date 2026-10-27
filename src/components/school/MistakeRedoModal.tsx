@@ -76,7 +76,7 @@ export function MistakeRedoModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40">
       <div
         className="w-full max-w-xl bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}

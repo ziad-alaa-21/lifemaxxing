@@ -70,7 +70,7 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
       {/* "See Reasoning" Drawer / Modal */}
       {isReasoningOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#14161A]/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#14161A]/40"
           onClick={() => setIsReasoningOpen(false)}
         >
           <div

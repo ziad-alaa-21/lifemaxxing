@@ -50,7 +50,7 @@ export function RingBreakdownSheet({ ring, isOpen, onClose }: RingBreakdownSheet
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#14161A]/40 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#14161A]/40 transition-opacity"
       onClick={onClose}
     >
       <div

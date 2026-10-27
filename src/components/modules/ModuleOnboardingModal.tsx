@@ -172,7 +172,7 @@ export function ModuleOnboardingModal() {
   return (
     <div
       id="onboarding-modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-6 overflow-y-auto"
     >
       <div className="w-full max-w-xl bg-surface border border-border-medium rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}

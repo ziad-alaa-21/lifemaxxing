@@ -306,7 +306,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
 
       {/* Password Modal */}
       {!googleOnlyAccount && isPasswordModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-border-subtle max-w-md w-full space-y-4">
             <h3 className="text-sm font-bold font-mono text-on-surface">
               {locale === "ar" ? "تغيير كلمة السر" : "Change Password"}
@@ -404,7 +404,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
 
       {/* Email Modal */}
       {!googleOnlyAccount && isEmailModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-border-subtle max-w-md w-full space-y-4">
             <h3 className="text-sm font-bold font-mono text-on-surface">
               {locale === "ar" ? "تغيير البريد الإلكتروني" : "Change Email"}

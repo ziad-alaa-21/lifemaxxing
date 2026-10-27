@@ -1025,7 +1025,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
 
       {/* Exercise Picker Modal with Category Filter */}
       {isPickerOpen && (
-        <div className="fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-on-surface/40 flex items-center justify-center p-4">
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-lg p-5 space-y-4 max-h-[85vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -1123,7 +1123,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
 
       {/* PR Celebration Modal */}
       {celebration && (
-        <div className="fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 z-50 bg-on-surface/40 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-surface-container border border-primary-lime/50 rounded-2xl w-full max-w-md p-6 text-center space-y-4 shadow-2xl">
             <div className="w-16 h-16 rounded-2xl bg-primary-lime/15 border border-primary-lime/40 flex items-center justify-center text-primary-lime mx-auto shadow-xs">
               <Sparkles className="w-8 h-8" />

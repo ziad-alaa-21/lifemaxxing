@@ -156,7 +156,7 @@ export function RestTimer({
   };
 
   return (
-    <div className={`fixed bottom-24 lg:bottom-6 z-50 w-80 bg-surface-container border border-secondary-cyan/30 rounded-2xl p-4 shadow-2xl animate-slide-up backdrop-blur-xl ${locale === "ar" ? "left-4" : "right-4"}`}>
+    <div className={`fixed bottom-24 lg:bottom-6 z-50 w-80 bg-surface-container border border-secondary-cyan/30 rounded-2xl p-4 shadow-2xl animate-slide-up ${locale === "ar" ? "left-4" : "right-4"}`}>
       <div className="flex items-center justify-between pb-2 border-b border-border-subtle mb-3">
         <div className="flex items-center gap-2">
           <Timer className="w-4 h-4 text-secondary-cyan" />

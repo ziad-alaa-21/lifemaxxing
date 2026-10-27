@@ -425,7 +425,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
 
       {/* Modal: Delete Data */}
       {isDeleteDataModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-amber-core/30 max-w-md w-full space-y-4">
             <div className="flex items-center gap-2 text-amber-core">
               <AlertTriangle className="w-5 h-5 shrink-0" />
@@ -552,7 +552,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
 
       {/* Modal: Delete Account */}
       {isDeleteAccountModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-surface-container p-6 rounded-2xl border border-crimson-alert/40 max-w-md w-full space-y-4">
             <div className="flex items-center gap-2 text-crimson-alert">
               <ShieldAlert className="w-5 h-5 shrink-0" />

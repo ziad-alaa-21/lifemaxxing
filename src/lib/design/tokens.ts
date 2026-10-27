@@ -20,7 +20,9 @@ export function applyReduceBlurPreference(reduceBlur: boolean): void {
 }
 
 export function getReduceBlurPreference(): boolean {
-  if (typeof window === "undefined") return false;
+  if (process.env.NODE_ENV === "production" || typeof window === "undefined") {
+    return false;
+  }
   try {
     return window.localStorage.getItem(REDUCE_BLUR_STORAGE_KEY) === "1";
   } catch {
@@ -29,6 +31,7 @@ export function getReduceBlurPreference(): boolean {
 }
 
 export function setReduceBlurPreference(reduceBlur: boolean): void {
+  if (process.env.NODE_ENV === "production") return;
   if (typeof window !== "undefined") {
     try {
       if (reduceBlur) {
@@ -43,7 +46,7 @@ export function setReduceBlurPreference(reduceBlur: boolean): void {
   applyReduceBlurPreference(reduceBlur);
 }
 
-if (typeof window !== "undefined") {
+if (process.env.NODE_ENV !== "production" && typeof window !== "undefined") {
   try {
     const params = new URLSearchParams(window.location.search);
     const param = params.get("noBlur");

@@ -658,7 +658,7 @@ export function SleepDashboard() {
 
       {/* Settings Modal */}
       {isSettingsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 animate-fade-in">
           <div className="stitch-card p-6 w-full max-w-sm space-y-4 shadow-2xl">
             <h3 className="text-sm font-bold text-on-surface flex items-center gap-2">
               <SettingsIcon className="w-4 h-4 text-secondary-cyan" />

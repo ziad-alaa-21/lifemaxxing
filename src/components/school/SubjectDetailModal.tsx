@@ -104,7 +104,7 @@ export function SubjectDetailModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40">
       <div
         className="w-full max-w-2xl bg-surface-container border border-border-subtle rounded-2xl shadow-2xl max-h-[92vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -525,7 +525,7 @@ export function SubjectDetailModal({
 
         {/* Delete Safeguard Confirmation Modal */}
         {deleteSafeguardModal && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/40">
             <div className="w-full max-w-md bg-surface-container border border-border-medium rounded-2xl p-6 shadow-2xl space-y-4">
               <div className="flex items-center gap-3 text-amber-600">
                 <AlertTriangle className="w-6 h-6 shrink-0" />

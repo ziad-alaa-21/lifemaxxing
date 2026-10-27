@@ -207,7 +207,7 @@ export function SessionModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fade-in">
       <div
         className="bg-surface-container w-full max-w-md rounded-2xl border border-border-subtle p-5 shadow-2xl space-y-4"
         onClick={(e) => e.stopPropagation()}
