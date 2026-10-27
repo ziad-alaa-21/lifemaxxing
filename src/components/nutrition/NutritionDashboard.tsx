@@ -434,7 +434,7 @@ export function NutritionDashboard() {
             {/* Protein */}
             <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-primary-lime font-bold">
+                <span className="text-primary-ink font-bold">
                   {locale === "ar" ? "بروتين" : "Protein"}
                 </span>
                 <span className="text-text-muted text-[11px]">
@@ -443,7 +443,7 @@ export function NutritionDashboard() {
               </div>
               <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary-lime rounded-full transition-all duration-500"
+                  className="h-full bg-primary-ink rounded-full transition-all duration-500"
                   style={{ width: `${protPercent}%` }}
                 />
               </div>
@@ -499,7 +499,7 @@ export function NutritionDashboard() {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => setIsAiModalOpen(true)}
-            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-lime text-on-primary font-bold shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-ink text-on-primary font-bold shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
             <span>{locale === "ar" ? "تحليل وجبة بالذكاء الاصطناعي" : "Parse Meal with AI"}</span>

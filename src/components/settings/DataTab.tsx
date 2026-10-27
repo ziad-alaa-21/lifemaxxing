@@ -279,7 +279,7 @@ export function DataTab({ reauthMethod }: DataTabProps) {
       <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
-            <Database className="w-4 h-4 text-primary-lime" />
+            <Database className="w-4 h-4 text-primary-ink" />
             <h3 className="text-sm font-bold font-mono text-on-surface">
               {locale === "ar" ? "سيادة البيانات وتصدير السجلات" : "Data Sovereignty & Export"}
             </h3>
@@ -315,9 +315,9 @@ export function DataTab({ reauthMethod }: DataTabProps) {
               className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-on-surface transition-all cursor-pointer disabled:opacity-50"
             >
               {exportingJson ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary-lime" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary-ink" />
               ) : (
-                <FileCode className="w-3.5 h-3.5 text-primary-lime" />
+                <FileCode className="w-3.5 h-3.5 text-primary-ink" />
               )}
               <span>{locale === "ar" ? "تصدير JSON" : "Export JSON"}</span>
             </button>
@@ -414,10 +414,10 @@ export function DataTab({ reauthMethod }: DataTabProps) {
       <div className="stitch-card p-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-on-surface-variant">
         <span>{locale === "ar" ? "وثائق الخصوصية والشروط القانونية:" : "Legal & Privacy Documentation:"}</span>
         <div className="flex items-center gap-4">
-          <Link href="/privacy" className="text-primary-lime underline hover:text-primary-lime-dim">
+          <Link href="/privacy" className="text-primary-ink underline hover:text-primary-ink-dim">
             {locale === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}
           </Link>
-          <Link href="/terms" className="text-primary-lime underline hover:text-primary-lime-dim">
+          <Link href="/terms" className="text-primary-ink underline hover:text-primary-ink-dim">
             {locale === "ar" ? "شروط الخدمة" : "Terms of Service"}
           </Link>
         </div>

@@ -549,7 +549,7 @@ export function MindDashboard() {
           <Calendar className="w-4 h-4 text-tertiary-purple" />
           <span>{selectedDate || "Loading date..."}</span>
           {isToday && (
-            <span className="px-2 py-0.5 rounded-md text-[10px] bg-primary-lime/15 text-primary-lime border border-primary-lime/30">
+            <span className="px-2 py-0.5 rounded-md text-[10px] bg-primary-ink/15 text-primary-ink border border-primary-ink/30">
               Today
             </span>
           )}
@@ -559,7 +559,7 @@ export function MindDashboard() {
           {!isToday && (
             <button
               onClick={() => setSelectedDate(getLocalDateString(new Date(), userProfile.timezone))}
-              className="px-2.5 py-1 rounded-xl bg-surface-container-high text-[11px] text-on-surface hover:text-primary-lime transition-colors cursor-pointer"
+              className="px-2.5 py-1 rounded-xl bg-surface-container-high text-[11px] text-on-surface hover:text-primary-ink transition-colors cursor-pointer"
             >
               Today
             </button>
@@ -641,7 +641,7 @@ export function MindDashboard() {
             <div className="stitch-card p-4 space-y-1">
               <div className="flex items-center justify-between text-text-muted text-[11px]">
                 <span>{locale === "ar" ? "الجلسات" : "Sessions"}</span>
-                <Target className="w-3.5 h-3.5 text-primary-lime" />
+                <Target className="w-3.5 h-3.5 text-primary-ink" />
               </div>
               <div className="text-2xl font-extrabold text-on-surface">
                 {scoreData.completedCount}
@@ -690,7 +690,7 @@ export function MindDashboard() {
             <div className="stitch-card p-5 space-y-4 font-mono">
               <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-primary-lime/10 border border-primary-lime/30 flex items-center justify-center text-primary-lime">
+                  <div className="w-8 h-8 rounded-xl bg-primary-ink/10 border border-primary-ink/30 flex items-center justify-center text-primary-ink">
                     <Zap className="w-4 h-4" />
                   </div>
                   <div>
@@ -705,7 +705,7 @@ export function MindDashboard() {
 
                 <button
                   onClick={() => setIsMathModalOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-primary-lime text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim cursor-pointer transition-all"
+                  className="px-3 py-1.5 rounded-xl bg-primary-ink text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-ink-dim cursor-pointer transition-all"
                 >
                   {locale === "ar" ? "تدريب دلوقتي" : "Train Now"}
                 </button>
@@ -729,7 +729,7 @@ export function MindDashboard() {
                       <div className="text-[10px] uppercase text-text-muted">
                         {locale === "ar" ? "الدقة" : "Accuracy"}
                       </div>
-                      <div className="text-lg font-bold text-primary-lime">{mathAccuracy}%</div>
+                      <div className="text-lg font-bold text-primary-ink">{mathAccuracy}%</div>
                     </div>
                     <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
                       <div className="text-[10px] uppercase text-text-muted">
@@ -758,11 +758,11 @@ export function MindDashboard() {
                           return (
                             <div
                               key={s.id || idx}
-                              className="flex-1 bg-primary-lime/20 hover:bg-primary-lime/40 rounded-t-md transition-all relative group"
+                              className="flex-1 bg-primary-ink/20 hover:bg-primary-ink/40 rounded-t-md transition-all relative group"
                               style={{ height: `${heightPct}%` }}
                               title={`Score: ${s.score} (${s.accuracy_pct}%)`}
                             >
-                              <div className="w-full h-1 bg-primary-lime rounded-t-md" />
+                              <div className="w-full h-1 bg-primary-ink rounded-t-md" />
                             </div>
                           );
                         })}
@@ -916,7 +916,7 @@ export function MindDashboard() {
               </div>
               <button
                 onClick={() => setIsMathModalOpen(true)}
-                className="px-5 py-2.5 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs cursor-pointer transition-all"
+                className="px-5 py-2.5 rounded-2xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-ink-dim shadow-xs cursor-pointer transition-all"
               >
                 Launch Trainer
               </button>
@@ -949,7 +949,7 @@ export function MindDashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-bold text-primary-lime">
+                      <div className="text-sm font-bold text-primary-ink">
                         {s.mode === "sprint" ? `${s.score} Correct` : `${s.accuracy_pct}% Accuracy`}
                       </div>
                       <div className="text-[10px] text-text-muted">

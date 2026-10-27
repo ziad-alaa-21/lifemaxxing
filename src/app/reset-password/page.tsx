@@ -244,7 +244,7 @@ export function ResetPasswordForm({
       className="min-h-screen w-full flex items-center justify-center p-4 bg-surface relative overflow-hidden"
       dir={locale === "ar" ? "rtl" : "ltr"}
     >
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-lime/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-ink/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-secondary-cyan/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Language Switcher */}
@@ -252,17 +252,17 @@ export function ResetPasswordForm({
         <button
           type="button"
           onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface hover:text-primary-lime hover:border-primary-lime/40 transition-all cursor-pointer shadow-sm"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface hover:text-primary-ink hover:border-primary-ink/40 transition-all cursor-pointer shadow-sm"
         >
-          <Globe className="w-3.5 h-3.5 text-primary-lime" />
+          <Globe className="w-3.5 h-3.5 text-primary-ink" />
           <span>{locale === "ar" ? "English" : "العربية"}</span>
         </button>
       </div>
 
       <div className="w-full max-w-md bg-surface-container border border-border-subtle rounded-3xl p-6 sm:p-8 relative z-10 shadow-2xl">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-surface-container-high border border-primary-lime/30 text-primary-lime mb-4 shadow-xs">
-            <KeyRound className="w-7 h-7 text-primary-lime" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-surface-container-high border border-primary-ink/30 text-primary-ink mb-4 shadow-xs">
+            <KeyRound className="w-7 h-7 text-primary-ink" />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-on-surface">
             {locale === "ar" ? "تعيين كلمة مرور جديدة" : "Set a new password"}
@@ -294,7 +294,7 @@ export function ResetPasswordForm({
           </div>
         ) : checkingSession ? (
           <div className="py-8 flex flex-col items-center justify-center gap-3 text-xs text-on-surface-variant">
-            <Loader2 className="w-5 h-5 animate-spin text-primary-lime" />
+            <Loader2 className="w-5 h-5 animate-spin text-primary-ink" />
             <span>{locale === "ar" ? "جاري التحقق من الرابط..." : "Checking your reset link..."}</span>
           </div>
         ) : !hasRecoverySession ? (
@@ -306,7 +306,7 @@ export function ResetPasswordForm({
             </div>
             <Link
               href="/login"
-              className="w-full py-3 px-4 bg-primary-lime text-on-primary font-semibold text-xs rounded-xl hover:bg-primary-lime-dim transition-all inline-flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-primary-ink text-on-primary font-semibold text-xs rounded-xl hover:bg-primary-ink-dim transition-all inline-flex items-center justify-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{locale === "ar" ? "العودة لتسجيل الدخول" : "Back to sign in"}</span>
@@ -329,7 +329,7 @@ export function ResetPasswordForm({
                     ? `${MIN_PASSWORD_LENGTH} أحرف على الأقل`
                     : `At least ${MIN_PASSWORD_LENGTH} characters`
                 }
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-lime transition-all"
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-ink transition-all"
                 dir="ltr"
               />
             </div>
@@ -345,7 +345,7 @@ export function ResetPasswordForm({
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder={locale === "ar" ? "أعد كتابة كلمة المرور" : "Re-enter new password"}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-lime transition-all"
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-ink transition-all"
                 dir="ltr"
               />
             </div>
@@ -353,7 +353,7 @@ export function ResetPasswordForm({
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-primary-lime text-on-primary text-xs font-bold rounded-xl hover:bg-primary-lime-dim transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-primary-ink text-on-primary text-xs font-bold rounded-xl hover:bg-primary-ink-dim transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:cursor-not-allowed"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               <span>{locale === "ar" ? "حفظ كلمة المرور الجديدة" : "Save new password"}</span>
@@ -362,7 +362,7 @@ export function ResetPasswordForm({
             <div className="text-center pt-2">
               <Link
                 href="/login"
-                className="text-xs text-on-surface-variant hover:text-primary-lime inline-flex items-center gap-1.5"
+                className="text-xs text-on-surface-variant hover:text-primary-ink inline-flex items-center gap-1.5"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>{locale === "ar" ? "العودة لتسجيل الدخول" : "Back to sign in"}</span>
@@ -380,7 +380,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div className="min-h-screen w-full flex items-center justify-center bg-surface">
-          <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
+          <Loader2 className="w-6 h-6 animate-spin text-primary-ink" />
         </div>
       }
     >

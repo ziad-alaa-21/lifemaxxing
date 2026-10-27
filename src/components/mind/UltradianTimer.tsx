@@ -378,8 +378,8 @@ export function UltradianTimer({
 
       {/* App Closed / Killed Recovery Prompt */}
       {recoveryPrompt && (
-        <div className="relative z-10 p-4 rounded-2xl bg-surface-container-high border border-primary-lime/40 space-y-2 text-xs font-mono animate-fade-in">
-          <div className="flex items-center gap-2 text-primary-lime font-bold">
+        <div className="relative z-10 p-4 rounded-2xl bg-surface-container-high border border-primary-ink/40 space-y-2 text-xs font-mono animate-fade-in">
+          <div className="flex items-center gap-2 text-primary-ink font-bold">
             <AlertTriangle className="w-4 h-4" />
             <span>{locale === "ar" ? "جلسة مستعادة من جهازك" : "Recovered Session from this Device"}</span>
           </div>
@@ -399,7 +399,7 @@ export function UltradianTimer({
                 setIsModalOpen(true);
                 setRecoveryPrompt(null);
               }}
-              className="px-4 py-1.5 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 cursor-pointer"
+              className="px-4 py-1.5 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 cursor-pointer"
             >
               {locale === "ar" ? "تسجيل الجلسة" : "Log Session"}
             </button>
@@ -687,7 +687,7 @@ export function UltradianTimer({
         {phase === "idle" && (
           <button
             onClick={handleStartWork}
-            className="flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-sm bg-primary-lime text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-sm bg-primary-ink text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Play className="w-4 h-4 fill-current text-on-primary" />
             <span>{locale === "ar" ? "ابدأ جلسة التركيز" : "Start Deep Work"}</span>

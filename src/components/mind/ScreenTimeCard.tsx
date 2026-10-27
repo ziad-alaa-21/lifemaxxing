@@ -195,7 +195,7 @@ export function ScreenTimeCard({
           {/* Ratio bar */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-primary-lime font-medium">
+              <span className="text-primary-ink font-medium">
                 {locale === "ar"
                   ? `${breakdown.productivePct}% إنتاجي (${formatMinutesToHours(breakdown.productiveMinutes)})`
                   : `${breakdown.productivePct}% Productive (${formatMinutesToHours(breakdown.productiveMinutes)})`}
@@ -208,7 +208,7 @@ export function ScreenTimeCard({
             </div>
             <div className="w-full h-2.5 rounded-full bg-surface-container-high overflow-hidden flex">
               <div
-                className="h-full bg-primary-lime transition-all duration-500"
+                className="h-full bg-primary-ink transition-all duration-500"
                 style={{ width: `${breakdown.productivePct}%` }}
                 title={`Productive: ${breakdown.productivePct}%`}
               />

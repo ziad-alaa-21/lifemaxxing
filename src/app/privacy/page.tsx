@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       <div className="mb-8">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-xs font-mono text-on-surface-variant hover:text-primary-lime transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono text-on-surface-variant hover:text-primary-ink transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back / العودة</span>
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
       <div className="stitch-card p-6 sm:p-10 space-y-10">
         {/* Header */}
         <div className="flex items-center gap-4 pb-6 border-b border-border-subtle">
-          <div className="p-3.5 rounded-2xl bg-surface-container-high text-primary-lime border border-primary-lime/20 shadow-md">
+          <div className="p-3.5 rounded-2xl bg-surface-container-high text-primary-ink border border-primary-ink/20 shadow-md">
             <Shield className="w-7 h-7" />
           </div>
           <div>
@@ -38,7 +38,7 @@ export default function PrivacyPage() {
 
         {/* English Section */}
         <section className="space-y-6 text-sm leading-relaxed" dir="ltr">
-          <div className="flex items-center gap-2 text-primary-lime font-bold font-mono uppercase text-xs tracking-wider">
+          <div className="flex items-center gap-2 text-primary-ink font-bold font-mono uppercase text-xs tracking-wider">
             <span>English (Official)</span>
           </div>
 
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div className="p-4 rounded-2xl bg-surface-container-low border border-border-subtle space-y-2">
-                <div className="flex items-center gap-2 text-primary-lime font-semibold text-xs uppercase font-mono">
+                <div className="flex items-center gap-2 text-primary-ink font-semibold text-xs uppercase font-mono">
                   <Database className="w-4 h-4" />
                   <span>1. What We Store & Where</span>
                 </div>
@@ -97,12 +97,12 @@ export default function PrivacyPage() {
 
             <div className="p-4 rounded-2xl bg-surface-container-high border border-border-subtle flex items-center justify-between text-xs font-mono">
               <div className="flex items-center gap-2 text-on-surface">
-                <Mail className="w-4 h-4 text-primary-lime" />
+                <Mail className="w-4 h-4 text-primary-ink" />
                 <span>Privacy Inquiries & Compliance Contact:</span>
               </div>
               <a
                 href={`mailto:${PRIVACY_CONTACT_EMAIL}`}
-                className="text-primary-lime underline hover:text-primary-lime-dim"
+                className="text-primary-ink underline hover:text-primary-ink-dim"
               >
                 {PRIVACY_CONTACT_EMAIL}
               </a>
@@ -112,7 +112,7 @@ export default function PrivacyPage() {
 
         {/* Arabic Section */}
         <section className="space-y-6 text-sm leading-relaxed pt-8 border-t border-border-subtle" dir="rtl">
-          <div className="flex items-center gap-2 text-primary-lime font-bold font-mono uppercase text-xs tracking-wider">
+          <div className="flex items-center gap-2 text-primary-ink font-bold font-mono uppercase text-xs tracking-wider">
             <span>العربية (النسخة المعتمدة)</span>
           </div>
 
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-right">
               <div className="p-4 rounded-2xl bg-surface-container-low border border-border-subtle space-y-2">
-                <div className="flex items-center gap-2 text-primary-lime font-semibold text-xs uppercase font-mono">
+                <div className="flex items-center gap-2 text-primary-ink font-semibold text-xs uppercase font-mono">
                   <Database className="w-4 h-4" />
                   <span>١. ما نقوم بتخزينه ومكان الحفظ</span>
                 </div>
@@ -171,12 +171,12 @@ export default function PrivacyPage() {
 
             <div className="p-4 rounded-2xl bg-surface-container-high border border-border-subtle flex items-center justify-between text-xs font-mono">
               <div className="flex items-center gap-2 text-on-surface">
-                <Mail className="w-4 h-4 text-primary-lime" />
+                <Mail className="w-4 h-4 text-primary-ink" />
                 <span>البريد المعتمد للاستفسارات والخصوصية:</span>
               </div>
               <a
                 href={`mailto:${PRIVACY_CONTACT_EMAIL}`}
-                className="text-primary-lime underline hover:text-primary-lime-dim"
+                className="text-primary-ink underline hover:text-primary-ink-dim"
                 dir="ltr"
               >
                 {PRIVACY_CONTACT_EMAIL}

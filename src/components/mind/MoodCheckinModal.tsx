@@ -238,7 +238,7 @@ export function MoodCheckinModal({
           {(autoContext.sleepHours !== undefined || autoContext.caffeineMg !== undefined) && (
             <div className="p-3 rounded-2xl bg-surface-container-low border border-border-subtle flex items-center justify-between text-xs font-mono">
               <span className="text-text-muted">{locale === "ar" ? "بيانات تلقائية:" : "Auto-detected context:"}</span>
-              <div className="flex items-center gap-2 text-primary-lime font-medium">
+              <div className="flex items-center gap-2 text-primary-ink font-medium">
                 {autoContext.sleepHours ? (
                   <span>{locale === "ar" ? `${autoContext.sleepHours} س نوم` : `${autoContext.sleepHours}h sleep`}</span>
                 ) : null}
@@ -358,7 +358,7 @@ export function MoodCheckinModal({
                     onClick={() => toggleTag(tag)}
                     className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-mono cursor-pointer transition-all ${
                       isSelected
-                        ? "bg-primary-lime/15 border-primary-lime/40 text-primary-lime font-medium"
+                        ? "bg-primary-ink/15 border-primary-ink/40 text-primary-ink font-medium"
                         : "bg-surface-container-low border-border-subtle text-text-muted hover:text-on-surface"
                     }`}
                   >
@@ -379,7 +379,7 @@ export function MoodCheckinModal({
               onChange={(e) => setNotes(e.target.value)}
               placeholder={locale === "ar" ? "اكتب أي تفاصيل سريعة عن يومك..." : "Brief context or thoughts..."}
               rows={2}
-              className="w-full px-3.5 py-2.5 rounded-2xl bg-surface-container-low border border-border-subtle text-xs text-on-surface font-mono placeholder:text-text-muted focus:outline-none focus:border-primary-lime/50 transition-colors resize-none text-start"
+              className="w-full px-3.5 py-2.5 rounded-2xl bg-surface-container-low border border-border-subtle text-xs text-on-surface font-mono placeholder:text-text-muted focus:outline-none focus:border-primary-ink/50 transition-colors resize-none text-start"
             />
           </div>
 
@@ -408,7 +408,7 @@ export function MoodCheckinModal({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full py-3.5 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-sm uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
+            className="w-full py-3.5 rounded-2xl bg-primary-ink text-on-primary font-mono font-bold text-sm uppercase tracking-wider hover:bg-primary-ink-dim shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
             <span>{locale === "ar" ? "حفظ تسجيل الحالة" : "Save Check-in"}</span>

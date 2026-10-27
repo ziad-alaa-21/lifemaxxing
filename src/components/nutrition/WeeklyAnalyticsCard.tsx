@@ -221,7 +221,7 @@ export function WeeklyAnalyticsCard({
               <span className="text-text-muted uppercase tracking-wider text-[11px]">
                 {locale === "ar" ? "الالتزام بالعناصر" : "Macro Adherence"}
               </span>
-              <span className="text-[11px] font-semibold text-primary-lime">
+              <span className="text-[11px] font-semibold text-primary-ink">
                 {analytics.adherenceLabel}
               </span>
             </div>
@@ -269,7 +269,7 @@ export function WeeklyAnalyticsCard({
               {analytics.averageCalories} {locale === "ar" ? "سعرة" : "kcal"}
             </div>
             <div className="flex items-center gap-3 text-[11px] text-text-muted">
-              <span className="text-primary-lime">
+              <span className="text-primary-ink">
                 {analytics.averageProteinG}{locale === "ar" ? " جم ب" : "g P"}
               </span>
               <span className="text-secondary-cyan">
@@ -340,7 +340,7 @@ export function WeeklyAnalyticsCard({
                   </span>
                   <div
                     className={`w-1.5 h-1.5 rounded-full mt-0.5 ${
-                      isQualifying ? "bg-primary-lime" : "bg-text-muted/30"
+                      isQualifying ? "bg-primary-ink" : "bg-text-muted/30"
                     }`}
                     title={
                       isQualifying
@@ -358,7 +358,7 @@ export function WeeklyAnalyticsCard({
         <div className="flex items-center justify-between text-[10px] text-text-muted pt-1">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-primary-lime" />
+              <span className="w-2 h-2 rounded-full bg-primary-ink" />
               <span>{locale === "ar" ? "يوم مكتمل" : "Qualifying day"}</span>
             </span>
             <span className="flex items-center gap-1">

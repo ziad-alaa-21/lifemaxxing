@@ -174,7 +174,7 @@ function changedFiles() {
 const isJsxRoot = (n) =>
   ts.isJsxElement(n) || ts.isJsxSelfClosingElement(n) || ts.isJsxFragment(n);
 
-const CLASS_VAR = /(classname|classes|class|styles?|cls)$/i;
+const CLASS_VAR = /(classname|classes|class|styles?|cls|colors?|dotcolor)$/i;
 const CLASS_FN = new Set(["cn", "clsx", "twMerge", "cva", "classNames"]);
 
 function inClassContext(node) {

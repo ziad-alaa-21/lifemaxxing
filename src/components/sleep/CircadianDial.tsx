@@ -69,8 +69,8 @@ export function CircadianDial({
       title: locale === "ar" ? "ذروة النشاط الذهني والبدني" : "Peak Physical / Cognitive",
       desc: locale === "ar" ? "أعلى درجات التركيز وقمة حرارة الجسم" : "Optimal alertness & body temperature peak",
       icon: Sparkles,
-      color: "text-primary-lime border-primary-lime/30 bg-primary-lime/10",
-      dotColor: "bg-primary-lime",
+      color: "text-primary-ink border-primary-ink/30 bg-primary-ink/10",
+      dotColor: "bg-primary-ink",
     },
     {
       time: formatTimeTo12h(caffeineTimeFormatted, { locale }),
@@ -123,7 +123,7 @@ export function CircadianDial({
           </div>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-border-subtle text-[11px] font-mono text-text-muted self-start sm:self-auto">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary-lime animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-primary-ink animate-pulse" />
           <span>
             {formatTimeTo12h(`${nowHour}:${nowMinute}`, { locale })} {locale === "ar" ? "الوقت الحالي" : "Current"}
           </span>
@@ -147,7 +147,7 @@ export function CircadianDial({
           />
           {/* Morning Sunlight window */}
           <div
-            className="absolute top-0 bottom-0 bg-primary-lime/20"
+            className="absolute top-0 bottom-0 bg-primary-ink/20"
             style={{ left: "29.1%", width: "8.3%" }}
             title="Morning Sunlight"
           />
@@ -158,8 +158,8 @@ export function CircadianDial({
           className="absolute top-3 -translate-x-1/2 flex flex-col items-center pointer-events-none transition-all duration-500 z-10"
           style={{ left: `${currentPercent}%` }}
         >
-          <div className="w-2.5 h-2.5 rounded-full bg-primary-lime shadow-xs" />
-          <div className="w-0.5 h-4 bg-primary-lime" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary-ink shadow-xs" />
+          <div className="w-0.5 h-4 bg-primary-ink" />
         </div>
 
         {/* Milestone Marks */}

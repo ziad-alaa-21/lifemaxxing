@@ -327,7 +327,7 @@ export function SavedMealsDrawer({
 
         {/* Undo Toast */}
         {deletedTemplate && (
-          <div className="p-3 my-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
+          <div className="p-3 my-3 rounded-2xl bg-surface-container-high border border-primary-ink/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
             <span>
               {locale === "ar"
                 ? `اتمسح القالب "${deletedTemplate.name}"`
@@ -335,7 +335,7 @@ export function SavedMealsDrawer({
             </span>
             <button
               onClick={handleUndoTemplateDelete}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             >
               <Undo2 className="w-3.5 h-3.5" />
               <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
@@ -415,7 +415,7 @@ export function SavedMealsDrawer({
                     <span className="font-bold text-on-surface">
                       {totals.total_calories} {locale === "ar" ? "سعرة" : "kcal"}
                     </span>
-                    <span className="text-primary-lime font-bold">
+                    <span className="text-primary-ink font-bold">
                       {totals.total_protein_g}{locale === "ar" ? "جم ب" : "g P"}
                     </span>
                     <span className="text-secondary-cyan">
@@ -603,7 +603,7 @@ export function SavedMealsDrawer({
               <button
                 onClick={handleCreateTemplate}
                 disabled={savingTemplate}
-                className="w-full py-2.5 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
               >
                 {savingTemplate
                   ? locale === "ar" ? "جاري حفظ القالب..." : "Saving Template..."
@@ -642,7 +642,7 @@ export function SavedMealsDrawer({
 
               <button
                 onClick={() => setIsCreating(true)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary-lime text-on-primary font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary-ink text-on-primary font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>{locale === "ar" ? "+ قالب جديد" : "+ New Template"}</span>
@@ -693,7 +693,7 @@ export function SavedMealsDrawer({
                         <span className="font-bold text-on-surface">
                           {meal.total_calories} {locale === "ar" ? "سعرة" : "kcal"}
                         </span>
-                        <span className="text-primary-lime font-bold">
+                        <span className="text-primary-ink font-bold">
                           {meal.total_protein_g}{locale === "ar" ? "جم ب" : "g P"}
                         </span>
                         <span className="text-text-muted text-[11px]">

@@ -143,7 +143,7 @@ export function MealTimeline({
     switch (c) {
       case "high":
         return (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-lime/10 text-primary-lime border border-primary-lime/20">
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-ink/10 text-primary-ink border border-primary-ink/20">
             {locale === "ar" ? "مؤكد" : "Verified"}
           </span>
         );
@@ -190,13 +190,13 @@ export function MealTimeline({
     <div className="space-y-4">
       {/* Undo Toast */}
       {deletedMeal && (
-        <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
+        <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-ink/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
           <span>
             {locale === "ar" ? `اتمسحت "${deletedMeal.name}"` : `Deleted "${deletedMeal.name}"`}
           </span>
           <button
             onClick={handleUndo}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all"
           >
             <Undo2 className="w-3.5 h-3.5" />
             <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
@@ -232,7 +232,7 @@ export function MealTimeline({
                     {locale === "ar" ? "وجبة خفيفة" : protEval.label}
                   </span>
                 ) : protEval.meetsGuideline ? (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary-lime/10 text-primary-lime border border-primary-lime/20 flex items-center gap-1">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary-ink/10 text-primary-ink border border-primary-ink/20 flex items-center gap-1">
                     <Check className="w-2.5 h-2.5" />
                     <span>
                       {locale === "ar"
@@ -253,7 +253,7 @@ export function MealTimeline({
                 <span className="font-bold text-on-surface">
                   {groupCals} {locale === "ar" ? "سعرة" : "kcal"}
                 </span>
-                <span className="text-primary-lime font-semibold">
+                <span className="text-primary-ink font-semibold">
                   {groupProt} {locale === "ar" ? "جم بروتين" : "g Prot"}
                 </span>
 
@@ -303,7 +303,7 @@ export function MealTimeline({
                             ? "بدون سعرات"
                             : "No kcal"}
                         </span>
-                        <span className="text-primary-lime">
+                        <span className="text-primary-ink">
                           {meal.protein_g}{locale === "ar" ? " جم ب" : "g P"}
                         </span>
                         <span className="text-secondary-cyan">

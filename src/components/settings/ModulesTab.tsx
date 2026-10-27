@@ -141,7 +141,7 @@ export function ModulesTab() {
           <div
             className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
               active
-                ? "bg-primary-lime/10 text-primary-lime border border-primary-lime/30"
+                ? "bg-primary-ink/10 text-primary-ink border border-primary-ink/30"
                 : "bg-surface-container-high text-on-surface-variant border border-border-subtle"
             }`}
           >
@@ -156,7 +156,7 @@ export function ModulesTab() {
               <span
                 className={`text-[10px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider ${
                   active
-                    ? "bg-primary-lime/20 text-primary-lime border border-primary-lime/30"
+                    ? "bg-primary-ink/20 text-primary-ink border border-primary-ink/30"
                     : "bg-surface-container-highest text-text-muted border border-border-subtle"
                 }`}
               >
@@ -183,8 +183,8 @@ export function ModulesTab() {
           aria-checked={active}
           disabled={isUpdating}
           onClick={() => handleToggle(key)}
-          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-lime/40 disabled:opacity-50 ${
-            active ? "bg-primary-lime text-on-primary" : "bg-surface-container-highest"
+          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-ink/40 disabled:opacity-50 ${
+            active ? "bg-primary-ink text-on-primary" : "bg-surface-container-highest"
           }`}
         >
           {isUpdating ? (
@@ -211,7 +211,7 @@ export function ModulesTab() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Layers className="w-5 h-5 text-primary-lime" />
+              <Layers className="w-5 h-5 text-primary-ink" />
               <h3 className="text-base font-bold font-mono text-on-surface">
                 {isAr ? "تخصيص أقسام التطبيق" : "Module Customization"}
               </h3>
@@ -242,7 +242,7 @@ export function ModulesTab() {
         )}
 
         {successMsg && (
-          <div className="mt-4 p-3 rounded-xl bg-primary-lime/10 border border-primary-lime/30 text-primary-lime text-xs flex items-center gap-2 animate-in fade-in">
+          <div className="mt-4 p-3 rounded-xl bg-primary-ink/10 border border-primary-ink/30 text-primary-ink text-xs flex items-center gap-2 animate-in fade-in">
             <Check className="w-4 h-4 shrink-0" />
             <span>{successMsg}</span>
           </div>
@@ -252,7 +252,7 @@ export function ModulesTab() {
       {/* Body Modules */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase px-1">
-          <Dumbbell className="w-4 h-4 text-primary-lime" />
+          <Dumbbell className="w-4 h-4 text-primary-ink" />
           <span>{isAr ? "أقسام الجسد والصحة" : "Body & Health Modules"}</span>
         </div>
         <div className="space-y-2.5">{bodyKeys.map(renderModuleRow)}</div>
@@ -261,7 +261,7 @@ export function ModulesTab() {
       {/* Mind Modules */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase px-1">
-          <Timer className="w-4 h-4 text-primary-lime" />
+          <Timer className="w-4 h-4 text-primary-ink" />
           <span>{isAr ? "أقسام العقل والتركيز" : "Mind & Focus Modules"}</span>
         </div>
         <div className="space-y-2.5">{mindKeys.map(renderModuleRow)}</div>
@@ -270,7 +270,7 @@ export function ModulesTab() {
       {/* School Modules */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase px-1">
-          <GraduationCap className="w-4 h-4 text-primary-lime" />
+          <GraduationCap className="w-4 h-4 text-primary-ink" />
           <span>{isAr ? "أقسام الدراسة والمذاكرة" : "School & Academic Modules"}</span>
         </div>
         <div className="space-y-2.5">{schoolKeys.map(renderModuleRow)}</div>

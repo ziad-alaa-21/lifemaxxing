@@ -403,7 +403,7 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
       {/* Top Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-primary-lime/10 border border-primary-lime/30 flex items-center justify-center text-primary-lime">
+          <div className="w-8 h-8 rounded-xl bg-primary-ink/10 border border-primary-ink/30 flex items-center justify-center text-primary-ink">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
@@ -434,7 +434,7 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
           )}
 
           {/* Main display: "4 of 5 done" */}
-          <span className="text-xs font-mono font-bold text-primary-lime px-2.5 py-1 rounded-full bg-primary-lime/10 border border-primary-lime/20">
+          <span className="text-xs font-mono font-bold text-primary-ink px-2.5 py-1 rounded-full bg-primary-ink/10 border border-primary-ink/20">
             {progressDisplay}
           </span>
           <button
@@ -472,7 +472,7 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
           </p>
           <button
             onClick={() => setIsManageOpen(true)}
-            className="px-4 py-2 rounded-xl bg-primary-lime/15 border border-primary-lime/30 text-primary-lime font-mono text-xs font-bold hover:bg-primary-lime/25 cursor-pointer transition-colors"
+            className="px-4 py-2 rounded-xl bg-primary-ink/15 border border-primary-ink/30 text-primary-ink font-mono text-xs font-bold hover:bg-primary-ink/25 cursor-pointer transition-colors"
           >
             {locale === "ar" ? "حدد التزاماتك اليومية" : "Set your commitments"}
           </button>
@@ -540,13 +540,13 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
                       if (e.key === "Enter") addCommitment(newText);
                     }}
                     placeholder={locale === "ar" ? "مثال: بلاش الموبايل على السرير" : "e.g. No phone in bed"}
-                    className="flex-1 px-3.5 py-2.5 rounded-2xl bg-surface-container-low border border-border-subtle text-xs text-on-surface font-mono placeholder:text-text-muted focus:outline-none focus:border-primary-lime/50 text-start"
+                    className="flex-1 px-3.5 py-2.5 rounded-2xl bg-surface-container-low border border-border-subtle text-xs text-on-surface font-mono placeholder:text-text-muted focus:outline-none focus:border-primary-ink/50 text-start"
                   />
                   <button
                     type="button"
                     onClick={() => addCommitment(newText)}
                     disabled={!newText.trim()}
-                    className="px-4 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase hover:bg-primary-lime-dim disabled:bg-surface-container-high disabled:text-text-muted disabled:cursor-not-allowed cursor-pointer transition-colors"
+                    className="px-4 rounded-2xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase hover:bg-primary-ink-dim disabled:bg-surface-container-high disabled:text-text-muted disabled:cursor-not-allowed cursor-pointer transition-colors"
                   >
                     {locale === "ar" ? "إضافة" : "Add"}
                   </button>
@@ -573,8 +573,8 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
                         disabled={alreadyAdded}
                         className={`px-3 py-1.5 rounded-xl border text-[11px] font-mono text-left cursor-pointer transition-all ${
                           alreadyAdded
-                            ? "bg-primary-lime/10 border-primary-lime/30 text-primary-lime opacity-80 cursor-default"
-                            : "bg-surface-container-low hover:bg-surface-container-high border-border-subtle text-on-surface hover:border-primary-lime/40 active:scale-95"
+                            ? "bg-primary-ink/10 border-primary-ink/30 text-primary-ink opacity-80 cursor-default"
+                            : "bg-surface-container-low hover:bg-surface-container-high border-border-subtle text-on-surface hover:border-primary-ink/40 active:scale-95"
                         }`}
                       >
                         {alreadyAdded ? "✓ " : "+ "}{labelText}
@@ -619,7 +619,7 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
             <div className="p-4 border-t border-border-subtle bg-surface-container-low">
               <button
                 onClick={() => setIsManageOpen(false)}
-                className="w-full py-3 rounded-2xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase cursor-pointer"
               >
                 {locale === "ar" ? "تمام" : "Done"}
               </button>

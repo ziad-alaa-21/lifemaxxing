@@ -101,11 +101,11 @@ export function FocusHistoryList({
     <div className="space-y-3 font-mono">
       {/* Undo Toast */}
       {deletedSession && (
-        <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs text-on-surface animate-fade-in">
+        <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-ink/40 flex items-center justify-between text-xs text-on-surface animate-fade-in">
           <span>Deleted &ldquo;{deletedSession.name}&rdquo;</span>
           <button
             onClick={handleUndo}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Undo2 className="w-3.5 h-3.5" />
             <span>Undo</span>

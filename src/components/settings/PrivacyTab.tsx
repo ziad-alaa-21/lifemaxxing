@@ -30,7 +30,7 @@ export function PrivacyTab() {
           {/* Section 1 */}
           <div className="space-y-1.5">
             <h4 className="text-xs font-bold font-mono text-on-surface flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5 text-primary-lime" />
+              <Eye className="w-3.5 h-3.5 text-primary-ink" />
               <span>{locale === "ar" ? "1. البيانات التي نقوم بتخزينها" : "1. What Data We Store"}</span>
             </h4>
             <p>

@@ -201,8 +201,8 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
 
       {/* Update Available Banner */}
       {updateAvailable && (
-        <div className="fixed bottom-20 lg:bottom-6 right-4 z-50 bg-surface-container border border-primary-lime/40 rounded-2xl p-4 shadow-2xl flex items-center gap-3 max-w-sm animate-slide-up">
-          <div className="w-9 h-9 rounded-xl bg-primary-lime/15 border border-primary-lime/30 flex items-center justify-center text-primary-lime shrink-0">
+        <div className="fixed bottom-20 lg:bottom-6 right-4 z-50 bg-surface-container border border-primary-ink/40 rounded-2xl p-4 shadow-2xl flex items-center gap-3 max-w-sm animate-slide-up">
+          <div className="w-9 h-9 rounded-xl bg-primary-ink/15 border border-primary-ink/30 flex items-center justify-center text-primary-ink shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <div className="space-y-0.5 min-w-0 flex-1">
@@ -216,7 +216,7 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={applyUpdate}
-              className="px-3 py-1.5 rounded-lg bg-primary-lime text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim flex items-center gap-1 cursor-pointer shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary"
+              className="px-3 py-1.5 rounded-lg bg-primary-ink text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-ink-dim flex items-center gap-1 cursor-pointer shadow-xs [&_svg]:stroke-current [&_svg]:text-on-primary"
             >
               <RefreshCw className="w-3 h-3 text-on-primary stroke-current" />
               <span>Update</span>

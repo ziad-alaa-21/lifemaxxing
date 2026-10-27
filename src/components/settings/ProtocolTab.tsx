@@ -194,7 +194,7 @@ export function ProtocolTab({
       {/* Biometrics & Goals Card */}
       <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
-          <Scale className="w-4 h-4 text-primary-lime" />
+          <Scale className="w-4 h-4 text-primary-ink" />
           <h3 className="text-sm font-bold font-mono text-on-surface">
             {locale === "ar" ? "القياسات الحيوية والأهداف" : "Biometrics & Goals"}
           </h3>
@@ -436,7 +436,7 @@ export function ProtocolTab({
             </h3>
           </div>
           {derivedSleep !== null && (
-            <span className="text-[11px] font-mono text-primary-lime">
+            <span className="text-[11px] font-mono text-primary-ink">
               {locale === "ar"
                 ? `المحسوب: ${derivedSleep} س نوم`
                 : `Derived: ${derivedSleep}h sleep`}
@@ -535,7 +535,7 @@ export function ProtocolTab({
       {/* Mind / Focus Target Card */}
       <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
-          <Brain className="w-4 h-4 text-primary-lime" />
+          <Brain className="w-4 h-4 text-primary-ink" />
           <h3 className="text-sm font-bold font-mono text-on-surface">
             {locale === "ar" ? "هدف التركيز الذهني اليومي" : "Cognitive Focus Target"}
           </h3>
@@ -581,7 +581,7 @@ export function ProtocolTab({
         <button
           type="submit"
           disabled={saving}
-          className="px-6 py-2.5 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
+          className="px-6 py-2.5 rounded-xl bg-primary-ink text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-ink-dim shadow-xs cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
         >
           {saving
             ? locale === "ar"

@@ -6,6 +6,8 @@ export type BadgeVariant =
   | "mind"
   | "school"
   | "record"
+  | "ink-solid"
+  | "ink-tint"
   | "lime-solid"
   | "lime-tint"
   | "cyan-solid"
@@ -33,6 +35,8 @@ export function Badge({
     mind: "bg-[#F1E8FF] text-[#5B21B6]",
     school: "bg-[#FDE7F1] text-[#9D174D]",
     record: "bg-[#F5B301] text-[#4A3400]",
+    "ink-solid": "bg-[#14161A] text-white [&_svg]:stroke-current [&_svg]:text-white",
+    "ink-tint": "bg-[#F1E8FF] text-[#5B21B6]",
     "lime-solid": "bg-[#14161A] text-white [&_svg]:stroke-current [&_svg]:text-white",
     "lime-tint": "bg-[#F1E8FF] text-[#5B21B6]",
     "cyan-solid": "bg-[#E6EEFF] text-[#1E3A9E] [&_svg]:stroke-current [&_svg]:text-[#1E3A9E]",

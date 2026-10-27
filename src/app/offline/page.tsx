@@ -34,7 +34,7 @@ export default function OfflinePage() {
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={() => window.location.reload()}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary-lime text-on-primary text-xs font-semibold uppercase tracking-wider hover:bg-primary-lime-dim flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary-ink text-on-primary text-xs font-semibold uppercase tracking-wider hover:bg-primary-ink-dim flex items-center justify-center gap-2 cursor-pointer shadow-xs"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Retry Connection</span>
@@ -42,7 +42,7 @@ export default function OfflinePage() {
 
           <Link
             href="/today"
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface hover:text-primary-lime flex items-center justify-center gap-1.5"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface hover:text-primary-ink flex items-center justify-center gap-1.5"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Go to Today</span>

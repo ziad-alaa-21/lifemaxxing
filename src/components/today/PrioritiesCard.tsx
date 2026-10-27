@@ -417,7 +417,7 @@ export function PrioritiesCard({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-2.5 rounded-[12px] bg-primary-lime text-on-primary text-xs font-medium hover:opacity-90 cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 rounded-[12px] bg-primary-ink text-on-primary text-xs font-medium hover:opacity-90 cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />

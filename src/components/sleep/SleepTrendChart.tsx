@@ -127,7 +127,7 @@ export function SleepTrendChart({ entries, targetHours = 8.0 }: SleepTrendChartP
           <div className="flex flex-wrap items-center justify-between text-[11px] font-mono text-text-muted pt-1">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-primary-lime" />
+                <span className="w-2.5 h-2.5 rounded-full bg-primary-ink" />
                 <span>{locale === "ar" ? "ممتاز (≥85)" : "Strong (\u226585)"}</span>
               </span>
               <span className="flex items-center gap-1">

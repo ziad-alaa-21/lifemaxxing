@@ -128,14 +128,14 @@ export function ModuleOnboardingModal() {
         onClick={() => toggleKey(key)}
         className={`w-full text-start p-3.5 rounded-2xl border transition-all flex items-start gap-3 select-none ${
           isChecked
-            ? "bg-surface-container-highest/80 border-primary-lime/60 shadow-xs ring-1 ring-primary-lime/30"
+            ? "bg-surface-container-highest/80 border-primary-ink/60 shadow-xs ring-1 ring-primary-ink/30"
             : "bg-surface-container/60 border-border-subtle hover:border-border-medium hover:bg-surface-container"
         }`}
       >
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
             isChecked
-              ? "bg-primary-lime text-on-primary font-medium"
+              ? "bg-primary-ink text-on-primary font-medium"
               : "bg-surface-container-high text-on-surface-variant"
           }`}
         >
@@ -154,7 +154,7 @@ export function ModuleOnboardingModal() {
             <div
               className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
                 isChecked
-                  ? "bg-primary-lime border-primary-lime text-on-primary"
+                  ? "bg-primary-ink border-primary-ink text-on-primary"
                   : "border-border-medium bg-surface-container"
               }`}
             >
@@ -178,7 +178,7 @@ export function ModuleOnboardingModal() {
         {/* Header */}
         <div className="p-5 sm:p-6 pb-4 border-b border-border-subtle bg-surface-container/30">
           <div className="flex items-center gap-2 mb-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-primary-lime/20 text-primary-lime border border-primary-lime/30">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-primary-ink/20 text-primary-ink border border-primary-ink/30">
               {isAr ? "مرحباً بيك" : "Welcome"}
             </span>
           </div>
@@ -198,7 +198,7 @@ export function ModuleOnboardingModal() {
               type="button"
               id="starter-pack-button"
               onClick={handleSelectStarter}
-              className="px-3 py-1.5 rounded-xl text-xs font-medium bg-primary-lime/10 text-primary-lime border border-primary-lime/30 hover:bg-primary-lime/20 transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl text-xs font-medium bg-primary-ink/10 text-primary-ink border border-primary-ink/30 hover:bg-primary-ink/20 transition-colors flex items-center gap-1.5"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>{isAr ? "حزمة البداية المقترحة" : "Suggested Starter"}</span>
@@ -237,7 +237,7 @@ export function ModuleOnboardingModal() {
           {/* Body Pillar */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase">
-              <Dumbbell className="w-3.5 h-3.5 text-primary-lime" />
+              <Dumbbell className="w-3.5 h-3.5 text-primary-ink" />
               <span>{isAr ? "الجسد والصحة" : "Body & Health"}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
@@ -248,7 +248,7 @@ export function ModuleOnboardingModal() {
           {/* Mind Pillar */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase">
-              <Timer className="w-3.5 h-3.5 text-primary-lime" />
+              <Timer className="w-3.5 h-3.5 text-primary-ink" />
               <span>{isAr ? "العقل والتركيز" : "Mind & Focus"}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
@@ -259,7 +259,7 @@ export function ModuleOnboardingModal() {
           {/* School Pillar */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase">
-              <GraduationCap className="w-3.5 h-3.5 text-primary-lime" />
+              <GraduationCap className="w-3.5 h-3.5 text-primary-ink" />
               <span>{isAr ? "الدراسة والمذاكرة" : "School & Academics"}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
@@ -282,7 +282,7 @@ export function ModuleOnboardingModal() {
             onClick={handleSubmit}
             className={`px-5 py-2.5 rounded-[12px] text-sm font-medium transition-all flex items-center gap-2 ${
               selected.length > 0 && !isSubmitting
-                ? "bg-primary-lime text-on-primary hover:opacity-90 shadow-xs active:scale-[0.98] cursor-pointer"
+                ? "bg-primary-ink text-on-primary hover:opacity-90 shadow-xs active:scale-[0.98] cursor-pointer"
                 : "bg-surface-container-highest text-text-muted cursor-not-allowed border border-border-subtle"
             }`}
           >

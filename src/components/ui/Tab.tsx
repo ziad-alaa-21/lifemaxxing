@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/design/tokens";
 
-export type TabColor = "lime" | "cyan" | "gold" | "sky" | "amber";
+export type TabColor = "ink" | "lime" | "cyan" | "gold" | "sky" | "amber";
 
 export interface TabProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean;
@@ -18,6 +18,7 @@ export function Tab({
   ...props
 }: TabProps) {
   const activeStyles: Record<TabColor, string> = {
+    ink: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
     lime: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
     cyan: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",
     gold: "bg-[#14161A] text-white shadow-[0_2px_8px_rgba(20,22,26,0.12)] [&_svg]:stroke-current [&_svg]:text-white",

@@ -60,7 +60,7 @@ export function DisabledModuleFallback({
       id={`disabled-fallback-${moduleKey}`}
       className="stitch-card p-8 sm:p-12 max-w-xl mx-auto my-8 text-center relative overflow-hidden"
     >
-      <div className="absolute top-0 right-0 w-48 h-48 bg-primary-lime/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-48 h-48 bg-primary-ink/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-16 h-16 rounded-2xl bg-surface-container-high border border-border-medium flex items-center justify-center text-on-surface-variant mx-auto mb-5 shadow-xs">
         <Icon className="w-8 h-8 opacity-70" />
@@ -88,7 +88,7 @@ export function DisabledModuleFallback({
           id={`enable-module-btn-${moduleKey}`}
           disabled={isEnabling}
           onClick={handleEnable}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-[12px] bg-primary-lime text-on-primary text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-[12px] bg-primary-ink text-on-primary text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
         >
           {isEnabling ? (
             <Loader2 className="w-4 h-4 animate-spin text-on-primary" />

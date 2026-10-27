@@ -145,7 +145,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
         {onStartWorkoutClick && (
           <button
             onClick={onStartWorkoutClick}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-lime/90 shadow-xs self-start sm:self-auto"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-ink/90 shadow-xs self-start sm:self-auto"
           >
             <Plus className="w-4 h-4" />
             <span>{locale === "ar" ? "تمرين جديد" : "New Session"}</span>
@@ -188,7 +188,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
           {onStartWorkoutClick && (
             <button
               onClick={onStartWorkoutClick}
-              className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 transition-all cursor-pointer hover:bg-primary-lime/90 shadow-xs"
+              className="px-4 py-2 rounded-xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 transition-all cursor-pointer hover:bg-primary-ink/90 shadow-xs"
             >
               <Plus className="w-4 h-4" />
               <span>{locale === "ar" ? "ابدأ تمرينك دلوقتي" : "Start Workout Now"}</span>
@@ -255,7 +255,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
                     </div>
                     <div className="flex items-center gap-3 text-xs font-mono text-text-muted">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-primary-lime" />
+                        <Calendar className="w-3.5 h-3.5 text-primary-ink" />
                         <span>{formattedDate}</span>
                       </span>
                       <span>•</span>
@@ -272,7 +272,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
                       <span className="text-[10px] font-mono text-text-muted block">
                         {locale === "ar" ? "إجمالي الحجم" : "VOLUME"}
                       </span>
-                      <span className="text-xs font-bold font-mono text-primary-lime">
+                      <span className="text-xs font-bold font-mono text-primary-ink">
                         {Math.round(totalTonnage).toLocaleString()} {locale === "ar" ? "كجم" : "kg"}
                       </span>
                     </div>
@@ -358,7 +358,7 @@ export function WorkoutHistory({ onStartWorkoutClick }: WorkoutHistoryProps) {
                                   </td>
                                   <td className="py-2 px-2">
                                     {s.e1rm_kg ? (
-                                      <span className="text-primary-lime font-bold">
+                                      <span className="text-primary-ink font-bold">
                                         {s.e1rm_kg} {locale === "ar" ? "كجم" : "kg"}
                                       </span>
                                     ) : (

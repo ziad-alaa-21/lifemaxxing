@@ -135,7 +135,7 @@ export function PreferencesTab({
       {/* Units & Localization */}
       <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
-          <Globe className="w-4 h-4 text-primary-lime" />
+          <Globe className="w-4 h-4 text-primary-ink" />
           <h3 className="text-sm font-bold font-mono text-on-surface">Units & Localization</h3>
         </div>
 
@@ -148,7 +148,7 @@ export function PreferencesTab({
                 onClick={() => setWeightUnit("kg")}
                 className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                   weightUnit === "kg"
-                    ? "bg-primary-lime text-on-primary shadow-xs"
+                    ? "bg-primary-ink text-on-primary shadow-xs"
                     : "bg-surface-container-low border border-border-subtle text-on-surface"
                 }`}
               >
@@ -159,7 +159,7 @@ export function PreferencesTab({
                 onClick={() => setWeightUnit("lbs")}
                 className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                   weightUnit === "lbs"
-                    ? "bg-primary-lime text-on-primary shadow-xs"
+                    ? "bg-primary-ink text-on-primary shadow-xs"
                     : "bg-surface-container-low border border-border-subtle text-on-surface"
                 }`}
               >
@@ -250,7 +250,7 @@ export function PreferencesTab({
               <button
                 type="button"
                 onClick={playTestChime}
-                className="text-[11px] font-mono text-primary-lime hover:underline cursor-pointer"
+                className="text-[11px] font-mono text-primary-ink hover:underline cursor-pointer"
               >
                 Play Test Chime
               </button>
@@ -261,7 +261,7 @@ export function PreferencesTab({
                 id="chimeToggle"
                 checked={chimeEnabled}
                 onChange={(e) => setChimeEnabled(e.target.checked)}
-                className="w-4 h-4 rounded accent-primary-lime cursor-pointer"
+                className="w-4 h-4 rounded accent-primary-ink cursor-pointer"
               />
               <label htmlFor="chimeToggle" className="text-xs font-mono text-on-surface cursor-pointer">
                 Play soft chime on interval complete
@@ -276,7 +276,7 @@ export function PreferencesTab({
                   max="100"
                   value={volume}
                   onChange={(e) => setVolume(parseInt(e.target.value, 10))}
-                  className="w-full accent-primary-lime"
+                  className="w-full accent-primary-ink"
                 />
                 <span className="text-xs font-mono text-text-muted w-8 text-right">{volume}%</span>
               </div>
@@ -304,7 +304,7 @@ export function PreferencesTab({
                 id="vibToggle"
                 checked={vibrationEnabled}
                 onChange={(e) => setVibrationEnabled(e.target.checked)}
-                className="w-4 h-4 rounded accent-primary-lime cursor-pointer"
+                className="w-4 h-4 rounded accent-primary-ink cursor-pointer"
               />
               <label htmlFor="vibToggle" className="text-xs font-mono text-on-surface cursor-pointer">
                 Vibrate on interval complete and rest timer
@@ -322,7 +322,7 @@ export function PreferencesTab({
                 id="adherenceToggle"
                 checked={hideAdherence}
                 onChange={(e) => setHideAdherence(e.target.checked)}
-                className="w-4 h-4 rounded accent-primary-lime cursor-pointer"
+                className="w-4 h-4 rounded accent-primary-ink cursor-pointer"
               />
               <label htmlFor="adherenceToggle" className="text-xs font-mono text-on-surface cursor-pointer">
                 Hide percentage badges on meal adherence
@@ -349,7 +349,7 @@ export function PreferencesTab({
         <button
           type="submit"
           disabled={saving}
-          className="px-6 py-2.5 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
+          className="px-6 py-2.5 rounded-xl bg-primary-ink text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-ink-dim shadow-xs cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
         >
           {saving ? "Saving..." : "Save Preferences"}
         </button>

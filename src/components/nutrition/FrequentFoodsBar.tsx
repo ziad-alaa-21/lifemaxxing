@@ -238,9 +238,9 @@ export function FrequentFoodsBar({
     <div className="space-y-2">
       {/* Undo Toast */}
       {loggedToast && (
-        <div className="p-3 rounded-2xl bg-surface-container border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in shadow-sm">
+        <div className="p-3 rounded-2xl bg-surface-container border border-primary-ink/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in shadow-sm">
           <div className="flex items-center gap-2">
-            <Check className="w-3.5 h-3.5 text-primary-lime" />
+            <Check className="w-3.5 h-3.5 text-primary-ink" />
             <span>
               {locale === "ar"
                 ? `اتسجل ${loggedToast.name} (${loggedToast.calories} سعرة)`
@@ -249,7 +249,7 @@ export function FrequentFoodsBar({
           </div>
           <button
             onClick={handleUndoQuickLog}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Undo2 className="w-3.5 h-3.5" />
             <span>{locale === "ar" ? "تراجع" : "Undo"}</span>

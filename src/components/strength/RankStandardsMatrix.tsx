@@ -407,7 +407,7 @@ export function RankStandardsMatrix() {
 
       {loading && (
         <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
+          <Loader2 className="w-6 h-6 animate-spin text-primary-ink" />
           <span className="text-xs font-mono">
             {locale === "ar" ? "جاري تحميل مصفوفة القوة من السيرفر..." : "Loading strength matrices from database..."}
           </span>
@@ -423,7 +423,7 @@ export function RankStandardsMatrix() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <BarChart2 className="w-4 h-4 text-primary-lime" />
+                    <BarChart2 className="w-4 h-4 text-primary-ink" />
                     <h3 className="text-xs font-mono uppercase tracking-wider text-on-surface font-bold">
                       {locale === "ar" ? "بروفايل القوة العضلية" : "Kinetic Power Profile"}
                     </h3>
@@ -484,7 +484,7 @@ export function RankStandardsMatrix() {
 
               <div className="flex items-center justify-center gap-4 text-[10px] font-mono border-t border-border-subtle pt-3">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-primary-lime" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary-ink" />
                   <span className="text-on-surface">{locale === "ar" ? "نسبتك الحالية" : "Your Ratio"}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -500,7 +500,7 @@ export function RankStandardsMatrix() {
                 <div>
                   <div className="flex items-center justify-between gap-3 pb-3 border-b border-border-subtle">
                     <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-primary-lime font-bold">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-primary-ink font-bold">
                         {locale === "ar" ? "تفاصيل المعايير للرفعة" : "Detailed Standard Breakdown"}
                       </span>
                       <h3 className="text-lg font-bold font-mono text-on-surface">
@@ -522,7 +522,7 @@ export function RankStandardsMatrix() {
                       <span className="text-[10px] font-mono text-text-muted block">
                         {locale === "ar" ? "أعلى رفعة PR 1RM" : "CURRENT PR 1RM"}
                       </span>
-                      <span className="text-base font-bold font-mono text-primary-lime">
+                      <span className="text-base font-bold font-mono text-primary-ink">
                         {activeLift.currentPR
                           ? activeLift.key === "pull_up" && activeLift.currentPR.e1rm_kg === 0
                             ? locale === "ar" ? "وزن الجسم صافي" : "Strict BW"
@@ -562,7 +562,7 @@ export function RankStandardsMatrix() {
                             {getTierTranslation(activeLift.nextTier)}
                           </span>:
                         </span>
-                        <span className="text-primary-lime font-bold">
+                        <span className="text-primary-ink font-bold">
                           {activeLift.kgToGo !== undefined
                             ? locale === "ar"
                               ? `ناقصك +${activeLift.kgToGo} كجم`
@@ -572,7 +572,7 @@ export function RankStandardsMatrix() {
                       </div>
                       <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-primary-lime rounded-full transition-all duration-500 shadow-xs"
+                          className="h-full bg-primary-ink rounded-full transition-all duration-500 shadow-xs"
                           style={{ width: `${activeLift.progressPercent}%` }}
                         />
                       </div>
@@ -603,7 +603,7 @@ export function RankStandardsMatrix() {
                               key={s.tier}
                               className={`p-2 rounded-xl border transition-all ${
                                 isCurrentOrPassed
-                                  ? "bg-primary-lime/10 border-primary-lime/40 text-on-surface font-semibold"
+                                  ? "bg-primary-ink/10 border-primary-ink/40 text-on-surface font-semibold"
                                   : "bg-surface-container-low border-border-subtle text-text-muted"
                               }`}
                             >
@@ -644,7 +644,7 @@ export function RankStandardsMatrix() {
                 onClick={() => setSelectedLift(lift.id)}
                 className={`bg-surface-container rounded-2xl p-4 border transition-all cursor-pointer space-y-3 ${
                   selectedLift === lift.id
-                    ? "border-primary-lime ring-1 ring-primary-lime/30 shadow-xs"
+                    ? "border-primary-ink ring-1 ring-primary-ink/30 shadow-xs"
                     : "border-border-subtle hover:border-secondary-cyan/40"
                 }`}
               >
@@ -671,7 +671,7 @@ export function RankStandardsMatrix() {
                     <span className="text-[10px] text-text-muted block">
                       {locale === "ar" ? "رقمك القياسي 1RM" : "1RM RECORD"}
                     </span>
-                    <span className="text-xs font-bold text-primary-lime">
+                    <span className="text-xs font-bold text-primary-ink">
                       {lift.currentPR
                         ? lift.key === "pull_up" && lift.currentPR.e1rm_kg === 0
                           ? locale === "ar" ? "وزن الجسم" : "Strict BW"
@@ -709,7 +709,7 @@ export function RankStandardsMatrix() {
                     </div>
                     <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-primary-lime rounded-full"
+                        className="h-full bg-primary-ink rounded-full"
                         style={{ width: `${lift.progressPercent}%` }}
                       />
                     </div>

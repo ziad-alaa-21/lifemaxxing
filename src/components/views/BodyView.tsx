@@ -118,7 +118,7 @@ function BodyViewContent() {
             onClick={() => switchTab("logger")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === "logger"
-                ? "bg-primary-lime text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                ? "bg-primary-ink text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >
@@ -183,7 +183,7 @@ function BodyViewContent() {
             onClick={() => switchTab("history")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === "history"
-                ? "bg-primary-lime text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                ? "bg-primary-ink text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >
@@ -342,7 +342,7 @@ function BodyViewContent() {
                       </div>
                     </div>
                     {ex.is_ranked && (
-                      <span className="px-2 py-0.5 rounded-md bg-primary-lime/10 border border-primary-lime/30 text-[10px] font-mono text-primary-lime font-bold uppercase shrink-0">
+                      <span className="px-2 py-0.5 rounded-md bg-primary-ink/10 border border-primary-ink/30 text-[10px] font-mono text-primary-ink font-bold uppercase shrink-0">
                         {locale === "ar" ? "معتمد" : "Ranked"}
                       </span>
                     )}
@@ -370,7 +370,7 @@ export function BodyView() {
     <Suspense
       fallback={
         <div className="p-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
+          <Loader2 className="w-6 h-6 animate-spin text-primary-ink" />
           <span className="text-xs font-mono">{locale === "ar" ? "جاري تحميل محرك اللياقة..." : "Loading strength module..."}</span>
         </div>
       }

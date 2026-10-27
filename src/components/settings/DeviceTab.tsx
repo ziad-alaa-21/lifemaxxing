@@ -106,7 +106,7 @@ export function DeviceTab() {
       <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-primary-lime" />
+            <Smartphone className="w-4 h-4 text-primary-ink" />
             <h3 className="text-sm font-bold font-mono text-on-surface">
               {locale === "ar" ? "تطبيق الويب التقدمي (PWA)" : "Progressive Web App (PWA)"}
             </h3>
@@ -134,7 +134,7 @@ export function DeviceTab() {
                   : "✓ Running in standalone application window"}
               </span>
             ) : isInstallable ? (
-              <span className="text-primary-lime">
+              <span className="text-primary-ink">
                 {locale === "ar" ? "● جاهز للتثبيت بضغطة واحدة" : "● Ready for one-click installation"}
               </span>
             ) : (
@@ -150,7 +150,7 @@ export function DeviceTab() {
             <button
               onClick={handleInstall}
               disabled={installing}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-lime-dim shadow-xs transition-all cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-ink text-on-primary text-xs font-mono font-bold uppercase tracking-wider hover:bg-primary-ink-dim shadow-xs transition-all cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
             >
               {installing ? (
                 <Loader2 className="w-4 h-4 animate-spin text-on-primary" />
@@ -179,7 +179,7 @@ export function DeviceTab() {
             </div>
             <div className="text-xs font-mono text-on-surface flex items-center gap-1.5" dir="ltr">
               <span>v1.0.0-stage9</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-primary-lime/10 text-primary-lime font-mono">
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-primary-ink/10 text-primary-ink font-mono">
                 {locale === "ar" ? "النسخة النهائية" : "Production"}
               </span>
             </div>
@@ -189,7 +189,7 @@ export function DeviceTab() {
             <div className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
               {locale === "ar" ? "آخر مزامنة لقاعدة البيانات" : "Last Database Sync"}
             </div>
-            <div className="text-xs font-mono text-primary-lime flex items-center gap-1.5" dir="ltr">
+            <div className="text-xs font-mono text-primary-ink flex items-center gap-1.5" dir="ltr">
               <Clock className="w-3.5 h-3.5" />
               <span>{lastSyncTime}</span>
             </div>
@@ -217,9 +217,9 @@ export function DeviceTab() {
             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-on-surface transition-all cursor-pointer disabled:opacity-50"
           >
             {clearingCache ? (
-              <Loader2 className="w-4 h-4 animate-spin text-primary-lime" />
+              <Loader2 className="w-4 h-4 animate-spin text-primary-ink" />
             ) : (
-              <RefreshCw className="w-4 h-4 text-primary-lime" />
+              <RefreshCw className="w-4 h-4 text-primary-ink" />
             )}
             <span>{locale === "ar" ? "إفراغ الكاش" : "Clear Cache"}</span>
           </button>

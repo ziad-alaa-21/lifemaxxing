@@ -446,9 +446,9 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
     <div className="space-y-6">
       {/* Undo Soft-Delete Notification */}
       {showUndoBanner && lastDeletedEntry && (
-        <div className="p-3.5 bg-surface-container-high border border-primary-lime/40 rounded-2xl flex items-center justify-between text-xs font-mono animate-in fade-in slide-in-from-top-2">
+        <div className="p-3.5 bg-surface-container-high border border-primary-ink/40 rounded-2xl flex items-center justify-between text-xs font-mono animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2 text-on-surface">
-            <Info className="w-4 h-4 text-primary-lime" />
+            <Info className="w-4 h-4 text-primary-ink" />
             <span>
               {locale === "ar"
                 ? `تم مسح تسجيل الوزن (${lastDeletedEntry.weight_kg} كجم).`
@@ -457,7 +457,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
           </div>
           <button
             onClick={handleUndoDelete}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:bg-primary-lime/90 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-ink text-on-primary font-bold hover:bg-primary-ink/90 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
@@ -506,7 +506,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 setNewNoteInput("");
                 setIsLogModalOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-lime/90 shadow-xs"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-ink/90 shadow-xs"
             >
               <Plus className="w-4 h-4" />
               <span>{locale === "ar" ? "سجل وزنك" : "Log Weight"}</span>
@@ -730,7 +730,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                                 <span className="text-on-surface">
                                   {locale === "ar" ? `الفعلي: ${data.rawWeight} كجم` : `Raw: ${data.rawWeight} kg`}
                                 </span>
-                                <span className="text-primary-lime font-bold">
+                                <span className="text-primary-ink font-bold">
                                   {locale === "ar" ? `متوسط ٧ أيام: ${data.movingAvg} كجم` : `7D Avg: ${data.movingAvg} kg`}
                                 </span>
                               </div>
@@ -867,7 +867,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
           <div className="bg-surface-container border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <div className="flex items-center gap-2">
-                <Weight className="w-4 h-4 text-primary-lime" />
+                <Weight className="w-4 h-4 text-primary-ink" />
                 <h3 className="text-sm font-bold font-mono text-on-surface uppercase">
                   {locale === "ar" ? "تسجيل وزن الجسم" : "Log Bodyweight"}
                 </h3>
@@ -932,7 +932,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-primary-lime/90 cursor-pointer shadow-xs"
+                  className="px-5 py-2.5 rounded-xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all hover:bg-primary-ink/90 cursor-pointer shadow-xs"
                 >
                   {locale === "ar" ? "حفظ الوزن" : "Save Weigh-In"}
                 </button>

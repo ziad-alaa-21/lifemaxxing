@@ -206,7 +206,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
       {/* Account Identity Card */}
       <div className="stitch-card p-5 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
-          <User className="w-4 h-4 text-primary-lime" />
+          <User className="w-4 h-4 text-primary-ink" />
           <h3 className="text-sm font-bold font-mono text-on-surface">
             {locale === "ar" ? "بيانات وبيئة الحساب" : "Account Credentials"}
           </h3>
@@ -226,7 +226,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
             <div className="text-[10px] font-mono uppercase tracking-wider text-text-muted">
               {locale === "ar" ? "معرف الحساب (auth.uid)" : "Account ID (auth.uid)"}
             </div>
-            <div className="text-xs font-mono text-primary-lime truncate" dir="ltr">
+            <div className="text-xs font-mono text-primary-ink truncate" dir="ltr">
               {userId || (locale === "ar" ? "لا يوجد" : "None")}
             </div>
           </div>
@@ -240,7 +240,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
                 onClick={() => setIsPasswordModalOpen(true)}
                 className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-on-surface transition-colors cursor-pointer"
               >
-                <KeyRound className="w-3.5 h-3.5 text-primary-lime" />
+                <KeyRound className="w-3.5 h-3.5 text-primary-ink" />
                 <span>{locale === "ar" ? "تغيير كلمة السر" : "Change Password"}</span>
               </button>
 
@@ -386,7 +386,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
                 <button
                   type="submit"
                   disabled={passwordLoading}
-                  className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold hover:bg-primary-lime-dim cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-xl bg-primary-ink text-on-primary text-xs font-mono font-bold hover:bg-primary-ink-dim cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
                 >
                   {passwordLoading
                     ? locale === "ar"
@@ -471,7 +471,7 @@ export function AccountTab({ userEmail, userId, isGoogleOnly }: AccountTabProps)
                 <button
                   type="submit"
                   disabled={emailLoading}
-                  className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary text-xs font-mono font-bold hover:bg-primary-lime-dim cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-xl bg-primary-ink text-on-primary text-xs font-mono font-bold hover:bg-primary-ink-dim cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
                 >
                   {emailLoading
                     ? locale === "ar"

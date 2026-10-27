@@ -100,7 +100,7 @@ export function ManualFoodModal({
         <div className="relative w-full max-w-md bg-surface-container border border-border-subtle rounded-3xl p-6 shadow-2xl">
           <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
             <div className="flex items-center gap-2">
-              <Plus className="w-5 h-5 text-primary-lime" />
+              <Plus className="w-5 h-5 text-primary-ink" />
               <h2 className="text-base font-bold font-mono text-on-surface">
                 {locale === "ar" ? "تسجيل صنف يدوي" : "Manual Food Entry"}
               </h2>
@@ -121,7 +121,7 @@ export function ManualFoodModal({
                 onClick={() => setMealType(m)}
                 className={`py-2 text-[11px] font-mono uppercase tracking-wider font-semibold rounded-lg transition-all capitalize cursor-pointer ${
                   mealType === m
-                    ? "bg-primary-lime text-on-primary shadow-sm font-bold"
+                    ? "bg-primary-ink text-on-primary shadow-sm font-bold"
                     : "text-text-muted hover:text-on-surface"
                 }`}
               >
@@ -147,7 +147,7 @@ export function ManualFoodModal({
                 placeholder={locale === "ar" ? "مثال: سلطة فراخ مشوية" : "e.g. Grilled Chicken Salad"}
                 value={foodName}
                 onChange={(e) => setFoodName(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-lime focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-ink focus:outline-none"
               />
             </div>
 
@@ -161,7 +161,7 @@ export function ManualFoodModal({
                   step="0.1"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-lime focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-ink focus:outline-none"
                 />
               </div>
               <div>
@@ -173,7 +173,7 @@ export function ManualFoodModal({
                   placeholder={locale === "ar" ? "حصة / جرام / طبق" : "serving / grams"}
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-lime focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-ink focus:outline-none"
                 />
               </div>
             </div>
@@ -188,7 +188,7 @@ export function ManualFoodModal({
                   placeholder={locale === "ar" ? "مثال: 350" : "e.g. 350"}
                   value={calories}
                   onChange={(e) => setCalories(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-lime focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-ink focus:outline-none"
                 />
               </div>
               <div>
@@ -201,7 +201,7 @@ export function ManualFoodModal({
                   placeholder={locale === "ar" ? "مثال: 32" : "e.g. 32"}
                   value={proteinG}
                   onChange={(e) => setProteinG(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-lime focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-ink focus:outline-none"
                 />
               </div>
             </div>
@@ -217,7 +217,7 @@ export function ManualFoodModal({
                   placeholder={locale === "ar" ? "مثال: 15" : "e.g. 15"}
                   value={carbsG}
                   onChange={(e) => setCarbsG(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-lime focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-ink focus:outline-none"
                 />
               </div>
               <div>
@@ -230,7 +230,7 @@ export function ManualFoodModal({
                   placeholder={locale === "ar" ? "مثال: 8" : "e.g. 8"}
                   value={fatsG}
                   onChange={(e) => setFatsG(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-lime focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-border-subtle font-mono text-sm text-on-surface focus:border-primary-ink focus:outline-none"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ export function ManualFoodModal({
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-primary-lime text-on-primary shadow-xs hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-primary-ink text-on-primary shadow-xs hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>

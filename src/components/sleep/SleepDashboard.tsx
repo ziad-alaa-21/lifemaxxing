@@ -470,7 +470,7 @@ export function SleepDashboard() {
             <span
               className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                 midpoint.stability === "Consistent"
-                  ? "text-primary-lime border-primary-lime/30 bg-primary-lime/10"
+                  ? "text-primary-ink border-primary-ink/30 bg-primary-ink/10"
                   : midpoint.stability === "Moderate"
                   ? "text-secondary-cyan border-secondary-cyan/30 bg-secondary-cyan/10"
                   : "text-status-danger border-status-danger/30 bg-status-danger/10"

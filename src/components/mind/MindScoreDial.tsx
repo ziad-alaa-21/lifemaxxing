@@ -102,7 +102,7 @@ export function MindScoreDial({ scoreData }: MindScoreDialProps) {
             <div className="text-[10px] text-text-muted uppercase">
               {locale === "ar" ? "الالتزامات" : "Discipline"}
             </div>
-            <div className="font-bold text-primary-lime">
+            <div className="font-bold text-primary-ink">
               +{disciplinePts} {locale === "ar" ? "نقطة" : "pts"}
             </div>
           </div>

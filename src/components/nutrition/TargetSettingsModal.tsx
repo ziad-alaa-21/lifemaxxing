@@ -340,7 +340,7 @@ export function TargetSettingsModal({
                   </div>
                   <div className="p-2 rounded-xl bg-surface-container-lowest">
                     <div className="text-[10px] text-text-muted">{locale === "ar" ? "البروتين" : "Protein"}</div>
-                    <div className="text-sm font-bold text-primary-lime">
+                    <div className="text-sm font-bold text-primary-ink">
                       {preview.targets.proteinGrams}{locale === "ar" ? " جم" : "g"}
                     </div>
                   </div>

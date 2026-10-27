@@ -221,7 +221,7 @@ export function SleepLogModal({
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-text-muted flex items-center gap-1 text-start">
-                <Sparkles className="w-3 h-3 text-primary-lime" />
+                <Sparkles className="w-3 h-3 text-primary-ink" />
                 <span>{locale === "ar" ? "وقت الصحيان" : "Wake Time"}</span>
               </label>
               <input

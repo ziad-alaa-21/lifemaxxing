@@ -21,6 +21,9 @@
 
   --color-on-primary: #ffffff;
 
+  --color-primary-ink: #14161a;
+  --color-primary-ink-dim: #2a313d;
+  /* Aliases for untouched strings in src/lib */
   --color-primary-lime: #14161a;
   --color-primary-lime-dim: #2a313d;
   --color-secondary-cyan: #2563eb;

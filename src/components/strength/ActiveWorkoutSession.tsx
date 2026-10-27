@@ -683,8 +683,8 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1 min-w-0 flex-1 text-start">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="w-2.5 h-2.5 rounded-full bg-primary-lime animate-pulse shrink-0" />
-              <span className="text-xs font-mono uppercase tracking-wider text-primary-lime font-bold truncate">
+              <span className="w-2.5 h-2.5 rounded-full bg-primary-ink animate-pulse shrink-0" />
+              <span className="text-xs font-mono uppercase tracking-wider text-primary-ink font-bold truncate">
                 {locale === "ar" ? "التمرين الحالي" : "Active Workout Session"}
               </span>
             </div>
@@ -693,7 +693,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
               value={workoutName}
               onChange={(e) => setWorkoutName(e.target.value)}
               placeholder={locale === "ar" ? "اسم التمرين" : "Session Name"}
-              className="text-lg sm:text-xl font-bold font-mono text-on-surface bg-transparent border-b border-transparent hover:border-border-subtle focus:border-primary-lime focus:outline-none transition-colors w-full truncate py-0.5 text-start"
+              className="text-lg sm:text-xl font-bold font-mono text-on-surface bg-transparent border-b border-transparent hover:border-border-subtle focus:border-primary-ink focus:outline-none transition-colors w-full truncate py-0.5 text-start"
             />
           </div>
 
@@ -720,7 +720,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
             <button
               onClick={handleSaveWorkout}
               disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-lime hover:bg-primary-lime-dim text-on-primary font-mono font-bold text-xs uppercase tracking-wider shadow-xs transition-all cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-ink hover:bg-primary-ink-dim text-on-primary font-mono font-bold text-xs uppercase tracking-wider shadow-xs transition-all cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
             >
               {isSaving ? (
                 <>
@@ -826,7 +826,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                         {item.exercise.name}
                       </h3>
                       {item.exercise.is_ranked && (
-                        <span className="px-2 py-0.5 rounded-md bg-primary-lime/10 border border-primary-lime/30 text-[10px] font-mono text-primary-lime font-bold uppercase">
+                        <span className="px-2 py-0.5 rounded-md bg-primary-ink/10 border border-primary-ink/30 text-[10px] font-mono text-primary-ink font-bold uppercase">
                           {locale === "ar" ? "معتمد" : "Ranked"}
                         </span>
                       )}
@@ -908,7 +908,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                                 updateSet(item.instanceId, s.id, "weightKg", e.target.value)
                               }
                               placeholder="0"
-                              className="w-24 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-lime focus:outline-none"
+                              className="w-24 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-ink focus:outline-none"
                             />
                           </td>
 
@@ -921,7 +921,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                                 updateSet(item.instanceId, s.id, "reps", e.target.value)
                               }
                               placeholder="0"
-                              className="w-16 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-lime focus:outline-none"
+                              className="w-16 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-ink focus:outline-none"
                             />
                           </td>
 
@@ -937,7 +937,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                                 updateSet(item.instanceId, s.id, "rpe", e.target.value)
                               }
                               placeholder="8"
-                              className="w-14 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono focus:border-primary-lime focus:outline-none"
+                              className="w-14 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono focus:border-primary-ink focus:outline-none"
                             />
                           </td>
 
@@ -945,7 +945,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                           <td className="py-2 px-2">
                             {s.e1rm !== null ? (
                               <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="px-2 py-1 rounded-md bg-primary-lime/10 border border-primary-lime/30 text-primary-lime font-bold text-[11px]">
+                                <span className="px-2 py-1 rounded-md bg-primary-ink/10 border border-primary-ink/30 text-primary-ink font-bold text-[11px]">
                                   {isPullUp && s.e1rm === 0 ? (locale === "ar" ? "وزن الجسم" : "Strict BW") : `${s.e1rm} ${locale === "ar" ? "كجم" : "kg"}`}
                                 </span>
                                 {tierEval && (
@@ -1098,7 +1098,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                         {ex.name}
                       </span>
                       {ex.is_ranked && (
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-lime/10 text-primary-lime border border-primary-lime/30 font-bold uppercase">
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-ink/10 text-primary-ink border border-primary-ink/30 font-bold uppercase">
                           {locale === "ar" ? "معتمد" : "Ranked"}
                         </span>
                       )}
@@ -1124,13 +1124,13 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
       {/* PR Celebration Modal */}
       {celebration && (
         <div className="fixed inset-0 z-50 bg-on-surface/40 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-surface-container border border-primary-lime/50 rounded-2xl w-full max-w-md p-6 text-center space-y-4 shadow-2xl">
-            <div className="w-16 h-16 rounded-2xl bg-primary-lime/15 border border-primary-lime/40 flex items-center justify-center text-primary-lime mx-auto shadow-xs">
+          <div className="bg-surface-container border border-primary-ink/50 rounded-2xl w-full max-w-md p-6 text-center space-y-4 shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-primary-ink/15 border border-primary-ink/40 flex items-center justify-center text-primary-ink mx-auto shadow-xs">
               <Sparkles className="w-8 h-8" />
             </div>
 
             <div className="space-y-1">
-              <span className="text-xs font-mono uppercase tracking-widest text-primary-lime font-bold">
+              <span className="text-xs font-mono uppercase tracking-widest text-primary-ink font-bold">
                 {locale === "ar" ? "حققت مستوى قوة جديد! عاش!" : "New Rank Achieved!"}
               </span>
               <h2 className="text-xl font-bold font-mono text-on-surface">
@@ -1151,7 +1151,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
             <div className="grid grid-cols-2 gap-3 pt-2 text-xs font-mono">
               <div className="bg-surface-container-low p-2.5 rounded-xl border border-border-subtle">
                 <span className="text-text-muted text-[10px] block">{locale === "ar" ? "الوزن الأقصى (1RM)" : "ESTIMATED 1RM"}</span>
-                <span className="text-base font-bold text-primary-lime">
+                <span className="text-base font-bold text-primary-ink">
                   {celebration.e1rm} {locale === "ar" ? "كجم" : "kg"}
                 </span>
               </div>
@@ -1171,7 +1171,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
 
             <button
               onClick={() => setCelebration(null)}
-              className="w-full py-2.5 rounded-xl bg-primary-lime text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-lime-dim shadow-xs"
+              className="w-full py-2.5 rounded-xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-ink-dim shadow-xs"
             >
               {locale === "ar" ? "استمرار" : "Continue"}
             </button>

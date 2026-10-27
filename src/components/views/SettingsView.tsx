@@ -104,10 +104,10 @@ export function SettingsView({
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
       {/* Top Banner */}
       <div className="bg-surface-container rounded-2xl p-6 border border-border-subtle relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-lime/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-ink/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-primary-lime/10 border border-primary-lime/30 flex items-center justify-center text-primary-lime shadow-xs">
+            <div className="w-12 h-12 rounded-xl bg-primary-ink/10 border border-primary-ink/30 flex items-center justify-center text-primary-ink shadow-xs">
               <Sliders className="w-6 h-6" />
             </div>
             <div>
@@ -122,7 +122,7 @@ export function SettingsView({
             </div>
           </div>
           {profile?.weight_unit && (
-            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-surface-container-high border border-border-subtle text-[11px] font-mono text-primary-lime">
+            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-surface-container-high border border-border-subtle text-[11px] font-mono text-primary-ink">
               {locale === "ar" ? "الوحدة: " : "Units: "}
               {profile.weight_unit.toUpperCase()}
             </span>
@@ -140,7 +140,7 @@ export function SettingsView({
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-semibold transition-all shrink-0 cursor-pointer ${
                 isActive
-                  ? "bg-primary-lime text-on-primary shadow-xs"
+                  ? "bg-primary-ink text-on-primary shadow-xs"
                   : "bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface border border-transparent"
               }`}
             >
@@ -154,7 +154,7 @@ export function SettingsView({
       {/* Tab Content */}
       {loading ? (
         <div className="p-12 stitch-card flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-primary-lime" />
+          <Loader2 className="w-6 h-6 animate-spin text-primary-ink" />
           <span className="text-xs font-mono text-text-muted">
             {locale === "ar" ? "جارٍ تحميل الإعدادات..." : "Loading settings..."}
           </span>

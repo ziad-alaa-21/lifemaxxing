@@ -15,7 +15,7 @@ export default function TermsPage() {
       <div className="mb-8">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-xs font-mono text-on-surface-variant hover:text-primary-lime transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono text-on-surface-variant hover:text-primary-ink transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back / العودة</span>
@@ -25,7 +25,7 @@ export default function TermsPage() {
       <div className="stitch-card p-6 sm:p-10 space-y-10">
         {/* Header */}
         <div className="flex items-center gap-4 pb-6 border-b border-border-subtle">
-          <div className="p-3.5 rounded-2xl bg-surface-container-high text-primary-lime border border-primary-lime/20 shadow-md">
+          <div className="p-3.5 rounded-2xl bg-surface-container-high text-primary-ink border border-primary-ink/20 shadow-md">
             <BookOpen className="w-7 h-7" />
           </div>
           <div>
@@ -38,7 +38,7 @@ export default function TermsPage() {
 
         {/* English Section */}
         <section className="space-y-6 text-sm leading-relaxed" dir="ltr">
-          <div className="flex items-center gap-2 text-primary-lime font-bold font-mono uppercase text-xs tracking-wider">
+          <div className="flex items-center gap-2 text-primary-ink font-bold font-mono uppercase text-xs tracking-wider">
             <span>English (Official)</span>
           </div>
 
@@ -49,7 +49,7 @@ export default function TermsPage() {
 
             <ul className="space-y-3 text-on-surface-variant list-none pl-0">
               <li className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-subtle">
-                <CheckCircle2 className="w-5 h-5 text-primary-lime shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-on-surface">1. Account Authenticity & Security:</strong>{" "}
                   {AUTH_MODE === "email"
@@ -61,7 +61,7 @@ export default function TermsPage() {
               </li>
 
               <li className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-subtle">
-                <CheckCircle2 className="w-5 h-5 text-primary-lime shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-on-surface">2. Permitted Personal Use:</strong> Life is provided for personal habit, productivity, wellness, and self-optimization tracking. Reverse engineering, scraping, automated API bombardment, or subverting rate limits is strictly prohibited.
                 </div>
@@ -75,7 +75,7 @@ export default function TermsPage() {
               </li>
 
               <li className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-subtle">
-                <CheckCircle2 className="w-5 h-5 text-primary-lime shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-on-surface">4. AI-Assisted Nutrition Logging:</strong> You acknowledge that AI food parsing estimations (powered by Google Gemini) are approximations for convenience and should be verified by you before logging.
                 </div>
@@ -84,12 +84,12 @@ export default function TermsPage() {
 
             <div className="p-4 rounded-2xl bg-surface-container-high border border-border-subtle flex items-center justify-between text-xs font-mono">
               <div className="flex items-center gap-2 text-on-surface">
-                <Mail className="w-4 h-4 text-primary-lime" />
+                <Mail className="w-4 h-4 text-primary-ink" />
                 <span>Contact for Terms & Compliance:</span>
               </div>
               <a
                 href={`mailto:${PRIVACY_CONTACT_EMAIL}`}
-                className="text-primary-lime underline hover:text-primary-lime-dim"
+                className="text-primary-ink underline hover:text-primary-ink-dim"
               >
                 {PRIVACY_CONTACT_EMAIL}
               </a>
@@ -99,7 +99,7 @@ export default function TermsPage() {
 
         {/* Arabic Section */}
         <section className="space-y-6 text-sm leading-relaxed pt-8 border-t border-border-subtle" dir="rtl">
-          <div className="flex items-center gap-2 text-primary-lime font-bold font-mono uppercase text-xs tracking-wider">
+          <div className="flex items-center gap-2 text-primary-ink font-bold font-mono uppercase text-xs tracking-wider">
             <span>العربية (النسخة المعتمدة)</span>
           </div>
 
@@ -110,7 +110,7 @@ export default function TermsPage() {
 
             <ul className="space-y-3 text-on-surface-variant list-none pr-0">
               <li className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-subtle">
-                <CheckCircle2 className="w-5 h-5 text-primary-lime shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-on-surface">١. أمان الحساب والبيانات:</strong>{" "}
                   {AUTH_MODE === "email"
@@ -122,7 +122,7 @@ export default function TermsPage() {
               </li>
 
               <li className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-subtle">
-                <CheckCircle2 className="w-5 h-5 text-primary-lime shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-on-surface">٢. الاستخدام الشخصي العادل:</strong> صُمم لايف لمتابعة أهدافك الشخصية وعاداتك الرياضية والذهنية. يُمنع منعاً باتاً استخراج البيانات بطرق آلية غير مصرح بها أو استهداف واجهات البرمجة بما يتجاوز حدود الاستخدام العادل.
                 </div>
@@ -136,7 +136,7 @@ export default function TermsPage() {
               </li>
 
               <li className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-border-subtle">
-                <CheckCircle2 className="w-5 h-5 text-primary-lime shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-on-surface">٤. التقديرات الذكية للتغذية:</strong> تقر بأن تحليلات الوجبات عبر الذكاء الاصطناعي (Google Gemini) هي تقديرات تقريبية لتسهيل التسجيل، وينبغي عليك مراجعتها قبل اعتمادها.
                 </div>
@@ -145,12 +145,12 @@ export default function TermsPage() {
 
             <div className="p-4 rounded-2xl bg-surface-container-high border border-border-subtle flex items-center justify-between text-xs font-mono">
               <div className="flex items-center gap-2 text-on-surface">
-                <Mail className="w-4 h-4 text-primary-lime" />
+                <Mail className="w-4 h-4 text-primary-ink" />
                 <span>البريد المعتمد للشروط والأحكام:</span>
               </div>
               <a
                 href={`mailto:${PRIVACY_CONTACT_EMAIL}`}
-                className="text-primary-lime underline hover:text-primary-lime-dim"
+                className="text-primary-ink underline hover:text-primary-ink-dim"
                 dir="ltr"
               >
                 {PRIVACY_CONTACT_EMAIL}

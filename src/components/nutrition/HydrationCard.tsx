@@ -144,7 +144,7 @@ export function HydrationCard({
     <div className="stitch-card p-6 space-y-4">
       {/* Undo Toast */}
       {deletedEntry && (
-        <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-lime/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
+        <div className="p-3 rounded-2xl bg-surface-container-high border border-primary-ink/40 flex items-center justify-between text-xs font-mono text-on-surface animate-fade-in">
           <span>
             {locale === "ar"
               ? `اتمسح ${deletedEntry.amount} ${deletedEntry.type === "water" ? "مل ميه" : "مجم كافيين"}`
@@ -152,7 +152,7 @@ export function HydrationCard({
           </span>
           <button
             onClick={handleUndo}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <Undo2 className="w-3.5 h-3.5" />
             <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
@@ -338,7 +338,7 @@ export function HydrationCard({
           <button
             onClick={handleCustomSubmit}
             disabled={!customAmount || logging}
-            className="px-4 py-2 rounded-xl bg-primary-lime text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-primary-ink text-on-primary font-bold hover:brightness-110 active:scale-95 transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
           >
             {locale === "ar" ? "إضافة" : "Add"}
           </button>

@@ -174,7 +174,7 @@ export function ConfirmFoodModal({
     switch (c) {
       case "high":
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-primary-lime/10 text-primary-lime border border-primary-lime/30">
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-primary-ink/10 text-primary-ink border border-primary-ink/30">
             {locale === "ar" ? "دقة عالية" : "High Confidence"}
           </span>
         );
@@ -269,7 +269,7 @@ export function ConfirmFoodModal({
           <button
             onClick={handleParse}
             disabled={parsing || !query.trim()}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-primary-lime text-on-primary shadow-xs hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-primary-ink text-on-primary shadow-xs hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
           >
             {parsing ? (
               <>
@@ -396,7 +396,7 @@ export function ConfirmFoodModal({
                 <span className="font-bold text-on-surface">
                   {totalMealCals} {locale === "ar" ? "سعرة" : "kcal"}
                 </span>
-                <span className="text-primary-lime font-semibold">
+                <span className="text-primary-ink font-semibold">
                   {totalMealProt}{locale === "ar" ? "جم بروتين" : "g Prot"}
                 </span>
                 <span className="text-secondary-cyan">
