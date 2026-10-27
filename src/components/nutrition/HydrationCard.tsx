@@ -178,7 +178,7 @@ export function HydrationCard({
             onClick={() => setActiveTab("caffeine")}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
               activeTab === "caffeine"
-                ? "bg-rank-gold text-on-primary font-bold shadow-sm"
+                ? "bg-rank-gold text-primary-ink font-bold shadow-sm"
                 : "text-text-muted hover:text-on-surface"
             }`}
           >

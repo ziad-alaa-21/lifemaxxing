@@ -170,7 +170,7 @@ function BodyViewContent() {
             onClick={() => switchTab("standards")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === "standards"
-                ? "bg-rank-gold text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                ? "bg-rank-gold text-primary-ink shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-primary-ink"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >

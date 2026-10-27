@@ -631,7 +631,7 @@ export function SavedMealsDrawer({
                   onClick={() => setActiveFilter("favorites")}
                   className={`flex items-center gap-1 px-3 py-1 rounded-lg transition-all cursor-pointer ${
                     activeFilter === "favorites"
-                      ? "bg-rank-gold text-on-primary font-bold"
+                      ? "bg-rank-gold text-primary-ink font-bold"
                       : "text-text-muted hover:text-on-surface"
                   }`}
                 >

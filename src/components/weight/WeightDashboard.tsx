@@ -564,7 +564,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
                   {locale === "ar" ? "الهدف المحدد" : "Goal Target"}
                 </span>
-                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-surface-container-high text-secondary-cyan">
+                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#E6EEFF] text-[#1E3A9E]">
                   {goalType === "cut"
                     ? (locale === "ar" ? "تنشيف" : "cut")
                     : goalType === "bulk"
