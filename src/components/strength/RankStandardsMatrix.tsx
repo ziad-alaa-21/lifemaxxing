@@ -33,6 +33,7 @@ import {
   calculateOverallRank,
   TierName,
 } from "@/lib/strength";
+import { BarbellSvg } from "@/components/illustrations/BarbellSvg";
 
 import { useI18n } from "@/lib/i18n/I18nContext";
 
@@ -384,6 +385,11 @@ export function RankStandardsMatrix() {
                     ({locale === "ar" ? "متوسط" : "Avg."} {overallRank.averageRatio.toFixed(2)}x {locale === "ar" ? "من وزن الجسم" : "BW"})
                   </span>
                 </div>
+                <BarbellSvg
+                  decorative={true}
+                  tier={overallRank.overallTier}
+                  className="w-28 h-6 mt-1.5"
+                />
               </div>
             </div>
 

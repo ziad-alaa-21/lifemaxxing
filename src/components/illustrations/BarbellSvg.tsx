@@ -8,6 +8,15 @@ export interface BarbellSvgProps {
    */
   weightKg?: number | string | null;
   /**
+   * Equipment string from exercises catalog (e.g. "barbell", "dumbbell", "machine").
+   * Required for set-row display: only renders when equipment === "barbell".
+   */
+  equipment?: string | null;
+  /**
+   * Weight unit (must be "kg"). Defaults to "kg".
+   */
+  unit?: string | null;
+  /**
    * When true, renders a decorative non-numeric barbell scaled by strength tier.
    * Used on the Body overall rank card.
    */
@@ -40,7 +49,9 @@ const PLATES: readonly PlateSpec[] = [
 
 /**
  * Decomposes real weight into Olympic plates per sleeve (greedy decomposition).
- * Olympic bar is 20 kg. If weight < 20 kg, returns empty array (empty bar).
+ * Olympic bar is 20 kg. If weight < 20 kg, or weight cannot be symmetrically
+ * loaded with available standard plates (multiples of 2.5 kg total),
+ * returns empty array (draws empty bar, no plates, no misleading indicator).
  */
 export function decomposeWeightToPlates(totalKg: number | string | null | undefined): PlateSpec[] {
   if (totalKg === null || totalKg === undefined || totalKg === "") return [];
@@ -48,7 +59,15 @@ export function decomposeWeightToPlates(totalKg: number | string | null | undefi
   if (!Number.isFinite(num) || num < 20) return [];
 
   const barKg = 20;
-  let perSide = Math.round(((num - barKg) / 2) * 100) / 100;
+  const loadKg = num - barKg;
+  // Standard plate pairs minimum increment is 2 * 1.25 kg = 2.5 kg.
+  // Check if load can be symmetrically made with plates:
+  const remainder = Math.abs(loadKg % 2.5);
+  if (remainder > 0.001 && Math.abs(remainder - 2.5) > 0.001) {
+    return [];
+  }
+
+  let perSide = Math.round((loadKg / 2) * 100) / 100;
   const result: PlateSpec[] = [];
 
   for (const plate of PLATES) {
@@ -57,6 +76,12 @@ export function decomposeWeightToPlates(totalKg: number | string | null | undefi
       perSide = Math.round((perSide - plate.kg) * 100) / 100;
     }
   }
+
+  // If there's any unplaced remainder, weight cannot be made with plates
+  if (perSide > 0.001) {
+    return [];
+  }
+
   return result;
 }
 
@@ -94,11 +119,21 @@ export function decorativeTierPlates(tier: string | null | undefined): PlateSpec
 
 export function BarbellSvg({
   weightKg,
+  equipment,
+  unit = "kg",
   decorative = false,
   tier,
   className = "w-full max-w-[260px] h-12",
   "aria-hidden": ariaHidden = true,
 }: BarbellSvgProps) {
+  // If not decorative, strictly gate to barbell exercises and kg units
+  if (!decorative) {
+    if (!equipment) return null;
+    const eq = equipment.trim().toLowerCase();
+    if (eq !== "barbell") return null;
+    if (unit && unit.trim().toLowerCase() !== "kg") return null;
+  }
+
   const plates = decorative
     ? decorativeTierPlates(tier)
     : decomposeWeightToPlates(weightKg);

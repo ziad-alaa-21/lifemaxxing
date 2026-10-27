@@ -30,6 +30,7 @@ import {
   TierName,
 } from "@/lib/strength";
 import { RestTimer } from "./RestTimer";
+import { BarbellSvg } from "@/components/illustrations/BarbellSvg";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
 import { useI18n } from "@/lib/i18n/I18nContext";
 
@@ -909,6 +910,12 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                               }
                               placeholder="0"
                               className="w-24 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-ink focus:outline-none"
+                            />
+                            <BarbellSvg
+                              weightKg={s.weightKg}
+                              equipment={item.exercise.equipment}
+                              unit="kg"
+                              className="w-20 h-4 mt-1"
                             />
                           </td>
 
