@@ -23,9 +23,9 @@
 
   --color-primary-ink: #14161a;
   --color-primary-ink-dim: #2a313d;
-  /* Aliases for untouched strings in src/lib */
-  --color-primary-lime: #14161a;
-  --color-primary-lime-dim: #2a313d;
+  /* Success aliases for untouched strings in src/lib (sleep score >=85, on-track weight deltas) */
+  --color-primary-lime: #166534;
+  --color-primary-lime-dim: #14532d;
   --color-secondary-cyan: #2563eb;
   --color-tertiary-purple: #7c3aed;
   --color-amber-core: #db2777;
@@ -115,22 +115,36 @@ body {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .liquid-glass-bar,
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .liquid-glass-bar,
   header[class*="backdrop-blur"],
   aside[class*="backdrop-blur"] {
     background-color: var(--color-surface-container-lowest) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
   .liquid-glass-bar,
-  header[class*="backdrop-blur"],
-  aside[class*="backdrop-blur"] {
-    background-color: var(--color-surface-container-lowest) !important;
+  [class*="backdrop-blur"] {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
+  .liquid-glass-bar,
+  header[class*="backdrop-blur"],
+  aside[class*="backdrop-blur"] {
+    background-color: var(--color-surface-container-lowest) !important;
+  }
+}
+
+html[data-reduce-blur="true"] .liquid-glass-bar,
+html[data-reduce-blur="true"] [class*="backdrop-blur"],
+html.no-blur .liquid-glass-bar,
+html.no-blur [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 html[data-reduce-blur="true"] .liquid-glass-bar,
@@ -140,8 +154,6 @@ html.no-blur .liquid-glass-bar,
 html.no-blur header[class*="backdrop-blur"],
 html.no-blur aside[class*="backdrop-blur"] {
   background-color: var(--color-surface-container-lowest) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
 }
 
 .scrollbar-none::-webkit-scrollbar,
