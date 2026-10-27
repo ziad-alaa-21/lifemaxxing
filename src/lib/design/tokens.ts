@@ -127,6 +127,18 @@ export const DESIGN_TOKENS = {
     level1: "bg-white border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.08)]",
     level2: "bg-white border border-[#E3E5F0] shadow-[0_12px_32px_rgba(40,50,120,0.12)]",
   },
+  plates: {
+    plate25: "var(--color-plate-25, #dc2626)",
+    plate20: "var(--color-plate-20, #2563eb)",
+    plate15: "var(--color-plate-15, #eab308)",
+    plate10: "var(--color-plate-10, #16a34a)",
+    plate5: "var(--color-plate-5, #ffffff)",
+    plate2_5: "var(--color-plate-2-5, #1e293b)",
+    plate1_25: "var(--color-plate-1-25, #94a3b8)",
+    collar: "var(--color-plate-collar, #475569)",
+    sleeve: "var(--color-plate-sleeve, #cbd5e1)",
+    shaft: "var(--color-plate-shaft, #64748b)",
+  },
   typography: {
     headlineXl: "text-[28px] leading-[36px] sm:text-[40px] sm:leading-[48px] font-medium tracking-normal",
     headlineLg: "text-[28px] leading-[36px] font-medium tracking-normal",

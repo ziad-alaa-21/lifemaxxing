@@ -45,6 +45,18 @@
   --color-rank-olympian: #5b21b6;
   --color-rank-mr-olympia: #9d174d;
 
+  /* Olympic Barbell Plate Tokens */
+  --color-plate-25: #dc2626;
+  --color-plate-20: #2563eb;
+  --color-plate-15: #eab308;
+  --color-plate-10: #16a34a;
+  --color-plate-5: #ffffff;
+  --color-plate-2-5: #1e293b;
+  --color-plate-1-25: #94a3b8;
+  --color-plate-collar: #475569;
+  --color-plate-sleeve: #cbd5e1;
+  --color-plate-shaft: #64748b;
+
   --font-sans: var(--font-active-plex), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-active-plex), system-ui, -apple-system, sans-serif;
 }

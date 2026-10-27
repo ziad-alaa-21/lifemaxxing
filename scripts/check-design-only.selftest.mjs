@@ -87,6 +87,33 @@ const cases = [
     mutate: (s) => s.replace(/useState(<[^>]*>)?\(/, (m) => `${m}/*x*/ undefined ?? `),
     expect: 1,
   },
+  {
+    name: "BarbellSvg illustration import and element with named props passes",
+    file: "src/components/strength/ActiveWorkoutSession.tsx",
+    mutate: (s) =>
+      'import { BarbellSvg } from "@/components/illustrations/BarbellSvg";\n' +
+      s.replace(
+        '<div className="stitch-card p-6 space-y-4">',
+        '<div className="stitch-card p-6 space-y-4">\n        <BarbellSvg decorative tier="Gold" />'
+      ),
+    expect: 0,
+  },
+  {
+    name: "adding any other non-illustration import fails",
+    file: "src/components/strength/ActiveWorkoutSession.tsx",
+    mutate: (s) => 'import { OtherHelper } from "@/lib/other";\n' + s,
+    expect: 1,
+  },
+  {
+    name: "adding any other non-illustration JSX component fails",
+    file: "src/components/strength/ActiveWorkoutSession.tsx",
+    mutate: (s) =>
+      s.replace(
+        '<div className="stitch-card p-6 space-y-4">',
+        '<div className="stitch-card p-6 space-y-4">\n        <OtherComponent id="forbidden" />'
+      ),
+    expect: 1,
+  },
 ];
 
 function run() {

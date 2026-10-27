@@ -87,6 +87,7 @@ const STYLING_LIB_ALLOWLIST = [
 const LOGIC_ALLOWLIST = [
   "src/lib/design/**",
   "src/components/ui/**", // shared primitives: Button, Badge, Tab, Card...
+  "src/components/illustrations/**", // dedicated folder for pure SVG illustration components
   "src/app/dev/**", // development-only design-system preview
 ];
 
@@ -256,6 +257,14 @@ function logicFingerprint(sf, { isRootLayout = false } = {}) {
         return;
       }
     }
+    if (
+      ts.isImportDeclaration(n) &&
+      ts.isStringLiteral(n.moduleSpecifier) &&
+      n.moduleSpecifier.text === "@/components/illustrations/BarbellSvg"
+    ) {
+      ranges.push({ start: n.getStart(sf), end: n.getEnd(), with: " " });
+      return;
+    }
     if (isJsxRoot(n)) {
       ranges.push({ start: n.getStart(sf), end: n.getEnd(), with: " __JSX__ " });
       return;
@@ -306,6 +315,9 @@ function contractFingerprint(sf) {
     if (ts.isJsxElement(n) || ts.isJsxSelfClosingElement(n)) {
       const opening = ts.isJsxElement(n) ? n.openingElement : n;
       const tag = tagNameOf(n);
+      if (tag === "BarbellSvg") {
+        return;
+      }
       const sig = [];
       let interactive = NATIVE_FOCUSABLE.has(tag) || COMPONENT_FOCUSABLE.test(tag.split(".").pop());
       for (const prop of opening.attributes.properties) {
