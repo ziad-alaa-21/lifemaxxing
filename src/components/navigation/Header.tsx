@@ -72,7 +72,7 @@ export function Header({ onOpenQuickAction }: HeaderProps) {
             className="flex items-center gap-2 px-[18px] py-[10px] rounded-[12px] bg-[#14161A] text-white text-[14px] leading-[20px] font-medium hover:bg-[#2A313D] shadow-[0_4px_12px_rgba(20,22,26,0.15)] transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2] text-white stroke-current" />
-            <span className="hidden sm:inline">{dict.nav.fastAction}</span>
+            <span className="hidden sm:inline">{locale === "ar" ? "إضافة سريعة" : "Quick add"}</span>
           </button>
         </div>
       </div>

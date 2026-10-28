@@ -61,7 +61,7 @@ export function Sidebar({ userEmail, userId }: SidebarProps) {
               LIFE
             </span>
             <div className="text-[12px] leading-[16px] text-[#5B6270]">
-              {dict.nav.brandTag}
+              {dict.nav.brandTag.includes("Telemetry") ? "Life Tracker" : dict.nav.brandTag.includes("القياسات") ? "متابعة الأداء" : dict.nav.brandTag}
             </div>
           </div>
         </div>

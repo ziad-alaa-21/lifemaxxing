@@ -447,74 +447,103 @@ export function MindDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="stitch-card p-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-tertiary-purple/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-tertiary-purple/10 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple shadow-xs">
-              <Brain className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">
-                  {locale === "ar" ? "الذهن والتركيز" : "Mind & Focus"}
-                </h1>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
-                  {locale === "ar" ? "جلسات وأدوات" : "Daily Practice"}
-                </span>
-              </div>
-              <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
-                {locale === "ar"
-                  ? "جلسات التركيز، العادات اليومية، ومتابعة الأداء."
-                  : "Focus sessions, daily habits, reflection, and mental tools."}
-              </p>
-            </div>
-          </div>
-
+      {/* Sub-navigation Header Area (Stitch Focus Ready Screen 77a963e8d6644b318dec22862c1f2740) */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
+        <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs text-on-surface hover:border-tertiary-purple/40 transition-colors cursor-pointer"
-            >
-              <Settings2 className="w-3.5 h-3.5 text-tertiary-purple" />
-              <span>{locale === "ar" ? "الهدف والتنبيه" : "Goal & Chime"}</span>
-            </button>
+            <span className="w-2 h-2 rounded-full bg-secondary-cyan" />
+            <span className="text-xs text-text-muted">
+              {locale === "ar" ? "جاهز للتركيز" : "Focus ready"}
+            </span>
           </div>
+          <div className="flex items-center gap-2.5">
+            <Brain className="w-6 h-6 text-tertiary-purple" />
+            <h1 className="text-2xl font-bold tracking-tight text-on-surface">
+              {locale === "ar" ? "الذهن والتركيز" : "Mind"}
+            </h1>
+          </div>
+        </div>
+
+        {/* Segmented Control Bar (Stitch Tabs) */}
+        <div className="inline-flex p-1 bg-surface-container-high rounded-full self-start md:self-auto shadow-xs border border-border-subtle">
+          {[
+            { id: "focus", label: locale === "ar" ? "التركيز" : "Focus", icon: Clock },
+            { id: "discipline", label: locale === "ar" ? "العادات" : "Habits", icon: ShieldCheck },
+            { id: "checkin", label: locale === "ar" ? "تقييم اليوم" : "Check-in", icon: Heart },
+            {
+              id: (["math", "reading", "screentime", "insights"].includes(currentTab) ? currentTab : "math"),
+              tabKey: "tools",
+              label: locale === "ar" ? "الأدوات" : "Tools",
+              icon: Zap,
+              isMatch: ["math", "reading", "screentime", "insights", "tools"].includes(currentTab),
+            },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = tab.isMatch !== undefined ? tab.isMatch : currentTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setTab(tab.id)}
+                className={`px-5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-surface-container-lowest text-on-surface shadow-xs font-semibold"
+                    : "text-text-muted hover:text-on-surface"
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* URL-Based Tabs Navigation Bar: 4 Stitch Tabs (Focus, Habits, Check-in, Tools) */}
-      <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-container border border-border-subtle overflow-x-auto">
-        {[
-          { id: "focus", label: locale === "ar" ? "التركيز" : "Focus", icon: Clock },
-          { id: "discipline", label: locale === "ar" ? "العادات" : "Habits", icon: ShieldCheck },
-          { id: "checkin", label: locale === "ar" ? "تقييم اليوم" : "Check-in", icon: Heart },
-          {
-            id: (["math", "reading", "screentime", "insights"].includes(currentTab) ? currentTab : "math"),
-            tabKey: "tools",
-            label: locale === "ar" ? "الأدوات" : "Tools",
-            icon: Zap,
-            isMatch: ["math", "reading", "screentime", "insights", "tools"].includes(currentTab),
-          },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const isActive = tab.isMatch !== undefined ? tab.isMatch : currentTab === tab.id;
-          return (
+      {/* Date & Settings Sub-bar */}
+      <div className="flex items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-border-subtle shadow-xs">
+          <button
+            onClick={() => changeDateByDays(-1)}
+            className="p-1 rounded-full hover:bg-surface-container text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+            title="Previous Day"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+          <div className="flex items-center gap-1.5 font-medium text-on-surface">
+            <Calendar className="w-3.5 h-3.5 text-tertiary-purple" />
+            <span>{selectedDate || "Loading date..."}</span>
+            {isToday && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary-ink/10 text-primary-ink font-semibold">
+                {locale === "ar" ? "النهاردة" : "Today"}
+              </span>
+            )}
+          </div>
+          {!isToday && (
             <button
-              key={tab.id}
-              onClick={() => setTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                isActive
-                  ? "bg-tertiary-purple text-on-primary shadow-xs font-bold"
-                  : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-              }`}
+              onClick={() => setSelectedDate(getLocalDateString(new Date(), userProfile.timezone))}
+              className="px-2 py-0.5 rounded-full bg-surface-container text-[10px] text-on-surface hover:text-primary-ink transition-colors cursor-pointer"
             >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{tab.label}</span>
+              {locale === "ar" ? "النهاردة" : "Today"}
             </button>
-          );
-        })}
+          )}
+          <button
+            onClick={() => changeDateByDays(1)}
+            disabled={isToday}
+            className="p-1 rounded-full hover:bg-surface-container text-text-muted hover:text-on-surface transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Next Day"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-border-subtle text-xs text-text-muted hover:text-on-surface hover:border-tertiary-purple/40 shadow-xs transition-colors cursor-pointer"
+        >
+          <Settings2 className="w-3.5 h-3.5 text-tertiary-purple" />
+          <span>{locale === "ar" ? "الهدف والتنبيه" : "Goal & Chime"}</span>
+        </button>
       </div>
 
       {/* Tools Sub-Navigation (Shown when user is in Tools tab) */}
@@ -567,46 +596,6 @@ export function MindDashboard() {
         </div>
       )}
 
-      {/* Date Navigation Bar */}
-      <div className="flex items-center justify-between p-3.5 bg-surface-container rounded-2xl border border-border-subtle font-mono text-xs">
-        <button
-          onClick={() => changeDateByDays(-1)}
-          className="p-1.5 rounded-xl hover:bg-surface-container-high text-text-muted hover:text-on-surface transition-colors cursor-pointer"
-          title="Previous Day"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-
-        <div className="flex items-center gap-2 font-bold text-on-surface">
-          <Calendar className="w-4 h-4 text-tertiary-purple" />
-          <span>{selectedDate || "Loading date..."}</span>
-          {isToday && (
-            <span className="px-2 py-0.5 rounded-md text-[10px] bg-primary-ink/15 text-primary-ink border border-primary-ink/30">
-              Today
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1">
-          {!isToday && (
-            <button
-              onClick={() => setSelectedDate(getLocalDateString(new Date(), userProfile.timezone))}
-              className="px-2.5 py-1 rounded-xl bg-surface-container-high text-[11px] text-on-surface hover:text-primary-ink transition-colors cursor-pointer"
-            >
-              Today
-            </button>
-          )}
-          <button
-            onClick={() => changeDateByDays(1)}
-            disabled={isToday}
-            className="p-1.5 rounded-xl hover:bg-surface-container-high text-text-muted hover:text-on-surface transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Next Day"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
       {/* ======================================================================
           TAB CONTENT
           ====================================================================== */}
@@ -636,39 +625,21 @@ export function MindDashboard() {
 
             {/* Right Column (4 cols): Goal Pace, Logged Intervals & Mind Score */}
             <div className="lg:col-span-4 space-y-5">
-              {/* Today's Focus Goal Progress */}
-              <div className="stitch-card p-5 space-y-4 font-mono">
+              {/* Today Summary Card (Stitch Today Card) */}
+              <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                    {locale === "ar" ? "هدف التركيز النهاردة" : "Focus Goal & Clarity"}
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary-ink/15 text-primary-ink border border-primary-ink/30">
-                    {scoreData.goalProgressPercent}% {locale === "ar" ? "من الهدف" : "of Goal"}
+                  <h2 className="text-sm font-semibold text-on-surface">
+                    {locale === "ar" ? "النهاردة" : "Today"}
+                  </h2>
+                  <span className="text-xs font-medium text-on-surface">
+                    {Math.floor(scoreData.totalActualMinutes / 60)}h {scoreData.totalActualMinutes % 60}m of {Math.floor((userProfile.dailyFocusGoalMinutes || 60) / 60)}h {(userProfile.dailyFocusGoalMinutes || 60) % 60}m
                   </span>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="text-3xl font-extrabold text-on-surface">
-                    {Math.floor(scoreData.totalActualMinutes / 60)}h {scoreData.totalActualMinutes % 60}m
-                    <span className="text-xs text-text-muted font-normal ml-2">
-                      / {Math.floor((userProfile.dailyFocusGoalMinutes || 60) / 60)}h {(userProfile.dailyFocusGoalMinutes || 60) % 60}m
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-on-surface-variant">
-                    {userProfile.dailyFocusGoalMinutes
-                      ? locale === "ar"
-                        ? `الهدف اليومي: ${userProfile.dailyFocusGoalMinutes} دقيقة`
-                        : `Daily deep work target: ${userProfile.dailyFocusGoalMinutes}m`
-                      : locale === "ar"
-                      ? "مفيش هدف يومي محدد"
-                      : "Daily deep work target"}
-                  </p>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                {/* Flat clean Progress Track matching Stitch */}
+                <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
                   <div
-                    className="h-full bg-primary-ink rounded-full transition-all duration-700"
+                    className="h-full bg-secondary-cyan rounded-full transition-all duration-700"
                     style={{ width: `${Math.min(100, scoreData.goalProgressPercent || 0)}%` }}
                   />
                 </div>
@@ -703,26 +674,35 @@ export function MindDashboard() {
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Logged Intervals */}
-              <div className="stitch-card p-5 space-y-3 font-mono">
-                <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-tertiary-purple" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-on-surface">
-                      {locale === "ar" ? "جلسات النهاردة" : "Logged Intervals"}
-                    </h3>
+                {/* Logged Intervals (Stitch style list) */}
+                <div className="flex flex-col pt-2 border-t border-border-subtle">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-medium text-text-muted uppercase tracking-wider">
+                      {locale === "ar" ? "جلسات مسجلة" : "Logged intervals"}
+                    </span>
+                    <span className="text-[11px] text-text-muted">
+                      {sessions.length} {locale === "ar" ? "جلسة" : "sessions"}
+                    </span>
                   </div>
-                  <span className="text-[11px] text-text-muted font-bold">
-                    {sessions.length} {locale === "ar" ? "جلسة" : "sessions"}
-                  </span>
+                  <FocusHistoryList
+                    sessions={sessions}
+                    onSessionsUpdated={fetchSessions}
+                    userTimezone={userProfile.timezone}
+                  />
                 </div>
-                <FocusHistoryList
-                  sessions={sessions}
-                  onSessionsUpdated={fetchSessions}
-                  userTimezone={userProfile.timezone}
-                />
+
+                {/* Contextual Mind Clarity Note */}
+                <div className="p-3.5 rounded-xl bg-surface-container-low flex flex-col gap-1">
+                  <span className="text-xs font-medium text-on-surface">
+                    {locale === "ar" ? "صفاء الذهن" : "Mind clarity"}
+                  </span>
+                  <p className="text-[11px] text-text-muted leading-relaxed">
+                    {locale === "ar"
+                      ? "إكمال جلسات التركيز الصباحية بيساعد على استيعاب المعلومات المعقدة بأعلى دقة."
+                      : "Consistently completing 50-minute sprints before midday raises average recall accuracy on physics problems."}
+                  </p>
+                </div>
               </div>
 
               {/* Mind Score Dial */}
