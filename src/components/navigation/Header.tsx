@@ -43,7 +43,11 @@ export function Header({ onOpenQuickAction }: HeaderProps) {
             {meta.title}
           </h1>
           <p className="text-[12px] leading-[16px] text-[#5B6270] hidden sm:block">
-            {meta.subtitle}
+            {pathname.startsWith("/mind")
+              ? (locale === "ar" ? "جلسات التركيز والعادات والأدوات" : "Focus sessions, habits and tools")
+              : pathname.startsWith("/body")
+              ? (locale === "ar" ? "التمارين، التغذية، النوم والمكتبة" : "Workouts, nutrition, sleep and library")
+              : meta.subtitle}
           </p>
         </div>
 

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary": "#ffffff", "surface-container-low": "#f0f3ff", "inverse-surface": "#2a313d", "inverse-on-surface": "#ecf1ff", "secondary": "#0051d5", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#003ea8", "surface-container-high": "#e2e8f9", "primary-fixed": "#e2e2e8", "tertiary-fixed": "#eaddff", "error": "#ba1a1a", "surface-container-lowest": "#ffffff", "surface-dim": "#d3daeb", "on-secondary-container": "#fefcff", "surface-bright": "#f9f9ff", "tertiary-container": "#25005a", "secondary-fixed-dim": "#b4c5ff", "on-primary-fixed-variant": "#45474b", "surface-tint": "#5d5e63", "error-container": "#ffdad6", "on-primary-fixed": "#1a1c20", "on-tertiary": "#ffffff", "on-primary": "#ffffff", "on-background": "#151c28", "on-error": "#ffffff", "on-surface": "#151c28", "surface-variant": "#dce2f3", "on-surface-variant": "#45474b", "on-primary-container": "#828489", "inverse-primary": "#c6c6cc", "on-tertiary-fixed": "#25005a", "on-tertiary-container": "#9863ff", "secondary-fixed": "#dbe1ff", "surface-container": "#e7eeff", "secondary-container": "#316bf3", "surface-container-highest": "#dce2f3", "tertiary-fixed-dim": "#d2bbff", "on-tertiary-fixed-variant": "#5a00c6", "surface": "#f9f9ff", "tertiary": "#000000", "background": "#f9f9ff", "primary-container": "#1a1c20", "on-secondary-fixed": "#00174b", "primary": "#000000", "outline-variant": "#c6c6cb", "primary-fixed-dim": "#c6c6cc", "outline": "#76777b" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "margin": "2rem", "space-md": "1rem", "space-xl": "1.5rem", "gutter-mobile": "1rem", "space-xs": "0.25rem", "margin-mobile": "1rem", "space-lg": "1.25rem", "gutter": "1.5rem" }, "fontFamily": { "body-lg": ["IBM Plex Sans"], "label-sm": ["IBM Plex Sans"], "headline-xl": ["IBM Plex Sans"], "headline-xl-mobile": ["IBM Plex Sans"], "label-md": ["IBM Plex Sans"], "headline-md": ["IBM Plex Sans"], "headline-lg": ["IBM Plex Sans"], "caption": ["IBM Plex Sans"], "headline-sm": ["IBM Plex Sans"], "body-md": ["IBM Plex Sans"] }, "fontSize": { "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "headline-xl": ["40px", { "lineHeight": "48px", "fontWeight": "500" }], "headline-xl-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "500" }], "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "500" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "500" }], "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;font-family:'IBM Plex Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-mobile flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="font-headline-md text-headline-md tracking-tight text-on-surface font-medium">Life</span><span class="font-caption text-caption text-on-surface-variant font-normal">/ Today</span></div><div class="flex items-center gap-space-xs"><a class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded-full transition-colors" data-path="notifications" href="#"><span class="material-symbols-outlined text-[22px]">notifications</span></a><a class="w-11 h-11 flex items-center justify-center" data-path="settings" href="#"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></a></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 px-gutter-mobile bg-surface"><div class="flex flex-col w-full space-y-space-lg pb-space-lg">
+<!-- 1. Header -->
+<header class="flex flex-col space-y-space-xs pt-space-xs">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Good morning, Ziad</span>
+<h1 class="font-headline-xl-mobile text-headline-xl-mobile text-on-surface tracking-tight font-medium leading-snug">
+      You slept 7.5 hours. Today is push day: bench and overhead press.
+    </h1>
+<div class="flex items-center gap-space-md pt-space-xs">
+<button class="font-label-md text-label-md text-secondary hover:text-on-secondary-fixed-variant transition-colors cursor-pointer bg-transparent p-0 m-0 text-left" type="button">
+        Why this?
+      </button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer bg-transparent p-0 m-0 text-left" type="button">
+        Customize
+      </button>
+</div>
+</header>
+<!-- 2. Today's Progress -->
+<section class="bg-surface-container-lowest rounded-[20px] p-[20px] shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col space-y-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Today's progress</h2>
+<div class="flex flex-col space-y-space-md">
+<!-- Body -->
+<div class="flex flex-col space-y-1.5 cursor-pointer group">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md font-medium text-on-surface">Body</span>
+<span class="font-caption text-caption text-on-surface-variant">2 of 3 done</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full rounded-full bg-gradient-to-r from-[#2563EB] to-[#4338CA] w-[66.6%]"></div>
+</div>
+</div>
+<!-- Mind -->
+<div class="flex flex-col space-y-1.5 cursor-pointer group">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md font-medium text-on-surface">Mind</span>
+<span class="font-caption text-caption text-on-surface-variant">1 of 2 done</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A21CAF] w-[50%]"></div>
+</div>
+</div>
+<!-- School -->
+<div class="flex flex-col space-y-1.5 cursor-pointer group">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md font-medium text-on-surface">School</span>
+<span class="font-caption text-caption text-on-surface-variant">0 of 1 done</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full rounded-full bg-gradient-to-r from-[#DB2777] to-[#C2410C] w-[6%]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Next Up -->
+<section class="bg-surface-container-lowest rounded-[20px] p-[20px] shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col space-y-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Next up</h2>
+<div class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<span class="font-body-md text-body-md text-on-surface">Physics exam in 3 days, Tue 10:30</span>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<span class="font-body-md text-body-md text-on-surface">Push day, planned for 5:30 pm</span>
+</div>
+</div>
+</section>
+<!-- 4. Today's Plan -->
+<section class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Today's plan</h2>
+<button class="font-label-md text-label-md text-secondary hover:text-on-secondary-fixed-variant transition-colors cursor-pointer bg-transparent p-0 m-0" type="button">
+        View all
+      </button>
+</div>
+<!-- Horizontal Swipeable List -->
+<div class="flex gap-space-md overflow-x-auto pb-space-xs -mx-gutter-mobile px-gutter-mobile scrollbar-none">
+<!-- Card 1: Body -->
+<article class="min-w-[260px] max-w-[260px] rounded-[20px] p-[20px] bg-gradient-to-br from-[#2563EB] to-[#4338CA] text-on-primary shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between shrink-0 relative overflow-hidden">
+<div class="flex flex-col space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption opacity-90 text-on-primary">5:30 pm</span>
+<span class="bg-surface-container-lowest/20 backdrop-blur-sm text-on-primary font-label-sm text-label-sm px-2.5 py-0.5 rounded-full">Body</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-primary font-medium pt-1">Push day</h3>
+<p class="font-caption text-caption opacity-85 text-on-primary">Bench press, overhead press, dips</p>
+</div>
+<div class="flex items-center justify-between pt-space-md mt-space-md border-t-0">
+<span class="font-label-sm text-label-sm opacity-90 text-on-primary">0 of 4 exercises</span>
+<svg class="w-7 h-5 opacity-90 text-on-primary" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" viewbox="0 0 28 20">
+<line x1="2" x2="26" y1="10" y2="10"></line>
+<line x1="6" x2="6" y1="5" y2="15"></line>
+<line x1="9" x2="9" y1="7" y2="13"></line>
+<line x1="19" x2="19" y1="7" y2="13"></line>
+<line x1="22" x2="22" y1="5" y2="15"></line>
+</svg>
+</div>
+</article>
+<!-- Card 2: School -->
+<article class="min-w-[260px] max-w-[260px] rounded-[20px] p-[20px] bg-gradient-to-br from-[#DB2777] to-[#C2410C] text-on-primary shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between shrink-0">
+<div class="flex flex-col space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption opacity-90 text-on-primary">8:00 pm</span>
+<span class="bg-surface-container-lowest/20 backdrop-blur-sm text-on-primary font-label-sm text-label-sm px-2.5 py-0.5 rounded-full">School</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-primary font-medium pt-1">Study Physics chapter 4</h3>
+<p class="font-caption text-caption opacity-85 text-on-primary">Mechanics, 45 minutes</p>
+</div>
+<div class="pt-space-md mt-space-md">
+<span class="font-label-sm text-label-sm opacity-90 text-on-primary">In 6 hours</span>
+</div>
+</article>
+<!-- Card 3: Mind -->
+<article class="min-w-[260px] max-w-[260px] rounded-[20px] p-[20px] bg-gradient-to-br from-[#7C3AED] to-[#A21CAF] text-on-primary shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between shrink-0">
+<div class="flex flex-col space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption opacity-90 text-on-primary">9:30 pm</span>
+<span class="bg-surface-container-lowest/20 backdrop-blur-sm text-on-primary font-label-sm text-label-sm px-2.5 py-0.5 rounded-full">Mind</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-primary font-medium pt-1">Read 20 pages</h3>
+<p class="font-caption text-caption opacity-85 text-on-primary">Deep Work, page 127 of 340</p>
+</div>
+<div class="pt-space-md mt-space-md">
+<span class="font-label-sm text-label-sm opacity-90 text-on-primary">Daily reflection</span>
+</div>
+</article>
+<!-- Card 4: Add plan -->
+<button class="min-w-[140px] rounded-[20px] p-[20px] bg-surface-container-lowest shadow-[0_8px_24px_rgba(40,50,120,0.04)] flex flex-col items-center justify-center space-y-space-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors shrink-0 cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[24px]">add_circle</span>
+<span class="font-label-md text-label-md font-medium">Add plan</span>
+</button>
+</div>
+</section>
+<!-- 5. Weekly Chart -->
+<section class="bg-surface-container-lowest rounded-[20px] p-[20px] shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">This week</h2>
+<!-- Range toggle -->
+<div class="flex bg-surface-container p-0.5 rounded-full text-caption font-caption">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-lowest text-on-surface font-medium shadow-sm">Week</span>
+<span class="px-2 py-0.5 rounded-full text-on-surface-variant">Month</span>
+<span class="px-2 py-0.5 rounded-full text-on-surface-variant">3 months</span>
+</div>
+</div>
+<!-- Segmented control -->
+<div class="flex bg-surface-container-low p-1 rounded-xl">
+<button class="flex-1 py-1.5 text-center font-label-sm text-label-sm rounded-lg bg-surface-container-lowest text-on-surface font-medium shadow-sm" type="button">Focus</button>
+<button class="flex-1 py-1.5 text-center font-label-sm text-label-sm rounded-lg text-on-surface-variant hover:text-on-surface transition-colors" type="button">Training</button>
+<button class="flex-1 py-1.5 text-center font-label-sm text-label-sm rounded-lg text-on-surface-variant hover:text-on-surface transition-colors" type="button">Sleep</button>
+</div>
+<!-- Metric readout -->
+<div class="flex flex-col">
+<div class="font-headline-lg text-headline-lg text-on-surface font-medium tracking-tight">14 h 20 m</div>
+<span class="font-caption text-caption text-secondary">12% more than last week</span>
+</div>
+<!-- 7 Day Bar Chart -->
+<div class="flex flex-col space-y-1 pt-space-xs">
+<div class="h-28 flex items-end justify-between px-1">
+<!-- Mon -->
+<div class="flex flex-col items-center flex-1 space-y-1.5">
+<div class="w-5 bg-surface-container-highest rounded-t-md h-[45%]"></div>
+<span class="font-caption text-caption text-on-surface-variant">M</span>
+</div>
+<!-- Tue -->
+<div class="flex flex-col items-center flex-1 space-y-1.5">
+<div class="w-5 bg-surface-container-highest rounded-t-md h-[60%]"></div>
+<span class="font-caption text-caption text-on-surface-variant">T</span>
+</div>
+<!-- Wed (Active with tooltip) -->
+<div class="flex flex-col items-center flex-1 relative">
+<div class="absolute -top-7 px-1.5 py-0.5 rounded bg-inverse-surface text-inverse-on-surface font-caption text-caption shadow-md whitespace-nowrap">
+            3 h 05 m
+          </div>
+<div class="w-5 bg-secondary rounded-t-md h-[88%]"></div>
+<span class="font-caption text-caption text-on-surface font-medium mt-1.5">W</span>
+</div>
+<!-- Thu -->
+<div class="flex flex-col items-center flex-1 space-y-1.5">
+<div class="w-5 bg-surface-container-highest rounded-t-md h-[50%]"></div>
+<span class="font-caption text-caption text-on-surface-variant">T</span>
+</div>
+<!-- Fri -->
+<div class="flex flex-col items-center flex-1 space-y-1.5">
+<div class="w-5 bg-surface-container-highest rounded-t-md h-[72%]"></div>
+<span class="font-caption text-caption text-on-surface-variant">F</span>
+</div>
+<!-- Sat -->
+<div class="flex flex-col items-center flex-1 space-y-1.5">
+<div class="w-5 bg-surface-container-highest rounded-t-md h-[30%]"></div>
+<span class="font-caption text-caption text-on-surface-variant">S</span>
+</div>
+<!-- Sun -->
+<div class="flex flex-col items-center flex-1 space-y-1.5">
+<div class="w-5 bg-surface-container-highest rounded-t-md h-[40%]"></div>
+<span class="font-caption text-caption text-on-surface-variant">S</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. Focus Today -->
+<section class="bg-surface-container-lowest rounded-[20px] p-[20px] shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Focus today</h2>
+<span class="font-caption text-caption text-on-surface-variant">Goal: 2 h</span>
+</div>
+<div class="flex flex-col space-y-space-xs">
+<div class="font-headline-lg text-headline-lg text-on-surface font-medium tracking-tight">1 h 25 m</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A21CAF] w-[70.8%]"></div>
+</div>
+</div>
+</section>
+<!-- 7. Subjects -->
+<section class="bg-surface-container-lowest rounded-[20px] p-[20px] shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col space-y-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Subjects</h2>
+<div class="flex flex-col space-y-space-sm">
+<!-- Physics -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<span class="font-label-md text-label-md font-medium text-on-surface">Physics</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Exam in 3 days</span>
+</div>
+<!-- Calculus -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<span class="font-label-md text-label-md font-medium text-on-surface">Calculus</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Average 91%</span>
+</div>
+<!-- Chemistry -->
+<div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low">
+<span class="font-label-md text-label-md font-medium text-on-surface">Chemistry</span>
+<span class="font-body-md text-body-md text-on-surface-variant">2 topics to review</span>
+</div>
+</div>
+<!-- Button -->
+<button class="w-full h-11 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors cursor-pointer" type="button">
+      + Add subject
+    </button>
+</section>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(40,50,120,0.06)]" data-active-classes="text-primary font-medium"><div class="h-16 px-space-xs flex items-center justify-around"><a aria-current="page" class="flex-1 min-w-[56px] h-11 flex flex-col items-center justify-center transition-colors text-primary font-medium" data-path="today" href="#"><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-label-sm text-caption tracking-tight mt-0.5">Today</span></a><a class="flex-1 min-w-[56px] h-11 flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="body" href="#"><span class="material-symbols-outlined text-[22px]">directions_run</span><span class="font-label-sm text-caption tracking-tight mt-0.5">Body</span></a><div class="flex-1 flex items-center justify-center"><a class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_4px_12px_rgba(20,22,26,0.25)] hover:bg-inverse-surface transition-colors active:scale-95" data-path="quick-add" href="#"><span class="material-symbols-outlined text-[24px]">add</span></a></div><a class="flex-1 min-w-[56px] h-11 flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="mind" href="#"><span class="material-symbols-outlined text-[22px]">self_improvement</span><span class="font-label-sm text-caption tracking-tight mt-0.5">Mind</span></a><a class="flex-1 min-w-[56px] h-11 flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="school" href="#"><span class="material-symbols-outlined text-[22px]">school</span><span class="font-label-sm text-caption tracking-tight mt-0.5">School</span></a></div></nav></body></html>

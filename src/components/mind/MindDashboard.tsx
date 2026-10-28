@@ -457,22 +457,22 @@ export function MindDashboard() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold font-mono text-on-surface">
-                  {dict.mind.engineTitle}
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">
+                  {locale === "ar" ? "الذهن والتركيز" : "Mind & Focus"}
                 </h1>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
-                  {locale === "ar" ? "جاهز ومكتمل" : "Stage 7c Complete"}
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
+                  {locale === "ar" ? "جلسات وأدوات" : "Daily Practice"}
                 </span>
               </div>
-              <p className="text-xs text-on-surface-variant mt-0.5 font-mono">
+              <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
                 {locale === "ar"
-                  ? "تركيز فائق، حساب ذهني، عادات والتزامات، قراءة، توازن وقت الشاشة، ومؤشر الجاهزية"
-                  : "Ultradian focus, mental math agility, habits, reading, screen balance & cognitive score"}
+                  ? "جلسات التركيز، العادات اليومية، ومتابعة الأداء."
+                  : "Focus sessions, daily habits, reflection, and mental tools."}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 font-mono">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs text-on-surface hover:border-tertiary-purple/40 transition-colors cursor-pointer"
@@ -484,24 +484,27 @@ export function MindDashboard() {
         </div>
       </div>
 
-      {/* URL-Based Tabs Navigation Bar */}
+      {/* URL-Based Tabs Navigation Bar: 4 Stitch Tabs (Focus, Habits, Check-in, Tools) */}
       <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-container border border-border-subtle overflow-x-auto">
         {[
-          { id: "focus", label: dict.mind.focusTimer, icon: Clock },
-          { id: "math", label: dict.mind.mentalMath, icon: Zap },
-          { id: "discipline", label: locale === "ar" ? "الالتزامات" : "Discipline", icon: ShieldCheck },
-          { id: "reading", label: dict.mind.reading, icon: BookOpen },
-          { id: "screentime", label: dict.mind.screenTime, icon: Smartphone },
-          { id: "checkin", label: locale === "ar" ? "تسجيل الحالة" : "Check-in", icon: Heart },
-          { id: "insights", label: locale === "ar" ? "التحليلات" : "Insights", icon: Lightbulb },
+          { id: "focus", label: locale === "ar" ? "التركيز" : "Focus", icon: Clock },
+          { id: "discipline", label: locale === "ar" ? "العادات" : "Habits", icon: ShieldCheck },
+          { id: "checkin", label: locale === "ar" ? "تقييم اليوم" : "Check-in", icon: Heart },
+          {
+            id: (["math", "reading", "screentime", "insights"].includes(currentTab) ? currentTab : "math"),
+            tabKey: "tools",
+            label: locale === "ar" ? "الأدوات" : "Tools",
+            icon: Zap,
+            isMatch: ["math", "reading", "screentime", "insights", "tools"].includes(currentTab),
+          },
         ].map((tab) => {
           const Icon = tab.icon;
-          const isActive = currentTab === tab.id;
+          const isActive = tab.isMatch !== undefined ? tab.isMatch : currentTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
                   ? "bg-tertiary-purple text-on-primary shadow-xs font-bold"
                   : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
@@ -513,6 +516,35 @@ export function MindDashboard() {
           );
         })}
       </div>
+
+      {/* Tools Sub-Navigation (Shown when user is in Tools tab) */}
+      {["math", "reading", "screentime", "insights", "tools"].includes(currentTab) && (
+        <div className="flex items-center gap-1.5 p-1 bg-surface-container-low rounded-xl border border-border-subtle overflow-x-auto text-xs">
+          {[
+            { id: "math", label: locale === "ar" ? "الحساب الذهني" : "Mental Math", icon: Zap },
+            { id: "reading", label: locale === "ar" ? "القراءة" : "Reading", icon: BookOpen },
+            { id: "screentime", label: locale === "ar" ? "وقت الشاشة" : "Screen Time", icon: Smartphone },
+            { id: "insights", label: locale === "ar" ? "تحليلات" : "Insights", icon: Lightbulb },
+          ].map((sub) => {
+            const SubIcon = sub.icon;
+            const isSubActive = currentTab === sub.id || (currentTab === "tools" && sub.id === "math");
+            return (
+              <button
+                key={sub.id}
+                onClick={() => setTab(sub.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                  isSubActive
+                    ? "bg-surface-container font-bold text-tertiary-purple shadow-xs border border-border-subtle"
+                    : "text-text-muted hover:text-on-surface"
+                }`}
+              >
+                <SubIcon className="w-3.5 h-3.5" />
+                <span>{sub.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Migration Pending Notice */}
       {schemaPending && (
@@ -579,7 +611,7 @@ export function MindDashboard() {
           TAB CONTENT
           ====================================================================== */}
 
-      {/* TAB 1: FOCUS & COMPREHENSIVE OVERVIEW */}
+      {/* TAB 1: FOCUS WORKSPACE (Stitch 12-Column Responsive Grid) */}
       {currentTab === "focus" && (
         !isModuleActive("module_focus") ? (
           <DisabledModuleFallback
@@ -588,385 +620,121 @@ export function MindDashboard() {
           />
         ) : (
         <div className="space-y-6">
-          {/* Hero 1: Composite Mind Score Dial */}
-          <MindScoreDial scoreData={compositeMindScore} />
+          {/* Main 12-Column Workspace matching Stitch */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left Column (8 cols): Hero Focus Timer */}
+            <div className="lg:col-span-8 space-y-6">
+              <UltradianTimer
+                onSessionLogged={fetchSessions}
+                userTimezone={userProfile.timezone}
+                defaultMode={userProfile.defaultFocusMode}
+                chimeEnabledDefault={userProfile.soundChimeEnabled}
+                soundVolumeDefault={userProfile.soundVolume}
+                vibrationDefault={userProfile.vibrationEnabled}
+              />
+            </div>
 
-          {/* Daily Metrics: Focus score, Deep Work, Sessions, Rating */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 font-mono">
-            {/* Focus Score */}
-            <div className="stitch-card p-4 space-y-1 relative overflow-hidden">
-              <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>{locale === "ar" ? "درجة التركيز" : "Focus Score"}</span>
-                <Sparkles className="w-3.5 h-3.5 text-tertiary-purple" />
-              </div>
-              <div className="text-2xl font-extrabold text-on-surface flex items-baseline gap-1">
-                {scoreData.score !== null ? (
-                  <>
-                    <span className="text-tertiary-purple">{scoreData.score}</span>
-                    <span className="text-xs text-text-muted font-normal">/ 100</span>
-                  </>
-                ) : (
-                  <span className="text-sm text-text-muted font-normal">
-                    {locale === "ar" ? "مفيش تقييم" : "No rating"}
+            {/* Right Column (4 cols): Goal Pace, Logged Intervals & Mind Score */}
+            <div className="lg:col-span-4 space-y-5">
+              {/* Today's Focus Goal Progress */}
+              <div className="stitch-card p-5 space-y-4 font-mono">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                    {locale === "ar" ? "هدف التركيز النهاردة" : "Focus Goal & Clarity"}
                   </span>
-                )}
-              </div>
-              <div className="text-[10px] text-on-surface-variant truncate">{scoreData.label}</div>
-            </div>
-
-            {/* Deep Work Time */}
-            <div className="stitch-card p-4 space-y-1">
-              <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>{locale === "ar" ? "العمل العميق" : "Deep Work"}</span>
-                <Clock className="w-3.5 h-3.5 text-secondary-cyan" />
-              </div>
-              <div className="text-2xl font-extrabold text-on-surface">
-                {scoreData.totalActualMinutes}
-                <span className="text-xs text-text-muted font-normal ml-1">
-                  {locale === "ar" ? "دقيقة" : "min"}
-                </span>
-              </div>
-              <div className="text-[10px] text-on-surface-variant">
-                {userProfile.dailyFocusGoalMinutes
-                  ? locale === "ar"
-                    ? `الهدف: ${userProfile.dailyFocusGoalMinutes} دقيقة (${scoreData.goalProgressPercent}%)`
-                    : `Goal: ${userProfile.dailyFocusGoalMinutes} min (${scoreData.goalProgressPercent}%)`
-                  : locale === "ar"
-                  ? "مفيش هدف يومي محدد"
-                  : "No daily goal set"}
-              </div>
-            </div>
-
-            {/* Sessions Done */}
-            <div className="stitch-card p-4 space-y-1">
-              <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>{locale === "ar" ? "الجلسات" : "Sessions"}</span>
-                <Target className="w-3.5 h-3.5 text-primary-ink" />
-              </div>
-              <div className="text-2xl font-extrabold text-on-surface">
-                {scoreData.completedCount}
-                <span className="text-xs text-text-muted font-normal ml-1">
-                  {locale === "ar" ? "مكتملة" : "done"}
-                </span>
-              </div>
-              <div className="text-[10px] text-on-surface-variant">
-                {locale === "ar" ? "فترات عمل وتركيز" : "Sprints & intervals"}
-              </div>
-            </div>
-
-            {/* Avg Rating */}
-            <div className="stitch-card p-4 space-y-1">
-              <div className="flex items-center justify-between text-text-muted text-[11px]">
-                <span>{locale === "ar" ? "تقييم الجلسات" : "Session Rating"}</span>
-                <Star className="w-3.5 h-3.5 text-amber-core" />
-              </div>
-              <div className="text-2xl font-extrabold text-on-surface">
-                {scoreData.averageRating !== null ? (
-                  <>
-                    <span className="text-amber-core">{scoreData.averageRating}</span>
-                    <span className="text-xs text-text-muted font-normal">/ 5</span>
-                  </>
-                ) : (
-                  <span className="text-sm text-text-muted font-normal">
-                    {locale === "ar" ? "مفيش" : "None"}
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary-ink/15 text-primary-ink border border-primary-ink/30">
+                    {scoreData.goalProgressPercent}% {locale === "ar" ? "من الهدف" : "of Goal"}
                   </span>
-                )}
-              </div>
-              <div className="text-[10px] text-on-surface-variant">
-                {sessions.filter((s) => s.rating).length > 0
-                  ? locale === "ar"
-                    ? `${sessions.filter((s) => s.rating).length} جلسة متقيمة`
-                    : `${sessions.filter((s) => s.rating).length} rated sessions`
-                  : locale === "ar"
-                  ? "قيم جلساتك بعد ما تخلصها"
-                  : "Rate completed focus"}
-              </div>
-            </div>
-          </div>
-
-          {/* Row 1: Math Summary & Discipline Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Math Summary Card with Sparkline */}
-            <div className="stitch-card p-5 space-y-4 font-mono">
-              <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-primary-ink/10 border border-primary-ink/30 flex items-center justify-center text-primary-ink">
-                    <Zap className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-on-surface">
-                      {locale === "ar" ? "ملخص الحساب الذهني" : "Mental Math Summary"}
-                    </h3>
-                    <p className="text-[10px] text-on-surface-variant">
-                      {locale === "ar" ? "السرعة والدقة في الحساب" : "Agility & calculation speed"}
-                    </p>
-                  </div>
                 </div>
 
-                <button
-                  onClick={() => setIsMathModalOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-primary-ink text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-ink-dim cursor-pointer transition-all"
-                >
-                  {locale === "ar" ? "تدريب دلوقتي" : "Train Now"}
-                </button>
-              </div>
-
-              {mathSessions.length === 0 ? (
-                <div className="p-4 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-1.5">
-                  <p className="text-xs text-text-muted">
-                    {locale === "ar" ? "مفيش تدريب اتسجل النهاردة." : "No training today."}
-                  </p>
-                  <p className="text-[10px] text-on-surface-variant">
-                    {locale === "ar"
-                      ? "نشّط سرعة بديهتك وتفكيرك في تحدي 60 ثانية."
-                      : "Sharpen mental processing speed in a 60-second sprint."}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
-                      <div className="text-[10px] uppercase text-text-muted">
-                        {locale === "ar" ? "الدقة" : "Accuracy"}
-                      </div>
-                      <div className="text-lg font-bold text-primary-ink">{mathAccuracy}%</div>
-                    </div>
-                    <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
-                      <div className="text-[10px] uppercase text-text-muted">
-                        {locale === "ar" ? "متوسط السرعة" : "Avg Speed"}
-                      </div>
-                      <div className="text-lg font-bold text-on-surface">
-                        {mathAvgSpeed} {locale === "ar" ? "ث / مسألة" : "s / item"}
-                      </div>
-                    </div>
+                <div className="space-y-1">
+                  <div className="text-3xl font-extrabold text-on-surface">
+                    {Math.floor(scoreData.totalActualMinutes / 60)}h {scoreData.totalActualMinutes % 60}m
+                    <span className="text-xs text-text-muted font-normal ml-2">
+                      / {Math.floor((userProfile.dailyFocusGoalMinutes || 60) / 60)}h {(userProfile.dailyFocusGoalMinutes || 60) % 60}m
+                    </span>
                   </div>
-
-                  {/* Sparkline Visual */}
-                  <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle space-y-1.5">
-                    <div className="flex items-center justify-between text-[10px] text-text-muted">
-                      <span>{locale === "ar" ? "نتائج الجلسات الأخيرة" : "Recent Session Scores"}</span>
-                      <span>
-                        {mathSessions.length} {locale === "ar" ? "جلسة" : "logged"}
-                      </span>
-                    </div>
-                    <div className="flex items-end gap-1.5 h-10 pt-1">
-                      {mathSessions
-                        .slice(0, 7)
-                        .reverse()
-                        .map((s, idx) => {
-                          const heightPct = Math.min(100, Math.max(15, (s.score / 25) * 100));
-                          return (
-                            <div
-                              key={s.id || idx}
-                              className="flex-1 bg-primary-ink/20 hover:bg-primary-ink/40 rounded-t-md transition-all relative group"
-                              style={{ height: `${heightPct}%` }}
-                              title={`Score: ${s.score} (${s.accuracy_pct}%)`}
-                            >
-                              <div className="w-full h-1 bg-primary-ink rounded-t-md" />
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Discipline Card */}
-            <DisciplineCard selectedDate={selectedDate} />
-          </div>
-
-          {/* Row 2: Reading Card & Screen Time Card */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ReadingCard selectedDate={selectedDate} onReadingUpdated={fetchSessions} />
-            <ScreenTimeCard selectedDate={selectedDate} onScreenTimeUpdated={fetchSessions} />
-          </div>
-
-          {/* Row 3: Daily State Check-in card */}
-          <div className="stitch-card p-5 space-y-3 font-mono">
-            <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
-              <div className="flex items-center gap-2">
-                <Heart className="w-4 h-4 text-amber-core" />
-                <h3 className="text-sm font-bold text-on-surface">
-                  {locale === "ar" ? "تسجيل الحالة اليومية" : "Daily State Check-ins"}
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsCheckinModalOpen(true)}
-                className="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs text-on-surface cursor-pointer transition-colors"
-              >
-                {locale === "ar" ? "تسجيل الحالة" : "Log Check-in"}
-              </button>
-            </div>
-
-            {checkins.length === 0 ? (
-              <p className="text-xs text-text-muted italic py-1">
-                {locale === "ar"
-                  ? "مفيش تسجيلات للحالة النهاردة. قيّم مزاجك وطاقتك وتركيزك الذهني."
-                  : "No check-ins today. Calibrate mood, energy, and cognitive focus."}
-              </p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                {(["morning", "midday", "evening"] as const).map((p) => {
-                  const item = checkins.find((c) => c.period === p);
-                  const pLabel =
-                    p === "morning"
+                  <p className="text-[11px] text-on-surface-variant">
+                    {userProfile.dailyFocusGoalMinutes
                       ? locale === "ar"
-                        ? "الصبح"
-                        : "morning"
-                      : p === "midday"
-                      ? locale === "ar"
-                        ? "الضهر"
-                        : "midday"
+                        ? `الهدف اليومي: ${userProfile.dailyFocusGoalMinutes} دقيقة`
+                        : `Daily deep work target: ${userProfile.dailyFocusGoalMinutes}m`
                       : locale === "ar"
-                      ? "بليل"
-                      : "evening";
-                  return (
-                    <div
-                      key={p}
-                      onClick={() => setIsCheckinModalOpen(true)}
-                      className={`p-3 rounded-2xl border text-xs cursor-pointer transition-all ${
-                        item
-                          ? "bg-surface-container-low border-border-subtle"
-                          : "bg-surface-container-low/40 border-dashed border-border-subtle text-text-muted"
-                      }`}
-                    >
-                      <div className="text-[10px] uppercase font-bold text-text-muted capitalize">
-                        {pLabel}
-                      </div>
-                      {item ? (
-                        <div className="mt-1 space-y-0.5">
-                          <div className="text-amber-core font-bold">
-                            {locale === "ar" ? "المزاج: " : "Mood: "}
-                            {RATING_LABELS[item.mood_score]}
-                          </div>
-                          <div className="text-[10px] text-on-surface-variant">
-                            {locale === "ar" ? "الطاقة: " : "Energy: "}
-                            {RATING_LABELS[item.energy_score]}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="mt-1 text-text-muted text-[11px]">
-                          {locale === "ar" ? "+ اضغط للتسجيل" : "+ Tap to log"}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                      ? "مفيش هدف يومي محدد"
+                      : "Daily deep work target"}
+                  </p>
+                </div>
 
-          {/* Row 4: Weekly Cognitive Insights Card */}
-          <WeeklyInsightCard insights={weeklyInsights} />
-
-          {/* Focus Timer */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-base font-bold font-mono text-on-surface">
-                  {locale === "ar" ? "مؤقت جلسات التركيز" : "Focus Session Timer"}
-                </h2>
-                <p className="text-xs text-on-surface-variant font-mono">
-                  {locale === "ar"
-                    ? "إيقاع التركيز الفائق، جلسات مكثفة، وتجديد النشاط"
-                    : "Ultradian rhythm, sprints, and interval renewals"}
-                </p>
-              </div>
-            </div>
-
-            <UltradianTimer
-              onSessionLogged={fetchSessions}
-              userTimezone={userProfile.timezone}
-              defaultMode={userProfile.defaultFocusMode}
-              chimeEnabledDefault={userProfile.soundChimeEnabled}
-              soundVolumeDefault={userProfile.soundVolume}
-              vibrationDefault={userProfile.vibrationEnabled}
-            />
-          </div>
-
-          {/* Focus History List */}
-          <div className="space-y-4">
-            <FocusHistoryList
-              sessions={sessions}
-              onSessionsUpdated={fetchSessions}
-              userTimezone={userProfile.timezone}
-            />
-          </div>
-        </div>
-        )
-      )}
-
-      {/* TAB 2: MENTAL MATH ARENA */}
-      {currentTab === "math" && (
-        !isModuleActive("module_math") ? (
-          <DisabledModuleFallback
-            moduleKey="module_math"
-            onEnabled={() => setTab("math")}
-          />
-        ) : (
-        <div className="space-y-6">
-          <div className="stitch-card p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-subtle">
-              <div>
-                <h2 className="text-base font-bold font-mono text-on-surface">Mental Math Arena</h2>
-                <p className="text-xs text-on-surface-variant font-mono">
-                  Sprint (60s) or Precision (20 questions) training
-                </p>
-              </div>
-              <button
-                onClick={() => setIsMathModalOpen(true)}
-                className="px-5 py-2.5 rounded-2xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider hover:bg-primary-ink-dim shadow-xs cursor-pointer transition-all"
-              >
-                Launch Trainer
-              </button>
-            </div>
-
-            {mathSessions.length === 0 ? (
-              <div className="p-8 text-center space-y-2">
-                <Zap className="w-8 h-8 text-text-muted mx-auto" />
-                <p className="text-xs font-mono text-text-muted">No math sessions recorded yet.</p>
-              </div>
-            ) : (
-              <div className="space-y-2 font-mono">
-                {mathSessions.map((s) => (
+                {/* Progress Bar */}
+                <div className="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
                   <div
-                    key={s.id}
-                    className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-on-surface capitalize">
-                        {s.mode} • {s.operation} ({s.difficulty})
-                      </div>
-                      <div className="text-[10px] text-text-muted">
-                        {new Date(s.created_at).toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
-                        {" • "}
-                        {s.duration_seconds}s total
-                      </div>
+                    className="h-full bg-primary-ink rounded-full transition-all duration-700"
+                    style={{ width: `${Math.min(100, scoreData.goalProgressPercent || 0)}%` }}
+                  />
+                </div>
+
+                {/* Metrics Row */}
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border-subtle text-center">
+                  <div className="p-2 rounded-xl bg-surface-container-low space-y-0.5">
+                    <div className="flex items-center justify-center gap-1 text-[9px] uppercase text-text-muted">
+                      <Sparkles className="w-3 h-3 text-tertiary-purple" />
+                      <span>{locale === "ar" ? "الدرجة" : "Score"}</span>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-bold text-primary-ink">
-                        {s.mode === "sprint" ? `${s.score} Correct` : `${s.accuracy_pct}% Accuracy`}
-                      </div>
-                      <div className="text-[10px] text-text-muted">
-                        {(s.avg_response_time_ms / 1000).toFixed(2)}s / item
-                      </div>
+                    <div className="text-sm font-bold text-tertiary-purple">
+                      {scoreData.score !== null ? scoreData.score : "--"}
                     </div>
                   </div>
-                ))}
+                  <div className="p-2 rounded-xl bg-surface-container-low space-y-0.5">
+                    <div className="flex items-center justify-center gap-1 text-[9px] uppercase text-text-muted">
+                      <Target className="w-3 h-3 text-primary-ink" />
+                      <span>{locale === "ar" ? "الجلسات" : "Sessions"}</span>
+                    </div>
+                    <div className="text-sm font-bold text-on-surface">
+                      {scoreData.completedCount}
+                    </div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-surface-container-low space-y-0.5">
+                    <div className="flex items-center justify-center gap-1 text-[9px] uppercase text-text-muted">
+                      <Star className="w-3 h-3 text-amber-core" />
+                      <span>{locale === "ar" ? "التقييم" : "Rating"}</span>
+                    </div>
+                    <div className="text-sm font-bold text-amber-core">
+                      {scoreData.averageRating !== null ? `${scoreData.averageRating}★` : "--"}
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
+
+              {/* Logged Intervals */}
+              <div className="stitch-card p-5 space-y-3 font-mono">
+                <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-tertiary-purple" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-on-surface">
+                      {locale === "ar" ? "جلسات النهاردة" : "Logged Intervals"}
+                    </h3>
+                  </div>
+                  <span className="text-[11px] text-text-muted font-bold">
+                    {sessions.length} {locale === "ar" ? "جلسة" : "sessions"}
+                  </span>
+                </div>
+                <FocusHistoryList
+                  sessions={sessions}
+                  onSessionsUpdated={fetchSessions}
+                  userTimezone={userProfile.timezone}
+                />
+              </div>
+
+              {/* Mind Score Dial */}
+              <MindScoreDial scoreData={compositeMindScore} />
+            </div>
           </div>
         </div>
         )
       )}
 
-      {/* TAB 3: DISCIPLINE COMMITMENTS */}
-      {currentTab === "discipline" && (
+      {/* TAB 2: HABITS & COMMITMENTS */}
+      {(currentTab === "discipline" || currentTab === "habits") && (
         !isModuleActive("module_discipline") ? (
           <DisabledModuleFallback
             moduleKey="module_discipline"
@@ -979,35 +747,7 @@ export function MindDashboard() {
         )
       )}
 
-      {/* TAB 4: READING ENGINE */}
-      {currentTab === "reading" && (
-        !isModuleActive("module_reading") ? (
-          <DisabledModuleFallback
-            moduleKey="module_reading"
-            onEnabled={() => setTab("reading")}
-          />
-        ) : (
-          <div className="space-y-6">
-            <ReadingCard selectedDate={selectedDate} onReadingUpdated={fetchSessions} />
-          </div>
-        )
-      )}
-
-      {/* TAB 5: SCREEN TIME TELEMETRY */}
-      {currentTab === "screentime" && (
-        !isModuleActive("module_screentime") ? (
-          <DisabledModuleFallback
-            moduleKey="module_screentime"
-            onEnabled={() => setTab("screentime")}
-          />
-        ) : (
-          <div className="space-y-6">
-            <ScreenTimeCard selectedDate={selectedDate} onScreenTimeUpdated={fetchSessions} />
-          </div>
-        )
-      )}
-
-      {/* TAB 6: MOOD & ENERGY CHECK-INS */}
+      {/* TAB 3: CHECK-IN & DAILY STATE */}
       {currentTab === "checkin" && (
         !isModuleActive("module_checkins") ? (
           <DisabledModuleFallback
@@ -1015,76 +755,206 @@ export function MindDashboard() {
             onEnabled={() => setTab("checkin")}
           />
         ) : (
-        <div className="space-y-6">
-          <div className="stitch-card p-6 space-y-4 font-mono">
-            <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-              <div>
-                <h2 className="text-base font-bold text-on-surface">Mood & Energy Logs</h2>
-                <p className="text-xs text-on-surface-variant">Honest calibration without clinical labels</p>
+          <div className="space-y-6">
+            <div className="stitch-card p-6 space-y-5 font-mono">
+              <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+                <div>
+                  <h2 className="text-base font-bold text-on-surface">
+                    {locale === "ar" ? "تسجيل الحالة اليومية" : "Daily State & Mood"}
+                  </h2>
+                  <p className="text-xs text-on-surface-variant">
+                    {locale === "ar"
+                      ? "قيّم مزاجك وطاقتك وتركيزك على مدار اليوم"
+                      : "Calibrate mood, energy, and mental focus without clinical labels"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsCheckinModalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-amber-core/15 border border-amber-core/40 text-amber-core font-bold text-xs uppercase cursor-pointer hover:bg-amber-core/25 transition-all"
+                >
+                  {locale === "ar" ? "تسجيل تقييم" : "Log Check-in"}
+                </button>
               </div>
-              <button
-                onClick={() => setIsCheckinModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-amber-core/15 border border-amber-core/40 text-amber-core font-bold text-xs uppercase cursor-pointer"
-              >
-                Log Entry
-              </button>
-            </div>
 
-            {checkins.length === 0 ? (
-              <p className="text-xs text-text-muted py-6 text-center">
-                No check-ins today. Tap Log Entry to record morning, midday, or evening state.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {checkins.map((c) => (
-                  <div
-                    key={c.id || c.period}
-                    className="p-4 rounded-2xl bg-surface-container-low border border-border-subtle space-y-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-amber-core uppercase">
-                        {c.period} Check-in
-                      </span>
-                      <span className="text-[10px] text-text-muted">
-                        {new Date(c.created_at || Date.now()).toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 text-xs">
-                      <div>Mood: <strong className="text-on-surface">{RATING_LABELS[c.mood_score]}</strong></div>
-                      <div>Energy: <strong className="text-on-surface">{RATING_LABELS[c.energy_score]}</strong></div>
-                      <div>Focus: <strong className="text-on-surface">{RATING_LABELS[c.focus_score]}</strong></div>
-                    </div>
-
-                    {c.context_tags && c.context_tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {c.context_tags.map((t) => (
-                          <span
-                            key={t}
-                            className="px-2 py-0.5 rounded-md text-[10px] bg-surface-container-high border border-border-subtle text-text-muted"
-                          >
-                            {t}
-                          </span>
-                        ))}
+              {checkins.length === 0 ? (
+                <div className="p-8 text-center space-y-2 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle">
+                  <Heart className="w-8 h-8 text-text-muted mx-auto" />
+                  <p className="text-xs text-text-muted">
+                    {locale === "ar"
+                      ? "مفيش تسجيلات للحالة النهاردة. قيّم مزاجك وطاقتك وتركيزك الذهني."
+                      : "No check-ins today. Tap Log Check-in to calibrate your current state."}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {(["morning", "midday", "evening"] as const).map((p) => {
+                    const item = checkins.find((c) => c.period === p);
+                    const pLabel =
+                      p === "morning"
+                        ? locale === "ar" ? "الصبح" : "Morning"
+                        : p === "midday"
+                        ? locale === "ar" ? "الضهر" : "Midday"
+                        : locale === "ar" ? "بليل" : "Evening";
+                    return (
+                      <div
+                        key={p}
+                        onClick={() => setIsCheckinModalOpen(true)}
+                        className={`p-4 rounded-2xl border text-xs cursor-pointer transition-all ${
+                          item
+                            ? "bg-surface-container-low border-border-subtle hover:border-amber-core/40"
+                            : "bg-surface-container-low/40 border-dashed border-border-subtle text-text-muted hover:bg-surface-container-low"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[10px] uppercase font-bold text-text-muted">
+                          <span>{pLabel}</span>
+                          {item && (
+                            <span className="text-text-muted">
+                              {item.created_at ? new Date(item.created_at).toLocaleTimeString([], {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                              }) : null}
+                            </span>
+                          )}
+                        </div>
+                        {item ? (
+                          <div className="mt-2 space-y-1">
+                            <div className="text-amber-core font-bold text-sm">
+                              {locale === "ar" ? "المزاج: " : "Mood: "}
+                              {RATING_LABELS[item.mood_score]}
+                            </div>
+                            <div className="text-[11px] text-on-surface-variant">
+                              {locale === "ar" ? "الطاقة: " : "Energy: "}
+                              {RATING_LABELS[item.energy_score]}
+                            </div>
+                            <div className="text-[11px] text-on-surface-variant">
+                              {locale === "ar" ? "التركيز: " : "Focus: "}
+                              {RATING_LABELS[item.focus_score]}
+                            </div>
+                            {item.context_tags && item.context_tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1 pt-1.5">
+                                {item.context_tags.map((t) => (
+                                  <span
+                                    key={t}
+                                    className="px-2 py-0.5 rounded-md text-[10px] bg-surface-container-high border border-border-subtle text-text-muted"
+                                  >
+                                    {t}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="mt-3 text-text-muted text-[11px]">
+                            {locale === "ar" ? "+ اضغط للتسجيل" : "+ Tap to log"}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
         )
       )}
 
-      {/* TAB 7: WEEKLY INSIGHTS */}
-      {currentTab === "insights" && (
+      {/* TAB 4: TOOLS (Mental Math, Reading, Screen Time, Insights) */}
+      {(["tools", "math", "reading", "screentime", "insights"].includes(currentTab)) && (
         <div className="space-y-6">
-          <WeeklyInsightCard insights={weeklyInsights} />
+          {(currentTab === "tools" || currentTab === "math") && (
+            <div className="space-y-6">
+              <div className="stitch-card p-6 space-y-4 font-mono">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-subtle">
+                  <div>
+                    <h2 className="text-base font-bold text-on-surface">
+                      {locale === "ar" ? "تدريب الحساب الذهني" : "Mental Math Arena"}
+                    </h2>
+                    <p className="text-xs text-on-surface-variant">
+                      {locale === "ar"
+                        ? "سبرنت 60 ثانية أو دقة 20 مسألة لسرعة البديهة"
+                        : "Sprint (60s) or Precision (20 questions) training"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsMathModalOpen(true)}
+                    className="px-5 py-2.5 rounded-2xl bg-primary-ink text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-ink-dim shadow-xs cursor-pointer transition-all"
+                  >
+                    {locale === "ar" ? "ابدأ التدريب" : "Launch Trainer"}
+                  </button>
+                </div>
+
+                {mathSessions.length === 0 ? (
+                  <div className="p-8 text-center space-y-2 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle">
+                    <Zap className="w-8 h-8 text-text-muted mx-auto" />
+                    <p className="text-xs text-text-muted">
+                      {locale === "ar" ? "مفيش جلسات حساب مسجلة لسه." : "No math sessions recorded yet."}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-3 pb-2">
+                      <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
+                        <div className="text-[10px] uppercase text-text-muted">
+                          {locale === "ar" ? "الدقة" : "Accuracy"}
+                        </div>
+                        <div className="text-lg font-bold text-primary-ink">{mathAccuracy}%</div>
+                      </div>
+                      <div className="p-3 bg-surface-container-low rounded-xl border border-border-subtle">
+                        <div className="text-[10px] uppercase text-text-muted">
+                          {locale === "ar" ? "متوسط السرعة" : "Avg Speed"}
+                        </div>
+                        <div className="text-lg font-bold text-on-surface">
+                          {mathAvgSpeed} {locale === "ar" ? "ث / مسألة" : "s / item"}
+                        </div>
+                      </div>
+                    </div>
+                    {mathSessions.map((s) => (
+                      <div
+                        key={s.id}
+                        className="p-3.5 rounded-2xl bg-surface-container-low border border-border-subtle flex items-center justify-between"
+                      >
+                        <div>
+                          <div className="text-xs font-bold text-on-surface capitalize">
+                            {s.mode} • {s.operation} ({s.difficulty})
+                          </div>
+                          <div className="text-[10px] text-text-muted">
+                            {new Date(s.created_at).toLocaleTimeString([], {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                            {" • "}
+                            {s.duration_seconds}s total
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-bold text-primary-ink">
+                            {s.mode === "sprint" ? `${s.score} Correct` : `${s.accuracy_pct}% Accuracy`}
+                          </div>
+                          <div className="text-[10px] text-text-muted">
+                            {(s.avg_response_time_ms / 1000).toFixed(2)}s / item
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {(currentTab === "tools" || currentTab === "reading") && (
+            <ReadingCard selectedDate={selectedDate} onReadingUpdated={fetchSessions} />
+          )}
+
+          {(currentTab === "tools" || currentTab === "screentime") && (
+            <ScreenTimeCard selectedDate={selectedDate} onScreenTimeUpdated={fetchSessions} />
+          )}
+
+          {(currentTab === "tools" || currentTab === "insights") && (
+            <WeeklyInsightCard insights={weeklyInsights} />
+          )}
         </div>
       )}
 

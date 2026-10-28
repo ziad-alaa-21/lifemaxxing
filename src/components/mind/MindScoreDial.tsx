@@ -68,20 +68,20 @@ export function MindScoreDial({ scoreData }: MindScoreDialProps) {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-on-surface">
-                {locale === "ar" ? "مؤشر الجاهزية الذهنية اليومي" : "Daily Mind Score"}
+                {locale === "ar" ? "درجة ذهنك (من تسجيلاتك)" : "Mind score (from your logs)"}
               </h2>
               <span className="px-2 py-0.5 rounded-full text-[10px] bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30 font-bold">
-                {label}
+                {hasActivity ? label : (locale === "ar" ? "مفيش جلسات لسه" : "No sessions yet")}
               </span>
             </div>
             <p className="text-xs text-on-surface-variant max-w-sm">
               {hasActivity
                 ? locale === "ar"
-                  ? "تقييم ذهني موحد بيجمع بين التركيز، العادات، الحساب الذهني، القراءة، وتوازن وقت الشاشة."
-                  : "Unified cognitive readiness synthesizing focus, habits, mental math, reading & screen balance."
+                  ? "تقييم بيجمع بين جلسات التركيز والعادات والحساب الذهني والقراءة ووقت الشاشة."
+                  : "Synthesized from your focus sessions, habits, mental math, reading, and screen time balance."
                 : locale === "ar"
-                ? "مفيش بيانات اتسجلت للنهاردة لسه. سجل جلسة تركيز أو عادات أو قراءة عشان نحسب نتيجتك."
-                : "No telemetry logged today. Log focus sessions, daily habits, or reading to compute your score."}
+                ? "مفيش جلسات لسه. سجل جلسة تركيز أو عادات أو قراءة عشان نحسب نتيجتك."
+                : "No sessions yet. Log focus sessions, daily habits, or reading to compute your score."}
             </p>
           </div>
         </div>

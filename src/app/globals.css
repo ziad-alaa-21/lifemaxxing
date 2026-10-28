@@ -245,3 +245,20 @@ html.no-blur aside[class*="backdrop-blur"] {
   border-color: #9d174d;
   color: #ffffff;
 }
+
+/* Today Screen 3-Column Desktop Layout (Matching Stitch 1440px) */
+@media (min-width: 1024px) {
+  .today-3col-grid {
+    display: grid !important;
+    grid-template-columns: 330px 1fr 310px !important;
+    align-items: start !important;
+    gap: 1.5rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav-desktop-pill {
+    display: flex !important;
+  }
+}
+

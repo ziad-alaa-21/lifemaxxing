@@ -17,7 +17,7 @@ export function WeeklyInsightCard({ insights }: WeeklyInsightCardProps) {
             <Lightbulb className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-on-surface">Weekly Cognitive Insights</h3>
+            <h3 className="text-sm font-bold text-on-surface">Weekly Insights</h3>
             <p className="text-[10px] text-on-surface-variant">7-day multi-domain synthesis</p>
           </div>
         </div>
