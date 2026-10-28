@@ -521,66 +521,101 @@ export function UltradianTimer({
         </div>
       )}
 
-      {/* Hero Timer Presentation (Stitch Tabular Timer) */}
-      <div className="flex flex-col items-center justify-center py-8 my-2 rounded-2xl bg-surface-container-low/50 relative overflow-hidden border border-border-subtle/50">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface-container-highest/20 to-transparent pointer-events-none" />
-        <div className="relative z-10 flex flex-col items-center">
-          {/* Phase indicator badge */}
-          <div className="flex items-center gap-1.5 mb-2">
-            {isBreak ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-secondary-cyan/15 text-secondary-cyan border border-secondary-cyan/30">
-                <Coffee className="w-3.5 h-3.5" />
-                <span>{locale === "ar" ? "استراحة تجديد طاقة" : "Renewal Break"}</span>
-              </span>
-            ) : phase === "paused" ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/15 text-amber-700 border border-amber-500/30">
-                <Pause className="w-3.5 h-3.5" />
-                <span>{locale === "ar" ? "متوقف مؤقتًا" : "Paused"}</span>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-purple/15 text-tertiary-purple border border-tertiary-purple/30">
-                <Flame className="w-3.5 h-3.5" />
-                <span>
-                  {locale === "ar"
-                    ? `تركيز ${
-                        taskCategory === "Coding"
-                          ? "برمجة"
-                          : taskCategory === "Study"
-                          ? "مذاكرة"
-                          : taskCategory === "Reading"
-                          ? "قراءة"
-                          : taskCategory === "Writing"
-                          ? "كتابة"
-                          : taskCategory === "Deep Work"
-                          ? "عمل عميق"
-                          : taskCategory === "Admin"
-                          ? "إداريات"
-                          : taskCategory === "Planning"
-                          ? "تخطيط"
-                          : taskCategory
-                      }`
-                    : `${taskCategory} Focus`}
-                </span>
-              </span>
-            )}
-          </div>
+      {/* Hero Timer Presentation (Stitch Circular Blue Ring Timer - Screenshot 3) */}
+      <div className="flex flex-col items-center justify-center py-6 my-2 rounded-2xl bg-surface-container-low/40 relative overflow-hidden border border-border-subtle/50">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface-container-highest/10 to-transparent pointer-events-none" />
 
-          {/* Big Tabular Countdown Numbers */}
-          <span className="text-[68px] lg:text-[88px] leading-none tracking-tight font-medium text-on-surface tabular-nums">
-            {formatSeconds(remainingSeconds)}
+        {/* Top Session Metadata Bar inside card */}
+        <div className="w-full px-5 pb-2 flex items-center justify-between text-xs">
+          <span className="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-semibold text-xs">
+            {taskCategory || "Physics"}
           </span>
-
-          <span className="text-xs text-text-muted mt-3">
-            {phase === "idle"
-              ? (locale === "ar" ? "فترة تركيز واحدة" : "Single block interval")
-              : isBreak
-              ? (locale === "ar" ? `${preset.breakMinutes} دقيقة استراحة` : `${preset.breakMinutes}m Break`)
-              : (locale === "ar" ? `${Math.round(elapsed / 60)} دقيقة من ${preset.workMinutes} دقيقة` : `${Math.round(elapsed / 60)}m of ${preset.workMinutes}m`)}
+          <span className="text-text-muted text-xs font-medium flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-text-muted" />
+            <span>{locale === "ar" ? "جلسة 1 من 3" : "Session 1 of 3"}</span>
           </span>
         </div>
 
+        {/* Circular Countdown Ring */}
+        <div className="relative z-10 flex flex-col items-center justify-center my-4">
+          <div className="relative w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center">
+            {/* SVG Progress Ring */}
+            <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 200 200">
+              {/* Background Track Circle */}
+              <circle
+                cx="100"
+                cy="100"
+                r="82"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="7"
+                className="text-surface-container-high"
+              />
+              {/* Animated Blue Progress Arc */}
+              <circle
+                cx="100"
+                cy="100"
+                r="82"
+                fill="none"
+                stroke="#2563eb"
+                strokeWidth="7"
+                strokeDasharray={2 * Math.PI * 82}
+                strokeDashoffset={
+                  2 * Math.PI * 82 * (1 - Math.max(0, Math.min(1, 1 - (remainingSeconds / (((isBreak ? preset.breakMinutes : preset.workMinutes) * 60) || 1)))))
+                }
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-linear"
+              />
+            </svg>
+
+            {/* Inner Content inside Ring */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none px-4">
+              {/* Phase / Intensity micro-badge */}
+              <div className="flex items-center gap-1 mb-1">
+                {isBreak ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-secondary-cyan">
+                    <Coffee className="w-3 h-3" />
+                    <span>{locale === "ar" ? "استراحة" : "Break"}</span>
+                  </span>
+                ) : phase === "paused" ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-600">
+                    <Pause className="w-3 h-3" />
+                    <span>{locale === "ar" ? "متوقف" : "Paused"}</span>
+                  </span>
+                ) : phase === "working" ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600">
+                    <Flame className="w-3 h-3 text-blue-600" />
+                    <span>{locale === "ar" ? "جلسة شغالة" : "Sprint active"}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-text-muted">
+                    <Sparkles className="w-3 h-3 text-secondary-cyan" />
+                    <span>{locale === "ar" ? "جاهز للتركيز" : "Focus ready"}</span>
+                  </span>
+                )}
+              </div>
+
+              {/* Big Tabular Countdown Numbers */}
+              <span className="text-4xl sm:text-5xl font-bold tracking-tight text-on-surface tabular-nums">
+                {formatSeconds(remainingSeconds)}
+              </span>
+
+              {/* Status Caption */}
+              <span className="text-xs text-text-muted mt-2 font-medium">
+                {phase === "idle"
+                  ? (locale === "ar" ? "جاهز للبدء" : "Focus ready")
+                  : isBreak
+                  ? (locale === "ar" ? `${preset.breakMinutes} دقيقة استراحة` : `${preset.breakMinutes}m break`)
+                  : (locale === "ar"
+                    ? `${Math.floor(remainingSeconds / 60)}:${(remainingSeconds % 60).toString().padStart(2, "0")} متبقي في الجلسة`
+                    : `${Math.floor(remainingSeconds / 60)}:${(remainingSeconds % 60).toString().padStart(2, "0")} remaining in block`)}
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Local Device Integrity Notice */}
-        <div className="text-[10px] text-text-muted mt-3 flex items-center gap-1.5 opacity-70">
+        <div className="text-[10px] text-text-muted flex items-center gap-1.5 opacity-70">
           <Clock className="w-3 h-3" />
           <span>
             {locale === "ar"
@@ -590,7 +625,7 @@ export function UltradianTimer({
         </div>
       </div>
 
-      {/* Config Form Fields (Stitch Subject & Intention) */}
+      {/* Config Form Fields (Stitch Subject & Intention - Shown in idle/ready phase) */}
       <div className="flex flex-col gap-3 font-mono">
         {/* Category selector row */}
         <div className="flex flex-col gap-1.5">
@@ -652,12 +687,12 @@ export function UltradianTimer({
         </div>
       </div>
 
-      {/* Action Button (Stitch prominent full-width CTA) */}
+      {/* Action Buttons (Stitch Layout: Start Focus / [Pause] [✓ Finish] / [Resume] [Reset]) */}
       <div className="pt-2 font-mono">
         {phase === "idle" && (
           <button
             onClick={handleStartWork}
-            className="w-full h-12 bg-primary-ink text-on-primary hover:brightness-110 font-semibold text-sm rounded-xl transition-all shadow-sm active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full h-12 bg-primary-ink text-on-primary hover:brightness-110 font-bold text-sm rounded-xl transition-all shadow-sm active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
           >
             <Play className="w-4 h-4 fill-current text-on-primary" />
             <span>{locale === "ar" ? "ابدأ التركيز" : "Start focus"}</span>
@@ -668,17 +703,17 @@ export function UltradianTimer({
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={handlePause}
-              className="h-12 bg-surface-container-high border border-border-subtle text-on-surface font-semibold text-sm rounded-xl hover:border-tertiary-purple active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="h-12 bg-surface-container-high border border-border-subtle text-on-surface font-semibold text-sm rounded-xl hover:border-primary-ink active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Pause className="w-4 h-4 fill-current" />
               <span>{locale === "ar" ? "إيقاف مؤقت" : "Pause"}</span>
             </button>
             <button
               onClick={handleFinishEarly}
-              className="h-12 bg-primary-ink text-on-primary font-semibold text-sm rounded-xl hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="h-12 bg-primary-ink text-on-primary font-bold text-sm rounded-xl hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>{locale === "ar" ? "إنهاء الجلسة" : "Complete"}</span>
+              <span>{locale === "ar" ? "إنهاء الجلسة" : "Finish"}</span>
             </button>
           </div>
         )}
@@ -687,7 +722,7 @@ export function UltradianTimer({
           <div className="grid grid-cols-3 gap-2">
             <button
               onClick={handleResume}
-              className="col-span-1 h-12 bg-primary-ink text-on-primary font-semibold text-sm rounded-xl hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="col-span-1 h-12 bg-primary-ink text-on-primary font-bold text-sm rounded-xl hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Play className="w-4 h-4 fill-current text-on-primary" />
               <span>{locale === "ar" ? "استئناف" : "Resume"}</span>
@@ -701,13 +736,74 @@ export function UltradianTimer({
             </button>
             <button
               onClick={handleFinishEarly}
-              className="h-12 bg-surface-container-high border border-border-subtle text-tertiary-purple font-semibold text-xs rounded-xl hover:border-tertiary-purple active:scale-[0.99] transition-all flex items-center justify-center gap-1 cursor-pointer"
+              className="h-12 bg-surface-container-high border border-border-subtle text-primary-ink font-semibold text-xs rounded-xl hover:border-primary-ink active:scale-[0.99] transition-all flex items-center justify-center gap-1 cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>{locale === "ar" ? "تسجيل الوقت" : "Log Elapsed"}</span>
             </button>
           </div>
         )}
+      </div>
+
+      {/* Target Checklist Card under Timer (Stitch Screenshot 3) */}
+      <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-on-surface">
+              {locale === "ar" ? "قائمة أهداف الجلسة" : "Target checklist"}
+            </h3>
+            <p className="text-xs text-text-muted mt-0.5">
+              {taskCategory || "Physics"} • {taskIntention || "Problem set 4 milestones"}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="w-7 h-7 rounded-lg bg-surface-container border border-border-subtle flex items-center justify-center text-on-surface hover:bg-surface-container-high cursor-pointer transition-colors"
+          >
+            <span className="text-base font-bold leading-none">+</span>
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          {/* Milestone 1: Done */}
+          <div className="flex items-center justify-between py-2 px-2.5 rounded-xl bg-surface-container-low/50 border border-border-subtle/50 text-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-4 h-4 rounded-full bg-blue-600 flex items-center justify-center text-white shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-on-surface font-medium line-through opacity-70">
+                {locale === "ar" ? "مسألة 1-3: معادلات الحث الكهرومغناطيسي" : "Question 1-3: Electromagnetic induction equations"}
+              </span>
+            </div>
+            <span className="text-[11px] text-text-muted shrink-0">25 m</span>
+          </div>
+
+          {/* Milestone 2: In Progress */}
+          <div className="flex items-center justify-between py-2 px-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-4 h-4 rounded-full border-2 border-blue-600 shrink-0" />
+              <span className="text-on-surface font-medium">
+                {locale === "ar" ? "مسألة 4: استنتاج تيار إزاحة ماكسويل" : "Question 4: Maxwell's displacement current derivation"}
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-600 border border-blue-500/30 shrink-0">
+              {locale === "ar" ? "قيد التنفيذ" : "In progress"}
+            </span>
+          </div>
+
+          {/* Milestone 3: Pending */}
+          <div className="flex items-center justify-between py-2 px-2.5 rounded-xl bg-surface-container-low/30 border border-border-subtle/40 text-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-4 h-4 rounded-full border border-border-default shrink-0" />
+              <span className="text-text-muted">
+                {locale === "ar" ? "مسألة 5: الشروط الحدية والتركيب" : "Question 5: Boundary value conditions synthesis"}
+              </span>
+            </div>
+            <span className="text-[11px] text-text-muted shrink-0">
+              {locale === "ar" ? "قيد الانتظار" : "Pending"}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Post-Session Reflection Modal */}

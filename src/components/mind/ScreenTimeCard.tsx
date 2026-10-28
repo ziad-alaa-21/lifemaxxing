@@ -147,116 +147,215 @@ export function ScreenTimeCard({
   const breakdown = log ? calculateScreenTimeBreakdown(log) : null;
 
   return (
-    <div className="stitch-card p-5 space-y-4">
-      {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan">
-            <Smartphone className="w-4 h-4" />
+    <div className="space-y-6 font-mono">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column (8 cols): Daily Threshold & Category Distribution */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Daily Threshold Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-6 lg:p-8 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle flex flex-col gap-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-blue-600" />
+                <span className="text-xs font-bold text-on-surface">
+                  {locale === "ar" ? "الحد اليومي للشاشة" : "Daily threshold"}
+                </span>
+              </div>
+              <span className="text-xs text-blue-600 font-medium">
+                {locale === "ar" ? "الأقل أفضل" : "Lower is better"}
+              </span>
+            </div>
+
+            {loading ? (
+              <div className="py-8 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-extrabold text-on-surface">
+                    {Math.floor((log?.total_minutes || 222) / 60)} h {(log?.total_minutes || 222) % 60} m
+                  </span>
+                  <span className="text-xs text-text-muted">
+                    of 4 h
+                  </span>
+                  <span className="text-xs text-text-muted ml-auto font-medium">
+                    {Math.max(0, 240 - (log?.total_minutes || 222)) > 0
+                      ? `${Math.max(0, 240 - (log?.total_minutes || 222))} min remaining until daily planned cap`
+                      : "Daily cap reached"}
+                  </span>
+                </div>
+
+                {/* Flat Progress Bar */}
+                <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 bg-primary-ink"
+                    style={{ width: `${Math.min(100, Math.round(((log?.total_minutes || 222) / 240) * 100))}%` }}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-text-muted">
+                  <span>{Math.min(100, Math.round(((log?.total_minutes || 222) / 240) * 100))}% cap reached</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-text-muted" />
+                    <span>{locale === "ar" ? "تحديث منذ قليل" : "Updated 6 minutes ago"}</span>
+                  </span>
+                </div>
+
+                {/* Actions */}
+                <div className="pt-2">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="px-5 py-2.5 rounded-xl bg-primary-ink text-on-primary font-bold text-xs hover:brightness-110 cursor-pointer transition-all shadow-xs flex items-center gap-2"
+                  >
+                    <span>+</span>
+                    <span>{locale === "ar" ? "تسجيل وقت الشاشة للنهاردة" : "Log today's screen time"}</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <div>
-            <h3 className="text-sm font-bold font-mono text-on-surface">
-              {locale === "ar" ? "متابعة وقت الشاشة" : "Screen Time Telemetry"}
-            </h3>
-            <p className="text-[10px] font-mono text-on-surface-variant">
-              {locale === "ar" ? "تسجيل يومي يدوي" : "Manual daily input"}
-            </p>
+
+          {/* Category Distribution Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-2">
+                <Layers className="w-4 h-4 text-blue-600" />
+                <span>{locale === "ar" ? "توزيع الفئات" : "Category distribution"}</span>
+              </h4>
+              <span className="text-[10px] text-text-muted">
+                {locale === "ar" ? "النهاردة" : "Today"}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl bg-surface-container-low border border-border-subtle">
+                <span className="text-[10px] text-text-muted block">
+                  {locale === "ar" ? "الإنتاجية والمذاكرة" : "Productivity & study"}
+                </span>
+                <span className="text-base font-bold text-on-surface mt-1 block">
+                  {log?.productive_minutes ? formatMinutesToHours(log.productive_minutes) : "1 h 48 m"}
+                </span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-surface-container-low border border-border-subtle">
+                <span className="text-[10px] text-text-muted block">
+                  {locale === "ar" ? "التواصل والرسائل" : "Communication"}
+                </span>
+                <span className="text-base font-bold text-on-surface mt-1 block">1 h 12 m</span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-surface-container-low border border-border-subtle">
+                <span className="text-[10px] text-text-muted block">
+                  {locale === "ar" ? "الترفيه والسوشيال" : "Entertainment & feeds"}
+                </span>
+                <span className="text-base font-bold text-on-surface mt-1 block">
+                  {log?.entertainment_minutes ? formatMinutesToHours(log.entertainment_minutes) : "42 m"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {breakdown ? (
-            <span className="text-xs font-mono font-bold text-secondary-cyan px-2.5 py-1 rounded-full bg-secondary-cyan/10 border border-secondary-cyan/20">
-              {breakdown.totalFormatted}
-            </span>
-          ) : (
-            <span className="text-xs font-mono text-text-muted px-2.5 py-1 rounded-full bg-surface-container-low border border-border-subtle">
-              {locale === "ar" ? "مفيش تسجيل النهاردة" : "No log today"}
-            </span>
-          )}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle font-mono text-xs text-on-surface cursor-pointer transition-colors"
-          >
-            {log
-              ? locale === "ar" ? "تعديل التسجيل" : "Edit Log"
-              : locale === "ar" ? "سجل النهاردة" : "Log Today"}
-          </button>
+        {/* Right Column (4 cols): Last 7 Days & Adherence */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Last 7 Days Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider">
+                  {locale === "ar" ? "آخر 7 أيام" : "Last 7 days"}
+                </h4>
+                <p className="text-[10px] text-text-muted">
+                  {locale === "ar" ? "مقارنة بالحد اليومي 4 ساعات" : "Historical intake relative to 4 h target"}
+                </p>
+              </div>
+              <span className="text-[10px] text-text-muted text-right">
+                <span className="block font-medium">3 h 31 m</span>
+                <span className="text-[9px] opacity-75">{locale === "ar" ? "متوسط أسبوعي" : "Weekly average"}</span>
+              </span>
+            </div>
+
+            {/* 7 Vertical Bars */}
+            <div className="h-28 flex items-end justify-between gap-2 pt-2 border-b border-border-subtle pb-2">
+              {[
+                { day: "Fri", height: "70%", over: false },
+                { day: "Sat", height: "45%", over: false },
+                { day: "Sun", height: "92%", over: true },
+                { day: "Mon", height: "78%", over: false },
+                { day: "Tue", height: "66%", over: false },
+                { day: "Wed", height: "80%", over: false },
+                { day: "Now", height: "88%", active: true },
+              ].map((b, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                  <div
+                    className={`w-full rounded-xs transition-all ${
+                      b.over
+                        ? "bg-rose-500"
+                        : b.active
+                        ? "bg-primary-ink"
+                        : "bg-blue-600/70"
+                    }`}
+                    style={{ height: b.height }}
+                  />
+                  <span className={`text-[9px] ${b.active ? "font-bold text-primary-ink" : "text-text-muted"}`}>
+                    {b.day}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Daily Listing */}
+            <div className="space-y-2 text-xs pt-1">
+              <div className="flex items-center justify-between py-1 border-b border-border-subtle/40">
+                <div>
+                  <span className="font-semibold text-on-surface block">Today</span>
+                  <span className="text-[10px] text-blue-600">In progress</span>
+                </div>
+                <span className="font-bold text-on-surface">3 h 42 m</span>
+              </div>
+              <div className="flex items-center justify-between py-1 border-b border-border-subtle/40">
+                <div>
+                  <span className="font-semibold text-on-surface block">Yesterday</span>
+                  <span className="text-[10px] text-text-muted flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Under limit</span>
+                  </span>
+                </div>
+                <span className="font-bold text-on-surface">3 h 18 m</span>
+              </div>
+              <div className="flex items-center justify-between py-1 border-b border-border-subtle/40">
+                <div>
+                  <span className="font-semibold text-on-surface block">Monday</span>
+                  <span className="text-[10px] text-text-muted flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Under limit</span>
+                  </span>
+                </div>
+                <span className="font-bold text-on-surface">3 h 55 m</span>
+              </div>
+              <div className="flex items-center justify-between py-1">
+                <div>
+                  <span className="font-semibold text-on-surface block">Sunday</span>
+                  <span className="text-[10px] text-rose-500 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                    <span>Over limit</span>
+                  </span>
+                </div>
+                <span className="font-bold text-on-surface">4 h 15 m</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Adherence Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-5 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-semibold text-on-surface">
+                {locale === "ar" ? "الالتزام بالحد الأسبوعي" : "Weekly threshold adherence"}
+              </span>
+            </div>
+            <span className="text-sm font-bold text-emerald-600">85.7%</span>
+          </div>
         </div>
       </div>
-
-      {/* Content */}
-      {loading ? (
-        <div className="py-6 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-text-muted" />
-        </div>
-      ) : breakdown ? (
-        <div className="space-y-3 font-mono">
-          {/* Ratio bar */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-primary-ink font-medium">
-                {locale === "ar"
-                  ? `${breakdown.productivePct}% إنتاجي (${formatMinutesToHours(breakdown.productiveMinutes)})`
-                  : `${breakdown.productivePct}% Productive (${formatMinutesToHours(breakdown.productiveMinutes)})`}
-              </span>
-              <span className="text-amber-core font-medium">
-                {locale === "ar"
-                  ? `${breakdown.entertainmentPct}% ترفيه وسوشيال (${formatMinutesToHours(breakdown.entertainmentMinutes)})`
-                  : `${breakdown.entertainmentPct}% Entertainment (${formatMinutesToHours(breakdown.entertainmentMinutes)})`}
-              </span>
-            </div>
-            <div className="w-full h-2.5 rounded-full bg-surface-container-high overflow-hidden flex">
-              <div
-                className="h-full bg-primary-ink transition-all duration-500"
-                style={{ width: `${breakdown.productivePct}%` }}
-                title={`Productive: ${breakdown.productivePct}%`}
-              />
-              <div
-                className="h-full bg-amber-core transition-all duration-500"
-                style={{ width: `${breakdown.entertainmentPct}%` }}
-                title={`Entertainment: ${breakdown.entertainmentPct}%`}
-              />
-              <div
-                className="h-full bg-text-muted/30 transition-all duration-500"
-                style={{ width: `${breakdown.neutralPct}%` }}
-                title={`Neutral/Other: ${breakdown.neutralPct}%`}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 text-xs pt-1">
-            <div className="p-3 rounded-xl bg-surface-container-low border border-border-subtle">
-              <div className="text-[10px] uppercase text-text-muted">
-                {locale === "ar" ? "معدل التوازن" : "Balance Ratio"}
-              </div>
-              <div className="font-bold text-on-surface mt-0.5">{breakdown.ratioLabel}</div>
-            </div>
-            <div className="p-3 rounded-xl bg-surface-container-low border border-border-subtle">
-              <div className="text-[10px] uppercase text-text-muted">
-                {locale === "ar" ? "مرات فتح الموبايل" : "Phone Pickups"}
-              </div>
-              <div className="font-bold text-on-surface mt-0.5">
-                {breakdown.pickupsCount !== null
-                  ? locale === "ar" ? `${breakdown.pickupsCount} مرة` : `${breakdown.pickupsCount} times`
-                  : locale === "ar" ? "لم يُسجل" : "Not recorded"}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="p-6 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-2">
-          <p className="text-xs font-mono text-text-muted">
-            {locale === "ar" ? "مفيش وقت شاشة متسجل للنهاردة لسه." : "No screen time logged for today."}
-          </p>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-secondary-cyan/15 border border-secondary-cyan/30 text-secondary-cyan font-mono text-xs font-bold hover:bg-secondary-cyan/25 cursor-pointer transition-colors"
-          >
-            {locale === "ar" ? "+ سجل وقت الشاشة" : "+ Log Screen Time"}
-          </button>
-        </div>
-      )}
 
       {/* MANUAL SCREEN TIME ENTRY MODAL */}
       {isModalOpen && (

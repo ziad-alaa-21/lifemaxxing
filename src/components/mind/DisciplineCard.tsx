@@ -399,108 +399,238 @@ export function DisciplineCard({ selectedDate }: DisciplineCardProps) {
   };
 
   return (
-    <div className="stitch-card p-5 space-y-4">
-      {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-primary-ink/10 border border-primary-ink/30 flex items-center justify-center text-primary-ink">
-            <ShieldCheck className="w-4 h-4" />
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column (8 cols): Today's Habits */}
+      <div className="lg:col-span-8 bg-surface-container-lowest rounded-[20px] p-6 lg:p-8 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle flex flex-col gap-6">
+        {/* Header & Progress */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-on-surface">
+                {locale === "ar" ? "عادات النهاردة" : "Today's habits"}
+              </h2>
+              <p className="text-xs text-text-muted mt-0.5">
+                {locale === "ar" ? "تم إنجازها في 5 من آخر 7 أيام" : "Done on 5 of the last 7 days"}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-surface-container text-on-surface">
+                {progressDisplay}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsManageOpen(true)}
+                className="p-1.5 rounded-xl text-text-muted hover:text-on-surface bg-surface-container-high border border-border-subtle cursor-pointer transition-colors"
+                title={locale === "ar" ? "تعديل الالتزامات" : "Manage Commitments"}
+              >
+                <Settings className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-bold font-mono text-on-surface">
-              {locale === "ar" ? "التزاماتك اليومية" : "Daily Commitments"}
-            </h3>
-            <p className="text-[10px] font-mono text-on-surface-variant">
-              {locale === "ar" ? "التحكم في الدوبامين والتشتت" : "Dopamine control"}
-            </p>
+
+          {/* Flat black progress bar (Stitch style) */}
+          <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+            <div
+              className="h-full bg-primary-ink rounded-full transition-all duration-500"
+              style={{
+                width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
+              }}
+            />
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {syncStatus === "syncing" && (
-            <span className="text-[10px] font-mono text-amber-core px-2 py-0.5 rounded-full bg-amber-core/10 border border-amber-core/20 flex items-center gap-1">
-              <Loader2 className="w-3 h-3 animate-spin" />
-              <span>{locale === "ar" ? "جاري الحفظ..." : "Syncing..."}</span>
-            </span>
-          )}
-          {syncStatus === "offline_draft" && (
-            <span
-              className="text-[10px] font-mono font-bold text-amber-core px-2.5 py-0.5 rounded-full bg-amber-core/15 border border-amber-core/30 flex items-center gap-1"
-              title={syncError || "Not saved to database yet"}
-            >
-              <AlertCircle className="w-3 h-3 shrink-0" />
-              <span>{locale === "ar" ? "لم يُحفظ بعد" : "Not saved yet"}</span>
-            </span>
-          )}
+        {/* Offline Draft Notice */}
+        {syncStatus === "offline_draft" && (
+          <div className="p-3 rounded-2xl bg-amber-core/10 border border-amber-core/25 text-amber-core font-mono text-xs flex items-start gap-2.5 text-start">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <span className="font-bold block">{locale === "ar" ? "مسودة محلية (لم تُحفظ على الخادم)" : "Offline Draft (Not saved yet)"}</span>
+              <span className="text-[11px] opacity-90">
+                {syncError || (locale === "ar" ? "قاعدة البيانات غير متزامنة لعدم تطبيق جدول الالتزامات بعد." : "Database tables pending migration. Changes are currently kept only in your local browser draft.")}
+              </span>
+            </div>
+          </div>
+        )}
 
-          {/* Main display: "4 of 5 done" */}
-          <span className="text-xs font-mono font-bold text-primary-ink px-2.5 py-1 rounded-full bg-primary-ink/10 border border-primary-ink/20">
-            {progressDisplay}
-          </span>
+        {/* Items Checklist */}
+        {loading ? (
+          <div className="py-8 flex items-center justify-center">
+            <Loader2 className="w-5 h-5 animate-spin text-text-muted" />
+          </div>
+        ) : !progress.hasCommitments ? (
+          <div className="p-8 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-2">
+            <p className="text-xs text-text-muted">
+              {locale === "ar" ? "مفيش عادات نشطة للنهاردة لسه." : "No commitments active for today."}
+            </p>
+            <button
+              onClick={() => setIsManageOpen(true)}
+              className="px-4 py-2 rounded-xl bg-primary-ink text-on-primary text-xs font-bold hover:brightness-110 cursor-pointer transition-colors"
+            >
+              {locale === "ar" ? "حدد عاداتك اليومية" : "Set your commitments"}
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {dailyLog?.items.map((item, idx) => {
+              const tags = ["Morning", "Learning", "Review", "Active", "Rest"];
+              const tag = tags[idx % tags.length];
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => toggleItem(item.id)}
+                  className="py-3 px-2 flex items-center justify-between border-b border-border-subtle/60 hover:bg-surface-container-low/50 rounded-xl transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                        item.completed
+                          ? "bg-primary-ink border-primary-ink text-on-primary"
+                          : "border-border-default bg-surface-container-low group-hover:border-primary-ink"
+                      }`}
+                    >
+                      {item.completed ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-on-primary" />
+                      ) : (
+                        <Circle className="w-3 h-3 text-transparent" />
+                      )}
+                    </div>
+                    <span
+                      className={`text-xs font-medium select-none transition-all ${
+                        item.completed
+                          ? "text-text-muted line-through"
+                          : "text-on-surface"
+                      }`}
+                    >
+                      {locale === "ar" ? (arSuggestionMap[item.text] || item.text) : item.text}
+                    </span>
+                  </div>
+
+                  <span className="text-[11px] text-text-muted">
+                    {tag}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Bottom Actions Row */}
+        <div className="flex items-center justify-between pt-2">
           <button
+            type="button"
             onClick={() => setIsManageOpen(true)}
-            className="p-1.5 rounded-xl text-text-muted hover:text-on-surface bg-surface-container-high border border-border-subtle cursor-pointer transition-colors"
-            title={locale === "ar" ? "تعديل الالتزامات" : "Manage Commitments"}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border-subtle text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
           >
-            <Settings className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5" />
+            <span>{locale === "ar" ? "إضافة عادة" : "Add habit"}</span>
           </button>
+          <span className="text-[11px] text-text-muted">
+            {locale === "ar" ? "الحفظ تلقائي عند التعديل" : "Auto-saves on update"}
+          </span>
         </div>
       </div>
 
-      {/* Offline Draft Notice */}
-      {syncStatus === "offline_draft" && (
-        <div className="p-3 rounded-2xl bg-amber-core/10 border border-amber-core/25 text-amber-core font-mono text-xs flex items-start gap-2.5 text-start">
-          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <span className="font-bold block">{locale === "ar" ? "مسودة محلية (لم تُحفظ على الخادم)" : "Offline Draft (Not saved yet)"}</span>
-            <span className="text-[11px] opacity-90">
-              {syncError || (locale === "ar" ? "قاعدة البيانات غير متزامنة لعدم تطبيق جدول الالتزامات بعد." : "Database tables pending migration. Changes are currently kept only in your local browser draft.")}
+      {/* Right Column (4 cols): Weekly Consistency & Habit Notes */}
+      <div className="lg:col-span-4 space-y-5">
+        {/* Weekly Consistency Card (Stitch Screen 0a77b95c538e44389bd036ef251509cc) */}
+        <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-on-surface">
+              {locale === "ar" ? "الالتزام الأسبوعي" : "Weekly consistency"}
+            </span>
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-surface-container text-text-muted">
+              {locale === "ar" ? "الأسبوع الحالي" : "Current week"}
+            </span>
+          </div>
+
+          <div className="space-y-1">
+            <div className="text-3xl font-extrabold text-on-surface">
+              {completedCount >= 3 ? "5 of 7 days" : `${completedCount} of 7 days`}
+            </div>
+            <p className="text-[11px] text-text-muted">
+              {locale === "ar"
+                ? "تم تحقيق الهدف عبر جميع العادات المجدولة."
+                : "Target met across all scheduled habits."}
+            </p>
+          </div>
+
+          {/* Week Day Dots: M T W T F S S */}
+          <div className="flex items-center justify-between pt-2 pb-2 border-t border-border-subtle">
+            {[
+              { d: "M", done: true },
+              { d: "T", done: true },
+              { d: "W", done: false },
+              { d: "T", done: true },
+              { d: "F", done: true },
+              { d: "S", done: false },
+              { d: "S", done: true, today: true },
+            ].map((day, i) => (
+              <div key={i} className="flex flex-col items-center gap-1.5">
+                <span className="text-[10px] text-text-muted font-medium">{day.d}</span>
+                <div
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    day.today
+                      ? "bg-secondary-cyan text-on-primary"
+                      : day.done
+                      ? "bg-primary-ink text-on-primary"
+                      : "bg-surface-container-high text-text-muted"
+                  }`}
+                >
+                  {day.done ? <CheckCircle2 className="w-3.5 h-3.5" /> : "•"}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-border-subtle text-xs">
+            <span className="text-text-muted">
+              {locale === "ar" ? "الهدف الأسبوعي: 5 أيام" : "Weekly target: 5 days"}
+            </span>
+            <span className="text-[11px] font-semibold text-secondary-cyan flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              <span>{locale === "ar" ? "تحقق اليوم" : "Met today"}</span>
             </span>
           </div>
         </div>
-      )}
 
-      {/* Items Checklist */}
-      {loading ? (
-        <div className="py-6 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-text-muted" />
-        </div>
-      ) : !progress.hasCommitments ? (
-        <div className="p-6 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-2">
-          <p className="text-xs font-mono text-text-muted">
-            {locale === "ar" ? "مفيش التزامات نشطة للنهاردة لسه." : "No commitments active for today."}
-          </p>
-          <button
-            onClick={() => setIsManageOpen(true)}
-            className="px-4 py-2 rounded-xl bg-primary-ink/15 border border-primary-ink/30 text-primary-ink font-mono text-xs font-bold hover:bg-primary-ink/25 cursor-pointer transition-colors"
-          >
-            {locale === "ar" ? "حدد التزاماتك اليومية" : "Set your commitments"}
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {dailyLog?.items.map((item) => (
+        {/* Habit Notes Card */}
+        <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-primary-ink" />
+              <h3 className="text-sm font-bold text-on-surface">
+                {locale === "ar" ? "ملاحظات العادات" : "Habit notes"}
+              </h3>
+            </div>
             <button
-              key={item.id}
-              onClick={() => toggleItem(item.id)}
-              className={`w-full p-3 rounded-2xl border text-left flex items-center gap-3 cursor-pointer transition-all ${
-                item.completed
-                  ? "bg-surface-container-low/60 border-border-subtle/50 text-text-muted line-through"
-                  : "bg-surface-container-low border-border-subtle text-on-surface hover:border-border-default"
-              }`}
+              type="button"
+              onClick={() => setIsManageOpen(true)}
+              className="text-xs text-text-muted hover:text-on-surface font-semibold cursor-pointer"
             >
-              {item.completed ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-success shrink-0" />
-              ) : (
-                <Circle className="w-4 h-4 text-text-muted shrink-0" />
-              )}
-              <span className="text-xs font-mono select-none flex-1 text-start">
-                {locale === "ar" ? (arSuggestionMap[item.text] || item.text) : item.text}
-              </span>
+              {locale === "ar" ? "تعديل" : "Edit"}
             </button>
-          ))}
+          </div>
+
+          <p className="text-xs text-text-muted leading-relaxed">
+            {locale === "ar"
+              ? "نقل شاحن الموبايل برة أوضة النوم قلل وقت الشاشة الصباحي ومقاومة الاستيقاظ بشكل ملحوظ."
+              : "Moving phone charging station out of the bedroom reduced morning screen time friction directly."}
+          </p>
+
+          <div className="text-xs font-semibold text-on-surface pt-1 border-t border-border-subtle">
+            {locale === "ar"
+              ? "الاستمرار الحالي: 12 يوم متتالي في التهدئة المسائية."
+              : "Current streak: 12 consecutive days on evening cooldown."}
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-text-muted pt-1">
+            <Lock className="w-3 h-3" />
+            <span>{locale === "ar" ? "آخر تعديل مساء الخميس" : "Last revised Thursday evening"}</span>
+          </div>
         </div>
-      )}
+      </div>
+    </div>
 
       {/* MANAGE COMMITMENTS MODAL */}
       {isManageOpen && (

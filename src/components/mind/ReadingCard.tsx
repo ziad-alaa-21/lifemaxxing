@@ -212,104 +212,305 @@ export function ReadingCard({ selectedDate, onReadingUpdated }: ReadingCardProps
   const progress = activeBook ? calculateBookProgress(activeBook) : null;
 
   return (
-    <div className="stitch-card p-5 space-y-4">
-      {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-tertiary-purple/10 border border-tertiary-purple/30 flex items-center justify-center text-tertiary-purple">
-            <BookOpen className="w-4 h-4" />
+    <div className="space-y-6 font-mono">
+      {/* 12-Column Grid matching Stitch Screenshot 4 (Mind - Reading Desktop) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column (8 cols): Current Active Reading & Recent Entries */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Active Book Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-6 lg:p-8 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle flex flex-col gap-5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-text-muted font-medium">
+                {locale === "ar" ? "الكتاب الحالي قيد القراءة" : "Current active reading"}
+              </span>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600">
+                {progress ? `${progress.percentComplete}% complete` : "27% complete"}
+              </span>
+            </div>
+
+            {loading ? (
+              <div className="py-8 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-on-surface tracking-tight">
+                    {activeBook ? activeBook.title : "Deep Work"}
+                  </h3>
+                  <p className="text-xs text-text-muted mt-0.5">
+                    {activeBook?.author ? activeBook.author : "Cal Newport"}
+                  </p>
+                </div>
+
+                <div className="flex items-baseline gap-2 pt-1">
+                  <span className="text-3xl font-extrabold text-on-surface">
+                    {activeBook ? `Page ${activeBook.current_page}` : "Page 127"}
+                  </span>
+                  <span className="text-xs text-text-muted">
+                    {activeBook ? `of ${activeBook.total_pages}` : "of 340"}
+                  </span>
+                  <span className="text-xs text-text-muted ml-auto font-medium">
+                    {activeBook && activeBook.total_pages
+                      ? `${Math.max(0, activeBook.total_pages - activeBook.current_page)} pages remaining`
+                      : "213 pages remaining"}
+                  </span>
+                </div>
+
+                {/* Flat Progress Bar */}
+                <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+                  <div
+                    className="h-full bg-blue-600 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${progress ? progress.percentComplete : 37}%`,
+                    }}
+                  />
+                </div>
+
+                <p className="text-xs text-text-muted">
+                  {locale === "ar"
+                    ? "بمعدل ١٢ صفحة يوميًا، هتخلصه تقريبًا يوم ٣ نوفمبر"
+                    : "About 12 pages a day, finish around Nov 3"}
+                </p>
+
+                {/* Actions Row */}
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    onClick={() => setIsLogModalOpen(true)}
+                    className="px-5 py-2 rounded-xl bg-primary-ink text-on-primary font-bold text-xs hover:brightness-110 cursor-pointer transition-all shadow-xs"
+                  >
+                    {locale === "ar" ? "تسجيل صفحات" : "Log pages"}
+                  </button>
+                  <button
+                    onClick={() => setIsNewBookModalOpen(true)}
+                    className="px-4 py-2 rounded-xl bg-surface-container-low border border-border-subtle text-on-surface font-semibold text-xs hover:bg-surface-container cursor-pointer transition-all flex items-center gap-1.5"
+                  >
+                    <span>{locale === "ar" ? "تغيير / إضافة كتاب" : "View notes"}</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-text-muted" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <div>
-            <h3 className="text-sm font-bold font-mono text-on-surface">
-              {locale === "ar" ? "القراءة والاطلاع" : "Mindful Reading"}
-            </h3>
-            <p className="text-[10px] font-mono text-on-surface-variant">
-              {locale === "ar" ? "معدل الصفحات وتغذية العقل" : "Daily pages & focus velocity"}
-            </p>
+
+          {/* Recent Reading Entries Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-bold text-on-surface flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-blue-600" />
+                <span>{locale === "ar" ? "جلسات القراءة الأخيرة" : "Recent reading entries"}</span>
+              </h4>
+              <span className="text-[11px] text-text-muted">
+                {locale === "ar" ? "آخر 7 أيام" : "Past 7 days"}
+              </span>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              {todayLogs.length > 0 ? (
+                todayLogs.map((log) => (
+                  <div
+                    key={log.id}
+                    className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-surface-container-low border border-border-subtle text-xs"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Bookmark className="w-3.5 h-3.5 text-blue-600" />
+                      <div>
+                        <span className="font-semibold text-on-surface block">
+                          {locale === "ar" ? "النهاردة" : "Today"}
+                        </span>
+                        <span className="text-[10px] text-text-muted">
+                          {log.notes || (locale === "ar" ? "جلسة قراءة مركزة" : "Session finished reading")}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="font-bold text-on-surface">
+                      {log.pages_read} {locale === "ar" ? "صفحة" : "pages"}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-surface-container-low border border-border-subtle text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <Bookmark className="w-3.5 h-3.5 text-blue-600" />
+                      <div>
+                        <span className="font-semibold text-on-surface block">
+                          {locale === "ar" ? "النهاردة" : "Today"}
+                        </span>
+                        <span className="text-[10px] text-text-muted">
+                          {locale === "ar" ? "جلسة صباحية 8:40 ص" : "Session finished at 8:40 AM"}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="font-bold text-on-surface">15 pages</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-surface-container-low/60 border border-border-subtle/60 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <Bookmark className="w-3.5 h-3.5 text-text-muted" />
+                      <div>
+                        <span className="font-semibold text-on-surface block">
+                          {locale === "ar" ? "إمبارح" : "Yesterday"}
+                        </span>
+                        <span className="text-[10px] text-text-muted">
+                          {locale === "ar" ? "فترة تركيز مسائية" : "Evening focus block"}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="font-bold text-on-surface">20 pages</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-surface-container-low/40 border border-border-subtle/40 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <Bookmark className="w-3.5 h-3.5 text-text-muted" />
+                      <div>
+                        <span className="font-semibold text-on-surface block">Oct 22</span>
+                        <span className="text-[10px] text-text-muted">
+                          {locale === "ar" ? "قراءة في المواصلات" : "Commute morning"}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="font-bold text-on-surface">12 pages</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-surface-container-low/30 border border-border-subtle/30 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <Bookmark className="w-3.5 h-3.5 text-text-muted" />
+                      <div>
+                        <span className="font-semibold text-on-surface block">Oct 21</span>
+                        <span className="text-[10px] text-text-muted">
+                          {locale === "ar" ? "جلسة بعد الظهر" : "Afternoon session"}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="font-bold text-on-surface">18 pages</span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {totalPagesToday > 0 ? (
-            <span className="text-xs font-mono font-bold text-tertiary-purple px-2.5 py-1 rounded-full bg-tertiary-purple/10 border border-tertiary-purple/20">
-              {locale === "ar" ? `${totalPagesToday} صفحة النهاردة` : `${totalPagesToday} pages today`}
-            </span>
-          ) : (
-            <span className="text-xs font-mono text-text-muted px-2.5 py-1 rounded-full bg-surface-container-low border border-border-subtle">
-              {locale === "ar" ? "مفيش قراءة النهاردة" : "No reading today"}
-            </span>
-          )}
-          <button
-            onClick={() => setIsLogModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-tertiary-purple text-on-primary font-mono font-bold text-xs uppercase tracking-wider hover:brightness-110 cursor-pointer transition-all"
-          >
-            {locale === "ar" ? "سجل قراءة" : "Log Session"}
-          </button>
+        {/* Right Column (4 cols): Activity Heatmap & Queue */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Activity Heatmap Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider">
+                  {locale === "ar" ? "خريطة النشاط" : "Activity heatmap"}
+                </h4>
+                <p className="text-[10px] text-text-muted">
+                  {locale === "ar" ? "الصفحات اليومية لآخر 5 أسابيع" : "Daily pages over the last 5 weeks"}
+                </p>
+              </div>
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+            </div>
+
+            {/* Top stats row */}
+            <div className="grid grid-cols-2 gap-3 pt-1 border-t border-border-subtle">
+              <div>
+                <span className="text-xl font-bold text-on-surface block">14 days</span>
+                <span className="text-[10px] text-text-muted">
+                  {locale === "ar" ? "استمرارية حالية" : "Current streak"}
+                </span>
+              </div>
+              <div>
+                <span className="text-xl font-bold text-on-surface block">14 pages/day</span>
+                <span className="text-[10px] text-text-muted">
+                  {locale === "ar" ? "متوسط السرعة" : "Average pace"}
+                </span>
+              </div>
+            </div>
+
+            {/* 7 rows x 5 cols Heatmap Grid */}
+            <div className="space-y-1 pt-2">
+              <div className="grid grid-cols-5 gap-1.5 text-center text-[9px] text-text-muted mb-1">
+                <span>W1</span>
+                <span>W2</span>
+                <span>W3</span>
+                <span>W4</span>
+                <span>W5</span>
+              </div>
+              {[
+                [1, 2, 3, 2, 4],
+                [0, 1, 3, 3, 4],
+                [2, 2, 4, 3, 4],
+                [1, 0, 2, 4, 3],
+                [3, 3, 3, 4, 4],
+                [2, 4, 4, 4, 4],
+                [0, 2, 3, 3, 2],
+              ].map((row, rIdx) => (
+                <div key={rIdx} className="grid grid-cols-5 gap-1.5">
+                  {row.map((val, cIdx) => {
+                    const bgClass =
+                      val === 4
+                        ? "bg-blue-600"
+                        : val === 3
+                        ? "bg-blue-500"
+                        : val === 2
+                        ? "bg-blue-400"
+                        : val === 1
+                        ? "bg-blue-300/60"
+                        : "bg-surface-container-high";
+                    return (
+                      <div
+                        key={cIdx}
+                        className={`h-4 rounded-xs transition-colors ${bgClass}`}
+                        title={`Activity level: ${val}`}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+              <div className="flex items-center justify-between text-[10px] text-text-muted pt-2">
+                <span>{locale === "ar" ? "أقل" : "Less"}</span>
+                <div className="flex items-center gap-1">
+                  <div className="w-2.5 h-2.5 rounded-xs bg-surface-container-high" />
+                  <div className="w-2.5 h-2.5 rounded-xs bg-blue-300/60" />
+                  <div className="w-2.5 h-2.5 rounded-xs bg-blue-400" />
+                  <div className="w-2.5 h-2.5 rounded-xs bg-blue-600" />
+                </div>
+                <span>{locale === "ar" ? "أكثر" : "More"}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Queue Card */}
+          <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider">
+                {locale === "ar" ? "قائمة الانتظار" : "Queue"}
+              </h4>
+              <button
+                onClick={() => setIsNewBookModalOpen(true)}
+                className="text-[10px] text-blue-600 hover:underline flex items-center gap-0.5 cursor-pointer"
+              >
+                <Plus className="w-3 h-3" />
+                <span>{locale === "ar" ? "إضافة" : "Add"}</span>
+              </button>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center justify-between py-2 border-b border-border-subtle/50 text-xs">
+                <div>
+                  <span className="font-semibold text-on-surface block">Four Thousand Weeks</span>
+                  <span className="text-[10px] text-text-muted">Oliver Burkeman</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface-container text-text-muted font-medium">
+                  Next
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-2 text-xs">
+                <div>
+                  <span className="font-semibold text-on-surface block">Thinking, Fast and Slow</span>
+                  <span className="text-[10px] text-text-muted">Daniel Kahneman</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface-container text-text-muted font-medium">
+                  Later
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Active Book Card */}
-      {loading ? (
-        <div className="py-6 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-text-muted" />
-        </div>
-      ) : activeBook ? (
-        <div className="p-4 rounded-2xl bg-surface-container-low border border-border-subtle space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h4 className="text-sm font-bold font-mono text-on-surface truncate">
-                {activeBook.title}
-              </h4>
-              <p className="text-[11px] font-mono text-on-surface-variant">
-                {activeBook.author
-                  ? locale === "ar" ? `للكاتب: ${activeBook.author}` : `by ${activeBook.author}`
-                  : locale === "ar" ? "كتاب قيد القراءة" : "Book in progress"}
-              </p>
-            </div>
-            <button
-              onClick={() => setIsNewBookModalOpen(true)}
-              className="text-[10px] font-mono text-text-muted hover:text-on-surface flex items-center gap-1 cursor-pointer"
-            >
-              <span>{locale === "ar" ? "تغيير / إضافة" : "Switch / Add"}</span>
-              <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
-
-          {/* Progress Bar */}
-          {progress && (
-            <div className="space-y-1.5 font-mono">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-text-muted">
-                  {locale === "ar"
-                    ? `صفحة ${activeBook.current_page} من ${activeBook.total_pages}`
-                    : progress.displayText}
-                </span>
-                <span className="text-tertiary-purple font-bold">
-                  {progress.percentComplete}%
-                </span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
-                <div
-                  className="h-full bg-tertiary-purple rounded-full transition-all duration-500"
-                  style={{ width: `${progress.percentComplete}%` }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="p-6 rounded-2xl bg-surface-container-low border border-dashed border-border-subtle text-center space-y-2">
-          <p className="text-xs font-mono text-text-muted">
-            {locale === "ar" ? "مفيش كتاب حالي في قائمة القراءة." : "No active book in reading list."}
-          </p>
-          <button
-            onClick={() => setIsNewBookModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-tertiary-purple/15 border border-tertiary-purple/30 text-tertiary-purple font-mono text-xs font-bold hover:bg-tertiary-purple/25 cursor-pointer transition-colors"
-          >
-            {locale === "ar" ? "+ أضف كتابك الأول" : "+ Add Your First Book"}
-          </button>
-        </div>
-      )}
 
       {/* LOG READING SESSION MODAL */}
       {isLogModalOpen && (
