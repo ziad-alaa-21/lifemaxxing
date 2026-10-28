@@ -36,6 +36,12 @@ import {
   FinishSetupCard,
   EndOfDayRecapCard,
 } from "@/components/today/TodayPillarCards";
+import { TodayFocusCard } from "@/components/today/TodayFocusCard";
+import { TodayNextUpCard } from "@/components/today/TodayNextUpCard";
+import { TodayActivityChartCard } from "@/components/today/TodayActivityChartCard";
+import { TodayProgressCard } from "@/components/today/TodayProgressCard";
+import { TodaySubjectsCard } from "@/components/today/TodaySubjectsCard";
+import { TodayPlanGrid } from "@/components/today/TodayPlanGrid";
 import { useI18n } from "@/lib/i18n/I18nContext";
 import { useUserModules } from "@/lib/modules/UserModulesContext";
 
@@ -580,17 +586,15 @@ export function TodayView() {
   const completedPrioritiesCount = priorities.filter((p) => p.completed).length;
 
   return (
-    <div className="space-y-6 pb-12 max-w-6xl mx-auto">
-      {/* 1. Date Header with Real Local Timezone */}
-      <div className="flex items-center justify-between px-5 py-4 bg-white rounded-[20px] border border-[#E3E5F0] shadow-[0_8px_24px_rgba(40,50,120,0.06)]">
-        <div className="flex items-center gap-2.5">
-          <Calendar className="w-4 h-4 text-[#14161A]" />
-          <span className="text-sm font-medium tracking-tight text-[#14161A]">
-            {formattedHeaderDate || (locale === "ar" ? "النهاردة" : "Today")}
-          </span>
-        </div>
+    <div className="space-y-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* 1. Page Header (Greeting + Honest Recommendation + Why This?) */}
+      <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
+        <RecommendationCard
+          recommendation={recommendation}
+          greeting={formattedHeaderDate || (locale === "ar" ? "النهاردة" : "Today")}
+        />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 shrink-0">
           {currentWeightKg && (
             <Link
               href="/body?tab=weight"
@@ -603,87 +607,97 @@ export function TodayView() {
 
           <button
             onClick={() => loadDashboardData()}
-            className="p-2 rounded-[10px] bg-[#F3F4FB] hover:bg-[#ECEEFA] border border-[#E3E5F0] text-[#5B6270] hover:text-[#14161A] transition-colors cursor-pointer"
+            className="p-2.5 rounded-[12px] bg-white hover:bg-[#F3F4FB] border border-[#E3E5F0] text-[#5B6270] hover:text-[#14161A] transition-colors shadow-sm cursor-pointer"
             title={locale === "ar" ? "تحديث البيانات" : "Refresh dashboard"}
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
           </button>
         </div>
-      </div>
+      </section>
 
-      {/* 2. The 3 Honest Pulse Rings (Body Cyan, Mind Violet, School Amber) */}
-      <LifePulseRings
-        bodyRing={bodyRing}
-        mindRing={mindRing}
-        schoolRing={schoolRing}
-        isBodyActive={isPillarActive("body")}
-        isMindActive={isPillarActive("mind")}
-        isSchoolActive={isPillarActive("school")}
-      />
+      {/* 2. 3-Column Primary Grid matching Stitch Desktop & Mobile */}
+      <section className="grid grid-cols-1 today-3col-grid gap-6 items-start">
+        {/* Left Column: Focus Today Card + Next Up Card */}
+        <div className="flex flex-col gap-6 min-w-0">
+          <TodayFocusCard
+            todayFocusMinutes={todayFocusMinutes}
+            dailyFocusGoalMinutes={dailyFocusGoalMinutes}
+          />
+          <TodayNextUpCard
+            nearestDeadline={nearestDeadline}
+            nearestExam={nearestExam}
+            plannedWorkoutSession={plannedSplitSession}
+            hasLoggedWorkoutToday={!!latestWorkout && latestWorkout.elapsedHours < 16}
+            hadPlannedItems={priorities.length > 0 || !!plannedSplitSession || deadlinesToday.total > 0}
+            allPlannedItemsDone={
+              (priorities.length > 0 || !!plannedSplitSession || deadlinesToday.total > 0) &&
+              (priorities.length === 0 || completedPrioritiesCount === priorities.length) &&
+              (!plannedSplitSession || (!!latestWorkout && latestWorkout.elapsedHours < 16)) &&
+              (deadlinesToday.total === 0 || deadlinesToday.completed === deadlinesToday.total)
+            }
+          />
+        </div>
 
-      {/* 3. Recommendation Card with Lime-Free Accent & Reasoning */}
-      <RecommendationCard recommendation={recommendation} />
+        {/* Center Column: 7-Day / 30-Day / 90-Day Activity Chart Card */}
+        <div className="flex flex-col min-w-0">
+          <TodayActivityChartCard
+            userId={userId || ""}
+            userTimezone={userTimezone}
+          />
+        </div>
 
-      {/* 4. Priorities List with Real Database Auto-Completion & Carry-Over */}
-      <PrioritiesCard
+        {/* Right Column: Today's Progress Card (with Ring Breakdown Sheet) + Subjects Card */}
+        <div className="flex flex-col gap-6 min-w-0">
+          <TodayProgressCard
+            bodyRing={bodyRing}
+            mindRing={mindRing}
+            schoolRing={schoolRing}
+            isBodyActive={isPillarActive("body")}
+            isMindActive={isPillarActive("mind")}
+            isSchoolActive={isPillarActive("school")}
+          />
+          {userId && <TodaySubjectsCard userId={userId} />}
+        </div>
+      </section>
+
+      {/* 3. Bottom Row: Today's Plan 4-Card Grid */}
+      <TodayPlanGrid
+        plannedWorkoutSession={plannedSplitSession}
+        nearestDeadlineTitle={nearestDeadline?.title}
+        todayFocusMinutes={todayFocusMinutes}
         priorities={priorities}
-        todayDateStr={todayDateStr}
-        tomorrowDateStr={tomorrowDateStr}
-        onPrioritiesChange={setPriorities}
-        userId={userId}
+        onAddPlanClick={() => {
+          const el = document.getElementById("priorities-section");
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        }}
+        onViewAllClick={() => {
+          const el = document.getElementById("timeline-section");
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        }}
       />
 
-      {/* 5. Circadian Day Timeline (No Invented Tasks) */}
-      <CircadianTimelineCard phases={circadianPhases} />
-
-      {/* 6. Modular Pillar Cards Grid (Error Isolated) */}
-      <div className="space-y-4">
-        <div className="text-[13px] uppercase tracking-[0.06em] text-[#5B6270] font-medium px-1">
-          {locale === "ar" ? "نظرة عامة على محاور اليوم" : "Pillar Telemetry Overview"}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {isPillarActive("body") && (
-            <TodayBodyCard
-              latestWorkoutName={latestWorkout?.name || null}
-              highestRankTier={highestRankTier}
-              currentWeightKg={currentWeightKg}
-              todayNutrition={todayNutrition}
-              latestSleep={latestSleep}
-              error={bodyError}
-            />
-          )}
-
-          {isPillarActive("mind") && (
-            <TodayMindCard
-              todayFocusMinutes={todayFocusMinutes}
-              completedSprintCount={completedSprintCount}
-              focusScore={todayFocusMinutes > 0 ? 80 : null}
-              disciplineDisplay={disciplineDisplay}
-              morningCheckinDone={checkins.morning}
-              middayCheckinDone={checkins.midday}
-              eveningCheckinDone={checkins.evening}
-              error={mindError}
-            />
-          )}
-
-          {isPillarActive("school") && subjectCount !== null && subjectCount > 0 && (
-            <TodaySchoolCard
-              subjectCount={subjectCount}
-              nearestDeadline={nearestDeadline}
-              nearestExam={nearestExam}
-              error={schoolError}
-            />
-          )}
-        </div>
+      {/* 4. Circadian Day Timeline (Time-ordered content of Today's plan) */}
+      <div id="timeline-section">
+        <CircadianTimelineCard phases={circadianPhases} />
       </div>
 
-      {/* 7. Finish Setup Card (For missing targets) */}
+      {/* 5. Priorities List with Carry-over, Add, Delete, and Reorder */}
+      <div id="priorities-section">
+        <PrioritiesCard
+          priorities={priorities}
+          todayDateStr={todayDateStr}
+          tomorrowDateStr={tomorrowDateStr}
+          onPrioritiesChange={setPriorities}
+          userId={userId}
+        />
+      </div>
+
+      {/* 6. Finish Setup Card (Missing targets, empty-state setup for new users) */}
       {missingTargets.length > 0 && (
         <FinishSetupCard missingTargets={missingTargets} />
       )}
 
-      {/* 8. End-of-Day Execution Recap (Neutral wording, NO celebration modal) */}
+      {/* 7. End-of-Day Execution Recap */}
       <EndOfDayRecapCard
         completedCount={completedPrioritiesCount}
         totalCount={priorities.length}

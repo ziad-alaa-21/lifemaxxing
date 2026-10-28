@@ -166,8 +166,18 @@ export function RingBreakdownSheet({ ring, isOpen, onClose }: RingBreakdownSheet
           </div>
         )}
 
+        {/* Section Link */}
+        <div className="mt-5">
+          <a
+            href={ring.domain === "body" ? "/body" : ring.domain === "mind" ? "/mind" : "/school"}
+            className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-[12px] bg-[#EEF2FF] hover:bg-[#E0E7FF] text-[#2563EB] text-xs font-medium transition-colors"
+          >
+            <span>{locale === "ar" ? "افتح القسم ده" : `Open ${ring.label || ring.domain} section`}</span>
+          </a>
+        </div>
+
         {/* Close Button */}
-        <div className="mt-6">
+        <div className="mt-3">
           <button
             onClick={onClose}
             className="w-full py-2.5 rounded-[12px] bg-[#14161A] hover:bg-[#23272F] text-white text-xs font-medium transition-colors cursor-pointer"

@@ -7,64 +7,33 @@ import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface RecommendationCardProps {
   recommendation: RecommendationOutput;
+  greeting?: string;
 }
 
-export function RecommendationCard({ recommendation }: RecommendationCardProps) {
+export function RecommendationCard({ recommendation, greeting }: RecommendationCardProps) {
   const { locale } = useI18n();
   const [isReasoningOpen, setIsReasoningOpen] = useState(false);
 
-  const getCategoryBadge = (badge: string) => {
-    if (locale !== "ar") return badge;
-    if (badge.includes("Recovery")) return "تنبيه استشفاء";
-    if (badge.includes("Deep Work") || badge.includes("Cognitive Focus")) return "تركيز ذهني";
-    if (badge.includes("Missing Telemetry") || badge.includes("Missing")) return "بيانات ناقصة";
-    if (badge.includes("Baseline Calibrating")) return "معايرة الأساس";
-    if (badge.includes("Session Prep") || badge.includes("Training Calibration")) return "جاهزية التمرين";
-    if (badge.includes("Strength & Load")) return "أحمال التمرين";
-    if (badge.includes("Academic Priority")) return "أولوية دراسية";
-    if (badge.includes("Pillar")) return "توازن اليوم";
-    return badge;
-  };
-
   return (
     <>
-      <div className="p-6 rounded-[20px] bg-white border border-[#E3E5F0] shadow-sm relative overflow-hidden space-y-3.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-8 h-8 rounded-[10px] flex items-center justify-center border text-xs"
-              style={{
-                borderColor: `${recommendation.accentColor}40`,
-                backgroundColor: `${recommendation.accentColor}15`,
-                color: recommendation.accentColor,
-              }}
-            >
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <span
-              className="text-[11px] font-medium uppercase tracking-wider px-2.5 py-0.5 rounded-full border"
-              style={{
-                borderColor: `${recommendation.accentColor}30`,
-                backgroundColor: `${recommendation.accentColor}12`,
-                color: recommendation.accentColor,
-              }}
-            >
-              {getCategoryBadge(recommendation.categoryBadge)}
-            </span>
-          </div>
-
+      <div className="flex flex-col gap-1.5 max-w-3xl">
+        {greeting && (
+          <span className="text-[14px] font-medium text-[#5B6270]">
+            {greeting}
+          </span>
+        )}
+        <h1 className="text-[26px] sm:text-[32px] lg:text-[36px] font-medium text-[#14161A] tracking-tight leading-snug">
+          {recommendation.headline}
+        </h1>
+        <div className="pt-1 flex items-center gap-3">
           <button
+            type="button"
             onClick={() => setIsReasoningOpen(true)}
-            className="text-xs font-medium flex items-center gap-1 text-[#5B6270] hover:text-[#14161A] transition-colors cursor-pointer"
+            className="text-[14px] font-medium text-[#5B6270] hover:text-[#14161A] underline underline-offset-4 decoration-[#C6C6CB] transition-colors cursor-pointer bg-transparent p-0 m-0 text-left rtl:text-right"
           >
-            <span>{locale === "ar" ? "ليه الاقتراح ده؟" : "See reasoning"}</span>
-            <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
+            {locale === "ar" ? "ليه الاقتراح ده؟" : "Why this?"}
           </button>
         </div>
-
-        <p className="text-[15px] font-medium text-[#14161A] leading-relaxed text-start">
-          {recommendation.headline}
-        </p>
       </div>
 
       {/* "See Reasoning" Drawer / Modal */}
