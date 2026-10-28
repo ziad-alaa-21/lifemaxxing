@@ -110,7 +110,7 @@ function BodyViewContent() {
 
   return (
     <div className="space-y-6">
-      {/* Top Navigation Tabs */}
+      {/* Top Navigation Tabs: 5 Clean Stitch Tabs (Workouts, Nutrition, Sleep, Weight, Library) */}
       <div className="relative">
         <div ref={tabsContainerRef} className="flex items-center gap-1.5 p-1.5 bg-surface-container rounded-2xl border border-border-subtle shadow-xs overflow-x-auto no-scrollbar scroll-smooth">
           <button
@@ -118,38 +118,12 @@ function BodyViewContent() {
             onClick={() => switchTab("logger")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === "logger"
-                ? "bg-primary-ink text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >
             <Dumbbell className="w-4 h-4 shrink-0" />
-            <span>{dict.body.activeSession}</span>
-          </button>
-
-          <button
-            data-tab="weight"
-            onClick={() => switchTab("weight")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-              activeTab === "weight"
-                ? "bg-secondary-cyan text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-            }`}
-          >
-            <Weight className="w-4 h-4 shrink-0" />
-            <span>{dict.body.bodyWeight}</span>
-          </button>
-
-          <button
-            data-tab="sleep"
-            onClick={() => switchTab("sleep")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-              activeTab === "sleep"
-                ? "bg-secondary-cyan text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-            }`}
-          >
-            <Moon className="w-4 h-4 shrink-0" />
-            <span>{dict.body.sleep}</span>
+            <span>{locale === "ar" ? "التمارين" : "Workouts"}</span>
           </button>
 
           <button
@@ -157,7 +131,7 @@ function BodyViewContent() {
             onClick={() => switchTab("nutrition")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === "nutrition"
-                ? "bg-secondary-cyan text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
+                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >
@@ -166,47 +140,88 @@ function BodyViewContent() {
           </button>
 
           <button
-            data-tab="standards"
-            onClick={() => switchTab("standards")}
+            data-tab="sleep"
+            onClick={() => switchTab("sleep")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-              activeTab === "standards"
-                ? "bg-rank-gold text-primary-ink shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-primary-ink"
+              activeTab === "sleep"
+                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >
-            <Award className="w-4 h-4 shrink-0" />
-            <span>{dict.body.standards}</span>
+            <Moon className="w-4 h-4 shrink-0" />
+            <span>{dict.body.sleep}</span>
           </button>
 
           <button
-            data-tab="history"
+            data-tab="weight"
+            onClick={() => switchTab("weight")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === "weight"
+                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
+                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+            }`}
+          >
+            <Weight className="w-4 h-4 shrink-0" />
+            <span>{dict.body.bodyWeight}</span>
+          </button>
+
+          <button
+            data-tab="library"
             onClick={() => switchTab("history")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-              activeTab === "history"
-                ? "bg-primary-ink text-on-primary shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-on-primary"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
-            }`}
-          >
-            <History className="w-4 h-4 shrink-0" />
-            <span>{dict.body.history}</span>
-          </button>
-
-          <button
-            data-tab="catalog"
-            onClick={() => switchTab("catalog")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-              activeTab === "catalog"
-                ? "bg-surface-container-highest text-on-surface border border-border-subtle font-bold"
+              ["history", "standards", "catalog"].includes(activeTab)
+                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
                 : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
             }`}
           >
             <BookOpen className="w-4 h-4 shrink-0" />
-            <span>{locale === "ar" ? "دليل التمارين" : "Exercise Catalog"}</span>
+            <span>{locale === "ar" ? "المكتبة" : "Library"}</span>
           </button>
         </div>
         {/* Subtle right gradient fade for horizontal scroll affordance */}
         <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface-container to-transparent rounded-r-2xl" />
       </div>
+
+      {/* Library Sub-Navigation (Shown when user is in Library views) */}
+      {["history", "standards", "catalog"].includes(activeTab) && (
+        <div className="flex items-center gap-1.5 p-1 bg-surface-container-low rounded-xl border border-border-subtle overflow-x-auto text-xs font-mono">
+          <button
+            onClick={() => switchTab("history")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+              activeTab === "history"
+                ? "bg-surface-container font-bold text-secondary-cyan shadow-xs border border-border-subtle"
+                : "text-text-muted hover:text-on-surface"
+            }`}
+          >
+            <History className="w-3.5 h-3.5" />
+            <span>{locale === "ar" ? "سجل التمرينات" : "Workout History"}</span>
+          </button>
+
+          <button
+            onClick={() => switchTab("standards")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+              activeTab === "standards"
+                ? "bg-surface-container font-bold text-secondary-cyan shadow-xs border border-border-subtle"
+                : "text-text-muted hover:text-on-surface"
+            }`}
+          >
+            <Award className="w-3.5 h-3.5" />
+            <span>{locale === "ar" ? "مستويات القوة" : "Strength Standards"}</span>
+          </button>
+
+          <button
+            onClick={() => switchTab("catalog")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+              activeTab === "catalog"
+                ? "bg-surface-container font-bold text-secondary-cyan shadow-xs border border-border-subtle"
+                : "text-text-muted hover:text-on-surface"
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>{locale === "ar" ? "دليل التمارين" : "Exercise Catalog"}</span>
+          </button>
+        </div>
+      )}
 
       {/* Tab 1: Active Workout Session */}
       {activeTab === "logger" && (

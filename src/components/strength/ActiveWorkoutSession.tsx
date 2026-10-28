@@ -917,6 +917,26 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                               unit="kg"
                               className="w-20 h-4 mt-1"
                             />
+                            {item.exercise.equipment?.toLowerCase() === "barbell" && (
+                              <div className="flex flex-wrap items-center gap-1 mt-1.5" title={locale === "ar" ? "إضافة طارات على كل جمب" : "Add plate to each side"}>
+                                {[20, 10, 5, 2.5, 1.25].map((plate) => {
+                                  const currentW = typeof s.weightKg === "number" ? s.weightKg : Number(s.weightKg) || 0;
+                                  const base = currentW < 20 ? 20 : currentW;
+                                  const newTotal = base + plate * 2;
+                                  return (
+                                    <button
+                                      key={plate}
+                                      type="button"
+                                      onClick={() => updateSet(item.instanceId, s.id, "weightKg", String(newTotal))}
+                                      className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container-high hover:bg-secondary-cyan/15 hover:text-secondary-cyan border border-border-subtle cursor-pointer transition-colors"
+                                      title={locale === "ar" ? `+${plate} كجم كل ناحية (الإجمالي: ${newTotal} كجم)` : `+${plate} kg each side (New total: ${newTotal} kg)`}
+                                    >
+                                      +{plate}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </td>
 
                           {/* Reps Input */}
