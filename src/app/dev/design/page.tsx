@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button, Badge, Tab, Card, Input, ProgressBar } from "@/components/ui";
-import {
-  getReduceBlurPreference,
-  setReduceBlurPreference,
-} from "@/lib/design/tokens";
+import { notFound } from "next/navigation";
 import { useI18n } from "@/lib/i18n/I18nContext";
 
 export default function DesignSystemPreviewPage() {
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
   const [activeTab, setActiveTab] = useState<"body" | "mind" | "school">("body");
   const [reduceBlur, setReduceBlur] = useState<boolean>(() =>
     getReduceBlurPreference()
