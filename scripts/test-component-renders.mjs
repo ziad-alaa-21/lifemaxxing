@@ -38,6 +38,7 @@ const mockTodayData = {
 };
 
 function renderMockTodayScreen({ data, locale = "en", handlers }) {
+  assert.ok(data, "Today data provided");
   const isAr = locale === "ar";
   const renderedLabels = [];
   const registeredButtons = {};
@@ -259,6 +260,7 @@ const mockMindData = {
 };
 
 function renderMockMindScreen({ data, locale = "en", handlers }) {
+  assert.ok(data, "Mind data provided");
   const isAr = locale === "ar";
   const renderedLabels = [];
   const registeredButtons = {};
@@ -372,6 +374,7 @@ const mockSchoolData = {
 };
 
 function renderMockSchoolScreen({ data, locale = "en", handlers }) {
+  assert.ok(data, "School data provided");
   const isAr = locale === "ar";
   const renderedLabels = [];
   const registeredButtons = {};
