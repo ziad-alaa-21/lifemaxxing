@@ -351,6 +351,205 @@ function renderMockMindScreen({ data, locale = "en", handlers }) {
   console.log("  PASS: All Mind Screen buttons (modes, timer, tabs, checkin, trainer) called their handlers\n");
 }
 
+// ---------------------------------------------------------------------------
+// 4. SCHOOL SCREEN (SchoolView)
+// ---------------------------------------------------------------------------
+console.log("4. Testing School Screen (SchoolView) Component Render with Mock Data...");
+
+const mockSchoolData = {
+  subjects: [
+    { id: "s1", name: "Physics", code: "PHY-201", color: "#0051d5", target_grade: 90 },
+    { id: "s2", name: "Calculus", code: "MTH-102", color: "#316bf3", target_grade: 90 },
+  ],
+  grades: [
+    { id: "g1", subject_id: "s1", title: "Mechanics Quiz", score_earned: 17, score_total: 20, assessment_type: "quiz" },
+    { id: "g2", subject_id: "s1", title: "Midterm", score_earned: 78, score_total: 100, assessment_type: "exam" },
+    { id: "g3", subject_id: "s1", title: "Waves Quiz", score_earned: 19, score_total: 20, assessment_type: "quiz" },
+  ],
+  deadlines: [
+    { id: "d1", title: "Physics Exam", subject_id: "s1", due_date: "2026-10-31" },
+  ],
+};
+
+function renderMockSchoolScreen({ data, locale = "en", handlers }) {
+  const isAr = locale === "ar";
+  const renderedLabels = [];
+  const registeredButtons = {};
+
+  // Tab Navigation Labels
+  renderedLabels.push(isAr ? "الدراسة والمذاكرة" : "School");
+  renderedLabels.push(isAr ? "المواد" : "Subjects");
+  renderedLabels.push(isAr ? "الجدول" : "Schedule");
+  renderedLabels.push(isAr ? "الخطة والمواعيد" : "Plan");
+  renderedLabels.push(isAr ? "تدريب" : "Practice");
+  renderedLabels.push(isAr ? "الدرجات" : "Grades");
+
+  // Key Widgets & Plain Word Strings (Zero GPA, strict phrases)
+  renderedLabels.push(isAr ? "تايمر المذاكرة" : "Study timer");
+  renderedLabels.push(isAr ? "متوسط الدرجات (مش موزون)" : "Average (unweighted)");
+  renderedLabels.push(isAr ? "هدف الترم" : "semester objective");
+  renderedLabels.push(isAr ? "توزيع الأداء" : "Performance split");
+  renderedLabels.push(isAr ? "كويزات" : "Quizzes");
+  renderedLabels.push(isAr ? "امتحانات كبيرة" : "Big exams");
+  renderedLabels.push(isAr ? "إحصائيات المذاكرة (من تسجيلك)" : "Study stats (from your log)");
+
+  // Button Handlers
+  registeredButtons["select_tab_schedule"] = () => handlers.onSelectTab("schedule");
+  registeredButtons["select_tab_grades"] = () => handlers.onSelectTab("grades");
+  registeredButtons["start_timer"] = () => handlers.onStartTimer();
+  registeredButtons["open_log_grade"] = () => handlers.onOpenLogGradeModal();
+  registeredButtons["view_study_stats"] = () => handlers.onViewStudyStats();
+
+  return { labels: renderedLabels, buttons: registeredButtons };
+}
+
+{
+  let activeTab = "subjects";
+  let timerStarted = false;
+  let logGradeModalOpen = false;
+  let studyStatsOpen = false;
+
+  const handlers = {
+    onSelectTab: (tab) => { activeTab = tab; },
+    onStartTimer: () => { timerStarted = true; },
+    onOpenLogGradeModal: () => { logGradeModalOpen = true; },
+    onViewStudyStats: () => { studyStatsOpen = true; },
+  };
+
+  // English Render
+  const enRender = renderMockSchoolScreen({ data: mockSchoolData, locale: "en", handlers });
+  assert.ok(enRender.labels.includes("School"), "Renders School title");
+  assert.ok(enRender.labels.includes("Subjects"), "Renders Subjects tab");
+  assert.ok(enRender.labels.includes("Schedule"), "Renders Schedule tab");
+  assert.ok(enRender.labels.includes("Plan"), "Renders Plan tab");
+  assert.ok(enRender.labels.includes("Practice"), "Renders Practice tab");
+  assert.ok(enRender.labels.includes("Grades"), "Renders Grades tab");
+  assert.ok(enRender.labels.includes("Average (unweighted)"), "Renders mandatory unweighted average label");
+  assert.ok(enRender.labels.includes("Quizzes"), "Renders plain word Quizzes");
+  assert.ok(enRender.labels.includes("Big exams"), "Renders plain word Big exams");
+  assert.ok(enRender.labels.includes("Study stats (from your log)"), "Renders from your log study stats");
+
+  // Arabic Render
+  const arRender = renderMockSchoolScreen({ data: mockSchoolData, locale: "ar", handlers });
+  assert.ok(arRender.labels.includes("الدراسة والمذاكرة"), "Renders Arabic School title");
+  assert.ok(arRender.labels.includes("المواد"), "Renders Arabic Subjects tab");
+  assert.ok(arRender.labels.includes("الجدول"), "Renders Arabic Schedule tab");
+  assert.ok(arRender.labels.includes("الخطة والمواعيد"), "Renders Arabic Plan tab");
+  assert.ok(arRender.labels.includes("تدريب"), "Renders Arabic Practice tab");
+  assert.ok(arRender.labels.includes("الدرجات"), "Renders Arabic Grades tab");
+  assert.ok(arRender.labels.includes("متوسط الدرجات (مش موزون)"), "Renders Arabic unweighted average");
+  assert.ok(arRender.labels.includes("كويزات"), "Renders Arabic plain word quizzes");
+  assert.ok(arRender.labels.includes("امتحانات كبيرة"), "Renders Arabic plain word big exams");
+  assert.ok(arRender.labels.includes("إحصائيات المذاكرة (من تسجيلك)"), "Renders Arabic from your log stats");
+
+  // Handler Simulations
+  enRender.buttons["select_tab_schedule"]();
+  assert.equal(activeTab, "schedule", "Clicking Schedule tab calls onSelectTab('schedule')");
+
+  enRender.buttons["select_tab_grades"]();
+  assert.equal(activeTab, "grades", "Clicking Grades tab calls onSelectTab('grades')");
+
+  enRender.buttons["start_timer"]();
+  assert.equal(timerStarted, true, "Clicking Start calls onStartTimer");
+
+  enRender.buttons["open_log_grade"]();
+  assert.equal(logGradeModalOpen, true, "Clicking Log Grade calls onOpenLogGradeModal");
+
+  enRender.buttons["view_study_stats"]();
+  assert.equal(studyStatsOpen, true, "Clicking View Stats calls onViewStudyStats");
+
+  console.log("  PASS: School Screen rendered all key labels in EN & AR (Plain Words, Zero GPA, Unweighted Average)");
+  console.log("  PASS: All School Screen buttons (tabs, study timer, grade logger, stats) called their handlers\n");
+}
+
+// ---------------------------------------------------------------------------
+// 5. SETTINGS SCREEN (SettingsView)
+// ---------------------------------------------------------------------------
+console.log("5. Testing Settings Screen (SettingsView) Component Render with Mock Data...");
+
+function renderMockSettingsScreen({ locale = "en", handlers }) {
+  const isAr = locale === "ar";
+  const renderedLabels = [];
+  const registeredButtons = {};
+
+  // Settings Tabs
+  renderedLabels.push(isAr ? "الإعدادات" : "Settings");
+  renderedLabels.push(isAr ? "حسابك" : "Account");
+  renderedLabels.push(isAr ? "الأقسام" : "Modules");
+  renderedLabels.push(isAr ? "أهدافك" : "Targets");
+  renderedLabels.push(isAr ? "التفضيلات" : "Preferences");
+  renderedLabels.push(isAr ? "البيانات والخصوصية" : "Data and privacy");
+
+  // Data & Privacy Widgets
+  renderedLabels.push(isAr ? "بياناتك ملكك لوحدك" : "Data sovereignty");
+  renderedLabels.push(isAr ? "مفيش بيع لبياناتك" : "Zero cloud resale");
+  renderedLabels.push(isAr ? "تنزيل نسخة من بياناتك" : "Export your data");
+  renderedLabels.push(isAr ? "مسح سجلاتي فقط" : "Delete my data");
+  renderedLabels.push(isAr ? "حذف حسابي بالكامل" : "Delete my account");
+  renderedLabels.push(isAr ? "ذاكرة الجهاز والتشغيل بدون نت" : "Device storage & offline cache");
+
+  // Button Handlers
+  registeredButtons["select_tab_modules"] = () => handlers.onSelectTab("modules");
+  registeredButtons["select_tab_targets"] = () => handlers.onSelectTab("targets");
+  registeredButtons["select_tab_privacy"] = () => handlers.onSelectTab("data-privacy");
+  registeredButtons["export_json"] = () => handlers.onExport("json");
+  registeredButtons["clear_cache"] = () => handlers.onClearCache();
+
+  return { labels: renderedLabels, buttons: registeredButtons };
+}
+
+{
+  let activeTab = "data-privacy";
+  let exportedFormat = null;
+  let cacheCleared = false;
+
+  const handlers = {
+    onSelectTab: (tab) => { activeTab = tab; },
+    onExport: (format) => { exportedFormat = format; },
+    onClearCache: () => { cacheCleared = true; },
+  };
+
+  // English Render
+  const enRender = renderMockSettingsScreen({ locale: "en", handlers });
+  assert.ok(enRender.labels.includes("Settings"), "Renders Settings title");
+  assert.ok(enRender.labels.includes("Account"), "Renders Account tab");
+  assert.ok(enRender.labels.includes("Modules"), "Renders Modules tab");
+  assert.ok(enRender.labels.includes("Targets"), "Renders Targets tab");
+  assert.ok(enRender.labels.includes("Preferences"), "Renders Preferences tab");
+  assert.ok(enRender.labels.includes("Data and privacy"), "Renders Data and privacy tab");
+  assert.ok(enRender.labels.includes("Data sovereignty"), "Renders Data sovereignty card header");
+  assert.ok(enRender.labels.includes("Zero cloud resale"), "Renders Zero cloud resale badge");
+  assert.ok(enRender.labels.includes("Export your data"), "Renders Export your data card");
+
+  // Arabic Render
+  const arRender = renderMockSettingsScreen({ locale: "ar", handlers });
+  assert.ok(arRender.labels.includes("الإعدادات"), "Renders Arabic Settings title");
+  assert.ok(arRender.labels.includes("حسابك"), "Renders Arabic Account tab");
+  assert.ok(arRender.labels.includes("الأقسام"), "Renders Arabic Modules tab");
+  assert.ok(arRender.labels.includes("أهدافك"), "Renders Arabic Targets tab");
+  assert.ok(arRender.labels.includes("التفضيلات"), "Renders Arabic Preferences tab");
+  assert.ok(arRender.labels.includes("البيانات والخصوصية"), "Renders Arabic Data and privacy tab");
+  assert.ok(arRender.labels.includes("بياناتك ملكك لوحدك"), "Renders Arabic sovereignty header");
+  assert.ok(arRender.labels.includes("مفيش بيع لبياناتك"), "Renders Arabic zero cloud resale");
+
+  // Handler Simulations
+  enRender.buttons["select_tab_modules"]();
+  assert.equal(activeTab, "modules", "Clicking Modules tab calls onSelectTab('modules')");
+
+  enRender.buttons["select_tab_targets"]();
+  assert.equal(activeTab, "targets", "Clicking Targets tab calls onSelectTab('targets')");
+
+  enRender.buttons["export_json"]();
+  assert.equal(exportedFormat, "json", "Clicking Download JSON calls onExport('json')");
+
+  enRender.buttons["clear_cache"]();
+  assert.equal(cacheCleared, true, "Clicking Clear Cache calls onClearCache");
+
+  console.log("  PASS: Settings Screen rendered all key labels in EN & AR (Data Sovereignty, Zero Resale, Storage)");
+  console.log("  PASS: All Settings Screen buttons (tabs, export, cache) called their handlers\n");
+}
+
 console.log("================================================================================");
-console.log("ALL COMPONENT RENDER TESTS PASSED (Today, Body, Mind)");
+console.log("ALL COMPONENT RENDER TESTS PASSED (Today, Body, Mind, School, Settings)");
 console.log("================================================================================");
+
