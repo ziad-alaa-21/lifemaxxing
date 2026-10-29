@@ -4,6 +4,10 @@ import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button, Badge, Tab, Card, Input, ProgressBar } from "@/components/ui";
 import { notFound } from "next/navigation";
+import {
+  getReduceBlurPreference,
+  setReduceBlurPreference,
+} from "@/lib/design/tokens";
 import { useI18n } from "@/lib/i18n/I18nContext";
 
 export default function DesignSystemPreviewPage() {
