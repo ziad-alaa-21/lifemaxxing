@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Brain, Info, CheckCircle2 } from "lucide-react";
 import { MindScoreBreakdown } from "@/lib/mindScore";
 import { useI18n } from "@/lib/i18n/I18nContext";
 

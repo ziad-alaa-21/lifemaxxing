@@ -4,20 +4,16 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  Brain,
   Timer,
   CheckCircle2,
   Smile,
   Wrench,
   Play,
   RotateCcw,
-  Sparkles,
   Calculator,
   BookOpen,
   Smartphone,
   TrendingUp,
-  X,
-  Plus,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/I18nContext";
 

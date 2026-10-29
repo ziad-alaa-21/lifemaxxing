@@ -4,11 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   Weight,
-  RefreshCw,
   Search,
   Bell,
   Plus,
-  User,
 } from "lucide-react";
 import { RingResult, RecommendationOutput, PriorityItem, CircadianPhase } from "@/lib/today";
 import { RecommendationCard } from "@/components/today/RecommendationCard";
@@ -36,7 +34,7 @@ export default function DevTodayPreviewPage() {
     }
     return "seeded";
   });
-  const [hideControls, setHideControls] = useState(() => {
+  const [hideControls] = useState(() => {
     if (typeof window !== "undefined") {
       const p = new URLSearchParams(window.location.search);
       if (p.get("hideControls") === "1" || p.get("hideBar") === "1") return true;

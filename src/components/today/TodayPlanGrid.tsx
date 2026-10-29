@@ -19,7 +19,7 @@ export function TodayPlanGrid({
   plannedWorkoutSession,
   nearestDeadlineTitle,
   todayFocusMinutes,
-  priorities,
+  priorities: _priorities,
   onAddPlanClick,
   onViewAllClick,
 }: TodayPlanGridProps) {

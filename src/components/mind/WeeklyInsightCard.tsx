@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, TrendingUp, AlertTriangle, Lightbulb } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { MindInsightItem } from "@/lib/mindInsights";
 
 interface WeeklyInsightCardProps {

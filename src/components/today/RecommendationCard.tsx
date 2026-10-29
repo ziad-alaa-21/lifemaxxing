@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Info, X, ChevronRight, Moon, Dumbbell, Smartphone, GraduationCap } from "lucide-react";
+import { Info, X, Moon, Dumbbell, Smartphone, GraduationCap } from "lucide-react";
 import { RecommendationOutput } from "@/lib/today";
 import { useI18n } from "@/lib/i18n/I18nContext";
 

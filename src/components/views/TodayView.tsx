@@ -2,14 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import {
-  Calendar,
-  Weight,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  RefreshCw,
-} from "lucide-react";
+import { Weight, RefreshCw } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import {
   calculateBodyRing,
@@ -25,14 +18,10 @@ import {
   RecommendationOutput,
   CircadianPhase,
 } from "@/lib/today";
-import { LifePulseRings } from "@/components/today/LifePulseRings";
 import { RecommendationCard } from "@/components/today/RecommendationCard";
 import { PrioritiesCard } from "@/components/today/PrioritiesCard";
 import { CircadianTimelineCard } from "@/components/today/CircadianTimelineCard";
 import {
-  TodayBodyCard,
-  TodayMindCard,
-  TodaySchoolCard,
   FinishSetupCard,
   EndOfDayRecapCard,
 } from "@/components/today/TodayPillarCards";
