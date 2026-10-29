@@ -136,300 +136,379 @@ export function MistakesTab({
 
   return (
     <div className="space-y-6">
-      {/* Top Banner / Due Today Alert */}
-      {dueTodayCount > 0 && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-surface-container to-amber-500/5 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-600 shrink-0">
-              <RotateCcw className="w-5 h-5 animate-pulse" />
-            </div>
-            <div>
-              <div className="text-sm font-bold font-mono text-on-surface">
-                {locale === "ar"
-                  ? `${dueTodayCount} أخطاء مستحقة للحل والتصحيح النهاردة`
-                  : `${dueTodayCount} Mistake${dueTodayCount > 1 ? "s" : ""} Due for Redo Today`}
+      {(() => {
+        const conceptCount = stats.causeBreakdown.concept || 0;
+        const carelessCount = stats.causeBreakdown.careless || 0;
+        const memoryCount = stats.causeBreakdown.memory || 0;
+        const timeCount = stats.causeBreakdown.time || 0;
+        const totalCount = stats.totalCount || 1;
+
+        const conceptPct = ((conceptCount / totalCount) * 100).toFixed(1);
+        const carelessPct = ((carelessCount / totalCount) * 100).toFixed(1);
+        const memoryPct = ((memoryCount / totalCount) * 100).toFixed(1);
+        const timePct = ((timeCount / totalCount) * 100).toFixed(1);
+
+        return (
+          <>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Primary Action & Diagnosis (5 cols) */}
+        <div className="lg:col-span-5 flex flex-col gap-5">
+          {/* Callout Redo Hero Card */}
+          <div className="bg-white rounded-[20px] p-6 border border-[#e2e8f9] shadow-xs flex flex-col justify-between relative overflow-hidden">
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-[#45474b] tracking-wide font-medium">
+                  {locale === "ar" ? "التكرار المتباعد اليومي" : "Daily spaced repetition"}
+                </span>
+                <h2 className="text-2xl font-bold text-[#151c28]">
+                  {locale === "ar"
+                    ? `إعادة اليوم: ${dueTodayCount} أخطاء`
+                    : `Redo today: ${dueTodayCount} mistake${dueTodayCount === 1 ? "" : "s"}`}
+                </h2>
               </div>
-              <p className="text-xs font-mono text-on-surface-variant mt-0.5">
-                {locale === "ar"
-                  ? "حل الأخطاء بإيدك بيثبت الفكرة في دماغك ويمنع تكرارها في الامتحان"
-                  : "Active-recall re-solving locks in comprehension before exam day"}
-              </p>
+              <div className="w-10 h-10 rounded-xl bg-[#0051d5]/10 text-[#0051d5] flex items-center justify-center">
+                <RotateCcw className="w-5 h-5" />
+              </div>
+            </div>
+            <p className="text-xs text-[#45474b] mt-3 leading-relaxed">
+              {locale === "ar"
+                ? "مراجعة فورية للأخطاء التحليلية والمفاهيمية تضمن تثبيت المعلومة قبل تلاشي الاسترجاع النشط."
+                : "Immediate review of recent analytical slips ensures long-term memory retention before active recall decays."}
+            </p>
+            <div className="mt-5 flex items-center justify-between pt-3 bg-[#f0f3ff] rounded-xl p-3.5 border border-[#e2e8f9]">
+              <div className="flex items-center gap-2">
+                <span className="text-[#0051d5] text-sm">⏱</span>
+                <span className="text-xs font-semibold text-[#151c28]">
+                  {locale === "ar" ? "الوقت المقدر: 14 دقيقة" : "Estimated time: 14 mins"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const firstDue = filteredMistakes.find((m) => !m.resolved);
+                  if (firstDue) onOpenRedoModal(firstDue);
+                  else if (filteredMistakes[0]) onOpenRedoModal(filteredMistakes[0]);
+                }}
+                className="bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-[#1a1c20] transition-colors shadow-xs cursor-pointer"
+              >
+                {locale === "ar" ? "ابدأ الحل" : "Start redo"}
+              </button>
             </div>
           </div>
-          <button
-            onClick={() => setSelectedStatus("due_today")}
-            className="px-4 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 transition-all cursor-pointer shadow-sm self-start sm:self-auto"
-          >
-            {locale === "ar" ? "ابدأ الحل دلوقتي" : "Practice Redos"}
-          </button>
-        </div>
-      )}
 
-      {/* Analytics Breakdown Card */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
-          <span className="text-[11px] text-[#717784] font-medium uppercase tracking-wider block">
-            {locale === "ar" ? "إجمالي الأخطاء" : "Total Cataloged"}
-          </span>
-          <div className="text-2xl font-bold text-[#151c28]">{stats.totalCount}</div>
-        </div>
-        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
-          <span className="text-[11px] text-[#0051d5] font-medium uppercase tracking-wider block">
-            {locale === "ar" ? "محتاج إعادة حل" : "Needs Redo"}
-          </span>
-          <div className="text-2xl font-bold text-[#0051d5]">{stats.openCount}</div>
-        </div>
-        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
-          <span className="text-[11px] text-[#34a853] font-medium uppercase tracking-wider block">
-            {locale === "ar" ? "تم الحل والإتقان" : "Redone & Resolved"}
-          </span>
-          <div className="text-2xl font-bold text-[#34a853]">{stats.resolvedCount}</div>
-        </div>
-        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
-          <span className="text-[11px] text-[#5c5b9e] font-medium uppercase tracking-wider block">
-            {locale === "ar" ? "نسبة التغلب ع الأخطاء" : "Resolution Rate"}
-          </span>
-          <div className="text-2xl font-bold text-[#5c5b9e]">
-            {stats.resolutionRatePct}%
-          </div>
-        </div>
-      </div>
+          {/* Root Cause Analysis Breakdown */}
+          <div className="bg-white rounded-[20px] p-6 border border-[#e2e8f9] shadow-xs flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <h3 className="text-sm font-bold text-[#151c28]">
+                  {locale === "ar" ? "أسباب الأخطاء الشائعة" : "Why I get things wrong"}
+                </h3>
+                <span className="text-xs text-[#717784]">
+                  {locale === "ar"
+                    ? `إجمالي ${stats.totalCount} خطأ متسجل`
+                    : `Cumulative log of ${stats.totalCount} recorded error states`}
+                </span>
+              </div>
+              <span className="text-xs font-semibold text-[#0051d5] bg-[#f0f3ff] px-2.5 py-1 rounded-full border border-[#dce2f3]">
+                {locale === "ar" ? "تحليل" : "Analysis"}
+              </span>
+            </div>
 
-      {/* Cause Taxonomy Breakdown Pill Bar */}
-      <div className="rounded-[20px] bg-white border border-[#e2e8f9] p-5 space-y-3 shadow-xs">
-        <div className="flex items-center justify-between text-xs text-[#45474b]">
-          <span className="uppercase tracking-wider font-semibold">
-            {locale === "ar" ? "توزيع أسباب الأخطاء" : "Root Cause Distribution"}
-          </span>
-          <span className="text-[11px] text-[#717784]">
-            {locale === "ar" ? `إجمالي ${stats.totalCount} خطأ متسجل` : `${stats.totalCount} total logged`}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          {(["concept", "careless", "time", "memory"] as MistakeCause[]).map((c) => {
-            const count = stats.causeBreakdown[c];
-            const pct = stats.causePercentages[c];
-            const cfg = causeColors[c];
-            const isSelected = selectedCause === c;
+            {/* Stacked Proportional Distribution Bar */}
+            <div className="w-full flex flex-col gap-1.5 mt-1">
+              <div className="h-3 w-full bg-[#e7eeff] rounded-full overflow-hidden flex">
+                <div className="h-full bg-[#0051d5]" style={{ width: `${conceptPct}%` }} title={`Concept: ${conceptCount}`} />
+                <div className="h-full bg-[#316bf3]" style={{ width: `${carelessPct}%` }} title={`Careless: ${carelessCount}`} />
+                <div className="h-full bg-[#5d5e63]" style={{ width: `${memoryPct}%` }} title={`Memory: ${memoryCount}`} />
+                <div className="h-full bg-[#c6c6cb]" style={{ width: `${timePct}%` }} title={`Time: ${timeCount}`} />
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-[#717784] pt-1">
+                <span>
+                  {locale === "ar"
+                    ? `السبب الأكبر: مفاهيم (${conceptPct}%)`
+                    : `Primary driver: Conceptual (${conceptPct}%)`}
+                </span>
+                <span>{locale === "ar" ? "المستهدف: < 15%" : "Target: < 15%"}</span>
+              </div>
+            </div>
 
-            return (
+            {/* Key Metrics Segment Grid */}
+            <div className="grid grid-cols-2 gap-2.5 pt-2">
               <button
-                key={c}
-                onClick={() => setSelectedCause(selectedCause === c ? "all" : c)}
-                className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer ${
-                  isSelected
-                    ? "bg-[#f0f3ff] border-[#0051d5] shadow-xs"
-                    : "bg-[#f8faff] border-[#e2e8f9] hover:border-[#0051d5]/40"
+                type="button"
+                onClick={() => setSelectedCause(selectedCause === "concept" ? "all" : "concept")}
+                className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
+                  selectedCause === "concept" ? "bg-[#f0f3ff] border-[#0051d5]" : "bg-[#f9f9ff] border-[#e2e8f9]"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${cfg.dot}`} />
-                    <span className="text-xs capitalize font-bold text-[#151c28]">
-                      {getCauseLabel(c)}
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-[#151c28]">{count}</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0051d5]" />
+                  <span className="text-xs font-medium text-[#151c28]">
+                    {locale === "ar" ? "مفاهيم" : "Concept"}
+                  </span>
                 </div>
-                <div className="text-[10px] text-[#717784] mt-0.5">
-                  {pct}% {locale === "ar" ? "من الأخطاء" : "of errors"}
-                </div>
+                <span className="text-xs font-bold text-[#151c28]">{conceptCount}</span>
               </button>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* Filter and Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Status Tabs */}
-          <div className="flex items-center bg-surface-container p-1 rounded-xl border border-border-subtle font-mono text-xs">
+              <button
+                type="button"
+                onClick={() => setSelectedCause(selectedCause === "careless" ? "all" : "careless")}
+                className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
+                  selectedCause === "careless" ? "bg-[#f0f3ff] border-[#0051d5]" : "bg-[#f9f9ff] border-[#e2e8f9]"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#316bf3]" />
+                  <span className="text-xs font-medium text-[#151c28]">
+                    {locale === "ar" ? "تسرع وسهو" : "Careless"}
+                  </span>
+                </div>
+                <span className="text-xs font-bold text-[#151c28]">{carelessCount}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedCause(selectedCause === "memory" ? "all" : "memory")}
+                className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
+                  selectedCause === "memory" ? "bg-[#f0f3ff] border-[#0051d5]" : "bg-[#f9f9ff] border-[#e2e8f9]"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#5d5e63]" />
+                  <span className="text-xs font-medium text-[#151c28]">
+                    {locale === "ar" ? "نسيان قانون" : "Memory"}
+                  </span>
+                </div>
+                <span className="text-xs font-bold text-[#151c28]">{memoryCount}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedCause(selectedCause === "time" ? "all" : "time")}
+                className={`p-2.5 rounded-xl border text-start transition-all cursor-pointer flex items-center justify-between ${
+                  selectedCause === "time" ? "bg-[#f0f3ff] border-[#0051d5]" : "bg-[#f9f9ff] border-[#e2e8f9]"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#c6c6cb]" />
+                  <span className="text-xs font-medium text-[#151c28]">
+                    {locale === "ar" ? "ضيق وقت" : "Time"}
+                  </span>
+                </div>
+                <span className="text-xs font-bold text-[#151c28]">{timeCount}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Add Prompt Banner */}
+          <div className="bg-[#f0f3ff] rounded-[20px] p-4.5 border border-[#e2e8f9] flex items-center gap-3">
+            <HelpCircle className="w-5 h-5 text-[#0051d5] shrink-0" />
+            <span className="text-xs text-[#45474b] leading-relaxed">
+              {locale === "ar"
+                ? "مراجعة الخطأ وإعادة حله خلال 24 ساعة تضاعف نسبة استرجاعه وثباته."
+                : "Reviewing errors within 24 hours doubles long-term retention."}
+            </span>
+          </div>
+        </div>
+
+        {/* Right Column: Error Catalog & Logs (7 cols) */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          {/* Top Action Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-[20px] px-5 py-4 border border-[#e2e8f9] shadow-xs">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-bold text-[#151c28]">
+                {locale === "ar" ? "الأخطاء المسجلة" : "Recorded mistakes"}
+              </span>
+              <span className="text-xs bg-[#f0f3ff] text-[#0051d5] font-semibold px-2.5 py-0.5 rounded-full border border-[#dce2f3]">
+                {filteredMistakes.length} {locale === "ar" ? "إجمالي" : "total"}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 sm:w-44">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={locale === "ar" ? "بحث..." : "Search..."}
+                  className="w-full py-1.5 pl-3 pr-8 bg-[#f0f3ff] border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] placeholder:text-[#76777b] focus:bg-white focus:outline-none"
+                />
+                <Search className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-[#76777b] pointer-events-none" />
+              </div>
+
+              <button
+                type="button"
+                onClick={onOpenAddModal}
+                className="inline-flex items-center gap-1.5 bg-black text-white hover:bg-[#1a1c20] text-xs font-semibold px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-xs shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{locale === "ar" ? "تسجيل خطأ" : "Add mistake"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Filter Pills Bar with Status and Causes */}
+          <div className="flex flex-wrap items-center gap-2">
             {(
               [
-                { id: "all", label: locale === "ar" ? "الكل" : "All" },
-                { id: "due_today", label: locale === "ar" ? `مستحق (${dueTodayCount})` : `Due (${dueTodayCount})` },
+                { id: "all", label: locale === "ar" ? "كل الأخطاء" : "All" },
+                { id: "due_today", label: locale === "ar" ? `مستحق اليوم (${dueTodayCount})` : `Redo today (${dueTodayCount})` },
                 { id: "open", label: locale === "ar" ? "مفتوح" : "Open" },
-                { id: "resolved", label: locale === "ar" ? "متقن" : "Resolved" },
+                { id: "resolved", label: locale === "ar" ? "متقن" : "Mastered" },
               ] as Array<{ id: StatusFilter; label: string }>
             ).map((t) => (
               <button
                 key={t.id}
+                type="button"
                 onClick={() => setSelectedStatus(t.id)}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap cursor-pointer transition-all ${
                   selectedStatus === t.id
-                    ? "bg-amber-500/20 text-amber-700 font-bold border border-amber-500/30 shadow-xs"
-                    : "text-text-muted hover:text-on-surface"
+                    ? "bg-black text-white shadow-xs font-semibold"
+                    : "bg-white text-[#45474b] border border-[#e2e8f9] hover:text-[#151c28]"
                 }`}
               >
                 {t.label}
               </button>
             ))}
-          </div>
 
-          {/* Subject Filter */}
-          <select
-            value={selectedSubjectId}
-            onChange={(e) => setSelectedSubjectId(e.target.value)}
-            className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
-          >
-            <option value="all">{locale === "ar" ? "كل المواد" : "All Subjects"}</option>
-            {subjects.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
+            <div className="h-4 w-px bg-[#e2e8f9] mx-1" />
+
+            {(["concept", "careless", "time", "memory"] as MistakeCause[]).map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setSelectedCause(selectedCause === c ? "all" : c)}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                  selectedCause === c
+                    ? "bg-[#0051d5] text-white font-semibold shadow-xs"
+                    : "bg-[#f0f3ff] text-[#45474b] hover:bg-[#e7eeff]"
+                }`}
+              >
+                {getCauseLabel(c)}
+              </button>
             ))}
-          </select>
-        </div>
-
-        {/* Search & Add Mistake CTA */}
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1 sm:w-56">
-            <Search className={`w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 text-text-muted ${locale === "ar" ? "right-3" : "left-3"}`} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={locale === "ar" ? "ابحث في الأخطاء..." : "Search mistakes..."}
-              className={`w-full py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface placeholder:text-text-muted focus:outline-none ${locale === "ar" ? "pr-8 pl-3" : "pl-8 pr-3"}`}
-            />
           </div>
 
-          <button
-            onClick={onOpenAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer shrink-0"
-          >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>{locale === "ar" ? "سجل خطأ" : "Log Mistake"}</span>
-          </button>
+          {/* Mistake Items Stack */}
+          {filteredMistakes.length === 0 ? (
+            <div className="p-12 rounded-[20px] bg-white border border-[#e2e8f9] text-center space-y-2 shadow-xs">
+              <BookX className="w-8 h-8 text-[#717784] mx-auto" />
+              <div className="text-sm font-bold text-[#151c28]">
+                {locale === "ar" ? "مفيش أخطاء مطابقة" : "No mistakes found"}
+              </div>
+              <p className="text-xs text-[#717784] max-w-sm mx-auto">
+                {locale === "ar"
+                  ? "سجل الأخطاء هنا أول ما تظهر في الواجبات أو الامتحانات لتكرارها وتثبيتها."
+                  : "Whenever you make an error on homework or exams, log it here for spaced repetition."}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredMistakes.map((m) => {
+                const subject = subjectMap.get(m.subject_id);
+                const isResolved = Boolean(m.resolved || m.last_redo_result === "correct");
+                const isDueToday =
+                  !isResolved || (m.redo_at && new Date(m.redo_at).getTime() <= nowMs);
+
+                return (
+                  <div
+                    key={m.id}
+                    className="bg-white rounded-[20px] p-5 border border-[#e2e8f9] shadow-xs flex flex-col gap-3 hover:border-[#0051d5]/40 transition-all"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {/* Subject Badge */}
+                        <span className="bg-[#dbe1ff] text-[#00174b] text-xs font-semibold px-2.5 py-0.5 rounded-md">
+                          {subject?.name || (locale === "ar" ? "مادة" : "Subject")}
+                        </span>
+                        {/* Topic Chip */}
+                        <span className="bg-[#e7eeff] text-[#151c28] text-xs font-medium px-2.5 py-0.5 rounded-md">
+                          {m.topic}
+                        </span>
+                        {/* Reason Chip */}
+                        <span className="bg-[#f0f3ff] text-[#45474b] text-xs font-medium px-2.5 py-0.5 rounded-md">
+                          {getCauseLabel(m.cause)}
+                        </span>
+                      </div>
+
+                      {/* Schedule Chip */}
+                      {isResolved ? (
+                        <span className="inline-flex items-center gap-1 bg-[#f0fdf4] text-[#15803d] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
+                          <Check className="w-3 h-3 stroke-[2.5]" />
+                          <span>{locale === "ar" ? "تم الإتقان" : "Mastered"}</span>
+                        </span>
+                      ) : isDueToday ? (
+                        <span className="inline-flex items-center gap-1.5 bg-[#ffdad6] text-[#93000a] text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#ba1a1a]" />
+                          <span>{locale === "ar" ? "إعادة اليوم" : "Redo today"}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 bg-[#e7eeff] text-[#45474b] text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0">
+                          <span>{locale === "ar" ? "قيد الجدولة" : "Pending"}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <p className="text-sm font-semibold text-[#151c28] leading-snug">
+                        {m.question_context}
+                      </p>
+                      {m.error_made && (
+                        <p className="text-xs text-[#45474b] leading-relaxed">
+                          {m.error_made}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-[#f0f3ff] text-[#717784] text-xs">
+                      <span>
+                        {m.redo_history && m.redo_history.length > 0
+                          ? locale === "ar"
+                            ? `${m.redo_history.length} محاولات سابقة`
+                            : `${m.redo_history.length} previous attempt(s)`
+                          : locale === "ar"
+                          ? "أول محاولة"
+                          : "First cycle"}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => onOpenRedoModal(m)}
+                          className="text-xs font-semibold text-[#0051d5] hover:underline cursor-pointer"
+                        >
+                          {locale === "ar" ? "إعادة الحل" : "Practice redo"}
+                        </button>
+                        <span>•</span>
+                        <button
+                          type="button"
+                          onClick={() => onOpenEditModal(m)}
+                          className="inline-flex items-center gap-1 text-xs text-[#45474b] hover:text-[#151c28] cursor-pointer"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                          <span>{locale === "ar" ? "تعديل" : "Edit"}</span>
+                        </button>
+                        <span>•</span>
+                        <button
+                          type="button"
+                          onClick={() => onDeleteMistake(m.id)}
+                          className="inline-flex items-center gap-1 text-xs text-[#ba1a1a] hover:underline cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>{locale === "ar" ? "حذف" : "Dismiss"}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Mistake Cards List */}
-      {filteredMistakes.length === 0 ? (
-        <div className="p-12 rounded-[20px] bg-white border border-[#e2e8f9] text-center space-y-2 shadow-xs">
-          <BookX className="w-8 h-8 text-[#717784] mx-auto" />
-          <div className="text-sm font-bold text-[#151c28]">
-            {locale === "ar" ? "مفيش أخطاء متسجلة هنا" : "No mistakes found"}
-          </div>
-          <p className="text-xs text-[#717784] max-w-sm mx-auto">
-            {searchQuery || selectedCause !== "all" || selectedStatus !== "all"
-              ? locale === "ar" ? "مفيش عناصر مطابقة للفلاتر دي. اعد ضبط الفلتر عشان تشوف كل الأخطاء." : "No items match your active filters. Reset filters to see all entries."
-              : locale === "ar" ? "أول ما تغلط في واجب أو كويز أو تدريب، سجله هنا عشان تراجعه وتضمن إنك مش هتكرره تاني." : "Whenever you make an error on a homework, quiz, or practice problem, log it here to build your active-recall notebook."}
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filteredMistakes.map((m) => {
-            const subject = subjectMap.get(m.subject_id);
-            const isResolved = Boolean(m.resolved || m.last_redo_result === "correct");
-            const isDueToday =
-              !isResolved || (m.redo_at && new Date(m.redo_at).getTime() <= nowMs);
-            const cfg = causeColors[m.cause] || causeColors.concept;
-
-            return (
-              <div
-                key={m.id}
-                className="rounded-[20px] bg-white border border-[#e2e8f9] hover:border-[#0051d5]/40 transition-all p-4.5 space-y-3 shadow-xs"
-              >
-                {/* Header: Subject + Topic + Cause + Status Badge */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[#f0f3ff]">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      className="w-3 h-3 rounded-full shrink-0"
-                      style={{ backgroundColor: subject?.color || "#0051d5" }}
-                    />
-                    <span className="text-xs font-bold text-[#151c28]">
-                      {subject?.name || (locale === "ar" ? "المادة" : "Academic Subject")}
-                    </span>
-                    <span className="text-[#717784] text-xs">•</span>
-                    <h3 dir="auto" className="text-xs font-bold text-[#151c28]">
-                      {m.topic}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-center gap-2 self-start sm:self-auto">
-                    <span
-                      className={`text-[10px] px-2.5 py-0.5 rounded-full border uppercase font-bold ${cfg.badge}`}
-                    >
-                      {getCauseLabel(m.cause)}
-                    </span>
-                    {isResolved ? (
-                      <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#f0fdf4] border border-[#bbf7d0] text-[#15803d] uppercase font-bold flex items-center gap-1">
-                        <Check className="w-2.5 h-2.5 stroke-[3]" />
-                        {locale === "ar" ? "تم الإتقان" : "Resolved"}
-                      </span>
-                    ) : (
-                      <span
-                        className={`text-[10px] px-2.5 py-0.5 rounded-full border uppercase font-bold ${
-                          isDueToday
-                            ? "bg-[#f0f3ff] border-[#dce2f3] text-[#0051d5]"
-                            : "bg-[#f8faff] border-[#e2e8f9] text-[#45474b]"
-                        }`}
-                      >
-                        {isDueToday
-                          ? locale === "ar" ? "مستحق النهاردة" : "Due Today"
-                          : locale === "ar" ? "في انتظار الإعادة" : "Pending Redo"}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Problem Prompt Snippet */}
-                <div className="space-y-1">
-                  <div className="text-[10px] text-[#717784] uppercase tracking-wider flex items-center gap-1">
-                    <HelpCircle className="w-3 h-3" />
-                    <span>{locale === "ar" ? "سياق المسألة / السؤال:" : "Problem Context:"}</span>
-                  </div>
-                  <p
-                    dir="auto"
-                    className="text-xs text-[#45474b] line-clamp-2 leading-relaxed"
-                  >
-                    {m.question_context}
-                  </p>
-                </div>
-
-                {/* Card Actions & Redo CTA */}
-                <div className="flex items-center justify-between pt-1 text-xs">
-                  <div className="text-[11px] text-[#717784] flex items-center gap-2">
-                    {m.redo_history && m.redo_history.length > 0 ? (
-                      <span>
-                        {m.redo_history.length} {locale === "ar" ? "محاولة إعادة حل" : "redo attempt(s)"}
-                      </span>
-                    ) : (
-                      <span>{locale === "ar" ? "مفيش محاولات سابقة" : "No redos yet"}</span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onOpenRedoModal(m)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#f0f3ff] border border-[#dce2f3] text-[#0051d5] text-xs font-semibold hover:bg-[#e2e8f9] transition-all cursor-pointer"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>{locale === "ar" ? "حل تاني" : "Practice Redo"}</span>
-                    </button>
-                    <button
-                      onClick={() => onOpenEditModal(m)}
-                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
-                      title={locale === "ar" ? "تعديل الخطأ" : "Edit Mistake"}
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => onDeleteMistake(m.id)}
-                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/30 transition-colors"
-                      title={locale === "ar" ? "حذف (تراجع 8 ث)" : "Delete (8s Undo)"}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+          </>
+        );
+      })()}
     </div>
   );
 }

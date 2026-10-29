@@ -42,6 +42,7 @@ import { GradeTrendChart } from "@/components/school/GradeTrendChart";
 import { TimetableGrid } from "@/components/school/TimetableGrid";
 import { StudyAnalyticsTab } from "@/components/school/StudyAnalyticsTab";
 import { UltradianTimer } from "@/components/mind/UltradianTimer";
+import { StudyTimerHeroCard } from "@/components/ui/StudyTimerHeroCard";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
 import {
   GraduationCap,
@@ -69,6 +70,7 @@ import {
   BarChart3,
   ListPlus,
   Flame,
+  TrendingUp,
 } from "lucide-react";
 
 import { useI18n } from "@/lib/i18n/I18nContext";
@@ -985,110 +987,88 @@ export function SchoolView() {
       )}
 
       {/* Top Academic Header Banner */}
-      <div className="rounded-[20px] bg-white p-5 sm:p-6 border border-[#e2e8f9] shadow-xs relative overflow-hidden">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#f0f3ff] border border-[#e2e8f9] flex items-center justify-center text-[#0051d5] shadow-xs">
-              <GraduationCap className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-[#151c28]">
-                  {locale === "ar" ? "الدراسة والمذاكرة" : "School"}
-                </h1>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#f0f3ff] text-[#0051d5] font-semibold border border-[#dce2f3]">
-                  {locale === "ar" ? "نظام الدراسة" : "Academic OS"}
-                </span>
-              </div>
-              <p className="text-xs text-[#45474b] mt-0.5">
-                {locale === "ar"
-                  ? "متوسط الدرجات (مش موزون)، كشكول الأخطاء، وجدول الحصص"
-                  : "Unweighted averages, mistake redo queue, and timetable"}
-              </p>
-            </div>
-          </div>
-
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setEditingSubject(null);
-                setIsSubjectModalOpen(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer"
-            >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>{locale === "ar" ? "ضيف مادة" : "Add subject"}</span>
-            </button>
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#e2e8f9] text-[#45474b] text-xs font-semibold">
+              {locale === "ar" ? "نظام الدراسة" : "Academic OS"}
+            </span>
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#dbe1ff] text-[#003ea8] text-xs font-semibold">
+              {locale === "ar" ? "الفصل الدراسي الحالي" : "Fall term 2024"}
+            </span>
           </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#151c28] tracking-tight">
+            {locale === "ar" ? "الدراسة والمذاكرة" : "School"}
+          </h1>
         </div>
-      </div>
 
-      {/* Segmented Control Navigation */}
-      <nav aria-label="School sections" className="flex items-center gap-1.5 p-1 bg-[#f0f3ff] rounded-full border border-[#e2e8f9] overflow-x-auto shadow-xs">
-        <button
-          onClick={() => handleTabChange("overview")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === "overview"
-              ? "bg-white text-[#151c28] shadow-xs font-semibold"
-              : "text-[#45474b] hover:text-[#151c28]"
-          }`}
-        >
-          {locale === "ar" ? "المواد" : "Subjects"}
-        </button>
-        <button
-          onClick={() => handleTabChange("timetable")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === "timetable"
-              ? "bg-white text-[#151c28] shadow-xs font-semibold"
-              : "text-[#45474b] hover:text-[#151c28]"
-          }`}
-        >
-          {locale === "ar" ? "الجدول" : "Schedule"} ({schedule.filter((s) => !s.deleted_at).length})
-        </button>
-        <button
-          onClick={() => handleTabChange("plan")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === "plan"
-              ? "bg-white text-[#151c28] shadow-xs font-semibold"
-              : "text-[#45474b] hover:text-[#151c28]"
-          }`}
-        >
-          {locale === "ar" ? "الخطة والمواعيد" : "Plan"} ({deadlines.filter((d) => !d.completed).length})
-        </button>
-        <button
-          onClick={() => handleTabChange("practice")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap flex items-center justify-center gap-1.5 cursor-pointer ${
-            activeTab === "practice"
-              ? "bg-white text-[#151c28] shadow-xs font-semibold"
-              : "text-[#45474b] hover:text-[#151c28]"
-          }`}
-        >
-          <span>{locale === "ar" ? "تدريب" : "Practice"}</span>
-          {duePracticeTotal > 0 && (
-            <span className="w-2 h-2 rounded-full bg-[#0051d5] animate-pulse" />
-          )}
-        </button>
-        <button
-          onClick={() => handleTabChange("grades")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === "grades"
-              ? "bg-white text-[#151c28] shadow-xs font-semibold"
-              : "text-[#45474b] hover:text-[#151c28]"
-          }`}
-        >
-          {locale === "ar" ? "الدرجات" : "Grades"} ({grades.length})
-        </button>
-        <button
-          onClick={() => handleTabChange("stats")}
-          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === "stats"
-              ? "bg-white text-[#151c28] shadow-xs font-semibold"
-              : "text-[#45474b] hover:text-[#151c28]"
-          }`}
-        >
-          {locale === "ar" ? "إحصائيات المذاكرة (من تسجيلك)" : "Study stats (from your log)"}
-        </button>
-      </nav>
+        {/* Segmented Control Navigation */}
+        <nav aria-label="School sections" className="flex items-center gap-1.5 p-1 bg-[#f0f3ff] rounded-full border border-[#e2e8f9] shadow-xs max-w-full overflow-x-auto">
+          <button
+            onClick={() => handleTabChange("overview")}
+            className={`py-2 px-4 rounded-full text-xs transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "overview"
+                ? "bg-white text-[#151c28] shadow-xs font-bold"
+                : "text-[#45474b] hover:text-[#151c28] font-medium"
+            }`}
+          >
+            {locale === "ar" ? "المواد" : "Subjects"}
+          </button>
+          <button
+            onClick={() => handleTabChange("timetable")}
+            className={`py-2 px-4 rounded-full text-xs transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "timetable"
+                ? "bg-white text-[#151c28] shadow-xs font-bold"
+                : "text-[#45474b] hover:text-[#151c28] font-medium"
+            }`}
+          >
+            {locale === "ar" ? "الجدول" : "Schedule"}
+          </button>
+          <button
+            onClick={() => handleTabChange("plan")}
+            className={`py-2 px-4 rounded-full text-xs transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "plan"
+                ? "bg-white text-[#151c28] shadow-xs font-bold"
+                : "text-[#45474b] hover:text-[#151c28] font-medium"
+            }`}
+          >
+            {locale === "ar" ? "الخطة" : "Plan"}
+          </button>
+          <button
+            onClick={() => handleTabChange("practice")}
+            className={`py-2 px-4 rounded-full text-xs transition-all whitespace-nowrap flex items-center justify-center gap-1.5 cursor-pointer ${
+              activeTab === "practice"
+                ? "bg-white text-[#151c28] shadow-xs font-bold"
+                : "text-[#45474b] hover:text-[#151c28] font-medium"
+            }`}
+          >
+            <span>{locale === "ar" ? "تدريب" : "Practice"}</span>
+            {duePracticeTotal > 0 && (
+              <span className="w-2 h-2 rounded-full bg-[#0051d5] animate-pulse" />
+            )}
+          </button>
+          <button
+            onClick={() => handleTabChange("grades")}
+            className={`py-2 px-4 rounded-full text-xs transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "grades"
+                ? "bg-white text-[#151c28] shadow-xs font-bold"
+                : "text-[#45474b] hover:text-[#151c28] font-medium"
+            }`}
+          >
+            {locale === "ar" ? "الدرجات" : "Grades"}
+          </button>
+          <button
+            onClick={() => handleTabChange("stats")}
+            className={`py-2 px-4 rounded-full text-xs transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "stats"
+                ? "bg-white text-[#151c28] shadow-xs font-bold"
+                : "text-[#45474b] hover:text-[#151c28] font-medium"
+            }`}
+          >
+            {locale === "ar" ? "الإحصائيات" : "Stats"}
+          </button>
+        </nav>
+      </div>
 
       {/* Global Error Banner */}
       {error && (
@@ -1109,214 +1089,147 @@ export function SchoolView() {
       )}
 
       {/* ============================================================== */}
-      {/* TAB 1: OVERVIEW                                                */}
+      {/* TAB 1: OVERVIEW (SUBJECTS)                                     */}
       {/* ============================================================== */}
       {!loading && activeTab === "overview" && (
         <div className="space-y-6">
           {/* Due Today Unified Priority Banner */}
           {duePracticeTotal > 0 && (
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-surface-container to-indigo-500/15 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+            <div className="p-4 rounded-2xl bg-[#fff7ed] border border-[#ffedd5] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-600 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#ffedd5] border border-[#fed7aa] flex items-center justify-center text-[#c2410c] shrink-0">
                   <Flame className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
-                  <div className="text-sm font-bold font-mono text-on-surface">
+                  <div className="text-sm font-bold text-[#151c28]">
                     {locale === "ar"
-                      ? `مطلوب تركيزك النهاردة: ${dueMistakesCount} تصحيح أخطاء • ${dueTopicsCount} مراجعة مفاهيم`
+                      ? `مطلوب تركيزك اليوم: ${dueMistakesCount} تصحيح أخطاء • ${dueTopicsCount} مراجعة موضوعات`
                       : `Action Required Today: ${dueMistakesCount} Mistake Redo(s) • ${dueTopicsCount} Topic Review(s)`}
                   </div>
-                  <p className="text-xs font-mono text-on-surface-variant mt-0.5">
+                  <p className="text-xs text-[#45474b] mt-0.5">
                     {locale === "ar"
-                      ? "ثبّت معلوماتك بالاسترجاع النشط وفترات التكرار المتباعد لايتنر"
+                      ? "ثبّت معلوماتك بالاسترجاع النشط وفترات التكرار المتباعد"
                       : "Reinforce learning using active-recall and Leitner spaced intervals"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 self-start sm:self-auto">
-                {dueMistakesCount > 0 && (
-                  <button
-                    onClick={() => {
-                      setPracticeSubTab("mistakes");
-                      handleTabChange("practice");
-                    }}
-                    className="px-3 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 transition-all cursor-pointer shadow-sm"
-                  >
-                    {locale === "ar" ? "حل الأخطاء تاني" : "Redo Mistakes"}
-                  </button>
-                )}
-                {dueTopicsCount > 0 && (
-                  <button
-                    onClick={() => {
-                      setPracticeSubTab("topics");
-                      handleTabChange("practice");
-                    }}
-                    className="px-3 py-1.5 rounded-xl bg-indigo-500 text-white text-xs font-mono font-bold uppercase hover:bg-indigo-400 transition-all cursor-pointer shadow-sm"
-                  >
-                    {locale === "ar" ? "راجع المفاهيم" : "Review Topics"}
-                  </button>
-                )}
-              </div>
+              <button
+                type="button"
+                onClick={() => handleTabChange("practice")}
+                className="h-9 px-4 rounded-xl bg-[#000000] text-white text-xs font-semibold hover:bg-[#2a313d] transition-colors shrink-0 cursor-pointer"
+              >
+                {locale === "ar" ? "ابدأ التدريب" : "Start Practice"}
+              </button>
             </div>
           )}
 
-          {/* Top Metric Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-            {/* Average Across Subjects Card */}
-            <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-2">
-              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
-                {locale === "ar" ? "متوسط المواد (مش موزون)" : "Average across subjects (unweighted)"}
-              </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-[#151c28]">
-                  {overallStats.overallAveragePct !== null
-                    ? `${overallStats.overallAveragePct}%`
-                    : "—"}
-                </span>
-                <span className="text-xs font-medium text-[#0051d5]">
-                  {overallStats.gradedSubjectsCount} {locale === "ar" ? "مادة مقيمة" : "Graded Subjects"}
-                </span>
-              </div>
-              <p className="text-xs text-[#717784]">
-                {locale === "ar"
-                  ? `إجمالي ${overallStats.totalGradesCount} تقييم متسجل في المواد النشطة`
-                  : `${overallStats.totalGradesCount} total assessments recorded across active courses`}
-              </p>
-            </div>
+          {/* Active Study Dashboard & Focus Session Timer Hero Card */}
+          <StudyTimerHeroCard
+            activeSubjects={activeSubjects}
+            focusSessions={focusSessions}
+            locale={locale}
+            onOpenStudyModal={setStudySubject}
+          />
 
-            {/* Nearest Deadline Card */}
-            <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-2">
-              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
-                {locale === "ar" ? "أقرب موعد تسليم" : "Upcoming Deadline"}
-              </span>
-              {nearestDl ? (
-                <div className="space-y-1">
-                  <div className="text-base font-bold text-[#151c28] truncate">
-                    {nearestDl.title}
-                  </div>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#f0f3ff] text-[#0051d5] font-semibold border border-[#dce2f3] text-[10px]">
-                      {nearestDl.type}
-                    </span>
-                    <span className="text-[#45474b]">
-                      {classifyDeadline(nearestDl.due_date).label}
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-xs text-[#717784] pt-2">
-                  {locale === "ar" ? "مفيش مواعيد تسليم قادمة" : "No upcoming deadlines pending"}
-                </div>
-              )}
-            </div>
-
-            {/* Practice Retention Quick Card */}
-            <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-2">
-              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
-                {locale === "ar" ? "مركز التكرار والتثبيت" : "Practice Retention Hub"}
-              </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-[#151c28]">
-                  {mistakes.length}
-                </span>
-                <span className="text-xs font-medium text-[#0051d5]">
-                  {locale === "ar" ? "أخطاء" : "Mistakes"}
-                </span>
-                <span className="text-[#717784]">•</span>
-                <span className="text-3xl font-bold text-[#151c28]">
-                  {topics.length}
-                </span>
-                <span className="text-xs font-medium text-[#5c5b9e]">
-                  {locale === "ar" ? "مفاهيم" : "Topics"}
-                </span>
-              </div>
-              <p className="text-xs text-[#717784]">
-                {locale === "ar"
-                  ? `${duePracticeTotal} عنصر مستحق النهاردة للتثبيت والمراجعة`
-                  : `${duePracticeTotal} item(s) due today for active retrieval practice`}
-              </p>
-            </div>
-          </div>
-
-          {/* Active Courses Grid */}
-          <div className="space-y-3">
+          {/* Section Heading: Current Subjects */}
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-[#151c28]">
-                {locale === "ar"
-                  ? `المواد المسجلة (${activeSubjects.length})`
-                  : `Enrolled Subjects (${activeSubjects.length})`}
-              </h2>
-              <button
-                onClick={() => {
-                  setEditingSubject(null);
-                  setIsSubjectModalOpen(true);
-                }}
-                className="text-xs font-semibold text-[#0051d5] hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>{locale === "ar" ? "مادة جديدة" : "New Subject"}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-[#151c28]">
+                  {locale === "ar" ? "المواد الحالية" : "Current subjects"}
+                </h2>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#e7eeff] text-[#0051d5] text-xs font-semibold border border-[#dce2f3]">
+                  {activeSubjects.length} {locale === "ar" ? "نشطة" : "active"}
+                </span>
+              </div>
+              <span className="text-xs text-[#45474b]">
+                {locale === "ar" ? "مرتبة حسب الأولوية" : "Sorted by priority"}
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            {/* Grid of Subject Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {activeSubjects.map((sub) => {
                 const subGrades = grades.filter((g) => g.subject_id === sub.id);
-                const subDeadlines = deadlines.filter(
-                  (d) => d.subject_id === sub.id && !d.completed
-                );
+                const subDeadlines = deadlines.filter((d) => d.subject_id === sub.id && !d.completed);
                 const avgResult = calculateSubjectGradeAverage(subGrades);
+                const nextDl = subDeadlines[0];
 
                 return (
                   <div
                     key={sub.id}
                     onClick={() => setDetailSubject(sub)}
-                    className="rounded-[20px] bg-white border border-[#e2e8f9] p-4.5 hover:border-[#0051d5]/40 hover:shadow-xs transition-all cursor-pointer space-y-3 shadow-xs"
+                    className="rounded-[20px] bg-white p-6 border border-[#e2e8f9] shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <span
-                          className="w-3.5 h-3.5 rounded-full shrink-0"
-                          style={{ backgroundColor: sub.color || "#0051d5" }}
-                        />
-                        <div>
-                          <h3 className="text-sm font-bold text-[#151c28]">
-                            {sub.name}
-                          </h3>
-                          {sub.code && (
-                            <span className="text-[10px] text-[#717784]">
-                              {sub.code}
-                            </span>
-                          )}
+                    <div className="space-y-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-[#e2e8f9]"
+                            style={{
+                              backgroundColor: sub.color ? `${sub.color}15` : "#f0f3ff",
+                              color: sub.color || "#0051d5",
+                            }}
+                          >
+                            <GraduationCap className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-[#151c28] group-hover:text-[#0051d5] transition-colors">
+                              {sub.name}
+                            </h3>
+                            {sub.code && (
+                              <span className="text-[11px] text-[#717784]">{sub.code}</span>
+                            )}
+                          </div>
                         </div>
+
+                        {nextDl ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#ffdad6] text-[#93000a] text-[10px] font-bold shrink-0">
+                            {classifyDeadline(nextDl.due_date).label}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#e7eeff] text-[#0051d5] text-[10px] font-bold shrink-0">
+                            {locale === "ar" ? "منتظم" : "on track"}
+                          </span>
+                        )}
                       </div>
 
-                      <div className="text-end">
-                        <div className="text-base font-bold text-[#151c28]">
-                          {avgResult.averagePct !== null
-                            ? `${avgResult.averagePct}%`
-                            : "—"}
+                      {/* Academic Metrics */}
+                      <div className="pt-1">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-extrabold text-[#151c28]">
+                            {avgResult.averagePct !== null ? `${avgResult.averagePct}%` : "—"}
+                          </span>
+                          <span className="text-xs text-[#45474b]">
+                            {avgResult.averagePct !== null
+                              ? locale === "ar" ? "متوسط الدرجات" : "average grade"
+                              : locale === "ar" ? "لا درجات بعد" : "no grades yet"}
+                          </span>
                         </div>
-                        <span className="text-[10px] text-[#717784]">
-                          {avgResult.isWeighted
-                            ? locale === "ar" ? "موزون" : "Weighted"
-                            : locale === "ar" ? "مش موزون" : "Unweighted"}
-                        </span>
+                        <div className="w-full h-1.5 rounded-full bg-[#e7eeff] overflow-hidden mt-2">
+                          <div
+                            className="h-full bg-[#0051d5] rounded-full transition-all"
+                            style={{ width: `${avgResult.averagePct || 0}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs pt-2.5 border-t border-[#f0f3ff] text-[#717784]">
-                      <span>
-                        {subGrades.length} {locale === "ar" ? "تقييم" : "assessment(s)"}
-                      </span>
-                      <span>
-                        {subDeadlines.length} {locale === "ar" ? "موعد تسليم" : "active deadline(s)"}
+                    {/* Footer / Context */}
+                    <div className="pt-4 mt-4 border-t border-[#f0f3ff] flex items-center justify-between text-xs text-[#45474b]">
+                      <span className="flex items-center gap-1.5 truncate max-w-[160px]">
+                        <BookOpen className="w-3.5 h-3.5 text-[#0051d5] shrink-0" />
+                        <span className="truncate">
+                          {nextDl?.title || (locale === "ar" ? "متابعة المنهج" : "Curriculum active")}
+                        </span>
                       </span>
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           setStudySubject(sub);
                         }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#f0f3ff] text-[#0051d5] font-semibold hover:bg-[#e2e8f9] transition-colors"
+                        className="text-xs font-semibold text-[#0051d5] hover:underline flex items-center gap-1.5 cursor-pointer"
                       >
                         <Play className="w-3 h-3 fill-[#0051d5]" />
                         <span>{locale === "ar" ? "ذاكر" : "Study"}</span>
@@ -1325,24 +1238,61 @@ export function SchoolView() {
                   </div>
                 );
               })}
-            </div>
-          </div>
 
-          {/* Trend Chart Preview */}
-          <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-[#151c28]">
-                  {locale === "ar" ? "مسار الأداء الدراسي" : "Academic Performance Trend"}
-                </h3>
-                <p className="text-xs text-[#717784] mt-0.5">
-                  {locale === "ar"
-                    ? "تطور الدرجات: كويز (دائرة) مقارنة بامتحان رئيسي (معين)"
-                    : "Quiz (circle) vs Big Exam (diamond) score progression"}
-                </p>
+              {/* Add Subject Action Card */}
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingSubject(null);
+                  setIsSubjectModalOpen(true);
+                }}
+                className="group min-h-[220px] rounded-[20px] bg-[#f0f3ff] hover:bg-[#e7eeff] border border-dashed border-[#c6c6cb] transition-all p-6 flex flex-col items-center justify-center text-center gap-2.5 cursor-pointer shadow-xs hover:shadow-sm"
+              >
+                <div className="w-12 h-12 rounded-full bg-white text-[#151c28] flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                  <Plus className="w-6 h-6 stroke-[2.5]" />
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-sm font-bold text-[#151c28]">
+                    {locale === "ar" ? "إضافة مادة" : "Add subject"}
+                  </span>
+                  <span className="text-xs text-[#45474b]">
+                    {locale === "ar" ? "سجل كورس جديد أو وحدة دراسية" : "Enroll in new course or custom module"}
+                  </span>
+                </div>
+              </button>
+            </div>
+
+            {/* Quick Weekly Distribution Insight Card */}
+            <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-[#f0f3ff] text-[#0051d5] flex items-center justify-center shrink-0 border border-[#e2e8f9]">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-[#151c28] block">
+                    {locale === "ar" ? "توزيع عبء المذاكرة الأسبوعي" : "Weekly study load balance"}
+                  </span>
+                  <span className="text-xs text-[#45474b]">
+                    {activeSubjects[0]?.name
+                      ? locale === "ar"
+                        ? `${activeSubjects[0].name} تمثل النصيب الأكبر من ساعات المذاكرة المسجلة هذا الأسبوع`
+                        : `${activeSubjects[0].name} accounts for the primary share of total hours logged this week`
+                      : locale === "ar"
+                      ? "توازن منتظم عبر المواد المسجلة"
+                      : "Balanced distribution across all enrolled courses"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {activeSubjects.slice(0, 3).map((s) => (
+                  <div key={s.id} className="flex items-center gap-1.5 text-xs text-[#45474b]">
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color || "#0051d5" }} />
+                    <span>{s.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
-            <GradeTrendChart grades={grades} />
           </div>
         </div>
       )}
@@ -1352,39 +1302,42 @@ export function SchoolView() {
       {/* ============================================================== */}
       {!loading && activeTab === "grades" && (
         <div className="space-y-6">
-          {/* Average Across Subjects Banner with direct jump to Study Stats */}
-          <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
-                {locale === "ar" ? "متوسط الدرجات (مش موزون)" : "Average (unweighted)"}
-              </span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-3xl font-bold text-[#151c28]">
-                  {overallStats.overallAveragePct !== null
-                    ? `${overallStats.overallAveragePct}%`
-                    : "—"}
-                </span>
-                <span className="text-xs font-medium text-[#0051d5]">
-                  {overallStats.gradedSubjectsCount} {locale === "ar" ? "مادة مقيمة" : "Graded Subjects"}
-                </span>
+          {/* Active Subject Context Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e2e8f9] shadow-xs">
+            <div className="flex items-center gap-3.5">
+              <button
+                type="button"
+                onClick={() => setGradeSubjectFilter("all")}
+                className="w-10 h-10 rounded-xl bg-[#f0f3ff] hover:bg-[#e7eeff] text-[#151c28] flex items-center justify-center transition-colors cursor-pointer border border-[#e2e8f9]"
+                title={locale === "ar" ? "كل المواد" : "All subjects"}
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+              <div>
+                <div className="flex items-center gap-1.5 text-xs text-[#45474b]">
+                  <span>{locale === "ar" ? "كل المواد" : "All subjects"}</span>
+                  <span>›</span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#fde7f1] text-[#9d174d] text-[10px] font-bold">
+                    {gradeSubjectFilter !== "all"
+                      ? subjects.find((s) => s.id === gradeSubjectFilter)?.code || "ACTIVE"
+                      : "ALL-COURSES"}
+                  </span>
+                </div>
+                <h2 className="text-xl font-bold text-[#151c28] tracking-tight">
+                  {gradeSubjectFilter !== "all"
+                    ? subjects.find((s) => s.id === gradeSubjectFilter)?.name || (locale === "ar" ? "المادة المحددة" : "Physics")
+                    : locale === "ar" ? "جميع المواد المقيمة" : "All Graded Courses"}
+                </h2>
               </div>
             </div>
-            <button
-              onClick={() => handleTabChange("stats")}
-              className="px-4 py-2.5 rounded-xl bg-[#f0f3ff] text-[#0051d5] text-xs font-semibold hover:bg-[#e2e8f9] transition-all cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
-            >
-              <span>{locale === "ar" ? "إحصائيات المذاكرة (من تسجيلك) ←" : "Study stats (from your log) →"}</span>
-            </button>
-          </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <select
                 value={gradeSubjectFilter}
                 onChange={(e) => setGradeSubjectFilter(e.target.value)}
-                className="px-3 py-2 bg-white border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] focus:outline-none focus:border-[#0051d5] shadow-xs"
+                className="h-10 px-3 bg-[#f0f3ff] border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] focus:outline-none focus:border-[#0051d5] cursor-pointer"
               >
-                <option value="all">{locale === "ar" ? "كل المواد" : "All Subjects"}</option>
+                <option value="all">{locale === "ar" ? "تبديل المادة (الكل)" : "Switch subject (All)"}</option>
                 {activeSubjects.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -1392,116 +1345,264 @@ export function SchoolView() {
                 ))}
               </select>
 
-              <select
-                value={gradeTypeFilter}
-                onChange={(e) => setGradeTypeFilter(e.target.value)}
-                className="px-3 py-2 bg-white border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] focus:outline-none focus:border-[#0051d5] shadow-xs"
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingGrade(null);
+                  setPreselectedGradeSubjectId(gradeSubjectFilter !== "all" ? gradeSubjectFilter : "");
+                  setIsGradeModalOpen(true);
+                }}
+                className="h-10 px-4 rounded-xl bg-[#000000] text-white hover:bg-[#2a313d] flex items-center gap-1.5 text-xs font-semibold transition-colors shadow-xs cursor-pointer"
               >
-                <option value="all">{locale === "ar" ? "كل الأنواع" : "All Types"}</option>
-                <option value="quiz">{locale === "ar" ? "كويزات بس" : "Quizzes Only"}</option>
-                <option value="big_exam">{locale === "ar" ? "امتحانات رئيسية بس" : "Big Exams Only"}</option>
-              </select>
+                <Plus className="w-4 h-4" />
+                <span>{locale === "ar" ? "سجل درجة" : "Log grade"}</span>
+              </button>
             </div>
-
-            <button
-              onClick={() => {
-                setEditingGrade(null);
-                setPreselectedGradeSubjectId("");
-                setIsGradeModalOpen(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>{locale === "ar" ? "سجل درجة" : "Record Grade"}</span>
-            </button>
           </div>
 
-          {/* Grades Table / Card List */}
-          <div className="space-y-2.5">
-            {grades
-              .filter((g) => {
-                if (gradeSubjectFilter !== "all" && g.subject_id !== gradeSubjectFilter)
-                  return false;
-                if (gradeTypeFilter !== "all" && g.type !== gradeTypeFilter)
-                  return false;
-                return true;
-              })
-              .map((g) => {
-                const sub = subjects.find((s) => s.id === g.subject_id);
-                const pct = calculateGradePercentage(g.mark_achieved, g.mark_total);
+          {/* Metrics Bento Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Average (unweighted) */}
+            <div className="bg-white p-6 rounded-2xl border border-[#e2e8f9] shadow-xs flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#45474b]">
+                  {locale === "ar" ? "المتوسط (مش موزون)" : "Average (unweighted)"}
+                </span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#316bf3]" />
+              </div>
+              <div className="my-3 flex items-baseline gap-2">
+                <span className="text-4xl font-extrabold text-[#151c28] tracking-tight">
+                  {overallStats.overallAveragePct !== null ? `${overallStats.overallAveragePct}%` : "—"}
+                </span>
+                <span className="text-xs text-[#45474b]">
+                  {locale === "ar"
+                    ? `عبر ${overallStats.totalGradesCount} تقييم متسجل`
+                    : `across ${overallStats.totalGradesCount} recorded items`}
+                </span>
+              </div>
+              <div className="w-full bg-[#e7eeff] h-2 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#316bf3] rounded-full"
+                  style={{ width: `${overallStats.overallAveragePct || 0}%` }}
+                />
+              </div>
+            </div>
 
-                return (
-                  <div
-                    key={g.id}
-                    className="stitch-card p-3.5 flex items-center justify-between gap-3 font-mono text-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full shrink-0"
-                        style={{ backgroundColor: sub?.color || "#F59E0B" }}
-                      />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-on-surface">{g.title}</span>
-                          <span
-                            className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold ${
-                              g.type === "quiz"
-                                ? "bg-amber-400/20 text-amber-700"
-                                : "bg-indigo-400/20 text-indigo-700"
-                            }`}
-                          >
-                            {g.type === "quiz"
-                              ? locale === "ar" ? "كويز" : "Quiz"
-                              : locale === "ar" ? "امتحان رئيسي" : "Big Exam"}
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-text-muted flex items-center gap-2 mt-0.5">
-                          <span>{sub?.name}</span>
-                          <span>•</span>
-                          <span>{g.entry_date}</span>
-                          {g.weight_pct !== null && (
-                            <>
-                              <span>•</span>
-                              <span>
-                                {locale === "ar" ? "الوزن النسبي:" : "Weight:"} {g.weight_pct}%
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+            {/* Target Grade */}
+            <div className="bg-white p-6 rounded-2xl border border-[#e2e8f9] shadow-xs flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#45474b]">
+                  {locale === "ar" ? "المستهدف" : "Target"}
+                </span>
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#e7eeff] text-[#0051d5] font-semibold">
+                  {overallStats.overallAveragePct !== null && overallStats.overallAveragePct >= 90
+                    ? locale === "ar" ? "تم بلوغ الهدف" : "Goal reached"
+                    : locale === "ar" ? "2% للهدف" : "2% to goal"}
+                </span>
+              </div>
+              <div className="my-3 flex items-baseline gap-2">
+                <span className="text-4xl font-extrabold text-[#151c28] tracking-tight">90%</span>
+                <span className="text-xs text-[#45474b]">{locale === "ar" ? "هدف الفصل الدراسي" : "semester objective"}</span>
+              </div>
+              <div className="w-full bg-[#e7eeff] h-2 rounded-full overflow-hidden">
+                <div className="h-full bg-[#000000] rounded-full" style={{ width: "90%" }} />
+              </div>
+            </div>
 
-                    <div className="flex items-center gap-4">
-                      <div className="text-end">
-                        <div className="text-sm font-extrabold text-on-surface">
-                          {pct}%
-                        </div>
-                        <div className="text-[10px] text-text-muted">
-                          {g.mark_achieved} / {g.mark_total}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => {
-                            setEditingGrade(g);
-                            setIsGradeModalOpen(true);
-                          }}
-                          className="p-1 rounded text-text-muted hover:text-on-surface"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteGrade(g.id)}
-                          className="p-1 rounded text-text-muted hover:text-crimson-alert"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
+            {/* Performance Split */}
+            <div className="bg-white p-6 rounded-2xl border border-[#e2e8f9] shadow-xs flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#45474b]">
+                  {locale === "ar" ? "توزيع الأداء" : "Performance split"}
+                </span>
+                <TrendingUp className="w-4 h-4 text-[#0051d5]" />
+              </div>
+              <div className="my-2 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#9d174d]" />
+                    <span className="text-[#151c28] font-medium">{locale === "ar" ? "كويزات" : "Quizzes"}</span>
                   </div>
-                );
-              })}
+                  <span className="font-bold text-[#151c28]">91%</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rotate-45 rounded-[1px] bg-[#25005a]" />
+                    <span className="text-[#151c28] font-medium">{locale === "ar" ? "امتحانات رئيسية" : "Big exams"}</span>
+                  </div>
+                  <span className="font-bold text-[#151c28]">82%</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-[#45474b]">
+                {locale === "ar" ? "الكويزات 91% • الامتحانات الرئيسية 82%" : "Quizzes 91%, Big exams 82%"}
+              </p>
+            </div>
+          </div>
+
+          {/* Chart & Timeline Card */}
+          <div className="bg-white p-6 rounded-2xl border border-[#e2e8f9] shadow-xs flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-base font-bold text-[#151c28]">
+                  {locale === "ar" ? "مسار تطور الدرجات" : "Grade progression"}
+                </h3>
+                <p className="text-xs text-[#45474b]">
+                  {locale === "ar" ? "متابعة كل تقييم تم رصده مقارنة بالهدف الفصلي" : "Tracking each graded assessment against term objective"}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4 text-xs text-[#45474b]">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#9d174d]" />
+                  <span>{locale === "ar" ? "كويز" : "Quiz"}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rotate-45 rounded-[1px] bg-[#25005a]" />
+                  <span>{locale === "ar" ? "امتحان رئيسي" : "Big exam"}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-4 h-0.5 border-b border-dashed border-[#76777b]" />
+                  <span>{locale === "ar" ? "خط الهدف" : "Target line"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* SVG Line & Scatter Plot */}
+            <div className="w-full bg-[#f0f3ff] rounded-xl p-4 overflow-hidden border border-[#e2e8f9]">
+              <svg className="w-full h-56 select-none" preserveAspectRatio="none" viewBox="0 0 800 240">
+                <defs>
+                  <linearGradient id="schoolGrad" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0%" stopColor="#9D174D" />
+                    <stop offset="50%" stopColor="#316BF3" />
+                    <stop offset="100%" stopColor="#25005A" />
+                  </linearGradient>
+                </defs>
+                <line stroke="#E2E8F9" strokeWidth="1" x1="40" x2="760" y1="30" y2="30" />
+                <text className="text-[10px] font-sans" fill="#76777B" textAnchor="end" x="32" y="34">100%</text>
+                <line stroke="#76777B" strokeDasharray="4 4" strokeWidth="1.5" x1="40" x2="760" y1="70" y2="70" />
+                <text className="text-[10px] font-sans" fill="#151C28" fontWeight="500" textAnchor="end" x="32" y="74">90%</text>
+                <text className="text-[11px] font-sans" fill="#45474B" textAnchor="end" x="756" y="64">Target 90%</text>
+                <line stroke="#E2E8F9" strokeWidth="1" x1="40" x2="760" y1="110" y2="110" />
+                <text className="text-[10px] font-sans" fill="#76777B" textAnchor="end" x="32" y="114">80%</text>
+                <line stroke="#E2E8F9" strokeWidth="1" x1="40" x2="760" y1="150" y2="150" />
+                <text className="text-[10px] font-sans" fill="#76777B" textAnchor="end" x="32" y="154">70%</text>
+                <line stroke="#E2E8F9" strokeWidth="1" x1="40" x2="760" y1="190" y2="190" />
+                <text className="text-[10px] font-sans" fill="#76777B" textAnchor="end" x="32" y="194">60%</text>
+
+                <path d="M 140 90 Q 280 138, 440 118 T 680 50" fill="none" stroke="url(#schoolGrad)" strokeLinecap="round" strokeWidth="2.5" />
+
+                <g className="cursor-pointer">
+                  <line stroke="#DCE2F3" strokeDasharray="2 2" strokeWidth="1" x1="140" x2="140" y1="90" y2="205" />
+                  <circle cx="140" cy="90" fill="#FFFFFF" r="8" stroke="#9D174D" strokeWidth="3" />
+                  <circle cx="140" cy="90" fill="#9D174D" r="3.5" />
+                  <text className="text-[11px] font-sans" fill="#45474B" textAnchor="middle" x="140" y="222">Mechanics</text>
+                  <text className="text-[11px] font-sans font-semibold" fill="#151C28" textAnchor="middle" x="140" y="78">85%</text>
+                </g>
+
+                <g className="cursor-pointer">
+                  <line stroke="#DCE2F3" strokeDasharray="2 2" strokeWidth="1" x1="440" x2="440" y1="118" y2="205" />
+                  <polygon fill="#FFFFFF" points="440,109 449,118 440,127 431,118" stroke="#25005A" strokeWidth="3" />
+                  <polygon fill="#25005A" points="440,114 444,118 440,122 436,118" />
+                  <text className="text-[11px] font-sans" fill="#45474B" textAnchor="middle" x="440" y="222">Midterm</text>
+                  <text className="text-[11px] font-sans font-semibold" fill="#151C28" textAnchor="middle" x="440" y="102">78%</text>
+                </g>
+
+                <g className="cursor-pointer">
+                  <line stroke="#DCE2F3" strokeDasharray="2 2" strokeWidth="1" x1="680" x2="680" y1="50" y2="205" />
+                  <circle cx="680" cy="50" fill="#FFFFFF" r="8" stroke="#9D174D" strokeWidth="3" />
+                  <circle cx="680" cy="50" fill="#9D174D" r="3.5" />
+                  <text className="text-[11px] font-sans" fill="#45474B" textAnchor="middle" x="680" y="222">Waves</text>
+                  <text className="text-[11px] font-sans font-semibold" fill="#151C28" textAnchor="middle" x="680" y="38">95%</text>
+                </g>
+              </svg>
+            </div>
+
+            {/* Live Interactive Grade Trend Breakdown */}
+            <div className="pt-2">
+              <GradeTrendChart grades={grades} />
+            </div>
+          </div>
+
+          {/* Grade History Section */}
+          <div className="bg-white p-6 rounded-2xl border border-[#e2e8f9] shadow-xs flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-[#151c28]">{locale === "ar" ? "السجل الدراسي" : "History"}</h3>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#f0f3ff] text-xs font-semibold text-[#151c28] border border-[#e2e8f9]">
+                  {grades.length} {locale === "ar" ? "تقييمات" : "entries"}
+                </span>
+              </div>
+              <span className="text-xs text-[#45474b]">{locale === "ar" ? "مرتبة حسب التاريخ" : "Sorted by date"}</span>
+            </div>
+
+            <div className="divide-y divide-[#e2e8f9]/60">
+              {grades
+                .filter((g) => {
+                  if (gradeSubjectFilter !== "all" && g.subject_id !== gradeSubjectFilter) return false;
+                  if (gradeTypeFilter !== "all" && g.type !== gradeTypeFilter) return false;
+                  return true;
+                })
+                .map((g) => {
+                  const sub = subjects.find((s) => s.id === g.subject_id);
+                  const pct = calculateGradePercentage(g.mark_achieved, g.mark_total);
+                  const isQuiz = g.type === "quiz";
+
+                  return (
+                    <div
+                      key={g.id}
+                      className="flex items-center justify-between py-3.5 hover:bg-[#f0f3ff]/40 px-2 rounded-xl transition-colors"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                            isQuiz ? "bg-[#fde7f1] text-[#9d174d]" : "bg-[#eaddff] text-[#25005a]"
+                          }`}
+                        >
+                          {isQuiz ? <span className="w-3 h-3 rounded-full bg-[#9d174d]" /> : <span className="w-3 h-3 rotate-45 bg-[#25005a]" />}
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-[#151c28]">{g.title}</div>
+                          <div className="text-xs text-[#45474b] flex items-center gap-2 mt-0.5">
+                            <span>{isQuiz ? (locale === "ar" ? "كويز" : "Quiz") : (locale === "ar" ? "امتحان رئيسي" : "Big exam")}</span>
+                            <span>•</span>
+                            <span style={{ color: sub?.color || "#0051d5" }}>{sub?.name}</span>
+                            <span>•</span>
+                            <span>{g.entry_date}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <span className="text-xs font-mono text-[#45474b]">
+                          {g.mark_achieved}/{g.mark_total}
+                        </span>
+                        <span className="text-sm font-bold text-[#151c28] w-12 text-right">
+                          {pct}%
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingGrade(g);
+                              setIsGradeModalOpen(true);
+                            }}
+                            className="p-1.5 rounded-lg text-[#45474b] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors cursor-pointer"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteGrade(g.id)}
+                            className="p-1.5 rounded-lg text-[#45474b] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         </div>
       )}
@@ -1510,88 +1611,351 @@ export function SchoolView() {
       {/* TAB 3: PLAN (DEADLINES)                                        */}
       {/* ============================================================== */}
       {!loading && activeTab === "plan" && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[#151c28]">
-              {locale === "ar" ? "مواعيد التسليم والجدول الأكاديمي" : "Academic Deadlines & Schedule"}
-            </h2>
-            <button
-              onClick={() => {
-                setEditingDeadline(null);
-                setPreselectedDeadlineSubjectId("");
-                setIsDeadlineModalOpen(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>{locale === "ar" ? "إضافة موعد تسليم" : "Add Deadline"}</span>
-            </button>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column (8 cols): Terms Banner & Grouped Tasks */}
+          <div className="lg:col-span-8 flex flex-col gap-6">
+            <div className="bg-white rounded-2xl p-6 border border-[#e2e8f9] shadow-xs flex items-center justify-between gap-4">
+              <div className="flex flex-col">
+                <span className="text-xs text-[#45474b] font-medium">
+                  {locale === "ar" ? "الفصل الدراسي النشط" : "Active academic terms"}
+                </span>
+                <span className="text-base font-bold text-[#151c28]">
+                  {locale === "ar" ? "مهام ومواعيد الفصل الدراسي" : "Spring semester coursework"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingDeadline(null);
+                  setPreselectedDeadlineSubjectId("");
+                  setIsDeadlineModalOpen(true);
+                }}
+                className="h-10 px-4 bg-[#000000] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 hover:bg-[#2a313d] transition-colors shadow-xs cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>{locale === "ar" ? "إضافة موعد تسليم" : "Add deadline"}</span>
+              </button>
+            </div>
 
-          <div className="space-y-2.5">
-            {deadlines.map((d) => {
-              const sub = subjects.find((s) => s.id === d.subject_id);
-              const urgency = classifyDeadline(d.due_date);
+            {(() => {
+              const todayStartMs = new Date().setHours(0, 0, 0, 0);
+              const todayDeadlines = deadlines.filter((d) => {
+                if (d.completed) return false;
+                const dueTime = new Date(d.due_date).getTime();
+                return dueTime <= todayStartMs + 24 * 3600 * 1000;
+              });
+
+              const thisWeekDeadlines = deadlines.filter((d) => {
+                if (d.completed) return false;
+                const dueTime = new Date(d.due_date).getTime();
+                return (
+                  dueTime > todayStartMs + 24 * 3600 * 1000 &&
+                  dueTime <= todayStartMs + 7 * 24 * 3600 * 1000
+                );
+              });
+
+              const laterDeadlines = deadlines.filter((d) => {
+                if (d.completed) return false;
+                const dueTime = new Date(d.due_date).getTime();
+                return dueTime > todayStartMs + 7 * 24 * 3600 * 1000;
+              });
 
               return (
-                <div
-                  key={d.id}
-                  className={`p-4 rounded-[18px] bg-white border flex items-center justify-between gap-3 text-xs transition-all shadow-xs ${
-                    d.completed
-                      ? "opacity-60 border-[#e2e8f9]"
-                      : "border-[#e2e8f9] hover:border-[#0051d5]/40"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={d.completed}
-                      onChange={(e) => handleToggleDeadlineComplete(d.id, e.target.checked)}
-                      className="w-4 h-4 rounded border-[#dce2f3] bg-[#f8faff] text-[#0051d5] focus:ring-0 cursor-pointer"
-                    />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`font-bold ${
-                            d.completed ? "line-through text-[#717784]" : "text-[#151c28]"
-                          }`}
-                        >
-                          {d.title}
-                        </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#f0f3ff] text-[#0051d5] font-semibold border border-[#dce2f3]">
-                          {d.type}
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-[#717784] flex items-center gap-2 mt-0.5">
-                        <span style={{ color: sub?.color || "#0051d5" }}>
-                          {sub?.name}
-                        </span>
-                        <span>•</span>
-                        <span>{locale === "ar" ? "التسليم:" : "Due:"} {urgency.label}</span>
-                      </div>
+                <>
+                  {/* Today Section */}
+                  <section className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between px-1">
+                      <h2 className="text-sm font-bold text-[#151c28]">
+                        {locale === "ar" ? "اليوم" : "Today"}
+                      </h2>
+                      <span className="text-xs text-[#45474b]">
+                        {todayDeadlines.length} {locale === "ar" ? "مهام متبقية" : "item(s) remaining"}
+                      </span>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => {
-                        setEditingDeadline(d);
-                        setIsDeadlineModalOpen(true);
-                      }}
-                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteDeadline(d.id)}
-                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/30 transition-colors"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+                    <div className="bg-white rounded-2xl p-3 border border-[#e2e8f9] shadow-xs flex flex-col gap-1">
+                      {todayDeadlines.length === 0 ? (
+                        <div className="p-6 text-center text-xs text-[#45474b]">
+                          {locale === "ar" ? "لا توجد مواعيد تسليم مستحقة اليوم" : "No deadlines due today"}
+                        </div>
+                      ) : (
+                        todayDeadlines.map((d) => {
+                          const sub = subjects.find((s) => s.id === d.subject_id);
+                          return (
+                            <div
+                              key={d.id}
+                              className="group flex items-center justify-between p-3 rounded-xl hover:bg-[#f0f3ff]/60 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <input
+                                  type="checkbox"
+                                  checked={d.completed}
+                                  onChange={(e) => handleToggleDeadlineComplete(d.id, e.target.checked)}
+                                  className="w-4 h-4 rounded border-[#dce2f3] text-[#0051d5] focus:ring-0 cursor-pointer"
+                                />
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-xs font-semibold text-[#151c28] truncate">
+                                    {d.title}
+                                  </span>
+                                  <span className="text-[11px] text-[#45474b]">
+                                    {locale === "ar" ? "مستحق اليوم" : "Due today"}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e7eeff] text-[#0051d5]">
+                                  {sub?.name || d.type}
+                                </span>
+                                <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingDeadline(d);
+                                      setIsDeadlineModalOpen(true);
+                                    }}
+                                    className="p-1 rounded text-[#76777b] hover:text-[#151c28] hover:bg-[#e7eeff] transition-colors cursor-pointer"
+                                    title={locale === "ar" ? "تعديل" : "Edit"}
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteDeadline(d.id)}
+                                    className="p-1 rounded text-[#76777b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors cursor-pointer"
+                                    title={locale === "ar" ? "حذف" : "Delete"}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </section>
+
+                  {/* This Week Section */}
+                  <section className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between px-1">
+                      <h2 className="text-sm font-bold text-[#151c28]">
+                        {locale === "ar" ? "هذا الأسبوع" : "This week"}
+                      </h2>
+                      <span className="text-xs text-[#45474b]">
+                        {thisWeekDeadlines.length} {locale === "ar" ? "مهام متبقية" : "item(s) remaining"}
+                      </span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-3 border border-[#e2e8f9] shadow-xs flex flex-col gap-1.5">
+                      {thisWeekDeadlines.length === 0 ? (
+                        <div className="p-6 text-center text-xs text-[#45474b]">
+                          {locale === "ar" ? "لا توجد مواعيد تسليم أخرى هذا الأسبوع" : "No additional deadlines this week"}
+                        </div>
+                      ) : (
+                        thisWeekDeadlines.map((d) => {
+                          const sub = subjects.find((s) => s.id === d.subject_id);
+                          return (
+                            <div
+                              key={d.id}
+                              className="group flex items-center justify-between p-3 rounded-xl hover:bg-[#f0f3ff]/60 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <input
+                                  type="checkbox"
+                                  checked={d.completed}
+                                  onChange={(e) => handleToggleDeadlineComplete(d.id, e.target.checked)}
+                                  className="w-4 h-4 rounded border-[#dce2f3] text-[#0051d5] focus:ring-0 cursor-pointer"
+                                />
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-xs font-semibold text-[#151c28] truncate">
+                                    {d.title}
+                                  </span>
+                                  <span className="text-[11px] text-[#45474b]">
+                                    {classifyDeadline(d.due_date).label}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#dbe1ff] text-[#003ea8]">
+                                  {locale === "ar" ? "قادم" : "Upcoming"}
+                                </span>
+                                <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#f0f3ff] text-[#45474b]">
+                                  {sub?.name || d.type}
+                                </span>
+                                <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingDeadline(d);
+                                      setIsDeadlineModalOpen(true);
+                                    }}
+                                    className="p-1 rounded text-[#76777b] hover:text-[#151c28] hover:bg-[#e7eeff] transition-colors cursor-pointer"
+                                    title={locale === "ar" ? "تعديل" : "Edit"}
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteDeadline(d.id)}
+                                    className="p-1 rounded text-[#76777b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors cursor-pointer"
+                                    title={locale === "ar" ? "حذف" : "Delete"}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </section>
+
+                  {/* Later Section */}
+                  <section className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between px-1">
+                      <h2 className="text-sm font-bold text-[#151c28]">
+                        {locale === "ar" ? "لاحقاً" : "Later"}
+                      </h2>
+                      <span className="text-xs text-[#45474b]">
+                        {laterDeadlines.length} {locale === "ar" ? "مهام متبقية" : "item(s) remaining"}
+                      </span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-3 border border-[#e2e8f9] shadow-xs flex flex-col gap-1.5">
+                      {laterDeadlines.length === 0 ? (
+                        <div className="p-6 text-center text-xs text-[#45474b]">
+                          {locale === "ar" ? "لا توجد مواعيد تسليم لاحقة" : "No later deadlines scheduled"}
+                        </div>
+                      ) : (
+                        laterDeadlines.map((d) => {
+                          const sub = subjects.find((s) => s.id === d.subject_id);
+                          return (
+                            <div
+                              key={d.id}
+                              className="group flex items-center justify-between p-3 rounded-xl hover:bg-[#f0f3ff]/60 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <input
+                                  type="checkbox"
+                                  checked={d.completed}
+                                  onChange={(e) => handleToggleDeadlineComplete(d.id, e.target.checked)}
+                                  className="w-4 h-4 rounded border-[#dce2f3] text-[#0051d5] focus:ring-0 cursor-pointer"
+                                />
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-xs font-semibold text-[#151c28] truncate">
+                                    {d.title}
+                                  </span>
+                                  <span className="text-[11px] text-[#45474b]">
+                                    {classifyDeadline(d.due_date).label}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#f0f3ff] text-[#45474b]">
+                                  {sub?.name || d.type}
+                                </span>
+                                <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingDeadline(d);
+                                      setIsDeadlineModalOpen(true);
+                                    }}
+                                    className="p-1 rounded text-[#76777b] hover:text-[#151c28] hover:bg-[#e7eeff] transition-colors cursor-pointer"
+                                    title={locale === "ar" ? "تعديل" : "Edit"}
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteDeadline(d.id)}
+                                    className="p-1 rounded text-[#76777b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors cursor-pointer"
+                                    title={locale === "ar" ? "حذف" : "Delete"}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </section>
+                </>
               );
-            })}
+            })()}
+          </div>
+
+          {/* Right Column (4 cols): Weekly Distribution & Study Materials */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            {/* Weekly Distribution Card */}
+            <div className="bg-white rounded-2xl p-6 border border-[#e2e8f9] shadow-xs flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-[#151c28]">
+                  {locale === "ar" ? "التوزيع الأسبوعي" : "Weekly distribution"}
+                </span>
+                <span className="text-xs text-[#45474b]">
+                  {deadlines.filter((d) => !d.completed).length} {locale === "ar" ? "مهام إجمالاً" : "tasks total"}
+                </span>
+              </div>
+
+              {/* 7-Day Bar Chart */}
+              <div className="h-28 flex items-end justify-between gap-2 pt-2">
+                {[
+                  { day: "Mon", h: "40%", active: false },
+                  { day: "Tue", h: "85%", active: true },
+                  { day: "Wed", h: "25%", active: false },
+                  { day: "Thu", h: "60%", active: false },
+                  { day: "Fri", h: "15%", active: false },
+                  { day: "Sat", h: "10%", active: false },
+                  { day: "Sun", h: "50%", active: false },
+                ].map((col) => (
+                  <div key={col.day} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                    <div
+                      className={`w-full rounded-t-md transition-all ${
+                        col.active ? "bg-[#316bf3]" : "bg-[#e2e8f9]"
+                      }`}
+                      style={{ height: col.h }}
+                    />
+                    <span className="text-[10px] text-[#45474b]">{col.day}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Next Major Test Callout */}
+              <div className="p-3.5 rounded-xl bg-[#f0f3ff] border border-[#e2e8f9] flex items-center justify-between mt-1">
+                <div className="flex flex-col">
+                  <span className="text-[11px] text-[#45474b]">
+                    {locale === "ar" ? "الاختبار الرئيسي القادم" : "Next major test"}
+                  </span>
+                  <span className="text-xs font-bold text-[#151c28]">
+                    {nearestDl?.title || (locale === "ar" ? "امتحان الفيزياء" : "Physics exam")}
+                  </span>
+                </div>
+                <span className="text-xs font-bold text-[#0051d5]">
+                  {nearestDl ? classifyDeadline(nearestDl.due_date).label : (locale === "ar" ? "3 أيام" : "3 days")}
+                </span>
+              </div>
+            </div>
+
+            {/* Study Materials Card */}
+            <div className="bg-white rounded-2xl p-6 border border-[#e2e8f9] shadow-xs flex flex-col gap-3">
+              <span className="text-sm font-bold text-[#151c28]">
+                {locale === "ar" ? "المواد والمراجع" : "Study materials"}
+              </span>
+              <div className="rounded-xl bg-[#f0f3ff] p-4 border border-[#e2e8f9] flex flex-col gap-1.5">
+                <span className="text-xs font-bold text-[#151c28]">
+                  {locale === "ar" ? "فهرس القوانين والملخصات" : "Course formula index"}
+                </span>
+                <span className="text-[11px] text-[#45474b] leading-relaxed">
+                  {locale === "ar"
+                    ? "ملخصات القوانين والميكانيكا الكلاسيكية والترموديناميكا متاحة للمراجعة السريعة."
+                    : "Thermodynamics and classical mechanics summaries available for revision."}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       )}
