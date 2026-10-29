@@ -101,28 +101,32 @@ export function SettingsView({
   ];
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-12">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12 font-sans">
       {/* Top Banner */}
-      <div className="bg-surface-container rounded-2xl p-6 border border-border-subtle relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-ink/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="rounded-[20px] bg-white p-5 sm:p-6 border border-[#e2e8f9] shadow-xs relative overflow-hidden">
         <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-primary-ink/10 border border-primary-ink/30 flex items-center justify-center text-primary-ink shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-xl bg-[#f0f3ff] border border-[#e2e8f9] flex items-center justify-center text-[#0051d5] shadow-xs">
               <Sliders className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-bold font-mono text-on-surface">
-                {locale === "ar" ? "الإعدادات والبروتوكول" : "Settings & Protocol"}
-              </h2>
-              <p className="text-xs text-on-surface-variant mt-0.5">
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold text-[#151c28]">
+                  {locale === "ar" ? "الإعدادات والبروتوكول" : "Settings & Protocol"}
+                </h2>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#f0f3ff] text-[#0051d5] font-semibold border border-[#dce2f3]">
+                  {locale === "ar" ? "التحكم الكامل" : "Full Control"}
+                </span>
+              </div>
+              <p className="text-xs text-[#45474b] mt-0.5">
                 {locale === "ar"
-                  ? "تكوين الأهداف، التحكم في الأجهزة، وسيادة البيانات"
-                  : "Target configuration, device controls, and data sovereignty"}
+                  ? "تكوين الأهداف، التحكم في الأقسام، وسيادة البيانات الكاملة"
+                  : "Target configuration, module controls, and data sovereignty"}
               </p>
             </div>
           </div>
           {profile?.weight_unit && (
-            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-surface-container-high border border-border-subtle text-[11px] font-mono text-primary-ink">
+            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-[#f0f3ff] border border-[#dce2f3] text-xs font-semibold text-[#0051d5]">
               {locale === "ar" ? "الوحدة: " : "Units: "}
               {profile.weight_unit.toUpperCase()}
             </span>
@@ -130,18 +134,18 @@ export function SettingsView({
         </div>
       </div>
 
-      {/* Tabs Navigation */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-b border-border-subtle">
+      {/* Segmented Control Navigation */}
+      <nav aria-label="Settings sections" className="flex items-center gap-1.5 p-1 bg-[#f0f3ff] rounded-full border border-[#e2e8f9] overflow-x-auto shadow-xs">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-semibold transition-all shrink-0 cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all shrink-0 cursor-pointer whitespace-nowrap ${
                 isActive
-                  ? "bg-primary-ink text-on-primary shadow-xs"
-                  : "bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface border border-transparent"
+                  ? "bg-white text-[#151c28] shadow-xs font-semibold"
+                  : "text-[#45474b] hover:text-[#151c28]"
               }`}
             >
               {tab.icon}
@@ -149,7 +153,7 @@ export function SettingsView({
             </button>
           );
         })}
-      </div>
+      </nav>
 
       {/* Tab Content */}
       {loading ? (

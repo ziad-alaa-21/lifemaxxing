@@ -126,17 +126,17 @@ export function ModuleOnboardingModal() {
         type="button"
         id={`onboarding-toggle-${key}`}
         onClick={() => toggleKey(key)}
-        className={`w-full text-start p-3.5 rounded-2xl border transition-all flex items-start gap-3 select-none ${
+        className={`w-full text-start p-3.5 rounded-2xl border transition-all flex items-start gap-3 select-none cursor-pointer ${
           isChecked
-            ? "bg-surface-container-highest/80 border-primary-ink/60 shadow-xs ring-1 ring-primary-ink/30"
-            : "bg-surface-container/60 border-border-subtle hover:border-border-medium hover:bg-surface-container"
+            ? "bg-[#f0f3ff] border-[#0051d5]/40 shadow-xs ring-1 ring-[#0051d5]/20"
+            : "bg-white border-[#e2e8f9] hover:border-[#cfd8ee] hover:bg-[#f8faff]"
         }`}
       >
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
             isChecked
-              ? "bg-primary-ink text-on-primary font-medium"
-              : "bg-surface-container-high text-on-surface-variant"
+              ? "bg-[#0051d5] text-white font-medium"
+              : "bg-[#f0f3ff] text-[#0051d5]"
           }`}
         >
           <Icon className="w-5 h-5" />
@@ -144,24 +144,20 @@ export function ModuleOnboardingModal() {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h4
-              className={`text-sm font-medium ${
-                isChecked ? "text-on-surface" : "text-on-surface"
-              }`}
-            >
+            <h4 className="text-sm font-bold text-[#151c28]">
               {isAr ? def.labelAr : def.labelEn}
             </h4>
             <div
               className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
                 isChecked
-                  ? "bg-primary-ink border-primary-ink text-on-primary"
-                  : "border-border-medium bg-surface-container"
+                  ? "bg-[#0051d5] border-[#0051d5] text-white"
+                  : "border-[#c0ccdf] bg-white"
               }`}
             >
               {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
             </div>
           </div>
-          <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
+          <p className="text-xs text-[#45474b] mt-1 leading-relaxed">
             {isAr ? def.descriptionAr : def.descriptionEn}
           </p>
         </div>
@@ -172,33 +168,33 @@ export function ModuleOnboardingModal() {
   return (
     <div
       id="onboarding-modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-3 sm:p-6 overflow-y-auto"
     >
-      <div className="w-full max-w-xl bg-surface border border-border-medium rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full max-w-xl bg-white border border-[#e2e8f9] rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-5 sm:p-6 pb-4 border-b border-border-subtle bg-surface-container/30">
+        <div className="p-5 sm:p-6 pb-4 border-b border-[#e2e8f9] bg-white">
           <div className="flex items-center gap-2 mb-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-primary-ink/20 text-primary-ink border border-primary-ink/30">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#f0f3ff] text-[#0051d5] border border-[#dce2f3]">
               {isAr ? "مرحباً بيك" : "Welcome"}
             </span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-on-surface">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#151c28]">
             {isAr ? "عايز تتابع إيه في يومك؟" : "What do you want to track?"}
           </h2>
-          <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
+          <p className="text-xs text-[#45474b] mt-1.5 leading-relaxed">
             {isAr
               ? "اختار اللي يهمك دلوقتي. تقدر تشغل أو تقفل أي قسم في أي وقت من الإعدادات بدون ما تفقد أي بيانات."
               : "Choose what matters to you right now. You can turn anything on or off anytime in Settings without losing any data."}
           </p>
 
           {/* Preset Buttons */}
-          <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-border-subtle/60">
+          <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-[#e2e8f9]">
             <button
               type="button"
               id="starter-pack-button"
               onClick={handleSelectStarter}
-              className="px-3 py-1.5 rounded-xl text-xs font-medium bg-primary-ink/10 text-primary-ink border border-primary-ink/30 hover:bg-primary-ink/20 transition-colors flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#f0f3ff] text-[#0051d5] border border-[#dce2f3] hover:bg-[#e2e8f9] transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>{isAr ? "حزمة البداية المقترحة" : "Suggested Starter"}</span>
@@ -208,7 +204,7 @@ export function ModuleOnboardingModal() {
               type="button"
               id="select-all-button"
               onClick={handleSelectAll}
-              className="px-3 py-1.5 rounded-xl text-xs font-medium bg-surface-container hover:bg-surface-container-high text-on-surface border border-border-subtle transition-colors"
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#f8faff] hover:bg-[#f0f3ff] text-[#151c28] border border-[#e2e8f9] transition-colors cursor-pointer"
             >
               {isAr ? "اختيار الكل" : "Select All"}
             </button>
@@ -217,7 +213,7 @@ export function ModuleOnboardingModal() {
               <button
                 type="button"
                 onClick={handleClearAll}
-                className="px-2.5 py-1.5 rounded-xl text-xs font-medium text-text-muted hover:text-on-surface transition-colors"
+                className="px-2.5 py-1.5 rounded-xl text-xs font-medium text-[#45474b] hover:text-[#151c28] transition-colors cursor-pointer"
               >
                 {isAr ? "مسح الاختيارات" : "Clear"}
               </button>
@@ -228,7 +224,7 @@ export function ModuleOnboardingModal() {
         {/* Scrollable Module List */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-error/10 border border-error/30 text-error text-xs flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-[#ffdad6]/40 border border-[#ffb4ab] text-[#ba1a1a] text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -236,8 +232,8 @@ export function ModuleOnboardingModal() {
 
           {/* Body Pillar */}
           <div className="space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase">
-              <Dumbbell className="w-3.5 h-3.5 text-primary-ink" />
+            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-[#151c28] uppercase">
+              <Dumbbell className="w-3.5 h-3.5 text-[#0051d5]" />
               <span>{isAr ? "الجسد والصحة" : "Body & Health"}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
@@ -247,8 +243,8 @@ export function ModuleOnboardingModal() {
 
           {/* Mind Pillar */}
           <div className="space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase">
-              <Timer className="w-3.5 h-3.5 text-primary-ink" />
+            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-[#151c28] uppercase">
+              <Timer className="w-3.5 h-3.5 text-[#0051d5]" />
               <span>{isAr ? "العقل والتركيز" : "Mind & Focus"}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
@@ -258,8 +254,8 @@ export function ModuleOnboardingModal() {
 
           {/* School Pillar */}
           <div className="space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider text-on-surface-variant uppercase">
-              <GraduationCap className="w-3.5 h-3.5 text-primary-ink" />
+            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-[#151c28] uppercase">
+              <GraduationCap className="w-3.5 h-3.5 text-[#0051d5]" />
               <span>{isAr ? "الدراسة والمذاكرة" : "School & Academics"}</span>
             </div>
             <div className="grid grid-cols-1 gap-2.5">
@@ -269,9 +265,9 @@ export function ModuleOnboardingModal() {
         </div>
 
         {/* Sticky Footer */}
-        <div className="p-4 sm:p-5 border-t border-border-subtle bg-surface-container/50 flex items-center justify-between gap-4">
-          <div className="text-xs font-mono text-on-surface-variant">
-            <span className="font-bold text-on-surface">{selected.length}</span> /{" "}
+        <div className="p-4 sm:p-5 border-t border-[#e2e8f9] bg-[#f8faff] flex items-center justify-between gap-4">
+          <div className="text-xs text-[#45474b]">
+            <span className="font-bold text-[#151c28]">{selected.length}</span> /{" "}
             {ALL_MODULE_KEYS.length} {isAr ? "أقسام مختارة" : "selected"}
           </div>
 
@@ -280,10 +276,10 @@ export function ModuleOnboardingModal() {
             id="onboarding-submit-button"
             disabled={selected.length === 0 || isSubmitting}
             onClick={handleSubmit}
-            className={`px-5 py-2.5 rounded-[12px] text-sm font-medium transition-all flex items-center gap-2 ${
+            className={`px-5 py-2.5 rounded-[12px] text-sm font-semibold transition-all flex items-center gap-2 ${
               selected.length > 0 && !isSubmitting
-                ? "bg-primary-ink text-on-primary hover:opacity-90 shadow-xs active:scale-[0.98] cursor-pointer"
-                : "bg-surface-container-highest text-text-muted cursor-not-allowed border border-border-subtle"
+                ? "bg-[#0051d5] text-white hover:bg-[#0043b3] shadow-xs active:scale-[0.98] cursor-pointer"
+                : "bg-[#f0f3ff] text-[#45474b] cursor-not-allowed border border-[#e2e8f9]"
             }`}
           >
             {isSubmitting ? (
