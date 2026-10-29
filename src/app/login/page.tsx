@@ -543,12 +543,12 @@ export function LoginForm() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center p-4 bg-surface relative overflow-hidden"
+      className="min-h-screen w-full flex items-center justify-center p-4 bg-[#f8faff] relative overflow-hidden font-sans"
       dir={locale === "ar" ? "rtl" : "ltr"}
     >
       {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-ink/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-72 h-72 bg-secondary-cyan/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#0051d5]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-72 h-72 bg-[#0051d5]/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* Language Switcher */}
       <div className="absolute top-6 right-6 z-20">
@@ -556,23 +556,23 @@ export function LoginForm() {
           id="lang-toggle-btn"
           type="button"
           onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface hover:text-primary-ink hover:border-primary-ink/40 transition-all cursor-pointer shadow-sm"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[#e2e8f9] text-xs font-semibold text-[#151c28] hover:text-[#0051d5] hover:border-[#0051d5]/40 transition-all cursor-pointer shadow-xs"
         >
-          <Globe className="w-3.5 h-3.5 text-primary-ink" />
+          <Globe className="w-3.5 h-3.5 text-[#0051d5]" />
           <span>{locale === "ar" ? "English" : "العربية"}</span>
         </button>
       </div>
 
-      <div className="w-full max-w-md bg-surface-container border border-border-subtle rounded-3xl p-6 sm:p-8 relative z-10 shadow-2xl">
+      <div className="w-full max-w-md bg-white border border-[#e2e8f9] rounded-3xl p-6 sm:p-8 relative z-10 shadow-xl">
         {/* Brand Header: Plain Language, No Jargon */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-surface-container-high border border-primary-ink/30 text-primary-ink mb-4 shadow-xs">
-            <Sparkles className="w-7 h-7 text-primary-ink" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#f0f3ff] border border-[#dce2f3] text-[#0051d5] mb-4 shadow-xs">
+            <Sparkles className="w-7 h-7 text-[#0051d5]" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-on-surface">
+          <h1 className="text-2xl font-bold tracking-tight text-[#151c28]">
             {locale === "ar" ? "لايف" : "Life"}
           </h1>
-          <p className="text-sm text-on-surface-variant mt-1.5 max-w-xs mx-auto">
+          <p className="text-sm text-[#45474b] mt-1.5 max-w-xs mx-auto">
             {locale === "ar"
               ? "مساعدك اليومي لتطوير حياتك وصحتك وتركيزك"
               : "Your personal life optimization companion"}
@@ -581,7 +581,7 @@ export function LoginForm() {
 
         {/* Error Alert */}
         {activeError && (
-          <div className="mb-5 p-3.5 bg-crimson-alert/10 border border-crimson-alert/30 rounded-2xl flex items-start gap-3 text-crimson-alert text-xs">
+          <div className="mb-5 p-3.5 bg-[#ffdad6]/40 border border-[#ffb4ab] rounded-2xl flex items-start gap-3 text-[#ba1a1a] text-xs">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span className="leading-relaxed">{activeError}</span>
           </div>
@@ -589,7 +589,7 @@ export function LoginForm() {
 
         {/* Info Message */}
         {activeMessage && (
-          <div className="mb-5 p-3.5 bg-emerald-success/10 border border-emerald-success/30 rounded-2xl flex items-start gap-2.5 text-emerald-success text-xs leading-relaxed">
+          <div className="mb-5 p-3.5 bg-[#f0f3ff] border border-[#dce2f3] rounded-2xl flex items-start gap-2.5 text-[#0051d5] text-xs leading-relaxed">
             <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
             <span>{activeMessage}</span>
           </div>
@@ -602,10 +602,10 @@ export function LoginForm() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={loadingGoogle}
-              className="w-full py-3.5 px-5 bg-white hover:bg-slate-100 text-slate-900 font-medium text-sm rounded-2xl transition-all flex items-center justify-center gap-3 cursor-pointer shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed border border-slate-200"
+              className="w-full py-3.5 px-5 bg-white hover:bg-[#f8faff] text-[#151c28] font-semibold text-sm rounded-2xl transition-all flex items-center justify-center gap-3 cursor-pointer shadow-xs disabled:opacity-60 disabled:cursor-not-allowed border border-[#e2e8f9]"
             >
               {loadingGoogle ? (
-                <Loader2 className="w-5 h-5 animate-spin text-slate-900" />
+                <Loader2 className="w-5 h-5 animate-spin text-[#151c28]" />
               ) : (
                 <>
                   <GoogleIcon className="w-5 h-5 shrink-0" />
@@ -620,24 +620,24 @@ export function LoginForm() {
 
         {/* EMAIL / PASSWORD FLOW (rendered only when AUTH_MODE is "email" or "both") */}
         {emailAllowed && (
-          <div className={googleAllowed ? "mt-8 pt-6 border-t border-border-subtle" : ""}>
+          <div className={googleAllowed ? "mt-8 pt-6 border-t border-[#e2e8f9]" : ""}>
             {emailView === "check_inbox" ? (
               /* Check Your Inbox Screen after Sign Up */
               <div className="space-y-5 text-center py-2" data-testid="check-inbox-screen">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary-ink/10 border border-primary-ink/30 text-primary-ink mx-auto">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#f0f3ff] border border-[#dce2f3] text-[#0051d5] mx-auto">
                   <Mail className="w-6 h-6" />
                 </div>
 
                 <div className="space-y-2">
-                  <h2 className="text-lg font-bold text-on-surface">
+                  <h2 className="text-lg font-bold text-[#151c28]">
                     {locale === "ar" ? "راجع بريدك الإلكتروني" : "Check your inbox"}
                   </h2>
-                  <p className="text-xs text-on-surface-variant leading-relaxed">
+                  <p className="text-xs text-[#45474b] leading-relaxed">
                     {locale === "ar"
                       ? `أرسلنا رابط تأكيد إلى ${email}. اضغط على الرابط في الرسالة لتفعيل حسابك والبدء.`
                       : `We sent a confirmation link to ${email}. Click the link in that email to activate your account.`}
                   </p>
-                  <p className="text-[11px] text-text-muted leading-relaxed">
+                  <p className="text-[11px] text-[#45474b] leading-relaxed">
                     {locale === "ar"
                       ? "إذا لم تصلك الرسالة خلال دقيقة، تفقد مجلد الرسائل غير المرغوب فيها (Spam)."
                       : "If you don't see it within a minute, please check your spam folder."}
@@ -649,12 +649,12 @@ export function LoginForm() {
                     type="button"
                     onClick={handleResendConfirmation}
                     disabled={resendingEmail}
-                    className="w-full py-2.5 px-4 bg-surface-container-high hover:bg-surface-container-highest border border-border-medium text-on-surface text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full py-2.5 px-4 bg-[#f8faff] hover:bg-[#f0f3ff] border border-[#e2e8f9] text-[#151c28] text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {resendingEmail ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : (
-                      <RefreshCw className="w-3.5 h-3.5 text-primary-ink" />
+                      <RefreshCw className="w-3.5 h-3.5 text-[#0051d5]" />
                     )}
                     <span>
                       {locale === "ar"
@@ -666,7 +666,7 @@ export function LoginForm() {
                   <button
                     type="button"
                     onClick={() => switchView("signin")}
-                    className="w-full py-2.5 px-4 text-xs text-on-surface-variant hover:text-primary-ink transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="w-full py-2.5 px-4 text-xs text-[#45474b] hover:text-[#0051d5] transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>
@@ -679,10 +679,10 @@ export function LoginForm() {
               /* Forgot Password Screen */
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <h2 className="text-sm font-bold text-on-surface">
+                  <h2 className="text-sm font-bold text-[#151c28]">
                     {locale === "ar" ? "استعادة كلمة المرور" : "Forgot your password?"}
                   </h2>
-                  <p className="text-xs text-on-surface-variant leading-relaxed">
+                  <p className="text-xs text-[#45474b] leading-relaxed">
                     {locale === "ar"
                       ? "أدخل بريدك الإلكتروني وسنرسل لك رابطاً لتعيين كلمة مرور جديدة."
                       : "Enter your email address and we'll send you a link to reset your password."}
@@ -697,7 +697,7 @@ export function LoginForm() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={locale === "ar" ? "البريد الإلكتروني" : "Email address"}
-                      className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-ink transition-all"
+                      className="w-full px-3.5 py-2.5 bg-[#f8faff] border border-[#e2e8f9] rounded-xl text-[#151c28] text-sm placeholder:text-[#717784] focus:outline-none focus:border-[#0051d5] focus:bg-white transition-all"
                       dir="ltr"
                     />
                   </div>
@@ -705,7 +705,7 @@ export function LoginForm() {
                   <button
                     type="submit"
                     disabled={loadingEmail}
-                    className="w-full py-3 px-4 bg-primary-ink text-on-primary text-xs font-bold rounded-xl hover:bg-primary-ink-dim transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:cursor-not-allowed"
+                    className="w-full py-3 px-4 bg-[#0051d5] text-white text-xs font-bold rounded-xl hover:bg-[#0043b3] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-[#f0f3ff] disabled:text-[#717784] disabled:cursor-not-allowed shadow-xs"
                   >
                     {loadingEmail && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                     <span>
@@ -717,7 +717,7 @@ export function LoginForm() {
                 <button
                   type="button"
                   onClick={() => switchView("signin")}
-                  className="w-full py-2 text-xs text-on-surface-variant hover:text-primary-ink transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2 text-xs text-[#45474b] hover:text-[#0051d5] transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>{locale === "ar" ? "العودة لتسجيل الدخول" : "Back to sign in"}</span>
@@ -727,7 +727,7 @@ export function LoginForm() {
               /* Sign In / Sign Up Form */
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-semibold text-on-surface-variant">
+                  <span className="text-xs font-semibold text-[#45474b]">
                     {emailView === "signin"
                       ? googleAllowed
                         ? locale === "ar"
@@ -743,7 +743,7 @@ export function LoginForm() {
                   <button
                     type="button"
                     onClick={() => switchView(emailView === "signin" ? "signup" : "signin")}
-                    className="text-xs text-primary-ink hover:underline cursor-pointer"
+                    className="text-xs text-[#0051d5] hover:underline cursor-pointer font-semibold"
                   >
                     {emailView === "signin"
                       ? locale === "ar"
@@ -763,7 +763,7 @@ export function LoginForm() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={locale === "ar" ? "البريد الإلكتروني" : "Email address"}
-                      className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-ink transition-all"
+                      className="w-full px-3.5 py-2.5 bg-[#f8faff] border border-[#e2e8f9] rounded-xl text-[#151c28] text-sm placeholder:text-[#717784] focus:outline-none focus:border-[#0051d5] focus:bg-white transition-all"
                       dir="ltr"
                     />
                   </div>
@@ -784,11 +784,11 @@ export function LoginForm() {
                           ? "كلمة المرور"
                           : "Password"
                       }
-                      className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-ink transition-all"
+                      className="w-full px-3.5 py-2.5 bg-[#f8faff] border border-[#e2e8f9] rounded-xl text-[#151c28] text-sm placeholder:text-[#717784] focus:outline-none focus:border-[#0051d5] focus:bg-white transition-all"
                       dir="ltr"
                     />
                     {emailView === "signup" && (
-                      <p className="mt-1.5 text-[11px] text-text-muted">
+                      <p className="mt-1.5 text-[11px] text-[#45474b]">
                         {locale === "ar"
                           ? `يجب أن تتكون كلمة المرور من ${MIN_PASSWORD_LENGTH} أحرف على الأقل.`
                           : `Must be at least ${MIN_PASSWORD_LENGTH} characters long.`}
@@ -799,11 +799,7 @@ export function LoginForm() {
                   <button
                     type="submit"
                     disabled={loadingEmail}
-                    className={
-                      googleAllowed
-                        ? "w-full py-2.5 px-4 bg-surface-container-high border border-border-medium text-on-surface text-xs font-semibold rounded-xl hover:bg-surface-container transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                        : "w-full py-3 px-4 bg-primary-ink text-on-primary text-xs font-bold rounded-xl hover:bg-primary-ink-dim transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed shadow-sm"
-                    }
+                    className="w-full py-3 px-4 bg-[#0051d5] text-white text-xs font-bold rounded-xl hover:bg-[#0043b3] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-[#f0f3ff] disabled:text-[#717784] disabled:shadow-none disabled:cursor-not-allowed shadow-xs"
                   >
                     {loadingEmail && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                     <span>
@@ -823,7 +819,7 @@ export function LoginForm() {
                   <button
                     type="button"
                     onClick={() => switchView("forgot")}
-                    className="text-on-surface-variant hover:text-primary-ink transition-colors cursor-pointer"
+                    className="text-[#45474b] hover:text-[#0051d5] transition-colors cursor-pointer"
                   >
                     {locale === "ar" ? "نسيت كلمة المرور؟" : "Forgot password?"}
                   </button>
@@ -832,7 +828,7 @@ export function LoginForm() {
                     type="button"
                     onClick={handleResendConfirmation}
                     disabled={resendingEmail}
-                    className="text-on-surface-variant hover:text-primary-ink transition-colors cursor-pointer disabled:opacity-50"
+                    className="text-[#45474b] hover:text-[#0051d5] transition-colors cursor-pointer disabled:opacity-50"
                   >
                     {locale === "ar"
                       ? "إعادة إرسال رسالة التأكيد"
@@ -845,15 +841,15 @@ export function LoginForm() {
         )}
 
         {/* Privacy & Terms Disclaimer */}
-        <div className="mt-8 text-center text-xs text-on-surface-variant leading-relaxed">
+        <div className="mt-8 text-center text-xs text-[#45474b] leading-relaxed">
           {locale === "ar" ? (
             <>
               بتسجيل دخولك، فإنك توافق على{" "}
-              <Link href="/terms" className="text-on-surface underline hover:text-primary-ink">
+              <Link href="/terms" className="text-[#151c28] underline hover:text-[#0051d5]">
                 شروط الخدمة
               </Link>{" "}
               و{" "}
-              <Link href="/privacy" className="text-on-surface underline hover:text-primary-ink">
+              <Link href="/privacy" className="text-[#151c28] underline hover:text-[#0051d5]">
                 سياسة الخصوصية
               </Link>
               .
@@ -861,11 +857,11 @@ export function LoginForm() {
           ) : (
             <>
               By continuing, you agree to our{" "}
-              <Link href="/terms" className="text-on-surface underline hover:text-primary-ink">
+              <Link href="/terms" className="text-[#151c28] underline hover:text-[#0051d5]">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="text-on-surface underline hover:text-primary-ink">
+              <Link href="/privacy" className="text-[#151c28] underline hover:text-[#0051d5]">
                 Privacy Policy
               </Link>
               .

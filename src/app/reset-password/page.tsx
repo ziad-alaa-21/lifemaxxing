@@ -241,33 +241,33 @@ export function ResetPasswordForm({
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center p-4 bg-surface relative overflow-hidden"
+      className="min-h-screen w-full flex items-center justify-center p-4 bg-[#f8faff] relative overflow-hidden font-sans"
       dir={locale === "ar" ? "rtl" : "ltr"}
     >
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-ink/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-72 h-72 bg-secondary-cyan/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#0051d5]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-72 h-72 bg-[#0051d5]/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* Language Switcher */}
       <div className="absolute top-6 right-6 z-20">
         <button
           type="button"
           onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-on-surface hover:text-primary-ink hover:border-primary-ink/40 transition-all cursor-pointer shadow-sm"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[#e2e8f9] text-xs font-semibold text-[#151c28] hover:text-[#0051d5] hover:border-[#0051d5]/40 transition-all cursor-pointer shadow-xs"
         >
-          <Globe className="w-3.5 h-3.5 text-primary-ink" />
+          <Globe className="w-3.5 h-3.5 text-[#0051d5]" />
           <span>{locale === "ar" ? "English" : "العربية"}</span>
         </button>
       </div>
 
-      <div className="w-full max-w-md bg-surface-container border border-border-subtle rounded-3xl p-6 sm:p-8 relative z-10 shadow-2xl">
+      <div className="w-full max-w-md bg-white border border-[#e2e8f9] rounded-3xl p-6 sm:p-8 relative z-10 shadow-xl">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-surface-container-high border border-primary-ink/30 text-primary-ink mb-4 shadow-xs">
-            <KeyRound className="w-7 h-7 text-primary-ink" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#f0f3ff] border border-[#dce2f3] text-[#0051d5] mb-4 shadow-xs">
+            <KeyRound className="w-7 h-7 text-[#0051d5]" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-on-surface">
+          <h1 className="text-xl font-bold tracking-tight text-[#151c28]">
             {locale === "ar" ? "تعيين كلمة مرور جديدة" : "Set a new password"}
           </h1>
-          <p className="text-xs text-on-surface-variant mt-1.5">
+          <p className="text-xs text-[#45474b] mt-1.5">
             {locale === "ar"
               ? `اختر كلمة مرور جديدة لا تقل عن ${MIN_PASSWORD_LENGTH} أحرف.`
               : `Choose a new password with at least ${MIN_PASSWORD_LENGTH} characters.`}
@@ -275,7 +275,7 @@ export function ResetPasswordForm({
         </div>
 
         {error && (
-          <div className="mb-5 p-3.5 bg-crimson-alert/10 border border-crimson-alert/30 rounded-2xl flex items-start gap-3 text-crimson-alert text-xs">
+          <div className="mb-5 p-3.5 bg-[#ffdad6]/40 border border-[#ffb4ab] rounded-2xl flex items-start gap-3 text-[#ba1a1a] text-xs">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span className="leading-relaxed">{error}</span>
           </div>
@@ -283,7 +283,7 @@ export function ResetPasswordForm({
 
         {success ? (
           <div className="space-y-4 text-center">
-            <div className="p-4 bg-emerald-success/10 border border-emerald-success/30 rounded-2xl flex flex-col items-center gap-2 text-emerald-success text-xs leading-relaxed">
+            <div className="p-4 bg-[#f0f3ff] border border-[#dce2f3] rounded-2xl flex flex-col items-center gap-2 text-[#0051d5] text-xs leading-relaxed">
               <CheckCircle2 className="w-6 h-6" />
               <span>
                 {locale === "ar"
@@ -293,20 +293,20 @@ export function ResetPasswordForm({
             </div>
           </div>
         ) : checkingSession ? (
-          <div className="py-8 flex flex-col items-center justify-center gap-3 text-xs text-on-surface-variant">
-            <Loader2 className="w-5 h-5 animate-spin text-primary-ink" />
+          <div className="py-8 flex flex-col items-center justify-center gap-3 text-xs text-[#45474b]">
+            <Loader2 className="w-5 h-5 animate-spin text-[#0051d5]" />
             <span>{locale === "ar" ? "جاري التحقق من الرابط..." : "Checking your reset link..."}</span>
           </div>
         ) : !hasRecoverySession ? (
           <div className="space-y-4 text-center">
-            <div className="p-4 bg-amber-core/10 border border-amber-core/30 rounded-2xl text-amber-core text-xs leading-relaxed">
+            <div className="p-4 bg-[#ffdad6]/40 border border-[#ffb4ab] rounded-2xl text-[#ba1a1a] text-xs leading-relaxed">
               {locale === "ar"
                 ? "انتهت صلاحية رابط استعادة كلمة المرور أو تم استخدامه مسبقاً. يرجى طلب رابط جديد من صفحة تسجيل الدخول."
                 : "This password reset link has expired or was already used. Please request a new reset link from the sign-in page."}
             </div>
             <Link
               href="/login"
-              className="w-full py-3 px-4 bg-primary-ink text-on-primary font-semibold text-xs rounded-xl hover:bg-primary-ink-dim transition-all inline-flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-[#0051d5] text-white font-semibold text-xs rounded-xl hover:bg-[#0043b3] transition-all inline-flex items-center justify-center gap-2 shadow-xs"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{locale === "ar" ? "العودة لتسجيل الدخول" : "Back to sign in"}</span>
@@ -315,7 +315,7 @@ export function ResetPasswordForm({
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-on-surface-variant mb-1.5">
+              <label className="block text-xs font-semibold text-[#45474b] mb-1.5">
                 {locale === "ar" ? "كلمة المرور الجديدة" : "New password"}
               </label>
               <input
@@ -329,13 +329,13 @@ export function ResetPasswordForm({
                     ? `${MIN_PASSWORD_LENGTH} أحرف على الأقل`
                     : `At least ${MIN_PASSWORD_LENGTH} characters`
                 }
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-ink transition-all"
+                className="w-full px-3.5 py-2.5 bg-[#f8faff] border border-[#e2e8f9] rounded-xl text-[#151c28] text-sm placeholder:text-[#717784] focus:outline-none focus:border-[#0051d5] focus:bg-white transition-all"
                 dir="ltr"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-on-surface-variant mb-1.5">
+              <label className="block text-xs font-semibold text-[#45474b] mb-1.5">
                 {locale === "ar" ? "تأكيد كلمة المرور الجديدة" : "Confirm new password"}
               </label>
               <input
@@ -345,7 +345,7 @@ export function ResetPasswordForm({
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder={locale === "ar" ? "أعد كتابة كلمة المرور" : "Re-enter new password"}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-border-medium rounded-xl text-on-surface text-sm placeholder:text-text-muted focus:outline-none focus:border-primary-ink transition-all"
+                className="w-full px-3.5 py-2.5 bg-[#f8faff] border border-[#e2e8f9] rounded-xl text-[#151c28] text-sm placeholder:text-[#717784] focus:outline-none focus:border-[#0051d5] focus:bg-white transition-all"
                 dir="ltr"
               />
             </div>
@@ -353,7 +353,7 @@ export function ResetPasswordForm({
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-primary-ink text-on-primary text-xs font-bold rounded-xl hover:bg-primary-ink-dim transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-[#0051d5] text-white text-xs font-bold rounded-xl hover:bg-[#0043b3] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-[#f0f3ff] disabled:text-[#717784] disabled:cursor-not-allowed shadow-xs"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               <span>{locale === "ar" ? "حفظ كلمة المرور الجديدة" : "Save new password"}</span>
@@ -362,7 +362,7 @@ export function ResetPasswordForm({
             <div className="text-center pt-2">
               <Link
                 href="/login"
-                className="text-xs text-on-surface-variant hover:text-primary-ink inline-flex items-center gap-1.5"
+                className="text-xs text-[#45474b] hover:text-[#0051d5] inline-flex items-center gap-1.5 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>{locale === "ar" ? "العودة لتسجيل الدخول" : "Back to sign in"}</span>
