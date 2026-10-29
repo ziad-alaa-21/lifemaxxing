@@ -166,13 +166,13 @@ export function GradeModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
       <div
-        className="w-full max-w-md bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg bg-white border border-[#e2e8f9] rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+        <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f9]">
           <div className="flex items-center gap-2">
-            <Award className="w-5 h-5 text-amber-600" />
-            <h3 className="text-base font-bold font-mono text-on-surface">
+            <Award className="w-5 h-5 text-[#0051d5]" />
+            <h3 className="text-base font-bold text-[#151c28]">
               {locale === "ar"
                 ? initialGrade ? "تعديل الدرجة" : "تسجيل درجة جديدة"
                 : initialGrade ? "Edit Grade Entry" : "Record Grade"}
@@ -180,14 +180,14 @@ export function GradeModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+            className="p-1.5 rounded-lg text-[#717784] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-2 text-crimson-alert text-xs font-mono">
+          <div className="p-3 bg-[#ffdad6]/40 border border-[#ffb4ab] rounded-xl flex items-center gap-2 text-[#ba1a1a] text-xs">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -196,14 +196,14 @@ export function GradeModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Subject Selector */}
           <div className="space-y-1.5">
-            <label className="text-xs font-mono text-on-surface-variant">
+            <label className="text-xs font-semibold text-[#45474b]">
               {locale === "ar" ? "المادة *" : "Subject *"}
             </label>
             <select
               value={subjectId}
               onChange={(e) => setSubjectId(e.target.value)}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#f8faff] border border-[#e2e8f9] text-sm text-[#151c28] focus:outline-none focus:border-[#0051d5] transition-colors"
             >
               <option value="" disabled>
                 {locale === "ar" ? "اختر المادة" : "Select subject"}
@@ -218,32 +218,32 @@ export function GradeModal({
 
           {/* Grade Type: Strictly 'quiz' vs 'big_exam' */}
           <div className="space-y-1.5">
-            <label className="text-xs font-mono text-on-surface-variant">
+            <label className="text-xs font-semibold text-[#45474b]">
               {locale === "ar" ? "نوع التقييم * (كويز أو امتحان رئيسي)" : "Assessment Type * (2 Types Only)"}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setType("quiz")}
-                className={`py-2 px-3 rounded-xl border text-xs font-mono flex items-center justify-center gap-2 transition-all ${
+                className={`py-2 px-3 rounded-xl border text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   type === "quiz"
-                    ? "border-amber-400 bg-amber-400/10 text-amber-700 font-semibold shadow-sm"
-                    : "border-border-subtle bg-surface-container-low text-text-muted hover:border-border-medium"
+                    ? "border-[#0051d5] bg-[#f0f3ff] text-[#0051d5] font-semibold shadow-xs"
+                    : "border-[#e2e8f9] bg-[#f8faff] text-[#45474b] hover:border-[#0051d5]/40"
                 }`}
               >
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#0051d5] inline-block" />
                 <span>{locale === "ar" ? "كويز (دائرة)" : "Quiz (Circle)"}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setType("big_exam")}
-                className={`py-2 px-3 rounded-xl border text-xs font-mono flex items-center justify-center gap-2 transition-all ${
+                className={`py-2 px-3 rounded-xl border text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   type === "big_exam"
-                    ? "border-indigo-400 bg-indigo-400/10 text-indigo-700 font-semibold shadow-sm"
-                    : "border-border-subtle bg-surface-container-low text-text-muted hover:border-border-medium"
+                    ? "border-[#5c5b9e] bg-[#f0f3ff] text-[#5c5b9e] font-semibold shadow-xs"
+                    : "border-[#e2e8f9] bg-[#f8faff] text-[#45474b] hover:border-[#0051d5]/40"
                 }`}
               >
-                <span className="w-2.5 h-2.5 rotate-45 bg-indigo-400 inline-block" />
+                <span className="w-2.5 h-2.5 rotate-45 bg-[#5c5b9e] inline-block" />
                 <span>{locale === "ar" ? "امتحان رئيسي (معين)" : "Big Exam (Diamond)"}</span>
               </button>
             </div>
@@ -364,24 +364,24 @@ export function GradeModal({
               onChange={(e) => setNote(e.target.value)}
               placeholder={locale === "ar" ? "مثال: نقصت في الاستنتاج؛ محتاج مراجعة على الشابتر التالت" : "e.g. Lost marks on derivation; revision needed on chapter 3"}
               rows={2}
-              className="w-full px-3.5 py-2 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors font-sans resize-none"
+              className="w-full px-3.5 py-2 rounded-xl bg-[#f8faff] border border-[#e2e8f9] text-sm text-[#151c28] focus:outline-none focus:border-[#0051d5] placeholder:text-[#717784] transition-colors font-sans resize-none"
             />
           </div>
 
           {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e2e8f9]">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-[#45474b] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
             >
               {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving || isBlocked}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] disabled:opacity-50 shadow-xs transition-all cursor-pointer"
             >
               {saving ? (
                 <>

@@ -89,19 +89,19 @@ export function WeeklyTargetCard({
   };
 
   return (
-    <div className="stitch-card p-5">
+    <div className="rounded-[20px] bg-white border border-[#e2e8f9] shadow-xs p-5">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-[#f0f3ff] border border-[#dce2f3] flex items-center justify-center text-[#0051d5]">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-on-surface">
+            <h3 className="text-sm font-bold text-[#151c28]">
               {locale === "ar" ? "المستهدف الأسبوعي للمذاكرة" : "Weekly Study Target"}
             </h3>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-[#717784]">
               {locale === "ar"
                 ? "إجمالي ساعات التركيز العميق لكل المواد الدراسية"
                 : "Total deep work focus across all subjects"}
@@ -115,7 +115,7 @@ export function WeeklyTargetCard({
               setTargetHoursInput(weeklyTargetMinutes ? (weeklyTargetMinutes / 60).toString() : "");
               setIsEditing(true);
             }}
-            className="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors px-2.5 py-1 rounded-lg hover:bg-amber-500/10 cursor-pointer"
+            className="text-xs font-semibold text-[#0051d5] hover:underline transition-colors px-2.5 py-1 rounded-lg cursor-pointer"
           >
             {weeklyTargetMinutes
               ? locale === "ar"
@@ -129,8 +129,8 @@ export function WeeklyTargetCard({
       </div>
 
       {isEditing ? (
-        <form onSubmit={handleSave} className="mt-3 pt-3 border-t border-border-subtle/40">
-          <label className="block text-xs font-medium text-text-muted mb-1.5">
+        <form onSubmit={handleSave} className="mt-3 pt-3 border-t border-[#e2e8f9]">
+          <label className="block text-xs font-medium text-[#45474b] mb-1.5">
             {locale === "ar" ? "ساعات المذاكرة المستهدفة في الأسبوع" : "Target Study Hours per Week"}
           </label>
           <div className="flex items-center gap-2">
@@ -143,14 +143,14 @@ export function WeeklyTargetCard({
               onChange={(e) => setTargetHoursInput(e.target.value)}
               placeholder="e.g. 15"
               autoFocus
-              className="flex-1 px-3 py-2 bg-surface-container-high rounded-xl border border-border-subtle text-sm text-on-surface focus:outline-none focus:border-amber-400 text-start"
+              className="flex-1 px-3 py-2 bg-[#f8faff] rounded-xl border border-[#e2e8f9] text-sm text-[#151c28] focus:outline-none focus:border-[#0051d5] text-start"
             />
-            <span className="text-xs text-text-muted">
+            <span className="text-xs text-[#717784]">
               {locale === "ar" ? "ساعة/أسبوع" : "hrs/week"}
             </span>
           </div>
 
-          {error && <p className="text-xs text-status-negative mt-1.5">{error}</p>}
+          {error && <p className="text-xs text-[#ba1a1a] mt-1.5">{error}</p>}
 
           <div className="flex items-center justify-end gap-2 mt-3">
             {weeklyTargetMinutes && (
@@ -158,7 +158,7 @@ export function WeeklyTargetCard({
                 type="button"
                 onClick={handleClear}
                 disabled={saving}
-                className="text-xs text-status-negative hover:underline px-2 py-1 mr-auto rtl:mr-0 rtl:ml-auto cursor-pointer"
+                className="text-xs text-[#ba1a1a] hover:underline px-2 py-1 mr-auto rtl:mr-0 rtl:ml-auto cursor-pointer"
               >
                 {locale === "ar" ? "مسح المستهدف" : "Clear Target"}
               </button>
@@ -167,14 +167,14 @@ export function WeeklyTargetCard({
               type="button"
               onClick={() => setIsEditing(false)}
               disabled={saving}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-on-surface hover:bg-surface-container-high cursor-pointer"
+              className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#45474b] hover:text-[#151c28] hover:bg-[#f0f3ff] cursor-pointer"
             >
               {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-on-primary transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#0051d5] hover:bg-[#003ea8] text-white transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
             >
               {saving
                 ? locale === "ar"
@@ -187,12 +187,12 @@ export function WeeklyTargetCard({
           </div>
         </form>
       ) : weeklyTargetMinutes === null ? (
-        <div className="mt-2 py-3 px-3.5 bg-surface-container-low rounded-xl border border-border-subtle/50 flex items-center justify-between">
-          <div className="text-xs text-text-muted">
-            <span className="text-on-surface font-medium">{progress.completedHoursFormatted}</span>{" "}
+        <div className="mt-2 py-3 px-3.5 bg-[#f8faff] rounded-xl border border-[#e2e8f9] flex items-center justify-between">
+          <div className="text-xs text-[#717784]">
+            <span className="text-[#151c28] font-semibold">{progress.completedHoursFormatted}</span>{" "}
             {locale === "ar" ? "تمت مذاكرتها الأسبوع ده" : "studied this week"}
           </div>
-          <span className="text-xs text-text-muted italic">
+          <span className="text-xs text-[#717784] italic">
             {locale === "ar" ? "لم يُحدد مستهدف" : "No target defined"}
           </span>
         </div>
@@ -200,10 +200,10 @@ export function WeeklyTargetCard({
         <div className="mt-2 space-y-2">
           <div className="flex items-baseline justify-between text-xs">
             <div>
-              <span className="text-base font-bold text-on-surface">{progress.completedHoursFormatted}</span>
-              <span className="text-text-muted"> / {progress.targetHoursFormatted}</span>
+              <span className="text-base font-bold text-[#151c28]">{progress.completedHoursFormatted}</span>
+              <span className="text-[#717784]"> / {progress.targetHoursFormatted}</span>
             </div>
-            <div className="font-semibold text-amber-600">
+            <div className="font-semibold text-[#0051d5]">
               {progress.isCompleted
                 ? locale === "ar"
                   ? "حققت الهدف بالكامل! 🎉"
@@ -212,10 +212,10 @@ export function WeeklyTargetCard({
             </div>
           </div>
 
-          <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-[#f0f3ff] overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                progress.isCompleted ? "bg-amber-400" : "bg-amber-500"
+                progress.isCompleted ? "bg-[#34a853]" : "bg-[#0051d5]"
               }`}
               style={{ width: `${Math.min(100, progress.progressPct)}%` }}
             />

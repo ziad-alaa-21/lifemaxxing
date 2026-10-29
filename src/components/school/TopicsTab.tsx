@@ -196,31 +196,31 @@ export function TopicsTab({
 
       {/* Analytics Breakdown Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="stitch-card p-3.5 font-mono space-y-1">
-          <span className="text-[10px] text-on-surface-variant uppercase tracking-wider block">
+        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
+          <span className="text-[11px] text-[#717784] font-medium uppercase tracking-wider block">
             {locale === "ar" ? "مفاهيم المنهج" : "Syllabus Topics"}
           </span>
-          <div className="text-2xl font-extrabold text-on-surface">{stats.totalTopics}</div>
+          <div className="text-2xl font-bold text-[#151c28]">{stats.totalTopics}</div>
         </div>
-        <div className="stitch-card p-3.5 font-mono space-y-1">
-          <span className="text-[10px] text-amber-700 uppercase tracking-wider block">
+        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
+          <span className="text-[11px] text-[#0051d5] font-medium uppercase tracking-wider block">
             {locale === "ar" ? "مستحق المراجعة" : "Reviews Due"}
           </span>
-          <div className="text-2xl font-extrabold text-amber-600">{stats.dueCount}</div>
+          <div className="text-2xl font-bold text-[#0051d5]">{stats.dueCount}</div>
         </div>
-        <div className="stitch-card p-3.5 font-mono space-y-1">
-          <span className="text-[10px] text-emerald-600 uppercase tracking-wider block">
+        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
+          <span className="text-[11px] text-[#34a853] font-medium uppercase tracking-wider block">
             {locale === "ar" ? "استيعاب عالي (4-5)" : "High Confidence (4-5)"}
           </span>
-          <div className="text-2xl font-extrabold text-emerald-600">
+          <div className="text-2xl font-bold text-[#34a853]">
             {stats.highConfidenceCount}
           </div>
         </div>
-        <div className="stitch-card p-3.5 font-mono space-y-1">
-          <span className="text-[10px] text-indigo-600 uppercase tracking-wider block">
+        <div className="rounded-[18px] bg-white border border-[#e2e8f9] p-4 space-y-1 shadow-xs">
+          <span className="text-[11px] text-[#5c5b9e] font-medium uppercase tracking-wider block">
             {locale === "ar" ? "متوسط الاستيعاب" : "Avg Confidence"}
           </span>
-          <div className="text-2xl font-extrabold text-indigo-700">
+          <div className="text-2xl font-bold text-[#5c5b9e]">
             {stats.averageConfidence} / 5
           </div>
         </div>
@@ -233,7 +233,7 @@ export function TopicsTab({
           <select
             value={selectedSubjectId}
             onChange={(e) => setSelectedSubjectId(e.target.value)}
-            className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
+            className="px-3 py-2 bg-white border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] focus:outline-none focus:border-[#0051d5] shadow-xs"
           >
             <option value="all">{locale === "ar" ? "كل المواد" : "All Subjects"}</option>
             {subjects.map((s) => (
@@ -245,13 +245,13 @@ export function TopicsTab({
 
           {/* Search */}
           <div className="relative w-48 sm:w-56">
-            <Search className={`w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 text-text-muted ${locale === "ar" ? "right-3" : "left-3"}`} />
+            <Search className={`w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 text-[#717784] ${locale === "ar" ? "right-3" : "left-3"}`} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={locale === "ar" ? "ابحث في المفاهيم..." : "Search topics..."}
-              className={`w-full py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface placeholder:text-text-muted focus:outline-none ${locale === "ar" ? "pr-8 pl-3" : "pl-8 pr-3"}`}
+              className={`w-full py-2 bg-white border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] placeholder:text-[#717784] focus:outline-none focus:border-[#0051d5] shadow-xs ${locale === "ar" ? "pr-8 pl-3" : "pl-8 pr-3"}`}
             />
           </div>
         </div>
@@ -260,15 +260,15 @@ export function TopicsTab({
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenBulkModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container border border-border-subtle text-on-surface hover:bg-surface-container-high text-xs font-mono transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#e2e8f9] text-[#151c28] hover:bg-[#f0f3ff] text-xs font-semibold transition-all cursor-pointer shadow-xs"
           >
-            <ListPlus className="w-3.5 h-3.5 text-indigo-600" />
+            <ListPlus className="w-3.5 h-3.5 text-[#0051d5]" />
             <span>{locale === "ar" ? "لصق جملة" : "Bulk Paste"}</span>
           </button>
 
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-500 text-white text-xs font-mono font-bold uppercase hover:bg-indigo-400 shadow-xs transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>{locale === "ar" ? "إضافة مفهوم" : "Add Topic"}</span>
@@ -278,12 +278,12 @@ export function TopicsTab({
 
       {/* Topics List */}
       {filteredTopics.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-surface-container/50 border border-border-subtle text-center space-y-2">
-          <BookmarkCheck className="w-8 h-8 text-text-muted mx-auto" />
-          <div className="text-sm font-mono font-bold text-on-surface">
+        <div className="p-12 rounded-[20px] bg-white border border-[#e2e8f9] text-center space-y-2 shadow-xs">
+          <BookmarkCheck className="w-8 h-8 text-[#717784] mx-auto" />
+          <div className="text-sm font-bold text-[#151c28]">
             {locale === "ar" ? "مفيش مفاهيم متسجلة" : "No topics found"}
           </div>
-          <p className="text-xs font-mono text-text-muted max-w-sm mx-auto">
+          <p className="text-xs text-[#717784] max-w-sm mx-auto">
             {searchQuery || selectedSubjectId !== "all"
               ? locale === "ar" ? "مفيش مفاهيم مطابقة للبحث أو المادة المحددة." : "No syllabus topics match your active search or subject filter."
               : locale === "ar" ? "أضف عناوين ومفاهيم المنهج أو الصقهم جملة واحدة عشان تتابع مراجعتهم بالتكرار المتباعد." : "Import your syllabus topics or paste them line-by-line to begin tracking Leitner spaced repetition."}
@@ -300,7 +300,7 @@ export function TopicsTab({
             return (
               <div
                 key={t.id}
-                className="stitch-card p-4 hover:border-border-medium transition-all space-y-3 shadow-xs flex flex-col justify-between"
+                className="rounded-[20px] bg-white border border-[#e2e8f9] hover:border-[#0051d5]/40 transition-all p-4.5 space-y-3 shadow-xs flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   {/* Subject Tag + Due Badge */}
@@ -344,9 +344,9 @@ export function TopicsTab({
                 </div>
 
                 {/* Bottom Row: 1-5 Stars Rating + Actions */}
-                <div className="pt-2 border-t border-border-subtle/50 flex items-center justify-between gap-2 font-mono text-xs">
+                <div className="pt-2.5 border-t border-[#f0f3ff] flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-text-muted mr-1">
+                    <span className="text-[10px] text-[#717784] mr-1">
                       {locale === "ar" ? "مستوى الفهم:" : "Confidence:"}
                     </span>
                     {[1, 2, 3, 4, 5].map((lvl) => (
@@ -355,13 +355,13 @@ export function TopicsTab({
                         disabled={isBusy}
                         onClick={() => handleRate(t.id, lvl)}
                         className={`p-1 rounded transition-all cursor-pointer disabled:opacity-40 hover:scale-110 ${
-                          lvl <= t.confidence ? "text-amber-600" : "text-text-muted/30"
+                          lvl <= t.confidence ? "text-[#0051d5]" : "text-[#dce2f3]"
                         }`}
                         title={`Rate confidence ${lvl}/5`}
                       >
                         <Star
                           className={`w-3.5 h-3.5 ${
-                            lvl <= t.confidence ? "fill-amber-400" : ""
+                            lvl <= t.confidence ? "fill-[#0051d5]" : ""
                           }`}
                         />
                       </button>
@@ -371,14 +371,14 @@ export function TopicsTab({
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => onOpenEditModal(t)}
-                      className="p-1.5 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
                       title={locale === "ar" ? "تعديل المفهوم" : "Edit Topic"}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => onDeleteTopic(t.id)}
-                      className="p-1.5 rounded-lg text-text-muted hover:text-crimson-alert hover:bg-crimson-alert/10 transition-colors"
+                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/30 transition-colors"
                       title={locale === "ar" ? "حذف (تراجع 8 ث)" : "Delete (8s Undo)"}
                     >
                       <Trash2 className="w-3.5 h-3.5" />

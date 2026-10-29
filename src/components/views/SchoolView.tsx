@@ -985,26 +985,25 @@ export function SchoolView() {
       )}
 
       {/* Top Academic Header Banner */}
-      <div className="stitch-card p-5 sm:p-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="rounded-[20px] bg-white p-5 sm:p-6 border border-[#e2e8f9] shadow-xs relative overflow-hidden">
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 shadow-xs">
+            <div className="w-12 h-12 rounded-xl bg-[#f0f3ff] border border-[#e2e8f9] flex items-center justify-center text-[#0051d5] shadow-xs">
               <GraduationCap className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold font-mono text-on-surface">
-                  {locale === "ar" ? "محرك الدراسة والتحصيل" : "School Engine"}
+                <h1 className="text-xl font-bold text-[#151c28]">
+                  {locale === "ar" ? "الدراسة والمذاكرة" : "School"}
                 </h1>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high text-amber-700 border border-amber-500/20">
-                  {locale === "ar" ? "المرحلة 8" : "Stage 8"}
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#f0f3ff] text-[#0051d5] font-semibold border border-[#dce2f3]">
+                  {locale === "ar" ? "نظام الدراسة" : "Academic OS"}
                 </span>
               </div>
-              <p className="text-xs text-on-surface-variant font-mono mt-0.5">
+              <p className="text-xs text-[#45474b] mt-0.5">
                 {locale === "ar"
-                  ? "حساب النسب، استرجاع الأخطاء، والتكرار المتباعد للمفاهيم"
-                  : "Pure percentages, active-recall mistakes & spaced repetition topics"}
+                  ? "متوسط الدرجات (مش موزون)، كشكول الأخطاء، وجدول الحصص"
+                  : "Unweighted averages, mistake redo queue, and timetable"}
               </p>
             </div>
           </div>
@@ -1015,81 +1014,81 @@ export function SchoolView() {
                 setEditingSubject(null);
                 setIsSubjectModalOpen(true);
               }}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>{dict.school.addSubject}</span>
+              <span>{locale === "ar" ? "ضيف مادة" : "Add subject"}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 5-Group Consolidated Mobile Tab Navigation */}
-      <div className="flex items-center gap-1.5 p-1 bg-surface-container rounded-xl border border-border-subtle overflow-x-auto">
+      {/* Segmented Control Navigation */}
+      <nav aria-label="School sections" className="flex items-center gap-1.5 p-1 bg-[#f0f3ff] rounded-full border border-[#e2e8f9] overflow-x-auto shadow-xs">
         <button
           onClick={() => handleTabChange("overview")}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
+          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
             activeTab === "overview"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
-              : "text-text-muted hover:text-on-surface"
+              ? "bg-white text-[#151c28] shadow-xs font-semibold"
+              : "text-[#45474b] hover:text-[#151c28]"
           }`}
         >
-          {dict.school.overview}
-        </button>
-        <button
-          onClick={() => handleTabChange("grades")}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
-            activeTab === "grades"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
-              : "text-text-muted hover:text-on-surface"
-          }`}
-        >
-          {dict.school.grades} ({grades.length})
-        </button>
-        <button
-          onClick={() => handleTabChange("plan")}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
-            activeTab === "plan"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
-              : "text-text-muted hover:text-on-surface"
-          }`}
-        >
-          {dict.school.plan} ({deadlines.filter((d) => !d.completed).length})
-        </button>
-        <button
-          onClick={() => handleTabChange("practice")}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap flex items-center justify-center gap-1.5 cursor-pointer ${
-            activeTab === "practice"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
-              : "text-text-muted hover:text-on-surface"
-          }`}
-        >
-          <span>{dict.school.practice}</span>
-          {duePracticeTotal > 0 && (
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-          )}
+          {locale === "ar" ? "المواد" : "Subjects"}
         </button>
         <button
           onClick={() => handleTabChange("timetable")}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
+          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
             activeTab === "timetable"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
-              : "text-text-muted hover:text-on-surface"
+              ? "bg-white text-[#151c28] shadow-xs font-semibold"
+              : "text-[#45474b] hover:text-[#151c28]"
           }`}
         >
-          {dict.school.timetable} ({schedule.filter((s) => !s.deleted_at).length})
+          {locale === "ar" ? "الجدول" : "Schedule"} ({schedule.filter((s) => !s.deleted_at).length})
+        </button>
+        <button
+          onClick={() => handleTabChange("plan")}
+          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === "plan"
+              ? "bg-white text-[#151c28] shadow-xs font-semibold"
+              : "text-[#45474b] hover:text-[#151c28]"
+          }`}
+        >
+          {locale === "ar" ? "الخطة والمواعيد" : "Plan"} ({deadlines.filter((d) => !d.completed).length})
+        </button>
+        <button
+          onClick={() => handleTabChange("practice")}
+          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap flex items-center justify-center gap-1.5 cursor-pointer ${
+            activeTab === "practice"
+              ? "bg-white text-[#151c28] shadow-xs font-semibold"
+              : "text-[#45474b] hover:text-[#151c28]"
+          }`}
+        >
+          <span>{locale === "ar" ? "تدريب" : "Practice"}</span>
+          {duePracticeTotal > 0 && (
+            <span className="w-2 h-2 rounded-full bg-[#0051d5] animate-pulse" />
+          )}
+        </button>
+        <button
+          onClick={() => handleTabChange("grades")}
+          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === "grades"
+              ? "bg-white text-[#151c28] shadow-xs font-semibold"
+              : "text-[#45474b] hover:text-[#151c28]"
+          }`}
+        >
+          {locale === "ar" ? "الدرجات" : "Grades"} ({grades.length})
         </button>
         <button
           onClick={() => handleTabChange("stats")}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all capitalize whitespace-nowrap cursor-pointer ${
+          className={`flex-1 py-2 px-3 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
             activeTab === "stats"
-              ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 font-semibold shadow-sm"
-              : "text-text-muted hover:text-on-surface"
+              ? "bg-white text-[#151c28] shadow-xs font-semibold"
+              : "text-[#45474b] hover:text-[#151c28]"
           }`}
         >
-          {locale === "ar" ? "الإحصائيات" : "Stats"}
+          {locale === "ar" ? "إحصائيات المذاكرة (من تسجيلك)" : "Study stats (from your log)"}
         </button>
-      </div>
+      </nav>
 
       {/* Global Error Banner */}
       {error && (
@@ -1164,21 +1163,21 @@ export function SchoolView() {
           {/* Top Metric Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             {/* Average Across Subjects Card */}
-            <div className="stitch-card p-4 space-y-2">
-              <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
-                {locale === "ar" ? "المعدل التراكمي للمواد (غير موزون)" : "Average across subjects (unweighted)"}
+            <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-2">
+              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
+                {locale === "ar" ? "متوسط المواد (مش موزون)" : "Average across subjects (unweighted)"}
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold font-mono text-on-surface">
+                <span className="text-3xl font-bold text-[#151c28]">
                   {overallStats.overallAveragePct !== null
                     ? `${overallStats.overallAveragePct}%`
                     : "—"}
                 </span>
-                <span className="text-xs font-mono text-amber-600">
+                <span className="text-xs font-medium text-[#0051d5]">
                   {overallStats.gradedSubjectsCount} {locale === "ar" ? "مادة مقيمة" : "Graded Subjects"}
                 </span>
               </div>
-              <p className="text-[11px] text-text-muted font-mono">
+              <p className="text-xs text-[#717784]">
                 {locale === "ar"
                   ? `إجمالي ${overallStats.totalGradesCount} تقييم متسجل في المواد النشطة`
                   : `${overallStats.totalGradesCount} total assessments recorded across active courses`}
@@ -1186,52 +1185,52 @@ export function SchoolView() {
             </div>
 
             {/* Nearest Deadline Card */}
-            <div className="stitch-card p-4 space-y-2">
-              <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
+            <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-2">
+              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
                 {locale === "ar" ? "أقرب موعد تسليم" : "Upcoming Deadline"}
               </span>
               {nearestDl ? (
                 <div className="space-y-1">
-                  <div className="text-base font-bold font-mono text-on-surface truncate">
+                  <div className="text-base font-bold text-[#151c28] truncate">
                     {nearestDl.title}
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-mono">
-                    <span className="px-2 py-0.5 rounded bg-surface-container-high text-amber-700 font-semibold border border-amber-500/20 uppercase text-[10px]">
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#f0f3ff] text-[#0051d5] font-semibold border border-[#dce2f3] text-[10px]">
                       {nearestDl.type}
                     </span>
-                    <span className="text-text-muted">
+                    <span className="text-[#45474b]">
                       {classifyDeadline(nearestDl.due_date).label}
                     </span>
                   </div>
                 </div>
               ) : (
-                <div className="text-xs font-mono text-text-muted pt-2">
+                <div className="text-xs text-[#717784] pt-2">
                   {locale === "ar" ? "مفيش مواعيد تسليم قادمة" : "No upcoming deadlines pending"}
                 </div>
               )}
             </div>
 
             {/* Practice Retention Quick Card */}
-            <div className="stitch-card p-4 space-y-2">
-              <span className="text-[11px] font-mono text-on-surface-variant uppercase tracking-wider block">
+            <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-2">
+              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
                 {locale === "ar" ? "مركز التكرار والتثبيت" : "Practice Retention Hub"}
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold font-mono text-on-surface">
+                <span className="text-3xl font-bold text-[#151c28]">
                   {mistakes.length}
                 </span>
-                <span className="text-xs font-mono text-amber-600">
+                <span className="text-xs font-medium text-[#0051d5]">
                   {locale === "ar" ? "أخطاء" : "Mistakes"}
                 </span>
-                <span className="text-text-muted font-mono">•</span>
-                <span className="text-3xl font-extrabold font-mono text-on-surface">
+                <span className="text-[#717784]">•</span>
+                <span className="text-3xl font-bold text-[#151c28]">
                   {topics.length}
                 </span>
-                <span className="text-xs font-mono text-indigo-600">
+                <span className="text-xs font-medium text-[#5c5b9e]">
                   {locale === "ar" ? "مفاهيم" : "Topics"}
                 </span>
               </div>
-              <p className="text-[11px] text-text-muted font-mono">
+              <p className="text-xs text-[#717784]">
                 {locale === "ar"
                   ? `${duePracticeTotal} عنصر مستحق النهاردة للتثبيت والمراجعة`
                   : `${duePracticeTotal} item(s) due today for active retrieval practice`}
@@ -1242,7 +1241,7 @@ export function SchoolView() {
           {/* Active Courses Grid */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold font-mono text-on-surface uppercase tracking-wider">
+              <h2 className="text-sm font-bold text-[#151c28]">
                 {locale === "ar"
                   ? `المواد المسجلة (${activeSubjects.length})`
                   : `Enrolled Subjects (${activeSubjects.length})`}
@@ -1252,9 +1251,9 @@ export function SchoolView() {
                   setEditingSubject(null);
                   setIsSubjectModalOpen(true);
                 }}
-                className="text-xs font-mono text-amber-600 hover:text-amber-700 flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-[#0051d5] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>{locale === "ar" ? "مادة جديدة" : "New Subject"}</span>
               </button>
             </div>
@@ -1271,20 +1270,20 @@ export function SchoolView() {
                   <div
                     key={sub.id}
                     onClick={() => setDetailSubject(sub)}
-                    className="stitch-card p-4 hover:border-border-medium transition-all cursor-pointer space-y-3 shadow-xs"
+                    className="rounded-[20px] bg-white border border-[#e2e8f9] p-4.5 hover:border-[#0051d5]/40 hover:shadow-xs transition-all cursor-pointer space-y-3 shadow-xs"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2.5">
                         <span
                           className="w-3.5 h-3.5 rounded-full shrink-0"
-                          style={{ backgroundColor: sub.color || "#F59E0B" }}
+                          style={{ backgroundColor: sub.color || "#0051d5" }}
                         />
                         <div>
-                          <h3 className="text-sm font-bold font-mono text-on-surface">
+                          <h3 className="text-sm font-bold text-[#151c28]">
                             {sub.name}
                           </h3>
                           {sub.code && (
-                            <span className="text-[10px] text-text-muted font-mono">
+                            <span className="text-[10px] text-[#717784]">
                               {sub.code}
                             </span>
                           )}
@@ -1292,20 +1291,20 @@ export function SchoolView() {
                       </div>
 
                       <div className="text-end">
-                        <div className="text-base font-extrabold font-mono text-on-surface">
+                        <div className="text-base font-bold text-[#151c28]">
                           {avgResult.averagePct !== null
                             ? `${avgResult.averagePct}%`
                             : "—"}
                         </div>
-                        <span className="text-[10px] font-mono text-text-muted">
+                        <span className="text-[10px] text-[#717784]">
                           {avgResult.isWeighted
                             ? locale === "ar" ? "موزون" : "Weighted"
-                            : locale === "ar" ? "غير موزون" : "Unweighted"}
+                            : locale === "ar" ? "مش موزون" : "Unweighted"}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-border-subtle/50 text-text-muted">
+                    <div className="flex items-center justify-between text-xs pt-2.5 border-t border-[#f0f3ff] text-[#717784]">
                       <span>
                         {subGrades.length} {locale === "ar" ? "تقييم" : "assessment(s)"}
                       </span>
@@ -1317,9 +1316,9 @@ export function SchoolView() {
                           e.stopPropagation();
                           setStudySubject(sub);
                         }}
-                        className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high text-amber-700 hover:bg-amber-500/20 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#f0f3ff] text-[#0051d5] font-semibold hover:bg-[#e2e8f9] transition-colors"
                       >
-                        <Play className="w-3 h-3 fill-amber-700" />
+                        <Play className="w-3 h-3 fill-[#0051d5]" />
                         <span>{locale === "ar" ? "ذاكر" : "Study"}</span>
                       </button>
                     </div>
@@ -1330,13 +1329,13 @@ export function SchoolView() {
           </div>
 
           {/* Trend Chart Preview */}
-          <div className="stitch-card p-5 space-y-4">
+          <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold font-mono text-on-surface">
+                <h3 className="text-sm font-bold text-[#151c28]">
                   {locale === "ar" ? "مسار الأداء الدراسي" : "Academic Performance Trend"}
                 </h3>
-                <p className="text-xs font-mono text-text-muted mt-0.5">
+                <p className="text-xs text-[#717784] mt-0.5">
                   {locale === "ar"
                     ? "تطور الدرجات: كويز (دائرة) مقارنة بامتحان رئيسي (معين)"
                     : "Quiz (circle) vs Big Exam (diamond) score progression"}
@@ -1353,12 +1352,37 @@ export function SchoolView() {
       {/* ============================================================== */}
       {!loading && activeTab === "grades" && (
         <div className="space-y-6">
+          {/* Average Across Subjects Banner with direct jump to Study Stats */}
+          <div className="rounded-[20px] bg-white p-5 border border-[#e2e8f9] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span className="text-xs font-semibold text-[#45474b] tracking-wide block">
+                {locale === "ar" ? "متوسط الدرجات (مش موزون)" : "Average (unweighted)"}
+              </span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-3xl font-bold text-[#151c28]">
+                  {overallStats.overallAveragePct !== null
+                    ? `${overallStats.overallAveragePct}%`
+                    : "—"}
+                </span>
+                <span className="text-xs font-medium text-[#0051d5]">
+                  {overallStats.gradedSubjectsCount} {locale === "ar" ? "مادة مقيمة" : "Graded Subjects"}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => handleTabChange("stats")}
+              className="px-4 py-2.5 rounded-xl bg-[#f0f3ff] text-[#0051d5] text-xs font-semibold hover:bg-[#e2e8f9] transition-all cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+            >
+              <span>{locale === "ar" ? "إحصائيات المذاكرة (من تسجيلك) ←" : "Study stats (from your log) →"}</span>
+            </button>
+          </div>
+
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <select
                 value={gradeSubjectFilter}
                 onChange={(e) => setGradeSubjectFilter(e.target.value)}
-                className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
+                className="px-3 py-2 bg-white border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] focus:outline-none focus:border-[#0051d5] shadow-xs"
               >
                 <option value="all">{locale === "ar" ? "كل المواد" : "All Subjects"}</option>
                 {activeSubjects.map((s) => (
@@ -1371,7 +1395,7 @@ export function SchoolView() {
               <select
                 value={gradeTypeFilter}
                 onChange={(e) => setGradeTypeFilter(e.target.value)}
-                className="px-3 py-1.5 bg-surface-container border border-border-subtle rounded-xl text-xs font-mono text-on-surface focus:outline-none"
+                className="px-3 py-2 bg-white border border-[#e2e8f9] rounded-xl text-xs text-[#151c28] focus:outline-none focus:border-[#0051d5] shadow-xs"
               >
                 <option value="all">{locale === "ar" ? "كل الأنواع" : "All Types"}</option>
                 <option value="quiz">{locale === "ar" ? "كويزات بس" : "Quizzes Only"}</option>
@@ -1385,7 +1409,7 @@ export function SchoolView() {
                 setPreselectedGradeSubjectId("");
                 setIsGradeModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{locale === "ar" ? "سجل درجة" : "Record Grade"}</span>
@@ -1488,7 +1512,7 @@ export function SchoolView() {
       {!loading && activeTab === "plan" && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold font-mono text-on-surface uppercase tracking-wider">
+            <h2 className="text-sm font-bold text-[#151c28]">
               {locale === "ar" ? "مواعيد التسليم والجدول الأكاديمي" : "Academic Deadlines & Schedule"}
             </h2>
             <button
@@ -1497,7 +1521,7 @@ export function SchoolView() {
                 setPreselectedDeadlineSubjectId("");
                 setIsDeadlineModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-bold uppercase hover:bg-amber-400 shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{locale === "ar" ? "إضافة موعد تسليم" : "Add Deadline"}</span>
@@ -1512,10 +1536,10 @@ export function SchoolView() {
               return (
                 <div
                   key={d.id}
-                  className={`p-3.5 rounded-xl bg-surface-container border flex items-center justify-between gap-3 font-mono text-xs transition-all ${
+                  className={`p-4 rounded-[18px] bg-white border flex items-center justify-between gap-3 text-xs transition-all shadow-xs ${
                     d.completed
-                      ? "opacity-60 border-border-subtle"
-                      : "border-border-subtle hover:border-border-medium"
+                      ? "opacity-60 border-[#e2e8f9]"
+                      : "border-[#e2e8f9] hover:border-[#0051d5]/40"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -1523,23 +1547,23 @@ export function SchoolView() {
                       type="checkbox"
                       checked={d.completed}
                       onChange={(e) => handleToggleDeadlineComplete(d.id, e.target.checked)}
-                      className="w-4 h-4 rounded border-border-medium bg-surface-container-high text-amber-500 focus:ring-0 cursor-pointer"
+                      className="w-4 h-4 rounded border-[#dce2f3] bg-[#f8faff] text-[#0051d5] focus:ring-0 cursor-pointer"
                     />
                     <div>
                       <div className="flex items-center gap-2">
                         <span
                           className={`font-bold ${
-                            d.completed ? "line-through text-text-muted" : "text-on-surface"
+                            d.completed ? "line-through text-[#717784]" : "text-[#151c28]"
                           }`}
                         >
                           {d.title}
                         </span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-surface-container-high text-amber-700 uppercase font-semibold border border-border-subtle">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#f0f3ff] text-[#0051d5] font-semibold border border-[#dce2f3]">
                           {d.type}
                         </span>
                       </div>
-                      <div className="text-[10px] text-text-muted flex items-center gap-2 mt-0.5">
-                        <span style={{ color: sub?.color || "#F59E0B" }}>
+                      <div className="text-[11px] text-[#717784] flex items-center gap-2 mt-0.5">
+                        <span style={{ color: sub?.color || "#0051d5" }}>
                           {sub?.name}
                         </span>
                         <span>•</span>
@@ -1554,13 +1578,13 @@ export function SchoolView() {
                         setEditingDeadline(d);
                         setIsDeadlineModalOpen(true);
                       }}
-                      className="p-1 rounded text-text-muted hover:text-on-surface"
+                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeleteDeadline(d.id)}
-                      className="p-1 rounded text-text-muted hover:text-crimson-alert"
+                      className="p-1.5 rounded-lg text-[#717784] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/30 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -1578,13 +1602,13 @@ export function SchoolView() {
       {!loading && activeTab === "practice" && (
         <div className="space-y-6">
           {/* Sub-Tab Selector: Mistakes vs Topics */}
-          <div className="flex items-center bg-surface-container p-1 rounded-xl border border-border-subtle max-w-sm font-mono text-xs">
+          <div className="flex items-center bg-[#f0f3ff] p-1 rounded-full border border-[#e2e8f9] max-w-sm text-xs shadow-xs">
             <button
               onClick={() => setPracticeSubTab("mistakes")}
-              className={`flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              className={`flex-1 py-1.5 px-3 rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 practiceSubTab === "mistakes"
-                  ? "bg-amber-500/20 text-amber-700 font-bold border border-amber-500/30 shadow-xs"
-                  : "text-text-muted hover:text-on-surface"
+                  ? "bg-white text-[#151c28] font-bold shadow-xs"
+                  : "text-[#45474b] hover:text-[#151c28]"
               }`}
             >
               <BookX className="w-3.5 h-3.5" />
@@ -1594,10 +1618,10 @@ export function SchoolView() {
             </button>
             <button
               onClick={() => setPracticeSubTab("topics")}
-              className={`flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              className={`flex-1 py-1.5 px-3 rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 practiceSubTab === "topics"
-                  ? "bg-indigo-500/20 text-indigo-700 font-bold border border-indigo-500/30 shadow-xs"
-                  : "text-text-muted hover:text-on-surface"
+                  ? "bg-white text-[#151c28] font-bold shadow-xs"
+                  : "text-[#45474b] hover:text-[#151c28]"
               }`}
             >
               <BookmarkCheck className="w-3.5 h-3.5" />

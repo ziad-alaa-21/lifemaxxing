@@ -128,13 +128,13 @@ export function SubjectModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
       <div
-        className="w-full max-w-md bg-surface-container border border-border-subtle rounded-2xl p-6 shadow-2xl space-y-4"
+        className="w-full max-w-md bg-white border border-[#e2e8f9] rounded-3xl p-6 shadow-2xl space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+        <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f9]">
           <div className="flex items-center gap-2">
-            <Bookmark className="w-5 h-5 text-amber-600" />
-            <h3 className="text-base font-bold font-mono text-on-surface">
+            <Bookmark className="w-5 h-5 text-[#0051d5]" />
+            <h3 className="text-base font-bold text-[#151c28]">
               {locale === "ar"
                 ? initialSubject ? "تعديل بيانات المادة" : "إضافة مادة جديدة"
                 : initialSubject ? "Edit Subject" : "New Subject"}
@@ -142,14 +142,14 @@ export function SubjectModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+            className="p-1.5 rounded-lg text-[#717784] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 bg-crimson-alert/10 border border-crimson-alert/30 rounded-xl flex items-center gap-2 text-crimson-alert text-xs font-mono">
+          <div className="p-3 bg-[#ffdad6]/40 border border-[#ffb4ab] rounded-xl flex items-center gap-2 text-[#ba1a1a] text-xs">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -158,9 +158,9 @@ export function SubjectModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name Input with dir="auto" for Arabic support */}
           <div className="space-y-1.5">
-            <label className="text-xs font-mono text-on-surface-variant flex items-center justify-between">
+            <label className="text-xs font-semibold text-[#45474b] flex items-center justify-between">
               <span>{locale === "ar" ? "اسم المادة *" : "Subject Name *"}</span>
-              <span className="text-[10px] text-text-muted">
+              <span className="text-[10px] text-[#717784]">
                 {locale === "ar" ? "فريد" : "Unique"}
               </span>
             </label>
@@ -171,13 +171,13 @@ export function SubjectModal({
               onChange={(e) => setName(e.target.value)}
               placeholder={locale === "ar" ? "مثال: فيزياء، تفاضل وتكامل، تاريخ" : "e.g. Physics, Advanced Math, تاريخ"}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors font-sans"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#f8faff] border border-[#e2e8f9] text-sm text-[#151c28] focus:outline-none focus:border-[#0051d5] placeholder:text-[#717784] transition-colors font-sans"
             />
           </div>
 
           {/* Code Input (Optional) */}
           <div className="space-y-1.5">
-            <label className="text-xs font-mono text-on-surface-variant">
+            <label className="text-xs font-semibold text-[#45474b]">
               {locale === "ar" ? "كود المادة (اختياري)" : "Course Code (Optional)"}
             </label>
             <input
@@ -185,15 +185,15 @@ export function SubjectModal({
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder="e.g. PHYS-101, MATH-202"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface font-mono uppercase focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#f8faff] border border-[#e2e8f9] text-sm text-[#151c28] font-mono uppercase focus:outline-none focus:border-[#0051d5] placeholder:text-[#717784] transition-colors"
             />
           </div>
 
           {/* Target Grade (%) */}
           <div className="space-y-1.5">
-            <label className="text-xs font-mono text-on-surface-variant flex items-center justify-between">
+            <label className="text-xs font-semibold text-[#45474b] flex items-center justify-between">
               <span>{locale === "ar" ? "النسبة المستهدفة % (اختياري)" : "Target Grade % (Optional)"}</span>
-              <span className="text-[10px] text-text-muted">0 – 100%</span>
+              <span className="text-[10px] text-[#717784]">0 – 100%</span>
             </label>
             <input
               type="number"
@@ -203,13 +203,13 @@ export function SubjectModal({
               value={targetGrade}
               onChange={(e) => setTargetGrade(e.target.value)}
               placeholder="e.g. 90"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-border-medium text-sm text-on-surface font-mono focus:outline-none focus:border-amber-400 placeholder:text-text-muted transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#f8faff] border border-[#e2e8f9] text-sm text-[#151c28] font-mono focus:outline-none focus:border-[#0051d5] placeholder:text-[#717784] transition-colors"
             />
           </div>
 
           {/* Color Palette Picker (Never Lime #C6FF3D) */}
           <div className="space-y-2">
-            <label className="text-xs font-mono text-on-surface-variant">
+            <label className="text-xs font-semibold text-[#45474b]">
               {locale === "ar" ? "لون المادة المميز" : "Subject Color Palette"}
             </label>
             <div className="grid grid-cols-4 gap-2.5">
@@ -218,17 +218,17 @@ export function SubjectModal({
                   key={opt.value}
                   type="button"
                   onClick={() => setColor(opt.value)}
-                  className={`flex items-center gap-2 p-2 rounded-xl border text-xs font-mono transition-all ${
+                  className={`flex items-center gap-2 p-2 rounded-xl border text-xs transition-all ${
                     color === opt.value
-                      ? "border-amber-400 bg-surface-container-high shadow-md"
-                      : "border-border-subtle bg-surface-container-low hover:border-border-medium"
+                      ? "border-[#0051d5] bg-[#f0f3ff] shadow-xs"
+                      : "border-[#e2e8f9] bg-[#f8faff] hover:border-[#0051d5]/40"
                   }`}
                 >
                   <span
-                    className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
+                    className="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs"
                     style={{ backgroundColor: opt.value }}
                   />
-                  <span className="truncate text-[11px] text-on-surface">
+                  <span className="truncate text-[11px] text-[#151c28]">
                     {opt.label.split(" ")[0]}
                   </span>
                 </button>
@@ -237,19 +237,19 @@ export function SubjectModal({
           </div>
 
           {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e2e8f9]">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 rounded-xl text-xs font-mono text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-[#45474b] hover:text-[#151c28] hover:bg-[#f0f3ff] transition-colors"
             >
               {locale === "ar" ? "إلغاء" : "Cancel"}
             </button>
             <button
               type="submit"
               disabled={saving || isBlocked}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 text-on-primary text-xs font-mono font-semibold uppercase tracking-wider hover:bg-amber-400 disabled:opacity-50 shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0051d5] text-white text-xs font-semibold hover:bg-[#003ea8] disabled:opacity-50 shadow-xs transition-all cursor-pointer"
             >
               {saving ? (
                 <>
