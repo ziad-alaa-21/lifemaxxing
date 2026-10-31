@@ -174,7 +174,7 @@ export function ModuleOnboardingModal() {
         {/* Header */}
         <div className="p-5 sm:p-6 pb-4 border-b border-[#e2e8f9] bg-white">
           <div className="flex items-center gap-2 mb-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#f0f3ff] text-[#0051d5] border border-[#dce2f3]">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f0f3ff] text-[#0051d5] border border-[#dce2f3]">
               {isAr ? "مرحباً بيك" : "Welcome"}
             </span>
           </div>
