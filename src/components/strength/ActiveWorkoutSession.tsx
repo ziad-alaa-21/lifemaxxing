@@ -861,19 +861,19 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
 
               {/* Set Table */}
               <div className="overflow-x-auto">
-                <table className="w-full text-start text-xs font-mono">
+                <table className="w-full text-start text-xs font-sans">
                   <thead>
-                    <tr className="text-text-muted border-b border-border-subtle/50 pb-2">
-                      <th className="py-2 px-2 w-12 text-center">{locale === "ar" ? "مجموعة" : "SET"}</th>
-                      <th className="py-2 px-2 w-32">
+                    <tr className="text-[#5B6270] border-b border-[#E3E5F0] pb-2 font-medium">
+                      <th className="py-2 px-2 w-12 text-center">{locale === "ar" ? "مجموعة" : "Set"}</th>
+                      <th className="py-2 px-2 w-36">
                         {isPullUp
-                          ? (locale === "ar" ? "الوزن المضاف (كجم)" : "ADDED WEIGHT (KG)")
-                          : (locale === "ar" ? "الوزن (كجم)" : "WEIGHT (KG)")}
+                          ? (locale === "ar" ? "الوزن المضاف (كجم)" : "Added weight (kg)")
+                          : (locale === "ar" ? "الوزن (كجم)" : "Weight (kg)")}
                       </th>
-                      <th className="py-2 px-2 w-24">{locale === "ar" ? "عدات" : "REPS"}</th>
+                      <th className="py-2 px-2 w-24">{locale === "ar" ? "عدات" : "Reps"}</th>
                       <th className="py-2 px-2 w-20">RPE</th>
-                      <th className="py-2 px-2">{locale === "ar" ? "أقصى وزن ومستوى" : "EST. 1RM & TIER"}</th>
-                      <th className="py-2 px-2 w-16 text-center">{locale === "ar" ? "تمت" : "DONE"}</th>
+                      <th className="py-2 px-2">{locale === "ar" ? "أقصى وزن ومستوى" : "Est. 1RM & tier"}</th>
+                      <th className="py-2 px-2 w-16 text-center">{locale === "ar" ? "تمت" : "Done"}</th>
                       <th className="py-2 px-2 w-10"></th>
                     </tr>
                   </thead>
@@ -895,7 +895,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                           }`}
                         >
                           {/* Set Number */}
-                          <td className="py-2.5 px-2 text-center font-bold text-text-muted">
+                          <td className="py-2.5 px-2 text-center font-medium text-[#5B6270]">
                             {s.setNumber}
                           </td>
 
@@ -909,7 +909,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                                 updateSet(item.instanceId, s.id, "weightKg", e.target.value)
                               }
                               placeholder="0"
-                              className="w-24 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-mono font-bold focus:border-primary-ink focus:outline-none"
+                              className="w-24 px-2 py-1.5 rounded-lg bg-surface-container-high border border-border-subtle text-on-surface font-sans font-medium focus:border-primary-ink focus:outline-none"
                             />
                             <BarbellSvg
                               weightKg={s.weightKg}
@@ -919,16 +919,30 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                             />
                             {item.exercise.equipment?.toLowerCase() === "barbell" && (
                               <div className="flex flex-wrap items-center gap-1 mt-1.5" title={locale === "ar" ? "إضافة طارات على كل جمب" : "Add plate to each side"}>
-                                {[20, 10, 5, 2.5, 1.25].map((plate) => {
+                                {([25, 20, 15, 10, 5, 2.5, 1.25] as const).map((plate) => {
                                   const currentW = typeof s.weightKg === "number" ? s.weightKg : Number(s.weightKg) || 0;
                                   const base = currentW < 20 ? 20 : currentW;
                                   const newTotal = base + plate * 2;
+                                  const colorClass =
+                                    plate === 25
+                                      ? "bg-[#DC2626] text-white"
+                                      : plate === 20
+                                      ? "bg-[#2563EB] text-white"
+                                      : plate === 15
+                                      ? "bg-[#EAB308] text-[#14161A]"
+                                      : plate === 10
+                                      ? "bg-[#16A34A] text-white"
+                                      : plate === 5
+                                      ? "bg-white text-[#14161A] border border-[#CBD5E1]"
+                                      : plate === 2.5
+                                      ? "bg-[#14161A] text-white"
+                                      : "bg-[#94A3B8] text-white";
                                   return (
                                     <button
                                       key={plate}
                                       type="button"
                                       onClick={() => updateSet(item.instanceId, s.id, "weightKg", String(newTotal))}
-                                      className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container-high hover:bg-secondary-cyan/15 hover:text-secondary-cyan border border-border-subtle cursor-pointer transition-colors"
+                                      className={`px-1.5 py-0.5 rounded text-[10px] font-medium cursor-pointer transition-opacity hover:opacity-90 shadow-2xs ${colorClass}`}
                                       title={locale === "ar" ? `+${plate} كجم كل ناحية (الإجمالي: ${newTotal} كجم)` : `+${plate} kg each side (New total: ${newTotal} kg)`}
                                     >
                                       +{plate}

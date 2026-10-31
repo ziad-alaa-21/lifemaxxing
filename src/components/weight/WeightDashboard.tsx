@@ -493,10 +493,10 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 setEditHeight(heightCm ? heightCm.toString() : "");
                 setIsGoalModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border-subtle text-xs font-mono text-text-muted hover:text-on-surface transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-[#F3F4FB] border border-[#E3E5F0] text-xs font-medium text-[#14161A] transition-colors cursor-pointer"
             >
-              <Edit2 className="w-3.5 h-3.5" />
-              <span>{locale === "ar" ? "إعدادات الهدف" : "Goal Settings"}</span>
+              <Edit2 className="w-3.5 h-3.5 text-[#5B6270]" />
+              <span>{locale === "ar" ? "إعدادات الهدف" : "Goal settings"}</span>
             </button>
 
             <button
@@ -506,10 +506,10 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 setNewNoteInput("");
                 setIsLogModalOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-ink text-on-primary font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer hover:bg-primary-ink/90 shadow-xs"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#14161A] text-white font-medium text-xs transition-all cursor-pointer hover:bg-black shadow-xs"
             >
-              <Plus className="w-4 h-4" />
-              <span>{locale === "ar" ? "سجل وزنك" : "Log Weight"}</span>
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>{locale === "ar" ? "سجل وزنك" : "Log weight"}</span>
             </button>
           </div>
         </div>
@@ -536,12 +536,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
           {/* Key Metric Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
             {/* 1. Current Weight */}
-            <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                {locale === "ar" ? "الوزن الحالي" : "Current Weight"}
+            <div className="stitch-card p-5 space-y-1.5">
+              <span className="text-xs font-medium text-[#5B6270] block">
+                {locale === "ar" ? "الوزن الحالي" : "Current weight"}
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold font-mono text-on-surface">
+                <span className="text-2xl font-bold text-[#14161A]">
                   {currentWeight !== null
                     ? `${currentWeight} ${locale === "ar" ? "كجم" : "kg"}`
                     : locale === "ar"
@@ -549,7 +549,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                     : "Unlogged"}
                 </span>
               </div>
-              <p className="text-[11px] font-mono text-text-muted">
+              <p className="text-xs text-[#5B6270]">
                 {dailyEntries.length > 0
                   ? (locale === "ar"
                       ? `آخر تسجيل: ${dailyEntries[dailyEntries.length - 1].date}`
@@ -559,12 +559,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
             </div>
 
             {/* 2. Goal Target & Projected Date */}
-            <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
+            <div className="stitch-card p-5 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                  {locale === "ar" ? "الهدف المحدد" : "Goal Target"}
+                <span className="text-xs font-medium text-[#5B6270] block">
+                  {locale === "ar" ? "الهدف المحدد" : "Goal target"}
                 </span>
-                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#E6EEFF] text-[#1E3A9E]">
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#E6EEFF] text-[#1E3A9E]">
                   {goalType === "cut"
                     ? (locale === "ar" ? "تنشيف" : "cut")
                     : goalType === "bulk"
@@ -573,7 +573,7 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                 </span>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold font-mono text-secondary-cyan">
+                <span className="text-2xl font-bold text-[#2563EB]">
                   {targetWeight
                     ? `${targetWeight} ${locale === "ar" ? "كجم" : "kg"}`
                     : locale === "ar"
@@ -581,12 +581,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                     : "Unset"}
                 </span>
                 {deltaToGoal !== null && (
-                  <span className="text-xs font-mono text-text-muted">
+                  <span className="text-xs text-[#5B6270]">
                     ({deltaToGoal > 0 ? `+${deltaToGoal}` : deltaToGoal} {locale === "ar" ? "كجم" : "kg"})
                   </span>
                 )}
               </div>
-              <p className="text-[11px] font-mono text-text-muted truncate">
+              <p className="text-xs text-[#5B6270] truncate">
                 {projectedGoal && projectedGoal.projectedDate
                   ? (locale === "ar"
                       ? `الميعاد المتوقع: ${projectedGoal.statusText}`
@@ -598,30 +598,30 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
             </div>
 
             {/* 3. Weekly Rate of Change (Goal-Aware) */}
-            <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                {locale === "ar" ? "معدل التغيير" : "Rate of Change"}
+            <div className="stitch-card p-5 space-y-1.5">
+              <span className="text-xs font-medium text-[#5B6270] block">
+                {locale === "ar" ? "معدل التغيير" : "Rate of change"}
               </span>
               <div className="flex items-baseline gap-2">
                 {rateResult.status === "Active" ? (
                   <>
-                    <span className={`text-xl font-bold font-mono ${rateSemantic.colorToken}`}>
+                    <span className={`text-2xl font-bold ${rateSemantic.colorToken}`}>
                       {rateResult.rateKgPerWeek! > 0
                         ? `+${rateResult.rateKgPerWeek}`
                         : rateResult.rateKgPerWeek}{" "}
                       {locale === "ar" ? "كجم" : "kg"}
                     </span>
-                    <span className="text-[10px] font-mono text-text-muted">
+                    <span className="text-xs text-[#5B6270]">
                       {locale === "ar" ? "/ أسبوع" : "/ wk"}
                     </span>
                   </>
                 ) : (
-                  <span className="text-xl font-bold font-mono text-text-muted">
+                  <span className="text-2xl font-bold text-[#5B6270]">
                     {locale === "ar" ? "جاري الحساب..." : "Calibrating..."}
                   </span>
                 )}
               </div>
-              <p className="text-[11px] font-mono text-text-muted">
+              <p className="text-xs text-[#5B6270]">
                 {rateResult.status === "Active"
                   ? (locale === "ar"
                       ? `${rateSemantic.label} (ميل ١٤ يوم)`
@@ -633,12 +633,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
             </div>
 
             {/* 4. Secondary BMI (No clinical wording, no red/green judgment) */}
-            <div className="bg-surface-container rounded-2xl p-4 border border-border-subtle space-y-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
-                {locale === "ar" ? "مؤشر كتلة الجسم (BMI)" : "Body Mass Index"}
+            <div className="stitch-card p-5 space-y-1.5">
+              <span className="text-xs font-medium text-[#5B6270] block">
+                {locale === "ar" ? "مؤشر كتلة الجسم (BMI)" : "Body mass index"}
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold font-mono text-on-surface">
+                <span className="text-2xl font-bold text-[#14161A]">
                   {bmiInfo.bmi !== null
                     ? bmiInfo.bmi
                     : locale === "ar"
@@ -646,12 +646,12 @@ export function WeightDashboard({ onWeightUpdated }: WeightDashboardProps) {
                     : "Unset"}
                 </span>
                 {bmiInfo.bmi !== null && (
-                  <span className="text-xs font-mono text-text-muted">
+                  <span className="text-xs text-[#5B6270]">
                     ({bmiInfo.category})
                   </span>
                 )}
               </div>
-              <p className="text-[11px] font-mono text-text-muted">
+              <p className="text-xs text-[#5B6270]">
                 {heightCm
                   ? (locale === "ar" ? `الطول: ${heightCm} سم` : `Height: ${heightCm} cm`)
                   : (locale === "ar" ? "سجل طولك في الإعدادات" : "Add height in settings")}

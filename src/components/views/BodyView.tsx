@@ -112,14 +112,14 @@ function BodyViewContent() {
     <div className="space-y-6">
       {/* Top Navigation Tabs: 5 Clean Stitch Tabs (Workouts, Nutrition, Sleep, Weight, Library) */}
       <div className="relative">
-        <div ref={tabsContainerRef} className="flex items-center gap-1.5 p-1.5 bg-surface-container rounded-2xl border border-border-subtle shadow-xs overflow-x-auto no-scrollbar scroll-smooth">
+        <div ref={tabsContainerRef} className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 scroll-smooth">
           <button
             data-tab="logger"
             onClick={() => switchTab("logger")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 shadow-sm ${
               activeTab === "logger"
-                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+                ? "bg-[#14161A] text-white font-medium"
+                : "bg-white text-[#5B6270] hover:text-[#14161A] hover:bg-[#F3F4FB] border border-[#E3E5F0]"
             }`}
           >
             <Dumbbell className="w-4 h-4 shrink-0" />
@@ -129,10 +129,10 @@ function BodyViewContent() {
           <button
             data-tab="nutrition"
             onClick={() => switchTab("nutrition")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 shadow-sm ${
               activeTab === "nutrition"
-                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+                ? "bg-[#14161A] text-white font-medium"
+                : "bg-white text-[#5B6270] hover:text-[#14161A] hover:bg-[#F3F4FB] border border-[#E3E5F0]"
             }`}
           >
             <Utensils className="w-4 h-4 shrink-0" />
@@ -142,10 +142,10 @@ function BodyViewContent() {
           <button
             data-tab="sleep"
             onClick={() => switchTab("sleep")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 shadow-sm ${
               activeTab === "sleep"
-                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+                ? "bg-[#14161A] text-white font-medium"
+                : "bg-white text-[#5B6270] hover:text-[#14161A] hover:bg-[#F3F4FB] border border-[#E3E5F0]"
             }`}
           >
             <Moon className="w-4 h-4 shrink-0" />
@@ -155,10 +155,10 @@ function BodyViewContent() {
           <button
             data-tab="weight"
             onClick={() => switchTab("weight")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 shadow-sm ${
               activeTab === "weight"
-                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+                ? "bg-[#14161A] text-white font-medium"
+                : "bg-white text-[#5B6270] hover:text-[#14161A] hover:bg-[#F3F4FB] border border-[#E3E5F0]"
             }`}
           >
             <Weight className="w-4 h-4 shrink-0" />
@@ -168,57 +168,55 @@ function BodyViewContent() {
           <button
             data-tab="library"
             onClick={() => switchTab("history")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 shadow-sm ${
               ["history", "standards", "catalog"].includes(activeTab)
-                ? "bg-secondary-cyan text-white shadow-xs font-bold [&_svg]:stroke-current [&_svg]:text-white"
-                : "text-text-muted hover:text-on-surface hover:bg-surface-container-high"
+                ? "bg-[#14161A] text-white font-medium"
+                : "bg-white text-[#5B6270] hover:text-[#14161A] hover:bg-[#F3F4FB] border border-[#E3E5F0]"
             }`}
           >
             <BookOpen className="w-4 h-4 shrink-0" />
             <span>{locale === "ar" ? "المكتبة" : "Library"}</span>
           </button>
         </div>
-        {/* Subtle right gradient fade for horizontal scroll affordance */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface-container to-transparent rounded-r-2xl" />
       </div>
 
       {/* Library Sub-Navigation (Shown when user is in Library views) */}
       {["history", "standards", "catalog"].includes(activeTab) && (
-        <div className="flex items-center gap-1.5 p-1 bg-surface-container-low rounded-xl border border-border-subtle overflow-x-auto text-xs font-mono">
+        <div className="flex items-center gap-1.5 p-1 bg-[#F0F3FF] rounded-full border border-[#E3E5F0] overflow-x-auto text-xs">
           <button
             onClick={() => switchTab("history")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-colors cursor-pointer ${
               activeTab === "history"
-                ? "bg-surface-container font-bold text-secondary-cyan shadow-xs border border-border-subtle"
-                : "text-text-muted hover:text-on-surface"
+                ? "bg-white font-medium text-[#14161A] shadow-sm border border-[#E3E5F0]"
+                : "text-[#5B6270] hover:text-[#14161A]"
             }`}
           >
             <History className="w-3.5 h-3.5" />
-            <span>{locale === "ar" ? "سجل التمرينات" : "Workout History"}</span>
+            <span>{locale === "ar" ? "سجل التمرينات" : "Workout history"}</span>
           </button>
 
           <button
             onClick={() => switchTab("standards")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-colors cursor-pointer ${
               activeTab === "standards"
-                ? "bg-surface-container font-bold text-secondary-cyan shadow-xs border border-border-subtle"
-                : "text-text-muted hover:text-on-surface"
+                ? "bg-white font-medium text-[#14161A] shadow-sm border border-[#E3E5F0]"
+                : "text-[#5B6270] hover:text-[#14161A]"
             }`}
           >
             <Award className="w-3.5 h-3.5" />
-            <span>{locale === "ar" ? "مستويات القوة" : "Strength Standards"}</span>
+            <span>{locale === "ar" ? "مستويات القوة" : "Strength standards"}</span>
           </button>
 
           <button
             onClick={() => switchTab("catalog")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full transition-colors cursor-pointer ${
               activeTab === "catalog"
-                ? "bg-surface-container font-bold text-secondary-cyan shadow-xs border border-border-subtle"
-                : "text-text-muted hover:text-on-surface"
+                ? "bg-white font-medium text-[#14161A] shadow-sm border border-[#E3E5F0]"
+                : "text-[#5B6270] hover:text-[#14161A]"
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>{locale === "ar" ? "دليل التمارين" : "Exercise Catalog"}</span>
+            <span>{locale === "ar" ? "دليل التمارين" : "Exercise catalog"}</span>
           </button>
         </div>
       )}

@@ -338,10 +338,10 @@ export function NutritionDashboard() {
       )}
 
       {/* Date Header & Target Settings Button */}
-      <div className="flex items-center justify-between p-4 bg-surface-container rounded-2xl border border-border-subtle">
+      <div className="flex items-center justify-between p-4 bg-white rounded-[20px] border border-[#E3E5F0] shadow-xs">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-secondary-cyan" />
-          <span className="text-xs font-mono font-bold text-on-surface">
+          <Calendar className="w-4 h-4 text-[#2563EB]" />
+          <span className="text-xs font-medium text-[#14161A]">
             {selectedDate === getLocalDateString(new Date(), userProfile.timezone)
               ? (locale === "ar" ? `النهاردة (${selectedDate})` : `Today (${selectedDate})`)
               : selectedDate}
@@ -350,10 +350,10 @@ export function NutritionDashboard() {
 
         <button
           onClick={() => setIsSettingsModalOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high border border-border-subtle text-xs font-mono text-text-muted hover:text-on-surface hover:border-secondary-cyan transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E3E5F0] text-xs font-medium text-[#14161A] hover:bg-[#F3F4FB] transition-colors cursor-pointer"
         >
-          <Settings2 className="w-3.5 h-3.5 text-secondary-cyan" />
-          <span>{locale === "ar" ? "إعدادات الأهداف" : "Target Settings"}</span>
+          <Settings2 className="w-3.5 h-3.5 text-[#5B6270]" />
+          <span>{locale === "ar" ? "إعدادات الأهداف" : "Target settings"}</span>
         </button>
       </div>
 
@@ -361,55 +361,55 @@ export function NutritionDashboard() {
       {targetCals === null ? (
         /* Honest Unconfigured State */
         <div className="stitch-card p-6 text-center space-y-3">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-secondary-cyan/10 border border-secondary-cyan/30 flex items-center justify-center text-secondary-cyan">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-[#E6EEFF] border border-[#BFDBFE] flex items-center justify-center text-[#1E3A9E]">
             <Flame className="w-6 h-6" />
           </div>
-          <div className="font-mono text-base font-bold text-on-surface">
-            {locale === "ar" ? "حدد أهداف التغذية الخاصة بيك" : "Set Your Nutritional Targets"}
+          <div className="text-base font-medium text-[#14161A]">
+            {locale === "ar" ? "حدد أهداف التغذية الخاصة بيك" : "Set your nutritional targets"}
           </div>
-          <p className="font-mono text-xs text-text-muted max-w-md mx-auto">
+          <p className="text-xs text-[#5B6270] max-w-md mx-auto">
             {locale === "ar"
               ? "مفيش أرقام افتراضية بنخترعها. دخل وزنك وطولك وسنة ميلادك لحساب أهداف تقديرية، أو حط أهداف مخصصة بنفسك."
               : "No default numbers are invented. Provide your bodyweight, height, and birth year to compute estimated targets, or set custom targets manually."}
           </p>
           <button
             onClick={() => setIsSettingsModalOpen(true)}
-            className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold bg-secondary-cyan text-on-primary shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-xl text-xs font-medium bg-[#14161A] text-white shadow-xs hover:bg-black active:scale-[0.99] transition-all cursor-pointer"
           >
-            {locale === "ar" ? "حدد أهدافك دلوقتي" : "Configure Targets Now"}
+            {locale === "ar" ? "حدد أهدافك دلوقتي" : "Configure targets now"}
           </button>
         </div>
       ) : (
         /* Configured Energy Telemetry */
         <div className="stitch-card p-6 space-y-6">
-          <div className="flex items-start justify-between font-mono">
+          <div className="flex items-start justify-between">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-text-muted">
-                {locale === "ar" ? "توازن السعرات" : "Energy Balance"}
+              <div className="text-xs font-medium text-[#5B6270]">
+                {locale === "ar" ? "توازن السعرات" : "Energy balance"}
               </div>
-              <div className="text-3xl font-extrabold text-on-surface mt-1 flex items-baseline gap-2">
+              <div className="text-3xl font-bold text-[#14161A] mt-1 flex items-baseline gap-2">
                 <span>{totalCalories}</span>
-                <span className="text-sm font-medium text-text-muted">
+                <span className="text-sm font-medium text-[#5B6270]">
                   / {targetCals} {locale === "ar" ? "سعرة" : "kcal"}
                 </span>
               </div>
             </div>
 
             <div className="text-end">
-              <div className="text-[11px] uppercase tracking-wider text-text-muted">
+              <div className="text-xs font-medium text-[#5B6270]">
                 {caloriesRemaining !== null && caloriesRemaining >= 0
                   ? locale === "ar"
                     ? "المتبقي"
                     : "Remaining"
                   : locale === "ar"
                   ? "تجاوزت الهدف"
-                  : "Over Budget"}
+                  : "Over budget"}
               </div>
               <div
                 className={`text-2xl font-bold mt-1 ${
                   caloriesRemaining !== null && caloriesRemaining >= 0
-                    ? "text-secondary-cyan"
-                    : "text-status-danger"
+                    ? "text-[#2563EB]"
+                    : "text-[#DC2626]"
                 }`}
               >
                 {caloriesRemaining !== null ? Math.abs(caloriesRemaining) : 0} {locale === "ar" ? "سعرة" : "kcal"}
@@ -418,68 +418,68 @@ export function NutritionDashboard() {
           </div>
 
           {/* Calorie Progress Bar */}
-          <div className="w-full h-3 bg-surface-container-lowest rounded-full overflow-hidden border border-border-subtle">
+          <div className="w-full h-3 bg-[#F3F4FB] rounded-full overflow-hidden border border-[#E3E5F0]">
             <div
-              className={`h-full rounded-full transition-all duration-500 shadow-sm ${
+              className={`h-full rounded-full transition-all duration-500 shadow-xs ${
                 caloriesRemaining !== null && caloriesRemaining < 0
-                  ? "bg-[#F87171]"
-                  : "bg-secondary-cyan"
+                  ? "bg-[#DC2626]"
+                  : "bg-gradient-to-r from-[#2563EB] to-[#4338CA]"
               }`}
               style={{ width: `${Math.min(100, calPercent)}%` }}
             />
           </div>
 
           {/* 3 Macro Gauges */}
-          <div className="grid grid-cols-3 gap-3 font-mono pt-2">
+          <div className="grid grid-cols-3 gap-3 pt-2">
             {/* Protein */}
-            <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
+            <div className="p-3.5 rounded-[16px] bg-[#F8F9FE] border border-[#E3E5F0] space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-primary-ink font-bold">
+                <span className="text-[#2563EB] font-medium">
                   {locale === "ar" ? "بروتين" : "Protein"}
                 </span>
-                <span className="text-text-muted text-[11px]">
+                <span className="text-[#5B6270] text-[11px]">
                   {targetProt ? `${totalProtein}/${targetProt}g` : `${totalProtein}g`}
                 </span>
               </div>
-              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#E3E5F0] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary-ink rounded-full transition-all duration-500"
+                  className="h-full bg-[#2563EB] rounded-full transition-all duration-500"
                   style={{ width: `${protPercent}%` }}
                 />
               </div>
             </div>
 
             {/* Carbs */}
-            <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
+            <div className="p-3.5 rounded-[16px] bg-[#F8F9FE] border border-[#E3E5F0] space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-secondary-cyan font-bold">
+                <span className="text-[#4338CA] font-medium">
                   {locale === "ar" ? "كارب" : "Carbs"}
                 </span>
-                <span className="text-text-muted text-[11px]">
+                <span className="text-[#5B6270] text-[11px]">
                   {targetCarbs ? `${totalCarbs}/${targetCarbs}g` : `${totalCarbs}g`}
                 </span>
               </div>
-              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#E3E5F0] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-secondary-cyan rounded-full transition-all duration-500"
+                  className="h-full bg-[#4338CA] rounded-full transition-all duration-500"
                   style={{ width: `${carbsPercent}%` }}
                 />
               </div>
             </div>
 
             {/* Fats */}
-            <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-border-subtle space-y-2">
+            <div className="p-3.5 rounded-[16px] bg-[#F8F9FE] border border-[#E3E5F0] space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-rank-gold font-bold">
+                <span className="text-[#D97706] font-medium">
                   {locale === "ar" ? "دهون" : "Fats"}
                 </span>
-                <span className="text-text-muted text-[11px]">
+                <span className="text-[#5B6270] text-[11px]">
                   {targetFats ? `${totalFats}/${targetFats}g` : `${totalFats}g`}
                 </span>
               </div>
-              <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#E3E5F0] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-rank-gold rounded-full transition-all duration-500"
+                  className="h-full bg-[#D97706] rounded-full transition-all duration-500"
                   style={{ width: `${fatsPercent}%` }}
                 />
               </div>
@@ -495,22 +495,22 @@ export function NutritionDashboard() {
       />
 
       {/* Action Bar */}
-      <div className="space-y-2.5 font-mono text-xs">
+      <div className="space-y-2.5 text-xs">
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => setIsAiModalOpen(true)}
-            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-primary-ink text-on-primary font-bold shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#14161A] text-white font-medium shadow-xs hover:bg-black active:scale-[0.99] transition-all cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
-            <span>{locale === "ar" ? "تحليل وجبة بالذكاء الاصطناعي" : "Parse Meal with AI"}</span>
+            <span>{locale === "ar" ? "تحليل وجبة بالذكاء الاصطناعي" : "Parse meal with AI"}</span>
           </button>
 
           <button
             onClick={() => setIsManualModalOpen(true)}
-            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white border border-[#E3E5F0] text-[#14161A] font-medium hover:bg-[#F3F4FB] active:scale-[0.99] transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4 text-secondary-cyan" />
-            <span>{locale === "ar" ? "+ تسجيل أكل يدوي" : "+ Manual Food Entry"}</span>
+            <Plus className="w-4 h-4 text-[#2563EB]" />
+            <span>{locale === "ar" ? "+ تسجيل أكل يدوي" : "+ Manual food entry"}</span>
           </button>
         </div>
 
@@ -519,10 +519,10 @@ export function NutritionDashboard() {
             setPrefillTemplate(null);
             setIsSavedMealsOpen(true);
           }}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-surface-container border border-border-subtle text-on-surface font-semibold hover:border-secondary-cyan hover:bg-surface-container-high active:scale-95 transition-all cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white border border-[#E3E5F0] text-[#14161A] font-medium hover:bg-[#F3F4FB] active:scale-[0.99] transition-all cursor-pointer"
         >
-          <Bookmark className="w-4 h-4 text-secondary-cyan" />
-          <span>{locale === "ar" ? "الوجبات المحفوظة والقوالب" : "Saved Meals & Templates"}</span>
+          <Bookmark className="w-4 h-4 text-[#2563EB]" />
+          <span>{locale === "ar" ? "الوجبات المحفوظة والقوالب" : "Saved meals & templates"}</span>
         </button>
       </div>
 

@@ -333,7 +333,7 @@ export function SleepDashboard() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in font-mono">
+    <div className="space-y-6 animate-fade-in font-sans">
       {/* Top Banner & Action Bar */}
       <div className="stitch-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -341,8 +341,8 @@ export function SleepDashboard() {
             <Moon className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-on-surface">
-              {locale === "ar" ? "قياسات النوم والنظام اليومي" : "Sleep & Circadian Telemetry"}
+            <h2 className="text-xl font-medium text-on-surface">
+              {locale === "ar" ? "قياسات النوم والنظام اليومي" : "Sleep & circadian telemetry"}
             </h2>
             <p className="text-xs text-on-surface-variant">
               {locale === "ar"
@@ -355,9 +355,9 @@ export function SleepDashboard() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setIsSettingsModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-border-subtle bg-surface-container-high hover:bg-surface-container-highest text-xs text-text-muted hover:text-on-surface transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-[#E3E5F0] bg-white hover:bg-[#F3F4FB] text-xs font-medium text-[#14161A] transition-all cursor-pointer"
           >
-            <SettingsIcon className="w-4 h-4" />
+            <SettingsIcon className="w-4 h-4 text-[#5B6270]" />
             <span>{locale === "ar" ? "الإعدادات" : "Settings"}</span>
           </button>
           <button
@@ -365,10 +365,10 @@ export function SleepDashboard() {
               setEditingEntry(null);
               setIsLogModalOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary-cyan hover:bg-secondary-cyan/90 text-on-primary font-bold text-xs shadow-xs transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#14161A] hover:bg-black text-white font-medium text-xs shadow-xs transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>{locale === "ar" ? "سجل نومك" : "LOG SLEEP"}</span>
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>{locale === "ar" ? "سجل نومك" : "Log sleep"}</span>
           </button>
         </div>
       </div>
@@ -378,7 +378,7 @@ export function SleepDashboard() {
         <div className="p-4 rounded-2xl bg-crimson-alert/10 border border-crimson-alert/30 text-crimson-alert text-xs flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <p className="font-bold">{locale === "ar" ? "مشكلة في قاعدة البيانات (sleep_logs)" : "Database Error (sleep_logs)"}</p>
+            <p className="font-bold">{locale === "ar" ? "مشكلة في قاعدة البيانات (sleep_logs)" : "Database error (sleep_logs)"}</p>
             <p className="opacity-90">{error}</p>
           </div>
         </div>
@@ -386,15 +386,15 @@ export function SleepDashboard() {
 
       {/* Undo Banner */}
       {showUndoBanner && lastDeletedEntry && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-surface-container border border-border-subtle shadow-2xl rounded-2xl px-5 py-3 flex items-center gap-4 animate-slide-up">
-          <span className="text-xs text-on-surface font-mono">
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-white border border-[#E3E5F0] shadow-2xl rounded-2xl px-5 py-3 flex items-center gap-4 animate-slide-up">
+          <span className="text-xs text-[#14161A]">
             {locale === "ar"
               ? `تم مسح تسجيل النوم ليوم ${lastDeletedEntry.sleep_date}.`
               : `Sleep log for ${lastDeletedEntry.sleep_date} soft-deleted.`}
           </span>
           <button
             onClick={handleUndoDelete}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-secondary-cyan text-on-primary text-xs font-bold hover:bg-secondary-cyan/90 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#14161A] text-white text-xs font-medium hover:bg-black transition-all cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{locale === "ar" ? "تراجع" : "Undo"}</span>
@@ -407,12 +407,12 @@ export function SleepDashboard() {
         {/* Card 1: Last Night Sleep Score */}
         <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              {locale === "ar" ? "آخر جودة نوم" : "Latest Sleep Score"}
+            <span className="text-xs font-medium text-[#5B6270]">
+              {locale === "ar" ? "آخر جودة نوم" : "Last night score"}
             </span>
             {latestScore && (
               <span
-                className="px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                className="px-2 py-0.5 rounded-full text-[11px] font-medium border"
                 style={{
                   color: latestScore.hexColor,
                   borderColor: `${latestScore.hexColor}40`,
@@ -425,14 +425,14 @@ export function SleepDashboard() {
           </div>
           <div className="flex items-baseline gap-2">
             <span
-              className="text-3xl font-extrabold"
-              style={{ color: latestScore?.hexColor || "#7DD3FC" }}
+              className="text-3xl font-bold"
+              style={{ color: latestScore?.hexColor || "#2563EB" }}
             >
               {latestScore ? latestScore.score : "--"}
             </span>
-            <span className="text-xs text-text-muted">/ 100</span>
+            <span className="text-xs text-[#5B6270]">/ 100</span>
           </div>
-          <p className="text-[11px] text-on-surface-variant font-mono">
+          <p className="text-xs text-[#5B6270]">
             {latestScore
               ? latestScore.label
               : locale === "ar"
@@ -444,17 +444,17 @@ export function SleepDashboard() {
         {/* Card 2: 7-Day Average Duration */}
         <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              {locale === "ar" ? "متوسط المدة (٧ أيام)" : "7-Day Avg Duration"}
+            <span className="text-xs font-medium text-[#5B6270]">
+              {locale === "ar" ? "متوسط المدة (٧ أيام)" : "7-day avg duration"}
             </span>
-            <Clock className="w-4 h-4 text-secondary-cyan" />
+            <Clock className="w-4 h-4 text-[#2563EB]" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-on-surface">
+            <span className="text-3xl font-bold text-[#14161A]">
               {stats.avgDurationFormatted}
             </span>
           </div>
-          <p className="text-[11px] text-on-surface-variant font-mono">
+          <p className="text-xs text-[#5B6270]">
             {locale === "ar"
               ? `الهدف: ${sleepTargetHours ? `${sleepTargetHours} ساعات` : "مش محدد"} (${stats.count} ليالي مسجلة)`
               : `Target: ${sleepTargetHours ? `${sleepTargetHours}h` : "Not set"} (${stats.count} nights recorded)`}
@@ -464,16 +464,16 @@ export function SleepDashboard() {
         {/* Card 3: Circadian Midpoint Consistency */}
         <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              {locale === "ar" ? "ثبات منتصف النوم" : "Midpoint Stability"}
+            <span className="text-xs font-medium text-[#5B6270]">
+              {locale === "ar" ? "ثبات منتصف النوم" : "Midpoint consistency"}
             </span>
             <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+              className={`px-2 py-0.5 rounded-full text-[11px] font-medium border ${
                 midpoint.stability === "Consistent"
-                  ? "text-primary-ink border-primary-ink/30 bg-primary-ink/10"
+                  ? "text-[#166534] border-[#BBF7D0] bg-[#DCFCE7]"
                   : midpoint.stability === "Moderate"
-                  ? "text-secondary-cyan border-secondary-cyan/30 bg-secondary-cyan/10"
-                  : "text-status-danger border-status-danger/30 bg-status-danger/10"
+                  ? "text-[#1E3A9E] border-[#BFDBFE] bg-[#E6EEFF]"
+                  : "text-[#991B1B] border-[#FECACA] bg-[#FEE2E2]"
               }`}
             >
               {midpoint.stability === "Consistent"
@@ -484,11 +484,11 @@ export function SleepDashboard() {
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-on-surface truncate">
+            <span className="text-2xl font-bold text-[#14161A] truncate">
               {midpoint.meanMidpointFormatted}
             </span>
           </div>
-          <p className="text-[11px] text-on-surface-variant font-mono">
+          <p className="text-xs text-[#5B6270]">
             {locale === "ar"
               ? `تغير \u00b1${midpoint.stdDevMinutes} دقيقة (إحصاء دائري)`
               : `\u00b1${midpoint.stdDevMinutes}m variability (circular stat)`}
@@ -498,17 +498,17 @@ export function SleepDashboard() {
         {/* Card 4: Daytime Naps Volume */}
         <div className="stitch-card p-6 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">
-              {locale === "ar" ? "قيلولات الـ ٧ أيام" : "7-Day Nap Volume"}
+            <span className="text-xs font-medium text-[#5B6270]">
+              {locale === "ar" ? "قيلولات الـ ٧ أيام" : "Daytime naps"}
             </span>
-            <Sun className="w-4 h-4 text-rank-bronze" />
+            <Sun className="w-4 h-4 text-[#D97706]" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-on-surface">
+            <span className="text-3xl font-bold text-[#14161A]">
               {stats.totalNapsMinutes}{locale === "ar" ? " دقيقة" : "m"}
             </span>
           </div>
-          <p className="text-[11px] text-on-surface-variant font-mono">
+          <p className="text-xs text-[#5B6270]">
             {locale === "ar"
               ? "مسجلة منفصلة عن نوم الليل"
               : "Recorded separate from nocturnal sleep"}
@@ -544,7 +544,7 @@ export function SleepDashboard() {
           <div className="py-10 text-center text-xs text-text-muted">
             {locale === "ar"
               ? "مفيش بيانات نوم مسجلة لسه. اضغط على \"سجل نومك\" فوق عشان تبدأ تتابع."
-              : "No sleep logs recorded yet. Tap LOG SLEEP above to start tracking."}
+              : "No sleep logs recorded yet. Tap Log sleep above to start tracking."}
           </div>
         ) : (
           <div className="divide-y divide-border-subtle">
