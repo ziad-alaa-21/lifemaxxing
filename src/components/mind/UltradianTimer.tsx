@@ -30,6 +30,7 @@ import {
   playHarmonicChime,
 } from "@/lib/mind";
 import { SessionCompleteModal } from "./SessionCompleteModal";
+import { TargetChecklist } from "./TargetChecklist";
 import { useI18n } from "@/lib/i18n/I18nContext";
 
 interface UltradianTimerProps {
@@ -745,66 +746,8 @@ export function UltradianTimer({
         )}
       </div>
 
-      {/* Target Checklist Card under Timer (Stitch Screenshot 3) */}
-      <div className="bg-surface-container-lowest rounded-[20px] p-6 shadow-[0_8px_24px_rgba(40,50,120,0.06)] border border-border-subtle space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-on-surface">
-              {locale === "ar" ? "قائمة أهداف الجلسة" : "Target checklist"}
-            </h3>
-            <p className="text-xs text-text-muted mt-0.5">
-              {taskCategory || "Physics"} • {taskIntention || "Problem set 4 milestones"}
-            </p>
-          </div>
-          <button
-            type="button"
-            className="w-7 h-7 rounded-lg bg-surface-container border border-border-subtle flex items-center justify-center text-on-surface hover:bg-surface-container-high cursor-pointer transition-colors"
-          >
-            <span className="text-base font-bold leading-none">+</span>
-          </button>
-        </div>
-
-        <div className="space-y-2">
-          {/* Milestone 1: Done */}
-          <div className="flex items-center justify-between py-2 px-2.5 rounded-xl bg-surface-container-low/50 border border-border-subtle/50 text-xs">
-            <div className="flex items-center gap-2.5">
-              <div className="w-4 h-4 rounded-full bg-blue-600 flex items-center justify-center text-white shrink-0">
-                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-on-surface font-medium line-through opacity-70">
-                {locale === "ar" ? "مسألة 1-3: معادلات الحث الكهرومغناطيسي" : "Question 1-3: Electromagnetic induction equations"}
-              </span>
-            </div>
-            <span className="text-[11px] text-text-muted shrink-0">25 m</span>
-          </div>
-
-          {/* Milestone 2: In Progress */}
-          <div className="flex items-center justify-between py-2 px-2.5 rounded-xl bg-surface-container-low border border-border-subtle text-xs">
-            <div className="flex items-center gap-2.5">
-              <div className="w-4 h-4 rounded-full border-2 border-blue-600 shrink-0" />
-              <span className="text-on-surface font-medium">
-                {locale === "ar" ? "مسألة 4: استنتاج تيار إزاحة ماكسويل" : "Question 4: Maxwell's displacement current derivation"}
-              </span>
-            </div>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-600 border border-blue-500/30 shrink-0">
-              {locale === "ar" ? "قيد التنفيذ" : "In progress"}
-            </span>
-          </div>
-
-          {/* Milestone 3: Pending */}
-          <div className="flex items-center justify-between py-2 px-2.5 rounded-xl bg-surface-container-low/30 border border-border-subtle/40 text-xs">
-            <div className="flex items-center gap-2.5">
-              <div className="w-4 h-4 rounded-full border border-border-default shrink-0" />
-              <span className="text-text-muted">
-                {locale === "ar" ? "مسألة 5: الشروط الحدية والتركيب" : "Question 5: Boundary value conditions synthesis"}
-              </span>
-            </div>
-            <span className="text-[11px] text-text-muted shrink-0">
-              {locale === "ar" ? "قيد الانتظار" : "Pending"}
-            </span>
-          </div>
-        </div>
-      </div>
+      {/* Target Checklist Card under Timer */}
+      <TargetChecklist taskCategory={taskCategory} taskIntention={taskIntention} />
 
       {/* Post-Session Reflection Modal */}
       <SessionCompleteModal
