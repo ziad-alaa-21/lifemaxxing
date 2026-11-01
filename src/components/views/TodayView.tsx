@@ -656,8 +656,13 @@ export function TodayView() {
         todayFocusMinutes={todayFocusMinutes}
         priorities={priorities}
         onAddPlanClick={() => {
-          const el = document.getElementById("priorities-section");
-          if (el) el.scrollIntoView({ behavior: "smooth" });
+          const btn = document.querySelector<HTMLButtonElement>("#priorities-section button");
+          if (btn) {
+            btn.click();
+          } else {
+            const el = document.getElementById("priorities-section");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }
         }}
         onViewAllClick={() => {
           const el = document.getElementById("timeline-section");

@@ -164,7 +164,13 @@ export function TodayPlanGrid({
         {/* 4. Dashed Add Plan Card */}
         <button
           type="button"
-          onClick={onAddPlanClick}
+          onClick={() => {
+            if (onAddPlanClick) {
+              onAddPlanClick();
+            } else {
+              document.querySelector<HTMLButtonElement>("#priorities-section button")?.click();
+            }
+          }}
           className="group rounded-[20px] p-6 min-h-[220px] flex flex-col items-center justify-center gap-3 transition-all hover:bg-[#F0F3FF]/60 active:scale-[0.98] border-2 border-dashed border-[#C7CAD9] bg-transparent text-[#14161A] cursor-pointer"
         >
           <div className="w-10 h-10 rounded-full bg-[#F0F3FF] flex items-center justify-center group-hover:bg-white transition-colors shadow-sm">

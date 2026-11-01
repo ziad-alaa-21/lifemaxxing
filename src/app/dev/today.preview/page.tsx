@@ -460,8 +460,14 @@ export default function DevTodayPreviewPage() {
           nearestDeadlineTitle={isSeeded ? "Study Physics chapter 4" : null}
           todayFocusMinutes={isSeeded ? 85 : 0}
           priorities={priorities}
-          onAddPlanClick={() => {}}
-          onViewAllClick={() => {}}
+          onAddPlanClick={() => {
+            const btn = document.querySelector<HTMLButtonElement>("#priorities-section button");
+            if (btn) btn.click();
+          }}
+          onViewAllClick={() => {
+            const el = document.getElementById("timeline-section");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
         />
 
         {/* 4. Circadian Day Timeline */}
