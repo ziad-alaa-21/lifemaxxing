@@ -23,7 +23,7 @@ interface TodayPlanGridProps {
   onAddPlanClick?: () => void;
   onViewAllClick?: () => void;
   onPlanAdded?: (item: PriorityItem) => void;
-  onPlanDeleted?: (id: string) => void;
+  onPlanDeleted?: (id: string, title?: string) => void;
 }
 
 const STORAGE_KEY = "lifemaxxing_custom_today_plans";
@@ -102,8 +102,9 @@ export function TodayPlanGrid({
   const seen = new Set<string>();
   const allCustomPlans: CustomPlanItem[] = [];
   for (const p of [...customPlans, ...customFromPriorities]) {
-    if (deletedSet.has(p.id)) continue;
-    const key = p.id || p.title.toLowerCase().trim();
+    const titleKey = (p.title || "").toLowerCase().trim();
+    if (deletedSet.has(p.id) || (titleKey && deletedSet.has(titleKey))) continue;
+    const key = p.id || titleKey;
     if (!seen.has(key)) {
       seen.add(key);
       allCustomPlans.push(p);
@@ -170,14 +171,18 @@ export function TodayPlanGrid({
     );
   };
 
-  const handleDeletePlan = (id: string, e?: React.MouseEvent) => {
+  const handleDeletePlan = (id: string, title?: string, e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
 
+    const titleKey = title ? title.toLowerCase().trim() : "";
+    const itemsToAdd = [id];
+    if (titleKey) itemsToAdd.push(titleKey);
+
     setDeletedPlanIds((prev) => {
-      const updated = Array.from(new Set([...prev, id]));
+      const updated = Array.from(new Set([...prev, ...itemsToAdd]));
       try {
         localStorage.setItem(DELETED_KEY, JSON.stringify(updated));
       } catch {}
@@ -185,7 +190,9 @@ export function TodayPlanGrid({
     });
 
     setCustomPlans((prev) => {
-      const updated = prev.filter((p) => p.id !== id);
+      const updated = prev.filter(
+        (p) => p.id !== id && (!titleKey || p.title.toLowerCase().trim() !== titleKey)
+      );
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch {}
@@ -193,7 +200,7 @@ export function TodayPlanGrid({
     });
 
     if (onPlanDeleted) {
-      onPlanDeleted(id);
+      onPlanDeleted(id, title);
     }
   };
 
@@ -216,114 +223,153 @@ export function TodayPlanGrid({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* 1. Body Gradient Card */}
-        <Link
-          href="/body?tab=logger"
-          className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
-          style={{ background: "linear-gradient(135deg, #2563EB, #4338CA)" }}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[14px] font-medium text-white/90">
-              {isAr ? "٥:٣٠ م" : "5:30 pm"}
-            </span>
-            <span className="px-3 py-0.5 rounded-full text-[12px] font-medium bg-white/20 text-white backdrop-blur-md">
-              {isAr ? "الجسم" : "Body"}
-            </span>
-          </div>
+        {!deletedSet.has("default-body") && (
+          <Link
+            href="/body?tab=logger"
+            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
+            style={{ background: "linear-gradient(135deg, #2563EB, #4338CA)" }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] font-medium text-white/90">
+                {isAr ? "٥:٣٠ م" : "5:30 pm"}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="px-3 py-0.5 rounded-full text-[12px] font-medium bg-white/20 text-white backdrop-blur-md">
+                  {isAr ? "الجسم" : "Body"}
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => handleDeletePlan("default-body", workoutName, e)}
+                  className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
+                  title={isAr ? "حذف الخطة" : "Delete plan"}
+                  aria-label={isAr ? "حذف الخطة" : "Delete plan"}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
 
-          <div className="flex flex-col gap-1 my-3">
-            <span className="text-[16px] font-medium text-white">
-              {workoutName}
-            </span>
-            <span className="text-[14px] text-white/80">
-              {isAr ? "تمرين القوة ورفع الأوزان الأساسي" : "Main resistance training block"}
-            </span>
-          </div>
+            <div className="flex flex-col gap-1 my-3">
+              <span className="text-[16px] font-medium text-white">
+                {workoutName}
+              </span>
+              <span className="text-[14px] text-white/80">
+                {isAr ? "تمرين القوة ورفع الأوزان الأساسي" : "Main resistance training block"}
+              </span>
+            </div>
 
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-[12px] text-white/90">
-              {isAr ? "جلسة تمرين اليوم" : "Scheduled session"}
-            </span>
-            <svg
-              className="w-8 h-8 text-white/80 shrink-0"
-              fill="none"
-              viewBox="0 0 40 40"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <rect fill="currentColor" height="2" rx="1" width="36" x="2" y="19" />
-              <rect fill="currentColor" height="14" rx="1.5" width="3" x="7" y="13" />
-              <rect fill="currentColor" height="20" rx="1.5" width="3" x="11" y="10" />
-              <rect fill="currentColor" height="20" rx="1.5" width="3" x="26" y="10" />
-              <rect fill="currentColor" height="14" rx="1.5" width="3" x="30" y="13" />
-            </svg>
-          </div>
-        </Link>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-[12px] text-white/90">
+                {isAr ? "جلسة تمرين اليوم" : "Scheduled session"}
+              </span>
+              <svg
+                className="w-8 h-8 text-white/80 shrink-0"
+                fill="none"
+                viewBox="0 0 40 40"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <rect fill="currentColor" height="2" rx="1" width="36" x="2" y="19" />
+                <rect fill="currentColor" height="14" rx="1.5" width="3" x="7" y="13" />
+                <rect fill="currentColor" height="20" rx="1.5" width="3" x="11" y="10" />
+                <rect fill="currentColor" height="20" rx="1.5" width="3" x="26" y="10" />
+                <rect fill="currentColor" height="14" rx="1.5" width="3" x="30" y="13" />
+              </svg>
+            </div>
+          </Link>
+        )}
 
         {/* 2. School Gradient Card */}
-        <Link
-          href="/school"
-          className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
-          style={{ background: "linear-gradient(135deg, #DB2777, #C2410C)" }}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[14px] font-medium text-white/90">
-              {isAr ? "٨:٠٠ م" : "8:00 pm"}
-            </span>
-            <span className="px-3 py-0.5 rounded-full text-[12px] font-medium bg-white/20 text-white backdrop-blur-md">
-              {isAr ? "الدراسة" : "School"}
-            </span>
-          </div>
+        {!deletedSet.has("default-school") && (
+          <Link
+            href="/school"
+            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
+            style={{ background: "linear-gradient(135deg, #DB2777, #C2410C)" }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] font-medium text-white/90">
+                {isAr ? "٨:٠٠ م" : "8:00 pm"}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="px-3 py-0.5 rounded-full text-[12px] font-medium bg-white/20 text-white backdrop-blur-md">
+                  {isAr ? "الدراسة" : "School"}
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => handleDeletePlan("default-school", studyTitle, e)}
+                  className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
+                  title={isAr ? "حذف الخطة" : "Delete plan"}
+                  aria-label={isAr ? "حذف الخطة" : "Delete plan"}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
 
-          <div className="flex flex-col gap-1 my-3">
-            <span className="text-[16px] font-medium text-white">
-              {studyTitle}
-            </span>
-            <span className="text-[14px] text-white/80">
-              {isAr ? "مذاكرة مركزة وحل تمارين" : "Targeted study sprint"}
-            </span>
-          </div>
+            <div className="flex flex-col gap-1 my-3">
+              <span className="text-[16px] font-medium text-white">
+                {studyTitle}
+              </span>
+              <span className="text-[14px] text-white/80">
+                {isAr ? "مذاكرة مركزة وحل تمارين" : "Targeted study sprint"}
+              </span>
+            </div>
 
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-[12px] text-white/90">
-              {isAr ? "مفاهيم المنهج" : "Syllabus review"}
-            </span>
-            <BookOpen className="w-5 h-5 text-white/80 shrink-0" aria-hidden="true" />
-          </div>
-        </Link>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-[12px] text-white/90">
+                {isAr ? "مفاهيم المنهج" : "Syllabus review"}
+              </span>
+              <BookOpen className="w-5 h-5 text-white/80 shrink-0" aria-hidden="true" />
+            </div>
+          </Link>
+        )}
 
         {/* 3. Mind Gradient Card */}
-        <Link
-          href="/mind"
-          className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
-          style={{ background: "linear-gradient(135deg, #7C3AED, #A21CAF)" }}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[14px] font-medium text-white/90">
-              {isAr ? "٩:٣٠ م" : "9:30 pm"}
-            </span>
-            <span className="px-3 py-0.5 rounded-full text-[12px] font-medium bg-white/20 text-white backdrop-blur-md">
-              {isAr ? "العقل" : "Mind"}
-            </span>
-          </div>
+        {!deletedSet.has("default-mind") && (
+          <Link
+            href="/mind"
+            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
+            style={{ background: "linear-gradient(135deg, #7C3AED, #A21CAF)" }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] font-medium text-white/90">
+                {isAr ? "٩:٣٠ م" : "9:30 pm"}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="px-3 py-0.5 rounded-full text-[12px] font-medium bg-white/20 text-white backdrop-blur-md">
+                  {isAr ? "العقل" : "Mind"}
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => handleDeletePlan("default-mind", focusTitle, e)}
+                  className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
+                  title={isAr ? "حذف الخطة" : "Delete plan"}
+                  aria-label={isAr ? "حذف الخطة" : "Delete plan"}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
 
-          <div className="flex flex-col gap-1 my-3">
-            <span className="text-[16px] font-medium text-white">
-              {focusTitle}
-            </span>
-            <span className="text-[14px] text-white/80">
-              {isAr ? "فترة صفاء ذهني وقراءة" : "Deep work & evening reflection"}
-            </span>
-          </div>
+            <div className="flex flex-col gap-1 my-3">
+              <span className="text-[16px] font-medium text-white">
+                {focusTitle}
+              </span>
+              <span className="text-[14px] text-white/80">
+                {isAr ? "فترة صفاء ذهني وقراءة" : "Deep work & evening reflection"}
+              </span>
+            </div>
 
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-[12px] text-white/90">
-              {todayFocusMinutes > 0
-                ? isAr ? `${todayFocusMinutes} دقيقة مسجلة` : `${todayFocusMinutes}m completed`
-                : isAr ? "استرجاع الهدوء" : "Mental clarity"}
-            </span>
-            <Sparkles className="w-5 h-5 text-white/80 shrink-0" aria-hidden="true" />
-          </div>
-        </Link>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-[12px] text-white/90">
+                {todayFocusMinutes > 0
+                  ? isAr ? `${todayFocusMinutes} دقيقة مسجلة` : `${todayFocusMinutes}m completed`
+                  : isAr ? "استرجاع الهدوء" : "Mental clarity"}
+              </span>
+              <Sparkles className="w-5 h-5 text-white/80 shrink-0" aria-hidden="true" />
+            </div>
+          </Link>
+        )}
 
         {/* Custom User Added Plan Cards */}
         {allCustomPlans.map((plan) => {
@@ -363,7 +409,7 @@ export function TodayPlanGrid({
                   </span>
                   <button
                     type="button"
-                    onClick={(e) => handleDeletePlan(plan.id, e)}
+                    onClick={(e) => handleDeletePlan(plan.id, plan.title, e)}
                     className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
                     title={isAr ? "حذف الخطة" : "Delete plan"}
                     aria-label={isAr ? "حذف الخطة" : "Delete plan"}

@@ -466,8 +466,13 @@ export default function DevTodayPreviewPage() {
           onPlanAdded={(newPlan) => {
             setPriorities((prev) => [...prev, newPlan]);
           }}
-          onPlanDeleted={(deletedId) => {
-            setPriorities((prev) => prev.filter((p) => p.id !== deletedId));
+          onPlanDeleted={(deletedId, deletedTitle) => {
+            const titleKey = deletedTitle ? deletedTitle.toLowerCase().trim() : "";
+            setPriorities((prev) =>
+              prev.filter(
+                (p) => p.id !== deletedId && (!titleKey || p.title.toLowerCase().trim() !== titleKey)
+              )
+            );
           }}
           onViewAllClick={() => {
             const el = document.getElementById("timeline-section");

@@ -658,8 +658,23 @@ export function TodayView() {
         onPlanAdded={(newPlan) => {
           setPriorities((prev) => [...prev, newPlan]);
         }}
-        onPlanDeleted={(deletedId) => {
-          setPriorities((prev) => prev.filter((p) => p.id !== deletedId));
+        onPlanDeleted={async (deletedId, deletedTitle) => {
+          const titleKey = deletedTitle ? deletedTitle.toLowerCase().trim() : "";
+          setPriorities((prev) =>
+            prev.filter(
+              (p) => p.id !== deletedId && (!titleKey || p.title.toLowerCase().trim() !== titleKey)
+            )
+          );
+
+          if (userId && !deletedId.startsWith("temp-") && !deletedId.startsWith("default-")) {
+            try {
+              await supabase
+                .from("priorities")
+                .update({ deleted_at: new Date().toISOString() })
+                .eq("id", deletedId)
+                .eq("user_id", userId);
+            } catch {}
+          }
         }}
         onViewAllClick={() => {
           const el = document.getElementById("timeline-section");
