@@ -23,9 +23,11 @@ interface TodayPlanGridProps {
   onAddPlanClick?: () => void;
   onViewAllClick?: () => void;
   onPlanAdded?: (item: PriorityItem) => void;
+  onPlanDeleted?: (id: string) => void;
 }
 
 const STORAGE_KEY = "lifemaxxing_custom_today_plans";
+const DELETED_KEY = "lifemaxxing_deleted_today_plan_ids";
 
 export function TodayPlanGrid({
   plannedWorkoutSession,
@@ -35,6 +37,7 @@ export function TodayPlanGrid({
   onAddPlanClick,
   onViewAllClick,
   onPlanAdded,
+  onPlanDeleted,
 }: TodayPlanGridProps) {
   const { locale } = useI18n();
   const isAr = locale === "ar";
@@ -44,6 +47,17 @@ export function TodayPlanGrid({
   const focusTitle = todayFocusMinutes > 0
     ? isAr ? "جلسة تركيز منجزة" : "Completed focus session"
     : isAr ? "جلسة تركيز ٥٠ دقيقة" : "Focus sprint (50m)";
+
+  // Deleted plan IDs tracked locally
+  const [deletedPlanIds, setDeletedPlanIds] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const stored = localStorage.getItem(DELETED_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Custom plans added specifically into Today's Plan
   const [customPlans, setCustomPlans] = useState<CustomPlanItem[]>(() => {
@@ -84,9 +98,11 @@ export function TodayPlanGrid({
       completed: p.completed,
     }));
 
+  const deletedSet = new Set(deletedPlanIds);
   const seen = new Set<string>();
   const allCustomPlans: CustomPlanItem[] = [];
   for (const p of [...customPlans, ...customFromPriorities]) {
+    if (deletedSet.has(p.id)) continue;
     const key = p.id || p.title.toLowerCase().trim();
     if (!seen.has(key)) {
       seen.add(key);
@@ -154,8 +170,31 @@ export function TodayPlanGrid({
     );
   };
 
-  const handleDeletePlan = (id: string) => {
-    setCustomPlans((prev) => prev.filter((p) => p.id !== id));
+  const handleDeletePlan = (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    setDeletedPlanIds((prev) => {
+      const updated = Array.from(new Set([...prev, id]));
+      try {
+        localStorage.setItem(DELETED_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
+    setCustomPlans((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
+    if (onPlanDeleted) {
+      onPlanDeleted(id);
+    }
   };
 
   return (
@@ -324,12 +363,10 @@ export function TodayPlanGrid({
                   </span>
                   <button
                     type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeletePlan(plan.id);
-                    }}
-                    className="w-6 h-6 rounded-full bg-black/20 hover:bg-black/40 text-white/80 hover:text-white flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+                    onClick={(e) => handleDeletePlan(plan.id, e)}
+                    className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
                     title={isAr ? "حذف الخطة" : "Delete plan"}
+                    aria-label={isAr ? "حذف الخطة" : "Delete plan"}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

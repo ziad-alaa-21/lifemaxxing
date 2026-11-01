@@ -658,6 +658,9 @@ export function TodayView() {
         onPlanAdded={(newPlan) => {
           setPriorities((prev) => [...prev, newPlan]);
         }}
+        onPlanDeleted={(deletedId) => {
+          setPriorities((prev) => prev.filter((p) => p.id !== deletedId));
+        }}
         onViewAllClick={() => {
           const el = document.getElementById("timeline-section");
           if (el) el.scrollIntoView({ behavior: "smooth" });
