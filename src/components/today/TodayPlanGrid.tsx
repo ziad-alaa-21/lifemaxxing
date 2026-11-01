@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BookOpen, Sparkles, Plus, X, Check, Trash2 } from "lucide-react";
 import { PriorityItem } from "@/lib/today";
 import { useI18n } from "@/lib/i18n/I18nContext";
@@ -29,6 +29,13 @@ interface TodayPlanGridProps {
 const STORAGE_KEY = "lifemaxxing_custom_today_plans";
 const DELETED_KEY = "lifemaxxing_deleted_today_plan_ids";
 
+function normalizePlanKey(s?: string | null): string {
+  return (s || "")
+    .toLowerCase()
+    .replace(/[\s,._-]+/g, " ")
+    .trim();
+}
+
 export function TodayPlanGrid({
   plannedWorkoutSession,
   nearestDeadlineTitle,
@@ -39,6 +46,7 @@ export function TodayPlanGrid({
   onPlanAdded,
   onPlanDeleted,
 }: TodayPlanGridProps) {
+  const router = useRouter();
   const { locale } = useI18n();
   const isAr = locale === "ar";
 
@@ -48,27 +56,9 @@ export function TodayPlanGrid({
     ? isAr ? "جلسة تركيز منجزة" : "Completed focus session"
     : isAr ? "جلسة تركيز ٥٠ دقيقة" : "Focus sprint (50m)";
 
-  // Deleted plan IDs tracked locally
-  const [deletedPlanIds, setDeletedPlanIds] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem(DELETED_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  // Custom plans added specifically into Today's Plan
-  const [customPlans, setCustomPlans] = useState<CustomPlanItem[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [isMounted, setIsMounted] = useState(false);
+  const [deletedPlanIds, setDeletedPlanIds] = useState<string[]>([]);
+  const [customPlans, setCustomPlans] = useState<CustomPlanItem[]>([]);
 
   // Modal state for adding a plan directly to Today's Plan
   const [isAddPlanModalOpen, setIsAddPlanModalOpen] = useState(false);
@@ -77,14 +67,40 @@ export function TodayPlanGrid({
   const [planTime, setPlanTime] = useState("");
   const [planMinutes, setPlanMinutes] = useState(30);
 
+  // Load from localStorage strictly after mount to prevent SSR hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+    try {
+      const storedDeleted = localStorage.getItem(DELETED_KEY);
+      if (storedDeleted) {
+        setDeletedPlanIds(JSON.parse(storedDeleted));
+      }
+      const storedPlans = localStorage.getItem(STORAGE_KEY);
+      if (storedPlans) {
+        setCustomPlans(JSON.parse(storedPlans));
+      }
+    } catch {}
+  }, []);
+
   // Sync custom plans to localStorage
   useEffect(() => {
+    if (!isMounted) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(customPlans));
     } catch {
       // Ignore quota error
     }
-  }, [customPlans]);
+  }, [customPlans, isMounted]);
+
+  // Sync deleted IDs to localStorage
+  useEffect(() => {
+    if (!isMounted) return;
+    try {
+      localStorage.setItem(DELETED_KEY, JSON.stringify(deletedPlanIds));
+    } catch {
+      // Ignore quota error
+    }
+  }, [deletedPlanIds, isMounted]);
 
   // Combine custom plans created here with any custom tasks from priorities
   const customFromPriorities: CustomPlanItem[] = (priorities || [])
@@ -98,13 +114,32 @@ export function TodayPlanGrid({
       completed: p.completed,
     }));
 
-  const deletedSet = new Set(deletedPlanIds);
+  const deletedSet = new Set(
+    deletedPlanIds.flatMap((id) => [
+      id,
+      id.toLowerCase().trim(),
+      normalizePlanKey(id),
+    ])
+  );
+
   const seen = new Set<string>();
   const allCustomPlans: CustomPlanItem[] = [];
   for (const p of [...customPlans, ...customFromPriorities]) {
-    const titleKey = (p.title || "").toLowerCase().trim();
-    if (deletedSet.has(p.id) || (titleKey && deletedSet.has(titleKey))) continue;
-    const key = p.id || titleKey;
+    const rawTitle = (p.title || "").trim();
+    const normTitle = normalizePlanKey(p.title);
+    const normId = normalizePlanKey(p.id);
+
+    if (
+      deletedSet.has(p.id) ||
+      deletedSet.has(p.id.toLowerCase().trim()) ||
+      (normId && deletedSet.has(normId)) ||
+      (rawTitle && deletedSet.has(rawTitle)) ||
+      (normTitle && deletedSet.has(normTitle))
+    ) {
+      continue;
+    }
+
+    const key = p.id || normTitle;
     if (!seen.has(key)) {
       seen.add(key);
       allCustomPlans.push(p);
@@ -171,27 +206,35 @@ export function TodayPlanGrid({
     );
   };
 
-  const handleDeletePlan = (id: string, title?: string, e?: React.MouseEvent) => {
+  const handleDeletePlan = (id: string, title?: string, e?: React.SyntheticEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
 
-    const titleKey = title ? title.toLowerCase().trim() : "";
-    const itemsToAdd = [id];
-    if (titleKey) itemsToAdd.push(titleKey);
+    const itemsToAdd = [id, id.toLowerCase().trim(), normalizePlanKey(id)];
+    if (title) {
+      itemsToAdd.push(title);
+      itemsToAdd.push(title.trim());
+      itemsToAdd.push(title.toLowerCase().trim());
+      itemsToAdd.push(normalizePlanKey(title));
+    }
 
     setDeletedPlanIds((prev) => {
-      const updated = Array.from(new Set([...prev, ...itemsToAdd]));
+      const updated = Array.from(new Set([...prev, ...itemsToAdd.filter(Boolean)]));
       try {
         localStorage.setItem(DELETED_KEY, JSON.stringify(updated));
       } catch {}
       return updated;
     });
 
+    const normTitle = normalizePlanKey(title);
     setCustomPlans((prev) => {
       const updated = prev.filter(
-        (p) => p.id !== id && (!titleKey || p.title.toLowerCase().trim() !== titleKey)
+        (p) =>
+          p.id !== id &&
+          p.id.toLowerCase().trim() !== id.toLowerCase().trim() &&
+          (!normTitle || normalizePlanKey(p.title) !== normTitle)
       );
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
@@ -223,10 +266,18 @@ export function TodayPlanGrid({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* 1. Body Gradient Card */}
-        {!deletedSet.has("default-body") && (
-          <Link
-            href="/body?tab=logger"
-            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
+        {(!deletedSet.has("default-body") && !deletedSet.has(normalizePlanKey(workoutName))) && (
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => router.push("/body?tab=logger")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                router.push("/body?tab=logger");
+              }
+            }}
+            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity cursor-pointer"
             style={{ background: "linear-gradient(135deg, #2563EB, #4338CA)" }}
           >
             <div className="flex items-center justify-between">
@@ -239,12 +290,16 @@ export function TodayPlanGrid({
                 </span>
                 <button
                   type="button"
-                  onClick={(e) => handleDeletePlan("default-body", workoutName, e)}
-                  className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleDeletePlan("default-body", workoutName, e);
+                  }}
+                  className="w-8 h-8 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90 relative z-10"
                   title={isAr ? "حذف الخطة" : "Delete plan"}
                   aria-label={isAr ? "حذف الخطة" : "Delete plan"}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -276,14 +331,22 @@ export function TodayPlanGrid({
                 <rect fill="currentColor" height="14" rx="1.5" width="3" x="30" y="13" />
               </svg>
             </div>
-          </Link>
+          </div>
         )}
 
         {/* 2. School Gradient Card */}
-        {!deletedSet.has("default-school") && (
-          <Link
-            href="/school"
-            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
+        {(!deletedSet.has("default-school") && !deletedSet.has(normalizePlanKey(studyTitle))) && (
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => router.push("/school")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                router.push("/school");
+              }
+            }}
+            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity cursor-pointer"
             style={{ background: "linear-gradient(135deg, #DB2777, #C2410C)" }}
           >
             <div className="flex items-center justify-between">
@@ -296,12 +359,16 @@ export function TodayPlanGrid({
                 </span>
                 <button
                   type="button"
-                  onClick={(e) => handleDeletePlan("default-school", studyTitle, e)}
-                  className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleDeletePlan("default-school", studyTitle, e);
+                  }}
+                  className="w-8 h-8 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90 relative z-10"
                   title={isAr ? "حذف الخطة" : "Delete plan"}
                   aria-label={isAr ? "حذف الخطة" : "Delete plan"}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -321,14 +388,22 @@ export function TodayPlanGrid({
               </span>
               <BookOpen className="w-5 h-5 text-white/80 shrink-0" aria-hidden="true" />
             </div>
-          </Link>
+          </div>
         )}
 
         {/* 3. Mind Gradient Card */}
-        {!deletedSet.has("default-mind") && (
-          <Link
-            href="/mind"
-            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity"
+        {(!deletedSet.has("default-mind") && !deletedSet.has(normalizePlanKey(focusTitle))) && (
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => router.push("/mind")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                router.push("/mind");
+              }
+            }}
+            className="rounded-[20px] p-6 text-white shadow-[0_8px_24px_rgba(40,50,120,0.08)] flex flex-col justify-between min-h-[220px] relative overflow-hidden group hover:opacity-95 transition-opacity cursor-pointer"
             style={{ background: "linear-gradient(135deg, #7C3AED, #A21CAF)" }}
           >
             <div className="flex items-center justify-between">
@@ -341,12 +416,16 @@ export function TodayPlanGrid({
                 </span>
                 <button
                   type="button"
-                  onClick={(e) => handleDeletePlan("default-mind", focusTitle, e)}
-                  className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleDeletePlan("default-mind", focusTitle, e);
+                  }}
+                  className="w-8 h-8 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90 relative z-10"
                   title={isAr ? "حذف الخطة" : "Delete plan"}
                   aria-label={isAr ? "حذف الخطة" : "Delete plan"}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -368,7 +447,7 @@ export function TodayPlanGrid({
               </span>
               <Sparkles className="w-5 h-5 text-white/80 shrink-0" aria-hidden="true" />
             </div>
-          </Link>
+          </div>
         )}
 
         {/* Custom User Added Plan Cards */}
@@ -409,12 +488,16 @@ export function TodayPlanGrid({
                   </span>
                   <button
                     type="button"
-                    onClick={(e) => handleDeletePlan(plan.id, plan.title, e)}
-                    className="w-7 h-7 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      handleDeletePlan(plan.id, plan.title, e);
+                    }}
+                    className="w-8 h-8 rounded-full bg-white/25 hover:bg-[#DC2626] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-90 relative z-10"
                     title={isAr ? "حذف الخطة" : "Delete plan"}
                     aria-label={isAr ? "حذف الخطة" : "Delete plan"}
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -431,8 +514,11 @@ export function TodayPlanGrid({
               <div className="flex items-center justify-between pt-1">
                 <button
                   type="button"
-                  onClick={() => handleTogglePlan(plan.id)}
-                  className={`flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTogglePlan(plan.id);
+                  }}
+                  className={`flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1 rounded-lg transition-colors cursor-pointer relative z-10 ${
                     plan.completed
                       ? "bg-white/25 text-white"
                       : "bg-white/15 hover:bg-white/25 text-white/90"

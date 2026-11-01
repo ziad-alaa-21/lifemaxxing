@@ -467,10 +467,14 @@ export default function DevTodayPreviewPage() {
             setPriorities((prev) => [...prev, newPlan]);
           }}
           onPlanDeleted={(deletedId, deletedTitle) => {
-            const titleKey = deletedTitle ? deletedTitle.toLowerCase().trim() : "";
+            const norm = (s?: string | null) => (s || "").toLowerCase().replace(/[\s,._-]+/g, " ").trim();
+            const titleKey = norm(deletedTitle);
             setPriorities((prev) =>
               prev.filter(
-                (p) => p.id !== deletedId && (!titleKey || p.title.toLowerCase().trim() !== titleKey)
+                (p) =>
+                  p.id !== deletedId &&
+                  p.id.toLowerCase().trim() !== deletedId.toLowerCase().trim() &&
+                  (!titleKey || norm(p.title) !== titleKey)
               )
             );
           }}
