@@ -721,7 +721,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
             {/* Save Button */}
             <button
               onClick={handleSaveWorkout}
-              disabled={isSaving}
+              disabled={isSaving || sessionExercises.every((e) => e.instanceId === "__empty_session__" || e.exercise?.id === "__empty__")}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-ink hover:bg-primary-ink-dim text-on-primary font-mono font-bold text-xs uppercase tracking-wider shadow-xs transition-all cursor-pointer disabled:bg-surface-container-high disabled:text-text-muted disabled:shadow-none disabled:cursor-not-allowed"
             >
               {isSaving ? (
@@ -808,7 +808,40 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
 
       {/* Exercises in Session */}
       <div className="space-y-4">
-        {sessionExercises.map((item, itemIdx) => {
+        {(() => {
+          const visibleExercises = sessionExercises.filter(
+            (e) => e.instanceId !== "__empty_session__" && e.exercise?.id !== "__empty__"
+          );
+
+          if (visibleExercises.length === 0) {
+            return (
+              <div className="text-center py-12 px-4 rounded-2xl border-2 border-dashed border-border-subtle bg-surface-container/40 space-y-3">
+                <div className="w-12 h-12 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center mx-auto text-text-muted">
+                  <Dumbbell className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-on-surface">
+                    {locale === "ar" ? "مفيش تمارين في الجلسة دي حالياً" : "No exercises in this workout session"}
+                  </p>
+                  <p className="text-xs text-text-muted">
+                    {locale === "ar"
+                      ? "اضغط على زر + إضافة تمرين لاختيار تمرين وبدء التسجيل"
+                      : "Tap the + Add Exercise button below to select an exercise and begin logging."}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsPickerOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-ink text-on-primary text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer shadow-xs mt-2"
+                >
+                  <Plus className="w-4 h-4 stroke-[2.5]" />
+                  <span>{locale === "ar" ? "إضافة تمرين" : "Add Exercise"}</span>
+                </button>
+              </div>
+            );
+          }
+
+          return visibleExercises.map((item, itemIdx) => {
           const isPullUp = item.exercise.id === "00000000-0000-0000-0000-000000000005";
 
           return (
@@ -852,9 +885,36 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                 </div>
 
                 <button
-                  onClick={() => removeExerciseFromSession(item.instanceId)}
+                  type="button"
+                  onClick={() => {
+                    const remaining = sessionExercises.filter(
+                      (e) =>
+                        e.instanceId !== item.instanceId &&
+                        e.instanceId !== "__empty_session__" &&
+                        e.exercise?.id !== "__empty__"
+                    );
+                    if (remaining.length === 0) {
+                      setSessionExercises([
+                        {
+                          instanceId: "__empty_session__",
+                          exercise: {
+                            id: "__empty__",
+                            name: "",
+                            muscle_group: "",
+                            equipment: "",
+                            is_ranked: false,
+                            ranked_key: null,
+                          },
+                          sets: [],
+                        },
+                      ]);
+                    } else {
+                      removeExerciseFromSession(item.instanceId);
+                    }
+                  }}
                   className="w-8 h-8 rounded-lg hover:bg-surface-container-high text-text-muted hover:text-crimson-alert flex items-center justify-center transition-colors cursor-pointer"
                   title={locale === "ar" ? "حذف التمرين" : "Remove Exercise"}
+                  aria-label={locale === "ar" ? "حذف التمرين" : "Remove Exercise"}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -1026,10 +1086,13 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                           {/* Remove Set */}
                           <td className="py-2 px-2 text-end">
                             <button
+                              type="button"
                               onClick={() => removeSet(item.instanceId, s.id)}
-                              className="text-text-muted hover:text-crimson-alert p-1 transition-colors cursor-pointer"
+                              className="w-7 h-7 rounded-lg hover:bg-crimson-alert/10 text-text-muted hover:text-crimson-alert flex items-center justify-center transition-colors cursor-pointer ml-auto rtl:mr-auto rtl:ml-0"
+                              title={locale === "ar" ? "حذف المجموعة" : "Remove set"}
+                              aria-label={locale === "ar" ? "حذف المجموعة" : "Remove set"}
                             >
-                              <X className="w-3.5 h-3.5" />
+                              <X className="w-4 h-4" />
                             </button>
                           </td>
                         </tr>
@@ -1051,7 +1114,8 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
               </div>
             </div>
           );
-        })}
+          });
+        })()}
       </div>
 
       {/* Add Exercise Trigger Button */}
@@ -1171,7 +1235,16 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                 return displayedList.map((ex) => (
                   <div
                     key={ex.id}
-                    onClick={() => addExerciseToSession(ex)}
+                    onClick={async () => {
+                      await addExerciseToSession(ex);
+                      setSessionExercises((prev) =>
+                        prev.filter(
+                          (item) =>
+                            item.instanceId !== "__empty_session__" &&
+                            item.exercise?.id !== "__empty__"
+                        )
+                      );
+                    }}
                     className="py-3 px-2 hover:bg-surface-container-high rounded-xl cursor-pointer transition-colors flex items-center justify-between group"
                   >
                     <div className="text-start">
