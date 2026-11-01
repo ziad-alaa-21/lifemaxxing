@@ -9,7 +9,6 @@ import {
   Plus,
 } from "lucide-react";
 import { RingResult, RecommendationOutput, PriorityItem, CircadianPhase } from "@/lib/today";
-import { RecommendationCard } from "@/components/today/RecommendationCard";
 import { TodayProgressCard } from "@/components/today/TodayProgressCard";
 import { TodayFocusCard } from "@/components/today/TodayFocusCard";
 import { TodayNextUpCard } from "@/components/today/TodayNextUpCard";
@@ -21,6 +20,18 @@ import { PrioritiesCard } from "@/components/today/PrioritiesCard";
 import { FinishSetupCard, EndOfDayRecapCard } from "@/components/today/TodayPillarCards";
 import { notFound } from "next/navigation";
 import { useI18n } from "@/lib/i18n/I18nContext";
+
+function getTodayHeaderDate(isAr: boolean): string {
+  try {
+    return new Intl.DateTimeFormat(isAr ? "ar-EG" : "en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    }).format(new Date());
+  } catch {
+    return isAr ? "النهاردة" : "Today";
+  }
+}
 
 export default function DevTodayPreviewPage() {
   if (process.env.NODE_ENV === "production") {
@@ -52,6 +63,14 @@ export default function DevTodayPreviewPage() {
   }, [setLocale]);
 
   const isAr = locale === "ar";
+
+  const [headerDate, setHeaderDate] = useState<string>(() =>
+    getTodayHeaderDate(isAr)
+  );
+
+  React.useEffect(() => {
+    setHeaderDate(getTodayHeaderDate(isAr));
+  }, [isAr]);
 
   // =========================================================================
   // FIXTURE DATA: Seeded Account (Matching Stitch Today Screen)
@@ -391,14 +410,16 @@ export default function DevTodayPreviewPage() {
 
       {/* Main Content Area */}
       <main className="max-w-[1280px] mx-auto px-4 sm:px-8 py-8 space-y-8">
-        {/* 1. Page Header (Greeting + Honest Recommendation + Why This?) */}
-        <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
-          <RecommendationCard
-            recommendation={recommendation}
-            greeting={isSeeded
-              ? (isAr ? "صباح الخير يا زياد" : "Good morning, Ziad")
-              : (isAr ? "أهلاً بيك" : "Welcome")}
-          />
+        {/* 1. Page Header (Date of the day) */}
+        <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+          <div>
+            <h1
+              suppressHydrationWarning
+              className="text-[26px] sm:text-[32px] font-semibold text-[#14161A] tracking-tight"
+            >
+              {headerDate || getTodayHeaderDate(isAr)}
+            </h1>
+          </div>
 
           <div className="flex items-center gap-3 shrink-0">
             {isSeeded && (

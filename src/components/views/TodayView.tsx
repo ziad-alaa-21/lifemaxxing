@@ -18,7 +18,6 @@ import {
   RecommendationOutput,
   CircadianPhase,
 } from "@/lib/today";
-import { RecommendationCard } from "@/components/today/RecommendationCard";
 import { PrioritiesCard } from "@/components/today/PrioritiesCard";
 import { CircadianTimelineCard } from "@/components/today/CircadianTimelineCard";
 import {
@@ -34,6 +33,19 @@ import { TodayPlanGrid } from "@/components/today/TodayPlanGrid";
 import { useI18n } from "@/lib/i18n/I18nContext";
 import { useUserModules } from "@/lib/modules/UserModulesContext";
 
+function getTodayHeaderDate(locale: string, timeZone?: string): string {
+  try {
+    return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
+      ...(timeZone ? { timeZone } : {}),
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    }).format(new Date());
+  } catch {
+    return "";
+  }
+}
+
 export function TodayView() {
   const { dict, locale } = useI18n();
   const { isModuleActive, isPillarActive } = useUserModules();
@@ -44,7 +56,9 @@ export function TodayView() {
   // Telemetry dates in user timezone
   const [todayDateStr, setTodayDateStr] = useState<string>("");
   const [tomorrowDateStr, setTomorrowDateStr] = useState<string>("");
-  const [formattedHeaderDate, setFormattedHeaderDate] = useState<string>("");
+  const [formattedHeaderDate, setFormattedHeaderDate] = useState<string>(() =>
+    getTodayHeaderDate(locale)
+  );
 
   // Pillar Data
   const [latestWorkout, setLatestWorkout] = useState<{
@@ -460,6 +474,10 @@ export function TodayView() {
   }, []);
 
   useEffect(() => {
+    setFormattedHeaderDate(getTodayHeaderDate(locale, userTimezone));
+  }, [locale, userTimezone]);
+
+  useEffect(() => {
     loadDashboardData();
 
     // Focus revalidation: re-fetch fresh telemetry when user returns to app tab
@@ -576,12 +594,16 @@ export function TodayView() {
 
   return (
     <div className="space-y-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* 1. Page Header (Greeting + Honest Recommendation + Why This?) */}
-      <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
-        <RecommendationCard
-          recommendation={recommendation}
-          greeting={formattedHeaderDate || (locale === "ar" ? "النهاردة" : "Today")}
-        />
+      {/* 1. Page Header (Date of the day) */}
+      <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <div>
+          <h1
+            suppressHydrationWarning
+            className="text-[26px] sm:text-[32px] font-semibold text-[#14161A] tracking-tight"
+          >
+            {formattedHeaderDate || getTodayHeaderDate(locale, userTimezone)}
+          </h1>
+        </div>
 
         <div className="flex items-center gap-3 shrink-0">
           {currentWeightKg && (
