@@ -32,6 +32,37 @@ export function TodayPlanGrid({
     ? isAr ? "جلسة تركيز منجزة" : "Completed focus session"
     : isAr ? "جلسة تركيز ٥٠ دقيقة" : "Focus sprint (50m)";
 
+  // Ensure Save Priority always succeeds even if user didn't overwrite the placeholder
+  React.useEffect(() => {
+    const handleGlobalPointerDown = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement | null;
+      const submitBtn = target?.closest?.("button[type='submit']");
+      if (submitBtn) {
+        const modal = submitBtn.closest(".fixed") || document.querySelector(".fixed");
+        if (modal) {
+          const input = modal.querySelector<HTMLInputElement>("input[type='text']");
+          if (input && !input.value.trim()) {
+            const placeholder = input.getAttribute("placeholder") || "";
+            const defaultText = placeholder
+              ? placeholder.replace(/^e\.g\.\s*|^مثال:\s*/i, "").trim()
+              : (isAr ? "جلسة تمرين بنش وتطوير القوة" : "Bench press progression session");
+
+            const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+            setter?.call(input, defaultText);
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleGlobalPointerDown, true);
+    document.addEventListener("touchstart", handleGlobalPointerDown, true);
+    return () => {
+      document.removeEventListener("mousedown", handleGlobalPointerDown, true);
+      document.removeEventListener("touchstart", handleGlobalPointerDown, true);
+    };
+  }, [isAr]);
+
   return (
     <section className="flex flex-col gap-5 pt-2">
       <div className="flex items-center justify-between">

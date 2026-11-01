@@ -284,7 +284,10 @@ export default function DevTodayPreviewPage() {
   const mindRing = isSeeded ? seededMindRing : emptyMindRing;
   const schoolRing = isSeeded ? seededSchoolRing : emptySchoolRing;
   const recommendation = isSeeded ? seededRecommendation : emptyRecommendation;
-  const priorities = isSeeded ? seededPriorities : [];
+  const [priorities, setPriorities] = useState<PriorityItem[]>(() => isSeeded ? seededPriorities : []);
+  React.useEffect(() => {
+    setPriorities(isSeeded ? seededPriorities : []);
+  }, [isSeeded]);
   const circadianPhases = isSeeded ? seededCircadianPhases : emptyCircadianPhases;
 
   return (
@@ -462,7 +465,22 @@ export default function DevTodayPreviewPage() {
           priorities={priorities}
           onAddPlanClick={() => {
             const btn = document.querySelector<HTMLButtonElement>("#priorities-section button");
-            if (btn) btn.click();
+            if (btn) {
+              btn.click();
+              setTimeout(() => {
+                const input = document.querySelector<HTMLInputElement>("input[placeholder*='Bench press'], input[placeholder*='مراجعة فيزياء']");
+                if (input) {
+                  input.focus();
+                  if (!input.value.trim()) {
+                    const defaultText = isAr ? "جلسة تمرين بنش وتطوير القوة" : "Bench press progression session";
+                    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+                    setter?.call(input, defaultText);
+                    input.dispatchEvent(new Event("input", { bubbles: true }));
+                    input.select();
+                  }
+                }
+              }, 50);
+            }
           }}
           onViewAllClick={() => {
             const el = document.getElementById("timeline-section");
@@ -481,8 +499,8 @@ export default function DevTodayPreviewPage() {
             priorities={priorities}
             todayDateStr="2026-10-27"
             tomorrowDateStr="2026-10-28"
-            onPrioritiesChange={() => {}}
-            userId={isSeeded ? "fixture-seeded" : null}
+            onPrioritiesChange={setPriorities}
+            userId={null}
           />
         </div>
 
