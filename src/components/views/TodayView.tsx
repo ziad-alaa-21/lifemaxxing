@@ -655,27 +655,8 @@ export function TodayView() {
         nearestDeadlineTitle={nearestDeadline?.title}
         todayFocusMinutes={todayFocusMinutes}
         priorities={priorities}
-        onAddPlanClick={() => {
-          const btn = document.querySelector<HTMLButtonElement>("#priorities-section button");
-          if (btn) {
-            btn.click();
-            setTimeout(() => {
-              const input = document.querySelector<HTMLInputElement>("input[placeholder*='Bench press'], input[placeholder*='مراجعة فيزياء']");
-              if (input) {
-                input.focus();
-                if (!input.value.trim()) {
-                  const defaultText = locale === "ar" ? "جلسة تمرين بنش وتطوير القوة" : "Bench press progression session";
-                  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
-                  setter?.call(input, defaultText);
-                  input.dispatchEvent(new Event("input", { bubbles: true }));
-                  input.select();
-                }
-              }
-            }, 50);
-          } else {
-            const el = document.getElementById("priorities-section");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
-          }
+        onPlanAdded={(newPlan) => {
+          setPriorities((prev) => [...prev, newPlan]);
         }}
         onViewAllClick={() => {
           const el = document.getElementById("timeline-section");
