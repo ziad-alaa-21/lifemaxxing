@@ -33,6 +33,7 @@ import { RestTimer } from "./RestTimer";
 import { BarbellSvg } from "@/components/illustrations/BarbellSvg";
 import { useOnlineGuard } from "@/hooks/useOnlineGuard";
 import { useI18n } from "@/lib/i18n/I18nContext";
+import { COMPREHENSIVE_EXERCISE_CATALOG } from "@/components/ui/ExerciseCatalogData";
 
 interface Exercise {
   id: string;
@@ -882,7 +883,7 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
                       const bw = bodyweightKg || 75;
                       const tierEval =
                         s.e1rm !== null && item.exercise.is_ranked
-                          ? determineTier(item.exercise.id, s.e1rm, bw, userGender)
+                          ? determineTier(item.exercise.ranked_key || item.exercise.id, s.e1rm, bw, userGender)
                           : null;
 
                       return (
@@ -1127,36 +1128,71 @@ export function ActiveWorkoutSession({ onWorkoutSaved }: ActiveWorkoutSessionPro
 
             {/* Exercises List */}
             <div className="flex-1 overflow-y-auto divide-y divide-border-subtle/50 pr-1">
-              {filteredExercises.map((ex) => (
-                <div
-                  key={ex.id}
-                  onClick={() => addExerciseToSession(ex)}
-                  className="py-3 px-2 hover:bg-surface-container-high rounded-xl cursor-pointer transition-colors flex items-center justify-between group"
-                >
-                  <div className="text-start">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-on-surface group-hover:text-secondary-cyan font-mono transition-colors">
-                        {ex.name}
-                      </span>
-                      {ex.is_ranked && (
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-ink/10 text-primary-ink border border-primary-ink/30 font-bold uppercase">
-                          {locale === "ar" ? "معتمد" : "Ranked"}
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-[10px] font-mono text-text-muted mt-0.5 capitalize">
-                      {ex.muscle_group} • {ex.equipment}
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-secondary-cyan group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </div>
-              ))}
+              {(() => {
+                const _ref = filteredExercises;
+                const combinedList: Exercise[] = [...availableExercises];
+                const seenIds = new Set(availableExercises.map((e) => e.id));
+                const seenNames = new Set(availableExercises.map((e) => e.name.toLowerCase().trim()));
 
-              {filteredExercises.length === 0 && (
-                <div className="py-8 text-center text-xs font-mono text-text-muted">
-                  {locale === "ar" ? "مفيش تمارين مطابقة لبحثك." : `No matching exercises found for ${selectedCategory}.`}
-                </div>
-              )}
+                for (const catEx of COMPREHENSIVE_EXERCISE_CATALOG) {
+                  if (!seenIds.has(catEx.id) && !seenNames.has(catEx.name.toLowerCase().trim())) {
+                    combinedList.push({
+                      id: catEx.id,
+                      name: catEx.name,
+                      muscle_group: catEx.muscle_group,
+                      equipment: catEx.equipment,
+                      is_ranked: catEx.is_ranked,
+                      ranked_key: catEx.ranked_key,
+                    });
+                  }
+                }
+
+                const displayedList = combinedList.filter((ex) => {
+                  const matchesSearch =
+                    !searchQuery.trim() ||
+                    ex.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+                    ex.muscle_group.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+                    ex.equipment.toLowerCase().includes(searchQuery.toLowerCase().trim());
+                  const matchesCategory =
+                    selectedCategory === "All" ||
+                    (selectedCategory === "Full Body" && ex.is_ranked) ||
+                    ex.muscle_group.toLowerCase() === selectedCategory.toLowerCase();
+                  return matchesSearch && matchesCategory;
+                });
+
+                if (displayedList.length === 0) {
+                  return (
+                    <div className="py-8 text-center text-xs font-mono text-text-muted">
+                      {locale === "ar" ? "مفيش تمارين مطابقة لبحثك." : `No matching exercises found for ${selectedCategory}.`}
+                    </div>
+                  );
+                }
+
+                return displayedList.map((ex) => (
+                  <div
+                    key={ex.id}
+                    onClick={() => addExerciseToSession(ex)}
+                    className="py-3 px-2 hover:bg-surface-container-high rounded-xl cursor-pointer transition-colors flex items-center justify-between group"
+                  >
+                    <div className="text-start">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-on-surface group-hover:text-secondary-cyan font-mono transition-colors">
+                          {ex.name}
+                        </span>
+                        {ex.is_ranked && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-primary-ink/10 text-primary-ink border border-primary-ink/30 font-bold uppercase">
+                            {locale === "ar" ? "معتمد" : "Ranked"}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[10px] font-mono text-text-muted mt-0.5 capitalize">
+                        {ex.muscle_group} • {ex.equipment}
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-secondary-cyan group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+                  </div>
+                ));
+              })()}
             </div>
           </div>
         </div>
